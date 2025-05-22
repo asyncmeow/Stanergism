@@ -1,3 +1,4 @@
+import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { calculateAnts, calculateSummationNonLinear } from './Calculate'
@@ -14,7 +15,7 @@ const getResearchCost = (index: number, buyAmount = 1, linGrowth = 0): IMultiBuy
   const metaData = calculateSummationNonLinear(
     player.researches[index],
     G.researchBaseCosts[index] * calculateSingularityDebuff('Researches'),
-    player.researchPoints,
+    Decimal.min(player.obtainium, 1e300).toNumber(),
     linGrowth,
     buyAmount
   )
@@ -96,11 +97,11 @@ export const buyResearch = (index: number, auto = false, linGrowth = 0, hover = 
   // Get our costs, and determine if anything is purchasable.
   const buyAmount = (player.researchBuyMaxToggle || auto || hover) ? 1e5 : 1
   const metaData = getResearchCost(index, buyAmount, linGrowth) /* Destructuring FTW! */
-  const canBuy = player.researchPoints >= metaData.cost
+  const canBuy = player.obtainium.gte(metaData.cost)
 
   if (canBuy && isResearchUnlocked(index) && !isResearchMaxed(index)) {
     player.researches[index] = metaData.levelCanBuy
-    player.researchPoints -= metaData.cost
+    player.obtainium.sub(metaData.cost)
     // Quick check after upgrading for max. This is to update any automation regardless of auto state
     if (isResearchMaxed(index)) {
       DOMCacheGetOrSet(`res${player.autoResearch || 1}`).classList.remove('researchRoomba')
@@ -200,7 +201,7 @@ export const researchDescriptions = (i: number, auto = false, linGrowth = 0) => 
     }
   }
 
-  if (player.researchPoints < metaData.cost && player.researches[i] < (G.researchMaxLevels[i])) {
+  if (player.obtainium.lt(metaData.cost) && player.researches[i] < (G.researchMaxLevels[i])) {
     DOMCacheGetOrSet('researchcost').style.color = 'var(--crimson-text-color)'
     updateClassList(p, [], ['researchMaxed', 'researchAvailable', 'researchPurchasedAvailable'])
   }
@@ -224,7 +225,7 @@ export const researchDescriptions = (i: number, auto = false, linGrowth = 0) => 
 
 export const updateResearchBG = (j: number) => {
   if (player.researches[j] > G.researchMaxLevels[j]) {
-    player.researchPoints += (player.researches[j] - G.researchMaxLevels[j]) * G.researchBaseCosts[j]
+    player.obtainium = player.obtainium.add((player.researches[j] - G.researchMaxLevels[j]) * G.researchBaseCosts[j])
     player.researches[j] = G.researchMaxLevels[j]
   }
 

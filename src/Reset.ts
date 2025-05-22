@@ -41,7 +41,7 @@ import { calculateHypercubeBlessings } from './Hypercubes'
 import { importSynergism } from './ImportExport'
 import { autoBuyPlatonicUpgrades, updatePlatonicUpgradeBG } from './Platonic'
 import { buyResearch, updateResearchBG } from './Research'
-import { getRune, resetOfferings, resetRunes } from './Runes'
+import { getRune, resetOfferings, resetRuneBlessings, resetRunes, resetRuneSpirits } from './Runes'
 import { playerJsonSchema } from './saves/PlayerJsonSchema'
 import { forceResetShopUpgrades, shopData } from './Shop'
 import { calculateSingularityDebuff, getFastForwardTotalMultiplier } from './singularity'
@@ -91,7 +91,7 @@ export const resetdetails = (input: resetNames) => {
   const resetCurrencyGain = DOMCacheGetOrSet('resetcurrency2')
   if (input === 'reincarnation') {
     resetObtainiumImage.style.display = 'block'
-    resetObtainiumText.textContent = format(Math.floor(calculateObtainium()))
+    resetObtainiumText.textContent = format(Decimal.floor(calculateObtainium()))
   } else {
     resetObtainiumImage.style.display = 'none'
     resetObtainiumText.textContent = ''
@@ -505,14 +505,7 @@ export const reset = (input: resetNames, fast = false, from = 'unknown') => {
       ascensionAchievementCheck(1)
     }
 
-    player.researchPoints = Math.min(1e300, player.researchPoints + Math.floor(obtainiumToGain))
-
-    if (player.reincarnationcounter > 0) {
-      const opscheck = obtainiumToGain / player.reincarnationcounter
-      if (opscheck > player.obtainiumpersecond) {
-        player.obtainiumpersecond = opscheck
-      }
-    }
+    player.obtainium = player.obtainium.add(obtainiumToGain)
 
     player.currentChallenge.transcension = 0
     resetUpgrades(3)
@@ -604,8 +597,6 @@ export const reset = (input: resetNames, fast = false, from = 'unknown') => {
     resetTalismans('ascension')
     player.reincarnationPoints = new Decimal('0')
     player.reincarnationShards = new Decimal('0')
-    player.obtainiumpersecond = 0
-    player.maxobtainiumpersecond = 0
     player.antSacrificePoints = 0
     player.antSacrificeTimer = 0
     player.antSacrificeTimerReal = 0
@@ -627,7 +618,7 @@ export const reset = (input: resetNames, fast = false, from = 'unknown') => {
     player.thirdCostParticles = new Decimal('1e4')
     player.fourthCostParticles = new Decimal('1e8')
     player.fifthCostParticles = new Decimal('1e16')
-    player.runeshards = 0
+    player.offerings = new Decimal('0')
     player.crystalUpgrades = [0, 0, 0, 0, 0, 0, 0, 0]
 
     resetRunes('ascension')
@@ -983,9 +974,9 @@ export const updateSingularityMilestoneAwards = (singularityReset = true): void 
   }
   if (player.achievements[277] > 0) { // Singularity 4
     if (player.currentChallenge.ascension !== 14) {
-      player.researchPoints = Math.floor(
+      player.obtainium = new Decimal(Math.floor(
         500 * calculateSingularityDebuff('Researches')
-      )
+      ))
     }
     if (player.currentChallenge.ascension !== 12) {
       player.reincarnationPoints = new Decimal('1e16')
@@ -1169,6 +1160,8 @@ export const singularity = (setSingNumber = -1) => {
   }
 
   resetRunes('singularity')
+  resetRuneBlessings('singularity')
+  resetRuneSpirits('singularity')
   resetTalismans('singularity')
 
   player.goldenQuarks += calculateGoldenQuarks()
@@ -1578,7 +1571,7 @@ export const getResetResearches = () => {
 }
 
 const resetResearches = () => {
-  player.researchPoints = 0
+  player.obtainium = new Decimal(0)
 
   for (const item of getResetResearches()) {
     player.researches[item] = 0

@@ -26,7 +26,6 @@ import {
   calculateRequiredRedAmbrosiaTime,
   calculateResearchAutomaticObtainium,
   calculateSigmoidExponential,
-  calculateSummationLinear,
   calculateSummationNonLinear,
   calculateToNextThreshold,
   calculateTotalOcteractCubeBonus,
@@ -43,7 +42,7 @@ import type { hepteractTypes } from './Hepteracts'
 import { hepteractTypeList } from './Hepteracts'
 import { allDurableConsumables, type PseudoCoinConsumableNames } from './Login'
 import { getQuarkBonus, quarkHandler } from './Quark'
-import { getRune, type RuneKeys } from './Runes'
+import { getRune, getRuneBlessing, getRuneSpirit, type RuneBlessingKeys, type RuneKeys, type RuneSpiritKeys } from './Runes'
 import { getShopCosts, isShopUpgradeUnlocked, shopData, shopUpgradeTypes } from './Shop'
 import { getGoldenQuarkCost } from './singularity'
 import { loadStatisticsUpdate } from './Statistics'
@@ -588,7 +587,7 @@ export const visualUpdateRunes = () => {
     DOMCacheGetOrSet('offeringCount').textContent = i18next.t(
       'runes.offeringsYouHave',
       {
-        offerings: format(player.runeshards, 0, true)
+        offerings: format(player.offerings, 0, true)
       }
     )
 
@@ -639,126 +638,12 @@ export const visualUpdateRunes = () => {
       })
     }
   } else if (getActiveSubTab() === 2) {
-    const blessingMultiplierArray = [0, 8, 10, 6.66, 2, 1]
-    let t = 0
-    for (let i = 1; i <= 5; i++) {
-      DOMCacheGetOrSet(`runeBlessingLevel${i}Value`).innerHTML = i18next.t(
-        'runes.blessings.blessingLevel',
-        {
-          amount: format(player.runeBlessingLevels[i])
-        }
-      )
-
-      DOMCacheGetOrSet(`runeBlessingPower${i}Value1`).innerHTML = i18next.t(
-        'runes.blessings.blessingPower',
-        {
-          reward: i18next.t(`runes.blessings.rewards.${i - 1}`),
-          value: format(G.runeBlessings[i]),
-          speed: format(
-            1
-              - t
-              + blessingMultiplierArray[i] * G.effectiveRuneBlessingPower[i],
-            4,
-            true
-          )
-        }
-      )
-
-      const levelsPurchasable = calculateSummationLinear(
-        player.runeBlessingLevels[i],
-        G.blessingBaseCost,
-        player.runeshards,
-        player.runeBlessingBuyAmount
-      )[0] - player.runeBlessingLevels[i]
-      levelsPurchasable > 0
-        ? DOMCacheGetOrSet(`runeBlessingPurchase${i}`).classList.add(
-          'runeButtonsAvailable'
-        )
-        : DOMCacheGetOrSet(`runeBlessingPurchase${i}`).classList.remove(
-          'runeButtonsAvailable'
-        )
-
-      DOMCacheGetOrSet(`runeBlessingPurchase${i}`).innerHTML = i18next.t(
-        'runes.blessings.increaseLevel',
-        {
-          amount: format(Math.max(1, levelsPurchasable)),
-          offerings: format(
-            Math.max(
-              G.blessingBaseCost * (1 + player.runeBlessingLevels[i]),
-              calculateSummationLinear(
-                player.runeBlessingLevels[i],
-                G.blessingBaseCost,
-                player.runeshards,
-                player.runeBlessingBuyAmount
-              )[1]
-            )
-          )
-        }
-      )
-
-      if (i === 5) {
-        t = 1
-      }
+    for (const runeBlessing of Object.keys(player.runeBlessings)) {
+      getRuneBlessing(runeBlessing as RuneBlessingKeys).updateRuneHTML()
     }
   } else if (getActiveSubTab() === 3) {
-    const spiritMultiplierArray = [0, 1, 1, 20, 1, 100]
-    const subtract = [0, 0, 0, 1, 0, 0]
-    for (let i = 1; i <= 5; i++) {
-      spiritMultiplierArray[i] *= player.corruptions.used.totalCorruptionDifficultyMultiplier
-
-      DOMCacheGetOrSet(`runeSpiritLevel${i}Value`).innerHTML = i18next.t(
-        'runes.spirits.spiritLevel',
-        {
-          amount: format(player.runeSpiritLevels[i])
-        }
-      )
-
-      DOMCacheGetOrSet(`runeSpiritPower${i}Value1`).innerHTML = i18next.t(
-        'runes.spirits.spiritPower',
-        {
-          reward: i18next.t(`runes.spirits.rewards.${i - 1}`),
-          value: format(G.runeSpirits[i]),
-          speed: format(
-            1
-              - subtract[i]
-              + spiritMultiplierArray[i] * G.effectiveRuneSpiritPower[i],
-            4,
-            true
-          )
-        }
-      )
-
-      const levelsPurchasable = calculateSummationLinear(
-        player.runeSpiritLevels[i],
-        G.spiritBaseCost,
-        player.runeshards,
-        player.runeSpiritBuyAmount
-      )[0] - player.runeSpiritLevels[i]
-      levelsPurchasable > 0
-        ? DOMCacheGetOrSet(`runeSpiritPurchase${i}`).classList.add(
-          'runeButtonsAvailable'
-        )
-        : DOMCacheGetOrSet(`runeSpiritPurchase${i}`).classList.remove(
-          'runeButtonsAvailable'
-        )
-
-      DOMCacheGetOrSet(`runeSpiritPurchase${i}`).innerHTML = i18next.t(
-        'runes.blessings.increaseLevel',
-        {
-          amount: format(Math.max(1, levelsPurchasable)),
-          offerings: format(
-            Math.max(
-              G.spiritBaseCost * (1 + player.runeSpiritLevels[i]),
-              calculateSummationLinear(
-                player.runeSpiritLevels[i],
-                G.spiritBaseCost,
-                player.runeshards,
-                player.runeSpiritBuyAmount
-              )[1]
-            )
-          )
-        }
-      )
+    for (const runeSpirit of Object.keys(player.runeSpirits)) {
+      getRuneSpirit(runeSpirit as RuneSpiritKeys).updateRuneHTML()
     }
   }
 }

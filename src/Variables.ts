@@ -292,17 +292,6 @@ export const Globals: GlobalVariables = {
 
   timeWarp: false,
 
-  blessingMultiplier: 1,
-  spiritMultiplier: 1,
-  runeBlessings: [0, 0, 0, 0, 0, 0],
-  runeSpirits: [0, 0, 0, 0, 0, 0],
-
-  effectiveRuneBlessingPower: [0, 0, 0, 0, 0, 0],
-  effectiveRuneSpiritPower: [0, 0, 0, 0, 0, 0],
-
-  blessingBaseCost: 1e6,
-  spiritBaseCost: 1e20,
-
   triggerChallenge: 0,
 
   prevReductionValue: -1,

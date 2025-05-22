@@ -1,8 +1,10 @@
+import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
 import { z } from 'zod'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { format, player } from './Synergism'
+import { getTalisman } from './Talismans'
 import { IconSets } from './Themes'
 import { toggleCorruptionLevel } from './Toggles'
 import { Alert, Notification, Prompt } from './UpdateHTML'
@@ -181,8 +183,8 @@ export class CorruptionLoadout {
 
   #illiteracyEffect () {
     const base = G.illiteracyPower[this.#levels.illiteracy]
-    const multiplier = (player.researchPoints > 1)
-      ? 1 + (1 / 100) * player.platonicUpgrades[9] * Math.min(100, Math.log10(player.researchPoints))
+    const multiplier = (player.obtainium.gte(1))
+      ? 1 + (1 / 100) * player.platonicUpgrades[9] * Math.min(100, Decimal.log10(player.obtainium))
       : 1
     return Math.min(base * multiplier, 1)
   }
@@ -238,6 +240,7 @@ export class CorruptionLoadout {
   get bonusLevels () {
     let bonusLevel = player.singularityUpgrades.corruptionFifteen.getEffect().bonus ? 1 : 0
     bonusLevel += +player.singularityChallenges.oneChallengeCap.rewards.freeCorruptionLevel
+    bonusLevel += getTalisman('cookieGrandma').bonus.freeCorruptionLevel
     return bonusLevel
   }
 

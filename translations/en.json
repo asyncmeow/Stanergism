@@ -375,7 +375,7 @@
       "57": "[[57]] One Way Only: Prestige without buying Multipliers.",
       "58": "[[58]] Authentic Shifting: Transcend without having bought a Multiplier.",
       "59": "[[59]] The Singularity: Reincarnate without having bought a Multiplier.",
-      "60": "[[60]] Gotta go SLOW!: Prestige without buying Accelerators or Accelerator Boosts.",
+      "60": "[[60]] Gotta go SLOW!: Prestige without buying Accelerators.",
       "61": "[[61]] I'm really going slow: Transcend without having bought Accelerators or Boosts.",
       "62": "[[62]] Are we there yet?: Reincarnate without having bought Accelerators or Boosts.",
       "63": "[[63]] A careful search for Diamonds: Get 1e120,000 Coins in [Reduced Diamonds] without buying Accelerators or Boosts.",
@@ -706,6 +706,7 @@
       "180": "Unlock Tier 6 Ant autobuy, and autobuy Hic and Experientia Ants! Add +1% Base Ant ELO.",
       "181": "Unlock Tier 7 Ant autobuy, and autobuy Praemoenio Ants! Add +2% Base Ant ELO.",
       "182": "Unlock Tier 8 Ant autobuy, and autobuy Scientia and Phylacterium Ants! Add +3% Base Ant ELO.",
+      "186": "Unlock the powers of a 'Wow Square' Talisman. Sounds cool!",
       "187": "Gain an Ascension Count multiplier based on your score: x{{x}}. Also: Offerings +{{y}}% [Max: 100% at 1M Ascensions]",
       "188": "Gain +100 Ascension count for all Ascensions longer than 10 seconds. Also: Obtainium +{{x}}% [Max: 100% at 5M Ascensions]",
       "189": "Gain 20% of Excess time after 10 seconds each Ascension as a linear multiplier to Ascension count. Also: Cubes +{{x}}% [Max: 200% at 500M Ascensions]",
@@ -1261,7 +1262,7 @@
       "17": "[2x7] Yep. +5 Exponent per level to crystals.",
       "18": "[2x8] Quantum tunnelling ftw. +20% global game speed.",
       "19": "[2x9] Unlocks new coin upgrades ranging from start of Ascend to post c10 and beyond.",
-      "20": "[2x10] The rune automator in shop now spends all Offerings automatically, 'splitting' them into each of the 5 runes equally.",
+      "20": "[2x10] The rune automator in shop now spends all Offerings automatically, 'splitting' them into each of the 5 runes equally. It also buys levels 20 times faster. Have fun!",
       "21": "[3x1] Perhaps score will benefit you more? Gain +5% more score on Ascensions per level.",
       "22": "[3x2] The exponent of the bonus of Artemis is increased by 0.05 per level.",
       "23": "[3x3] For each 20 Cubes opened at once, you get 1 additional tribute at random.",
@@ -2549,7 +2550,7 @@
       "63": "Crystal Production is multiplied based on Particles to the sixth power [Caps at 1e6000x].",
       "64": "Mythos Shard Production is multiplied by your Particles squared.",
       "65": "Multiply the gain of Particles from Reincarnation by 5x!",
-      "66": "When you use an Offering, every unlocked rune will get 1 free experience.",
+      "66": "The 'Rune Level Coefficient' of the first five of your runes are all increased by 2. It basically makes your Rune's EXP more valuable.",
       "67": "Atom gain is increased by 3% per Particle producer purchased!",
       "68": "Gain a free Multiplier for every 1e1000x increase in tax.",
       "69": "Gain more Obtainium based on your particle gain. [Works with automation at a reduced rate!]",
@@ -3243,7 +3244,7 @@
   "buildings": {
     "coinInformation": "You hold <<gold | {{coins}} Coins>> [<<gold | +{{coinsPerSecond}}/s>>] | Total Ever: <<gold | {{totalGenerated}}>>",
     "coinFlavorTexts": {
-      "1": "You have nothing 100 coins. You can hire a worker, conveniently for exactly 100 coins!",
+      "1": "You have nothing but 100 coins. You can hire a worker, conveniently for exactly 100 coins!",
       "2": "Your workers sure are working hard. Let's buy some investments with our coins!",
       "3": "A million coins! Something tells you that being a millionaire here isn't all that impressive.",
       "4": "You're beyond rich, you're loaded! However, it does not feel... <<cyan | prestigious>> enough.",
@@ -3254,7 +3255,7 @@
       "9": "Your wealth now has 100,000 digits. Have you even considered how long it would take to write it out? You should ask <a href=\"https://ivark.github.io/AntimatterDimensions\" target=\"_blank\"><<yellow | Hevipelle>></a>.",
       "10": "Remember when you had just a million coins? Pepperidge farm remembers. <<grey | Your Grandma>> remembers...",
       "11": "The three digits at the front of your total coins are called a <<orange | mantissa>>. Do they even matter in your case?",
-      "12": "The number of digits in your wealth is the number of atoms in the universe, raised to the power of <<gold | 1,250,000>>...",
+      "12": "Your wealth is equal to the number of atoms in the universe, raised to the power of <<gold | 1,250,000>>...",
       "13": "You see the ants from down here. However, do you see the ants from <<orange | up there>>?",
       "14": "If you had a dollar for every digit in your wealth, you would be the richest person on this thing one would call <<lightblue|\"Earth\">>...",
       "15": "10^1,000,000,000,000,000 Coins! If the exponent were multiplied by 9, in some alternative <<grey | Realities>> you would overflow the universe with coins.",
@@ -3599,15 +3600,15 @@
     "thanksResearches": "Thanks to researches, your effective levels are increased by {{percent}}%",
     "speed": {
       "name": "Speed Rune",
-      "description": "An energy eminates from this stone. You feel compelled to inscribe power into it with your Offerings.",
-      "values": "+0.02% Accelerator Power, +0.25% Accelerators per level. Global Speed (affecting resource production, and most reset timers) is multiplied by up to 2!",
-      "effect": "Speed Rune Bonus: +{{val}}% Accelerator Power, +{{val2}} Accelerators, +{{val3}} Global Speed."
+      "description": "An energy emanates from this stone. You feel compelled to inscribe power into it with your Offerings.",
+      "values": "+0.02% Accelerator Power, +0.25% Free Accelerators per level. Global Speed (affecting resource production, and most reset timers) is multiplied by up to 2!",
+      "effect": "Speed Rune Bonus: +{{val}}% Accelerator Power, +{{val2}} Free Accelerators, +{{val3}} Global Speed."
     },
     "duplication": {
       "name": "Duplication Rune",
       "description": "With this many diamonds, surely you live in a post-scarcity world. Let's counterfeit anyway!",
-      "values": "+0.2 Multiplier Power Boost (each gives +0.02 to Multiplier Power), +0.25% Multipliers per level. Tax growth is delayed more for each level (cap: 99.9%)!",
-      "effect": "Duplication Rune Bonus: +{{val}} Multiplier Power Boosts, +{{val2}} Multipliers, -{{val3}}% Tax Growth."
+      "values": "+0.2 Multiplier Power Boost (each gives +0.02 to Multiplier Power), +0.25% Free Multipliers per level. Tax growth is delayed more for each level (cap: 99.9%)!",
+      "effect": "Duplication Rune Bonus: +{{val}} Multiplier Power Boosts, +{{val2}} Free Multipliers, -{{val3}}% Tax Growth."
     },
     "prism": {
       "name": "Prism Rune",
@@ -3638,6 +3639,12 @@
       "description": "The piece of eight, long thought lost, no longer. It went there and back again.",
       "values": "I wonder what happens if you feed it your Offerings.",
       "effect": "You cannot grasp the true form of Ant God's antiques. [Addition itself takes {{val}}% as long]"
+    },
+    "horseShoe": {
+      "name": "The Horse's Shoe",
+      "description": "I never realized the world was so easily won, just by realizing you got someone to say you won't be lonely anymore.",
+      "values": "Each level gives you +5 Ambrosia Luck, +1 Red Ambrosia Luck. You also reduce the conversion ratio between the two by up to 0.5, depending on level (-0.5 * level / (level + 50))",
+      "effect": "Horseshoe Rune Bonus: +{{val}} Ambrosia Luck, +{{val2}} Red Ambrosia Luck, {{val3}} conversion ratio."
     },
     "levelup": {
       "1": "+(Level/4)^1.25 Accelerator, +0.25% Accelerators per level. +1 Accelerator Boost every 20 levels!",
@@ -3672,6 +3679,7 @@
       "autoBuyOff": "Auto Buy: OFF",
       "clickBuyEveryType": "Click to buy every type of Talisman Shards and Fragments, if affordable",
       "costToBuy": "Cost to buy {{name}} ({{buyAmount}}): {{obtainium}} Obtainium and {{offerings}} Offerings.",
+      "doesNotReset": "[<<white|♔>>] This talisman NEVER resets! Not even on Singularity.",
       "rarity": {
         "1": "<<white | Common>>",
         "2": "<<green | Uncommon>>",
@@ -3734,6 +3742,12 @@
         "inscription": "<<gold | ✏>> Inscription: Even-Dimensional Cube Gain is increased by <<gold|{{val}}>>",
         "signature": "<<crimson | ✎>> Signature: Odd-Dimensional Cube Gain is increased by <<crimson|12%>>"
       },
+      "cookieGrandma": {
+        "name": "Freshly-Baked Cookie",
+        "description": "Kinda burns your neck. Thanks Grandma!",
+        "inscription": "<<gold | ✏>> Inscription: Gain <<gold|+{{val}}>> free Corruption Levels!",
+        "signature": "<<crimson | ✎>> Signature: Unlock three more Cookie Upgrades in the Cube Upgrades subtab!"
+      },
       "shards": {
         "shard": "Talisman Shard",
         "commonFragment": "Common Fragment",
@@ -3776,7 +3790,8 @@
         "prism": "Bonus Prism Rune Levels: <<orange|{{x}}>>",
         "thrift": "Bonus Thrift Rune Levels: <<orange|{{x}}>>",
         "SI": "Bonus Superior Intellect Rune Levels: <<orange|{{x}}>>",
-        "IA": "Bonus Infinite Ascent Rune Levels: <<orange|{{x}}>>"
+        "IA": "Bonus Infinite Ascent Rune Levels: <<orange|{{x}}>>",
+        "antiquities": "Bonus Antiquities of Ant God Rune Levels: <<orange|{{x}}>>"
       },
       "mythicEffects": {
         "exemption": "Mythic Effect: +400 Duplication Rune Levels!",
@@ -3795,25 +3810,25 @@
       "autoRuneOff": "Auto Rune: OFF",
       "allIncreaseLevel": "ALL Increase Level",
       "blessingLevel": "<<orchid|Blessing level>>: {{amount}}",
-      "blessingPower": "Blessing Power: <<turquoise|{{value}}>> =-=-= Effect: <<gold|{{speed}}>>x {{reward}}!",
+      "blessingPower": "Blessing Power: <<turquoise|{{value}}>> =-=-= Effect: {{desc}}",
       "rewards": {
-        "0": "Global Speed",
-        "1": "Multiplier Boosts",
-        "2": "Ant Sacrifice Rewards",
-        "3": "Delay for A.Boost Cost",
-        "4": "Obtainium --> Ant Mult."
+        "speed": "{{effect}}x Global Speed",
+        "duplication": "{{effect}}x Multiplier Boosts",
+        "prism": "{{effect}}x Ant Sacrifice Rewards",
+        "thrift": "{{effect}}x Accelerator Boost Cost Delays",
+        "superiorIntellect": "Ant Speed multiplied by Obt^{{effect}} || Ant Speed x{{effect2}}"
       },
       "increaseLevel": "Increase Level By <<orchid|{{amount}}>> [Cost: <<orchid|{{offerings}}>> Offerings]"
     },
     "spirits": {
       "spiritLevel": "Spirit level: <<orchid|{{amount}}>>",
-      "spiritPower": "Spirit Power: <<turquoise|{{value}}>> =-=-= Effect: <<gold|{{speed}}>>{{reward}}!",
+      "spiritPower": "Spirit Power: <<turquoise|{{value}}>> =-=-= Effect: {{desc}}",
       "rewards": {
-        "0": "x Global Speed",
-        "1": "x Wow! Cubes by Ascension",
-        "2": "x Additional levels to Crystal caps",
-        "3": "x Obtainium",
-        "4": "% stronger Research 4x9 effect"
+        "speed": "{{effect}}x Ascension Speed",
+        "duplication": "{{effect}}x Wow! Cubes by Ascension",
+        "prism": "{{effect}}x Additional levels to Crystal caps",
+        "thrift": "{{effect}}x Offerings",
+        "superiorIntellect": "{{effect}}x Obtainium"
       },
       "buyUpTo": "Buy up to <<var(--orchid-text-color)|{{amount}}>> Levels per purchase, if affordable. [Input to toggle]"
     },
@@ -4275,6 +4290,7 @@
     "globalQuarkMultiplierStats": {
       "title": "Quark Multiplier",
       "AchievementPoints": "Achievement Points Bonus:",
+      "plasticTalisman": "Plastic Talisman - Inscription Bonus:",
       "Achievement250": "Achievement 250 Bonus:",
       "Achievement251": "Achievement 251 Bonus:",
       "Achievement266": "Achievement 266 Bonus:",
@@ -4466,6 +4482,8 @@
     },
     "ascensionSpeedMultiplierStats": {
       "title": "Ascension Speed Multiplier",
+      "SpeedSpirit": "Speed Spirit Bonus:",
+      "PolymathTalisman": "Polymath Talisman - Inscription Bonus:",
       "Chronometer": "Chronometer Shop Upgrade:",
       "Chronometer2": "Chronometer 2 Shop Upgrade:",
       "Chronometer3": "Chronometer 3 Shop Upgrade:",
@@ -4792,10 +4810,10 @@
         "2": "Tesseract Shard: x{{amount}}: +{{bonus}}% Bonus Wow! Tesseracts",
         "3": "Hypercube Shard: x{{amount}}: +{{bonus}}% Bonus Wow! Hypercubes",
         "4": "Platonic Remnant: x{{amount}}: +{{bonus}}% Bonus Platonic! Cubes",
-        "5": "Hypercube Statue: x{{amount}}: +{{bonus}}% ALL Hypercube bonuses",
+        "5": "Hypercube Statue: x{{amount}}: +{{bonus}}% to all Hypercube Benediction bonuses!",
         "6": "Keynesian Statue: x{{amount}}: +{{bonus}}% Bonus Constant exponent on taxes",
         "7": "High-Scoring Statue: x{{amount}}: +{{bonus}}% More Score on corruptions",
-        "8": "Chronos Statue: x{{amount}}: +{{bonus}}% <<yellow|true>> Global Speed (after speed diminishing returns)"
+        "8": "Chronos Statue: x{{amount}}: +{{bonus}}% <<cyan|Immaculate>> Global Speed (after speed diminishing returns)"
       }
     },
     "platonicUpgrades": {

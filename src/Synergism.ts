@@ -34,7 +34,6 @@ import {
   buyMax,
   buyMultiplier,
   buyParticleBuilding,
-  buyRuneBonusLevels,
   buyTesseractBuilding,
   calculateTessBuildingsInBudget,
   getCost,
@@ -85,7 +84,22 @@ import {
   updateSingularityGlobalPerks,
   updateTesseractAutoBuyAmount
 } from './Reset'
-import { generateRunesHTML, getRune, indexToRune, initRunes, sacrificeOfferings, sumOfRuneLevels } from './Runes'
+import {
+  buyBlessingLevels,
+  buySpiritLevels,
+  generateRunesHTML,
+  getRune,
+  getRuneBlessing,
+  getRuneSpirit,
+  indexToRune,
+  initRuneBlessings,
+  initRunes,
+  initRuneSpirits,
+  type RuneBlessingKeys,
+  type RuneSpiritKeys,
+  sacrificeOfferings,
+  sumOfRuneLevels
+} from './Runes'
 import { c15RewardUpdate } from './Statistics'
 import {
   generateTalismansHTML,
@@ -443,11 +457,11 @@ export const player: Player = {
     reincarnation: 0,
     ascension: 0
   },
-  researchPoints: 0,
+
+  obtainium: new Decimal('0'),
+  maxObtainium: new Decimal('0'),
+
   obtainiumtimer: 0,
-  obtainiumpersecond: 0,
-  maxobtainiumpersecond: 0,
-  maxobtainium: 0,
   // Ignore the first index. The other 25 are shaped in a 5x5 grid similar to the production appearance
   // dprint-ignore
   researches: [
@@ -504,11 +518,28 @@ export const player: Player = {
     thrift: new Decimal(0),
     superiorIntellect: new Decimal(0),
     infiniteAscent: new Decimal(0),
-    antiquities: new Decimal(0)
+    antiquities: new Decimal(0),
+    horseShoe: new Decimal(0)
   },
 
-  runeshards: 0,
-  maxofferings: 0,
+  runeBlessings: {
+    speed: new Decimal(0),
+    duplication: new Decimal(0),
+    prism: new Decimal(0),
+    thrift: new Decimal(0),
+    superiorIntellect: new Decimal(0)
+  },
+
+  runeSpirits: {
+    speed: new Decimal(0),
+    duplication: new Decimal(0),
+    prism: new Decimal(0),
+    thrift: new Decimal(0),
+    superiorIntellect: new Decimal(0)
+  },
+
+  offerings: new Decimal('0'),
+  maxOfferings: new Decimal('0'),
 
   prestigecounter: 0,
   transcendcounter: 0,
@@ -677,7 +708,8 @@ export const player: Player = {
     polymath: noTalismanFragments,
     mortuus: noTalismanFragments,
     plastic: noTalismanFragments,
-    wowSquare: noTalismanFragments
+    wowSquare: noTalismanFragments,
+    cookieGrandma: noTalismanFragments
   },
 
   talismanShards: 0,
@@ -954,8 +986,6 @@ export const player: Player = {
     enter: 2
   },
 
-  runeBlessingLevels: [0, 0, 0, 0, 0, 0],
-  runeSpiritLevels: [0, 0, 0, 0, 0, 0],
   runeBlessingBuyAmount: 0,
   runeSpiritBuyAmount: 0,
 
@@ -1868,16 +1898,8 @@ const loadSynergy = () => {
         0,
         0
       )
-      player.maxofferings = player.runeshards
-      player.maxobtainium = player.researchPoints
-      player.researchPoints += 51200 * player.researches[50]
       player.researches[50] = 0
     }
-
-    player.maxofferings = player.maxofferings || 0
-    player.maxobtainium = player.maxobtainium || 0
-    player.runeshards = player.runeshards || 0
-    player.researchPoints = player.researchPoints || 0
 
     if (
       !data.loaded1009
@@ -1927,18 +1949,6 @@ const loadSynergy = () => {
       || player.researches[90] > 10
     ) {
       player.loaded10091 = true
-      player.researchPoints += 7.5e8 * player.researches[82]
-      player.researchPoints += 2e8 * player.researches[83]
-      player.researchPoints += 4.5e9 * player.researches[84]
-      player.researchPoints += 2.5e7 * player.researches[86]
-      player.researchPoints += 7.5e7 * player.researches[87]
-      player.researchPoints += 3e8 * player.researches[88]
-      player.researchPoints += 1e9 * player.researches[89]
-      player.researchPoints += 2.5e7 * player.researches[90]
-      player.researchPoints += 1e8 * player.researches[91]
-      player.researchPoints += 2e9 * player.researches[92]
-      player.researchPoints += 9e9 * player.researches[93]
-      player.researchPoints += 7.25e10 * player.researches[94]
       player.researches[86] = 0
       player.researches[87] = 0
       player.researches[88] = 0
@@ -2019,10 +2029,6 @@ const loadSynergy = () => {
       player.antUpgrades = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
       player.unlocks.rrow4 = false
-      player.researchPoints += 3e7 * player.researches[50]
-      player.researchPoints += 2e9 * player.researches[96]
-      player.researchPoints += 5e9 * player.researches[97]
-      player.researchPoints += 3e10 * player.researches[98]
       player.researches[50] = 0
       player.researches[96] = 0
       player.researches[97] = 0
@@ -2066,30 +2072,11 @@ const loadSynergy = () => {
 
       player.antSacrificePoints = 0
       player.antSacrificeTimer = 0
-
-      player.obtainiumpersecond = 0
-      player.maxobtainiumpersecond = 0
     }
 
     if (data.loaded10101 === undefined || data.loaded10101 === false) {
       player.loaded10101 = true
 
-      // dprint-ignore
-      const refundThese = [
-        0, 31, 32, 61, 62, 63, 64, 76, 77, 78, 79, 80, 81, 98, 104, 105, 106,
-        107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120,
-        121, 122, 123, 125,
-      ];
-      // dprint-ignore
-      const refundReward = [
-        0, 2, 20, 5, 10, 80, 5e3, 1e7, 1e7, 2e7, 3e7, 4e7, 2e8, 3e10, 1e11,
-        1e12, 2e11, 1e12, 2e10, 2e11, 1e12, 2e13, 5e13, 1e14, 2e14, 5e14, 1e15,
-        2e15, 1e16, 1e15, 1e16, 1e14, 1e15, 1e15, 1e20,
-      ];
-      for (let i = 1; i < refundThese.length; i++) {
-        player.researchPoints += player.researches[refundThese[i]] * refundReward[i]
-        player.researches[refundThese[i]] = 0
-      }
       player.autoAntSacrifice = false
       player.antMax = false
     }
@@ -2140,11 +2127,11 @@ const loadSynergy = () => {
     if (player.reincarnationCount < 0) {
       player.reincarnationCount = 0
     }
-    if (player.runeshards < 0) {
-      player.runeshards = 0
+    if (player.offerings.lte(0)) {
+      player.offerings = new Decimal(0)
     }
-    if (player.researchPoints < 0) {
-      player.researchPoints = 0
+    if (player.obtainium.lte(0)) {
+      player.obtainium = new Decimal(0)
     }
 
     if (player.resettoggle1 === 0) {
@@ -3663,7 +3650,7 @@ export const updateAllMultiplier = (): void => {
   b *= 1 + (11 * player.researches[34]) / 100
   b *= 1 + (11 * player.researches[35]) / 100
   b *= 1 + player.researches[89] / 5
-  b *= 1 + 10 * G.effectiveRuneBlessingPower[2]
+  b *= getRuneBlessing('duplication').bonus.multiplierBoosts
 
   G.totalMultiplierBoost = Math.pow(
     Math.floor(b) + c,
@@ -3709,8 +3696,7 @@ export const multipliers = (): void => {
     10
       + (0.05 * player.researches[129] * Math.log(player.commonFragments + 1))
         / Math.log(4)
-      + ((20 * player.corruptions.used.totalCorruptionDifficultyMultiplier)
-        * G.effectiveRuneSpiritPower[3]),
+      + getRuneSpirit('prism').bonus.crystalCaps,
     0.05 * player.crystalUpgrades[3]
   )
   crystalExponent += 0.04 * CalcECC('transcend', player.challengecompletions[3])
@@ -4523,10 +4509,7 @@ export const resourceGain = (dt: number): void => {
 }
 
 export const updateAntMultipliers = (): void => {
-  // Update 2.5.0: Updated to have a base of 10 instead of 1x
-  G.globalAntMult = new Decimal(10)
-  // Update 2.9.0: Updated to give a 5x multiplier no matter what
-  G.globalAntMult = G.globalAntMult.times(5)
+  G.globalAntMult = new Decimal(1)
   G.globalAntMult = G.globalAntMult.times(getRune('superiorIntellect').bonus.antSpeed)
   if (player.upgrades[76] === 1) {
     G.globalAntMult = G.globalAntMult.times(5)
@@ -4551,7 +4534,7 @@ export const updateAntMultipliers = (): void => {
     1
       + player.upgrades[78]
         * 0.005
-        * Math.pow(Math.log10(player.maxofferings + 1), 2)
+        * Math.pow(Decimal.log10(player.maxOfferings.add(1)), 2)
   )
   G.globalAntMult = G.globalAntMult.times(
     Decimal.pow(
@@ -4564,8 +4547,8 @@ export const updateAntMultipliers = (): void => {
   )
   G.globalAntMult = G.globalAntMult.times(
     Decimal.pow(
-      Math.max(1, player.researchPoints),
-      G.effectiveRuneBlessingPower[5]
+      Decimal.max(1, player.obtainium),
+      getRuneBlessing('superiorIntellect').bonus.obtToAntExponent
     )
   )
 
@@ -5703,24 +5686,11 @@ export const updateAll = (): void => {
     )
   }
 
-  if (player.runeshards > player.maxofferings) {
-    player.maxofferings = player.runeshards
+  if (player.offerings.greaterThan(player.maxOfferings)) {
+    player.maxOfferings = new Decimal(player.offerings)
   }
-  if (player.researchPoints > player.maxobtainium) {
-    player.maxobtainium = player.researchPoints
-  }
-
-  if (isNaN(player.runeshards)) {
-    player.runeshards = 0
-  }
-  if (player.runeshards > 1e300) {
-    player.runeshards = 1e300
-  }
-  if (isNaN(player.researchPoints)) {
-    player.researchPoints = 0
-  }
-  if (player.researchPoints > 1e300) {
-    player.researchPoints = 1e300
+  if (player.obtainium.greaterThan(player.maxObtainium)) {
+    player.maxObtainium = new Decimal(player.obtainium)
   }
 
   autoBuyAnts()
@@ -6141,11 +6111,11 @@ export const synergismHotkeys = (event: KeyboardEvent, key: string): void => {
       }
       if (G.currentTab === Tabs.Runes) {
         if (getActiveSubTab() === 0) {
-          sacrificeOfferings(indexToRune[num], player.runeshards)
+          sacrificeOfferings(indexToRune[num], player.offerings)
         } else if (getActiveSubTab() === 2) {
-          buyRuneBonusLevels('Blessings', num)
+          buyBlessingLevels(indexToRune[num] as RuneBlessingKeys, player.offerings)
         } else if (getActiveSubTab() === 3) {
-          buyRuneBonusLevels('Spirits', num)
+          buySpiritLevels(indexToRune[num] as RuneSpiritKeys, player.offerings)
         }
       }
       if (G.currentTab === Tabs.Challenges) {
@@ -6168,7 +6138,7 @@ export const synergismHotkeys = (event: KeyboardEvent, key: string): void => {
       }
       if (G.currentTab === Tabs.Runes) {
         if (getActiveSubTab() === 0) {
-          sacrificeOfferings('infiniteAscent', player.runeshards)
+          sacrificeOfferings('infiniteAscent', player.offerings)
         }
       }
       break
@@ -6182,7 +6152,7 @@ export const synergismHotkeys = (event: KeyboardEvent, key: string): void => {
       }
       if (G.currentTab === Tabs.Runes) {
         if (getActiveSubTab() === 0) {
-          sacrificeOfferings('antiquities', player.runeshards)
+          sacrificeOfferings('antiquities', player.offerings)
         }
       }
       break
@@ -6265,6 +6235,8 @@ export const reloadShit = (reset = false) => {
   console.log(player.runes)
   initRedAmbrosiaUpgrades(player.redAmbrosiaUpgrades)
   initRunes(player.runes)
+  initRuneBlessings(player.runeBlessings)
+  initRuneSpirits(player.runeSpirits)
   initTalismans(player.talismans)
 
   console.log(sumOfRuneLevels())
@@ -6403,6 +6375,8 @@ window.addEventListener('load', async () => {
 
   initRedAmbrosiaUpgrades(player.redAmbrosiaUpgrades)
   initRunes(player.runes)
+  initRuneBlessings(player.runeBlessings)
+  initRuneSpirits(player.runeSpirits)
   initTalismans(player.talismans)
   Alert(
     `If you have the time, please submit feedback for the recent update! Form closes May 11, 2025. \n <a href="https://forms.gle/SLVUakXBc9RvEfqz8" style="border: 2px solid gold" target="_blank">CLICK ME!</a>`

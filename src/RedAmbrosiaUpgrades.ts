@@ -597,10 +597,10 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
 export type RedAmbrosiaUpgradesMap = {
   [K in RedAmbrosiaKeys]: RedAmbrosiaUpgrade<K>
 }
-let redAmbrosiaUpgrades: RedAmbrosiaUpgradesMap | null = null
+let redAmbrosiaUpgrades: RedAmbrosiaUpgradesMap
 
 export function initRedAmbrosiaUpgrades (investments: Record<RedAmbrosiaKeys, number>) {
-  redAmbrosiaUpgrades = {} as RedAmbrosiaUpgradesMap
+  const upgrades: Partial<RedAmbrosiaUpgradesMap> = {}
   const keys = Object.keys(redAmbrosiaUpgradeData) as RedAmbrosiaKeys[]
 
   // Use type assertions after careful validation
@@ -614,10 +614,10 @@ export function initRedAmbrosiaUpgrades (investments: Record<RedAmbrosiaKeys, nu
     }
 
     // Use a function that casts the result appropriately
-    const upgrade = new RedAmbrosiaUpgrade(dataWithInvestment, key) // Here we need to use type assertion because TypeScript can't track
-    // the relationship between the key and the generic parameter in the loop
-    redAmbrosiaUpgrades[key as 'tutorial'] = upgrade as RedAmbrosiaUpgrade<'tutorial'>
+    const upgrade = new RedAmbrosiaUpgrade(dataWithInvestment, key)
+    ;(upgrades as Record<RedAmbrosiaKeys, RedAmbrosiaUpgrade<RedAmbrosiaKeys>>)[key] = upgrade
   }
+  redAmbrosiaUpgrades = upgrades as RedAmbrosiaUpgradesMap
 }
 
 export function getRedAmbrosiaUpgrade<K extends RedAmbrosiaKeys> (key: K): RedAmbrosiaUpgrade<K> {

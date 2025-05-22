@@ -28,25 +28,25 @@ export type ResetHistoryEntryAntSacrifice = ResetHistoryEntryBase & {
   crumbs: string
   crumbsPerSecond: string
   effectiveELO: number
-  obtainium: number
-  offerings: number
+  obtainium: Decimal
+  offerings: Decimal
   kind: 'antsacrifice'
 }
 
 export type ResetHistoryEntryPrestige = ResetHistoryEntryBase & {
-  offerings: number
+  offerings: Decimal
   diamonds: string
   kind: 'prestige'
 }
 export type ResetHistoryEntryTranscend = ResetHistoryEntryBase & {
-  offerings: number
+  offerings: Decimal
   mythos: string
   kind: 'transcend'
 }
 export type ResetHistoryEntryReincarnate = ResetHistoryEntryBase & {
-  offerings: number
+  offerings: Decimal
   particles: string
-  obtainium: number
+  obtainium: Decimal
   kind: 'reincarnate'
 }
 

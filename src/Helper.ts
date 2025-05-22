@@ -1,5 +1,5 @@
+import Decimal from 'break_infinity.js'
 import { sacrificeAnts } from './Ants'
-import { buyAllBlessings } from './Buy'
 import {
   calculateAmbrosiaGenerationSpeed,
   calculateAmbrosiaLuck,
@@ -16,7 +16,15 @@ import {
 import { quarkHandler } from './Quark'
 import { getRedAmbrosiaUpgrade } from './RedAmbrosiaUpgrades'
 import { Seed, seededRandom } from './RNG'
-import { getNumberUnlockedRunes, getRune, indexToRune, type RuneKeys, sacrificeOfferings } from './Runes'
+import {
+  buyAllBlessingLevels,
+  buyAllSpiritLevels,
+  getNumberUnlockedRunes,
+  getRune,
+  indexToRune,
+  type RuneKeys,
+  sacrificeOfferings
+} from './Runes'
 import { useConsumable } from './Shop'
 import { player } from './Synergism'
 import { Tabs } from './Tabs'
@@ -308,10 +316,7 @@ export const automaticTools = (input: AutoToolInput, time: number) => {
 
       const obtainiumGain = calculateResearchAutomaticObtainium(time)
       // Add Obtainium
-      player.researchPoints = Math.min(
-        1e300,
-        player.researchPoints + obtainiumGain
-      )
+      player.obtainium = player.obtainium.add(obtainiumGain)
       // Update visual displays if appropriate
       if (G.currentTab === Tabs.Research) {
         visualUpdateResearch()
@@ -323,10 +328,7 @@ export const automaticTools = (input: AutoToolInput, time: number) => {
       // As well as cube upgrade 1x2 (2).
       G.autoOfferingCounter += time
       // Any time this exceeds 1 it adds an offering
-      player.runeshards = Math.min(
-        1e300,
-        player.runeshards + Math.floor(G.autoOfferingCounter)
-      )
+      player.offerings = player.offerings.add(Math.floor(G.autoOfferingCounter))
       G.autoOfferingCounter %= 1
       break
     case 'runeSacrifice':
@@ -334,19 +336,15 @@ export const automaticTools = (input: AutoToolInput, time: number) => {
       player.sacrificeTimer += time
       if (
         player.sacrificeTimer >= 1
-        && isFinite(player.runeshards)
-        && player.runeshards > 0
+        && player.offerings.gt(0)
       ) {
         // Automatic purchase of Blessings
         if (player.highestSingularityCount >= 15) {
-          let ratio = 4
           if (player.toggles[36]) {
-            buyAllBlessings('Blessings', 100 / ratio, true)
-            ratio--
+            buyAllBlessingLevels(player.offerings.div(2), true)
           }
           if (player.toggles[37]) {
-            buyAllBlessings('Spirits', 100 / ratio, true)
-            ratio--
+            buyAllSpiritLevels(player.offerings.div(2), true)
           }
         }
         if (
@@ -371,7 +369,7 @@ export const automaticTools = (input: AutoToolInput, time: number) => {
             numUnlocked -= 1
           }
 
-          const offeringPerRune = Math.floor(player.runeshards * 0.5 / numUnlocked)
+          const offeringPerRune = Decimal.floor(player.offerings.mul(0.5).div(numUnlocked))
 
           for (const key of Object.keys(player.runes)) {
             const runeKey = key as RuneKeys
@@ -381,7 +379,7 @@ export const automaticTools = (input: AutoToolInput, time: number) => {
           // If you did not buy cube upgrade 2x10 it sacrifices to selected rune.
           const rune = player.autoSacrifice
           if (rune !== 0) {
-            sacrificeOfferings(indexToRune[rune], player.runeshards, true)
+            sacrificeOfferings(indexToRune[rune], player.offerings, true)
           }
         }
         // Modulo used in event of a large delta time (this could happen for a number of reasons)

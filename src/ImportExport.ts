@@ -482,7 +482,7 @@ export const promocodes = async (input: string | null, amount?: number) => {
   }
   if (input === 'synergism2021' && !player.codes.get(1)) {
     player.codes.set(1, true)
-    player.runeshards += 25
+    player.offerings = player.offerings.add(25)
     player.worlds.add(50)
     el.textContent = i18next.t('importexport.promocodes.synergism2021')
   } else if (input === ':unsmith:' && player.achievements[243] < 1) {

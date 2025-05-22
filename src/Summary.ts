@@ -44,7 +44,7 @@ export const generateExportSummary = async (): Promise<void> => {
   if (player.prestigeCount > 0 || player.highestSingularityCount > 0) {
     resources = `${resources}Diamonds: ${format(player.prestigePoints, 2, true)}\n`
     resources = `${resources}Crystals: ${format(player.prestigeShards, 2, true)}\n`
-    resources = `${resources}Offerings: ${format(player.runeshards, 0, true)}\n`
+    resources = `${resources}Offerings: ${format(player.offerings, 0, true)}\n`
   }
   if (player.transcendCount > 0 || player.highestSingularityCount > 0) {
     resources = `${resources}Mythos: ${format(player.transcendPoints, 2, true)}\n`
@@ -53,7 +53,7 @@ export const generateExportSummary = async (): Promise<void> => {
   if (player.reincarnationCount > 0 || player.highestSingularityCount > 0) {
     resources = `${resources}Particles: ${format(player.reincarnationPoints, 2, true)}\n`
     resources = `${resources}Atoms: ${format(player.reincarnationShards, 2, true)}\n`
-    resources = `${resources}Obtainium: ${format(player.researchPoints, 0, true)}\n`
+    resources = `${resources}Obtainium: ${format(player.obtainium, 0, true)}\n`
   }
   if (player.ascensionCount > 0 || player.highestSingularityCount > 0) {
     const cubeArray = [

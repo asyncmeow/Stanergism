@@ -234,8 +234,8 @@ const checkPlatonicUpgrade = (
   let checksum = 0
   const resources = ['obtainium', 'offerings', 'cubes', 'tesseracts', 'hypercubes', 'platonics', 'abyssals'] as const
   const resourceNames = [
-    'researchPoints',
-    'runeshards',
+    'obtainium',
+    'offerings',
     'wowCubes',
     'wowTesseracts',
     'wowHypercubes',
@@ -313,14 +313,14 @@ export const createPlatonicDescription = (index: number) => {
   DOMCacheGetOrSet('platonicOfferingCost').textContent = i18next.t(
     'wowCubes.platonicUpgrades.descriptionBox.offeringCost',
     {
-      a: format(player.runeshards),
+      a: format(player.offerings),
       b: format(platUpgradeBaseCosts[index].offerings * priceMultiplier)
     }
   )
   DOMCacheGetOrSet('platonicObtainiumCost').textContent = i18next.t(
     'wowCubes.platonicUpgrades.descriptionBox.obtainiumCost',
     {
-      a: format(player.researchPoints),
+      a: format(player.obtainium),
       b: format(platUpgradeBaseCosts[index].obtainium * priceMultiplier)
     }
   )
@@ -439,8 +439,8 @@ export const buyPlatonicUpgrades = (index: number, auto = false) => {
       player.platonicUpgrades[index] += 1
       // Auto Platonic Upgrades no longer claim the cost of Offerings and Obtainiums
       if (!auto) {
-        player.researchPoints -= Math.floor(platUpgradeBaseCosts[index].obtainium * priceMultiplier)
-        player.runeshards -= Math.floor(platUpgradeBaseCosts[index].offerings * priceMultiplier)
+        player.obtainium = player.obtainium.sub(Math.floor(platUpgradeBaseCosts[index].obtainium * priceMultiplier))
+        player.offerings = player.offerings.sub(Math.floor(platUpgradeBaseCosts[index].offerings * priceMultiplier))
       }
       player.wowCubes.sub(Math.floor(platUpgradeBaseCosts[index].cubes * priceMultiplier))
       player.wowTesseracts.sub(Math.floor(platUpgradeBaseCosts[index].tesseracts * priceMultiplier))

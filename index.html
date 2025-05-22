@@ -1163,7 +1163,7 @@
                     <td><button id="ach144" class="reincarnationunlock" i18n-aria-label="achievements.descriptions.144"><img src="Pictures/Default/ach298.png" alt="" loading="lazy"></button></td>
                     <td><button id="ach172" class="chal8 purpleach" i18n-aria-label="achievements.descriptions.172"><img src="Pictures/Default/ach305.png" alt="" loading="lazy"></button></td>
                     <td><button id="ach179" class="chal8 redach" i18n-aria-label="achievements.descriptions.179"><img src="Pictures/Default/ach312.png" alt="" loading="lazy"></button></td>
-                    <td><button id="ach186" class="ascendunlock" i18n-aria-label="achievements.descriptions.186"><img src="Pictures/Default/ach319.png" alt="" loading="lazy"></button></td>
+                    <td><button id="ach186" class="ascendunlock redach" i18n-aria-label="achievements.descriptions.186"><img src="Pictures/Default/ach319.png" alt="" loading="lazy"></button></td>
                     <td><button id="ach193" class="ascendunlock purpleach" i18n-aria-label="achievements.descriptions.193"><img src="Pictures/Default/ach326.png" alt="" loading="lazy"></button></td>
                     <td><button id="ach200" class="ascendunlock purpleach" i18n-aria-label="achievements.descriptions.200"><img src="Pictures/Default/ach333.png" alt="" loading="lazy"></button></td>
                     <td><button id="ach207" class="chal11 purpleach" i18n-aria-label="achievements.descriptions.207"><img src="Pictures/Default/ach340.png" alt="" loading="lazy"></button></td>
@@ -1366,6 +1366,7 @@
                 <p id="superiorIntellectRunePower" style="color: tomato"></p>
                 <p id="infiniteAscentRunePower" style="color: lightgoldenrodyellow">Infinte Ascent: +0.002% ALL Cube Types, +0.0002% Quark Gain</p>
                 <p id="antiquitiesRunePower" class="orchidText">Grandiloquence: +33% Bonus Exponent in C15, +120% Cubes, +10% Quarks, +10% Potion Efficiency, +1 free Platonic Remnant per opening</p>
+                <p id="horseShoeRunePower" style="color: burlywood"></p>
                 <p class="reincarnationunlock" id="researchrunebonus" style="color: pink">Thanks to researches, your effective levels are increased by 0%</p>
                 <p id="runehotkeys" style="color: lightgray;" i18n="footnotes.runes"></p>
             </div>
@@ -1430,6 +1431,8 @@
                         <p id="talismanThriftEffect" style="color: lightgreen"></p>
                         <p id="talismanSIEffect" class="crimsonText"></p>
                         <p id="talismanIAEffect" style="color: lightgoldenrodyellow"></p>
+                        <p id="talismanAntiquitiesEffect" style="color: orchid"></p>
+                        <p id="talismanNoResetText" style="color: pink"></p>
                     </div>
 
                     <div id="talismanlevelup" aria-live="polite" style="table-layout: fixed; display: none">
@@ -1481,33 +1484,33 @@
             </div>
             <div class="runeBlessingRow">
                 <img class="runeIcons" src="Pictures/Default/BlessingSpeed.png" loading="lazy">
-                <span class="mainText" id="runeBlessingLevel1Value">0</span>
-                <button class="runeButtons" id="runeBlessingPurchase1"></button>
-                <span id="runeBlessingPower1Value1" style="color: turquoise"></span>
+                <span class="mainText blessingLevel" id="speedRuneBlessingLevel">0</span>
+                <button class="runeButtons" id="speedRuneBlessingPurchase"></button>
+                <span id="speedRuneBlessingPower" style="color: turquoise"></span>
             </div>
             <div class="runeBlessingRow">
                 <img class="runeIcons" src="Pictures/Default/BlessingDuplication.png" loading="lazy">
-                <span class="mainText" id="runeBlessingLevel2Value">0</span>
-                <button class="runeButtons" id="runeBlessingPurchase2"></button>
-                <span id="runeBlessingPower2Value1" style="color: turquoise"></span>
+                <span class="mainText blessingLevel" id="duplicationRuneBlessingLevel">0</span>
+                <button class="runeButtons" id="duplicationRuneBlessingPurchase"></button>
+                <span id="duplicationRuneBlessingPower" style="color: turquoise"></span>
             </div>
             <div class="runeBlessingRow">
                 <img class="runeIcons" src="Pictures/Default/BlessingPrism.png" loading="lazy">
-                <span class="mainText" id="runeBlessingLevel3Value">0</span>
-                <button class="runeButtons" id="runeBlessingPurchase3"></button>
-                <span id="runeBlessingPower3Value1" style="color: turquoise"></span>
+                <span class="mainText blessingLevel" id="prismRuneBlessingLevel">0</span>
+                <button class="runeButtons" id="prismRuneBlessingPurchase"></button>
+                <span id="prismRuneBlessingPower" style="color: turquoise"></span>
             </div>
             <div class="runeBlessingRow">
                 <img class="runeIcons" src="Pictures/Default/BlessingThrift.png" loading="lazy">
-                <span class="mainText" id="runeBlessingLevel4Value">0</span>
-                <button class="runeButtons" id="runeBlessingPurchase4"></button>
-                <span id="runeBlessingPower4Value1" style="color: turquoise"></span>
+                <span class="mainText blessingLevel" id="thriftRuneBlessingLevel">0</span>
+                <button class="runeButtons" id="thriftRuneBlessingPurchase"></button>
+                <span id="thriftRuneBlessingPower" style="color: turquoise"></span>
             </div>
             <div class="runeBlessingRow">
                 <img class="runeIcons" src="Pictures/Default/BlessingSI.png" loading="lazy">
-                <span class="mainText" id="runeBlessingLevel5Value">0</span>
-                <button class="runeButtons" id="runeBlessingPurchase5"></button>
-                <span id="runeBlessingPower5Value1" style="color: turquoise"></span>
+                <span class="mainText blessingLevel" id="superiorIntellectRuneBlessingLevel">0</span>
+                <button class="runeButtons" id="superiorIntellectRuneBlessingPurchase"></button>
+                <span id="superiorIntellectRuneBlessingPower" style="color: turquoise"></span>
             </div>
         </div>
         <div id="runeContainer4" style="display: none">
@@ -1519,33 +1522,33 @@
             </div>
             <div class="runeBlessingRow">
                 <img class="runeIcons" src="Pictures/Default/SpiritSpeed.png" loading="lazy">
-                <span id="runeSpiritLevel1Value"></span>
-                <button class="runeButtons" id="runeSpiritPurchase1"></button>
-                <span id="runeSpiritPower1Value1"></span>
+                <span class="blessingLevel" id="speedRuneSpiritLevel"></span>
+                <button class="runeButtons" id="speedRuneSpiritPurchase"></button>
+                <span id="speedRuneSpiritPower"></span>
             </div>
             <div class="runeBlessingRow">
                 <img class="runeIcons" src="Pictures/Default/SpiritDuplication.png" loading="lazy">
-                <span id="runeSpiritLevel2Value"></span>
-                <button class="runeButtons" id="runeSpiritPurchase2"></button>
-                <span id="runeSpiritPower2Value1"></span>
+                <span class="blessingLevel" id="duplicationRuneSpiritLevel"></span>
+                <button class="runeButtons" id="duplicationRuneSpiritPurchase"></button>
+                <span id="duplicationRuneSpiritPower"></span>
             </div>
             <div class="runeBlessingRow">
                 <img class="runeIcons" src="Pictures/Default/SpiritPrism.png" loading="lazy">
-                <span id="runeSpiritLevel3Value"></span>
-                <button class="runeButtons" id="runeSpiritPurchase3"></button>
-                <span id="runeSpiritPower3Value1"></span>
+                <span class="blessingLevel" id="prismRuneSpiritLevel"></span>
+                <button class="runeButtons" id="prismRuneSpiritPurchase"></button>
+                <span id="prismRuneSpiritPower"></span>
             </div>
             <div class="runeBlessingRow">
                 <img class="runeIcons" src="Pictures/Default/SpiritThrift.png" loading="lazy">
-                <span id="runeSpiritLevel4Value"></span>
-                <button class="runeButtons" id="runeSpiritPurchase4"></button>
-                <span id="runeSpiritPower4Value1"></span>
+                <span class="blessingLevel" id="thriftRuneSpiritLevel"></span>
+                <button class="runeButtons" id="thriftRuneSpiritPurchase"></button>
+                <span id="thriftRuneSpiritPower"></span>
             </div>
             <div class="runeBlessingRow">
                 <img class="runeIcons" src="Pictures/Default/SpiritSI.png" loading="lazy">
-                <span id="runeSpiritLevel5Value"></span>
-                <button class="runeButtons" id="runeSpiritPurchase5"></button>
-                <span id="runeSpiritPower5Value1"></span>
+                <span class="blessingLevel" id="superiorIntellectRuneSpiritLevel"></span>
+                <button class="runeButtons" id="superiorIntellectRuneSpiritPurchase"></button>
+                <span id="superiorIntellectRuneSpiritPower"></span>
             </div>
         </div>
     </div>
@@ -3073,9 +3076,9 @@
                 <button class="reincarnationunlock statsNerds" id="kBaseObtainium" style="border: 2px solid pink" i18n="statistics.subtabs.baseObtainium"></button>
                 <button class="reincarnationunlock statsNerds" id="kObtIgnoreDR" style="border: 2px solid pink" i18n="statistics.subtabs.obtIgnoreDR"></button>
                 <button class="reincarnationunlock statsNerds" id="kObtMult" style="border: 2px solid pink" i18n="statistics.subtabs.obtMult"></button>
-                <button class="statsNerds" id="kQuarkMult" style="border: 2px solid white" i18n="statistics.subtabs.quarkMult"></button>
-                <button class="statsNerds" id="kGSpeedMultIgnoreDR" style="border: 2px solid blue" i18n="statistics.subtabs.gSpeedMultIgnoreDR"></button>
-                <button class="statsNerds reincarnationunlock" id="kGSpeedMult" style="border: 2px solid blue" i18n="statistics.subtabs.gSpeedMult"></button>
+                <button class="statsNerds reincarnationunlock" id="kQuarkMult" style="border: 2px solid white" i18n="statistics.subtabs.quarkMult"></button>
+                <button class="statsNerds reincarnationunlock" id="kGSpeedMultIgnoreDR" style="border: 2px solid blue" i18n="statistics.subtabs.gSpeedMultIgnoreDR"></button>
+                <button class="statsNerds prestigeunlock" id="kGSpeedMult" style="border: 2px solid blue" i18n="statistics.subtabs.gSpeedMult"></button>
                 <button class="statsNerds chal8" id="kAntSacrificeMult" style="border: 2px solid burlywood" i18n="statistics.subtabs.antSacrificeMult"></button>
                 <button class="statsNerds ascendunlock" id="kASCMult" style="border: 2px solid orange" i18n="statistics.subtabs.ascMult"></button>
                 <button class="statsNerds ascendunlock" id="kGlobalCubeMult" style="border: 2px solid khaki" i18n="statistics.subtabs.globalCubeMult"></button>

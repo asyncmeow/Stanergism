@@ -348,11 +348,15 @@ export const playerSchema = z.object({
       ascension: z.number()
     }).default(() => ({ ...blankSave.currentChallenge }))
   ]),
-  researchPoints: z.number(),
+
+  obtainium: decimalSchema.default(() => blankSave.obtainium),
+  maxObtainium: decimalSchema.default(() => blankSave.maxObtainium),
+
+  researchPoints: z.number().optional(),
   obtainiumtimer: z.number(),
-  obtainiumpersecond: z.number().default(() => blankSave.obtainiumpersecond),
-  maxobtainiumpersecond: z.number().default(() => blankSave.maxobtainiumpersecond),
-  maxobtainium: z.number().default(() => blankSave.maxobtainium),
+  obtainiumpersecond: z.number().optional(),
+  maxobtainiumpersecond: z.number().optional(),
+  maxobtainium: z.number().optional(),
 
   researches: z.number().array().transform((array) => arrayExtend(array, 'researches')),
 
@@ -389,10 +393,37 @@ export const playerSchema = z.object({
     })
     .default(() => ({ ...blankSave.runes })),
 
+  runeBlessings: z.record(z.string(), decimalSchema)
+    .transform((object) => {
+      return Object.fromEntries(
+        Object.keys(blankSave.runeBlessings).map((key) => {
+          const value = object[key] ?? blankSave.runeBlessings[key as keyof typeof blankSave['runeBlessings']]
+          return value === null ? [key, new Decimal('0')] : [key, new Decimal(value)]
+        })
+      )
+    })
+    .default(() => ({ ...blankSave.runeBlessings })),
+
+  runeSpirits: z.record(z.string(), decimalSchema)
+    .transform((object) => {
+      return Object.fromEntries(
+        Object.keys(blankSave.runeSpirits).map((key) => {
+          const value = object[key] ?? blankSave.runeSpirits[key as keyof typeof blankSave['runeSpirits']]
+          return value === null ? [key, new Decimal('0')] : [key, new Decimal(value)]
+        })
+      )
+    })
+    .default(() => ({ ...blankSave.runeSpirits })),
+
   runelevels: z.number().array().optional(),
   runeexp: z.union([z.number(), z.null().transform(() => 0)]).array().optional(),
-  runeshards: z.number(),
-  maxofferings: z.number().default(() => blankSave.maxofferings),
+
+  offerings: decimalSchema.default(() => blankSave.offerings),
+  maxOfferings: decimalSchema.default(() => blankSave.maxOfferings),
+
+  runeshards: z.number().optional(),
+  maxofferings: z.number().optional(),
+
   offeringpersecond: z.number().optional(),
 
   prestigecounter: z.number(),
@@ -624,8 +655,8 @@ export const playerSchema = z.object({
   autoChallengeStartExponent: z.number().default(() => blankSave.autoChallengeStartExponent),
   autoChallengeTimer: z.record(z.string(), z.number()).default(() => ({ ...blankSave.autoChallengeTimer })),
 
-  runeBlessingLevels: z.number().array().default(() => [...blankSave.runeBlessingLevels]),
-  runeSpiritLevels: z.number().array().default(() => [...blankSave.runeSpiritLevels]),
+  runeBlessingLevels: z.number().array().optional(),
+  runeSpiritLevels: z.number().array().optional(),
   runeBlessingBuyAmount: z.number().default(() => blankSave.runeBlessingBuyAmount),
   runeSpiritBuyAmount: z.number().default(() => blankSave.runeSpiritBuyAmount),
 

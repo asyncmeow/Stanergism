@@ -1,3 +1,4 @@
+import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
 import { achievementaward } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
@@ -82,7 +83,7 @@ interface MetaphysicsReward extends BaseReward {
 }
 
 interface PolymathReward extends BaseReward {
-  spiritBonus: number
+  ascensionSpeedBonus: number
   SIOOMBonus: number
 }
 
@@ -100,6 +101,11 @@ interface WowSquareReward extends BaseReward {
   oddDimBonus: number
 }
 
+interface GrandmaReward extends BaseReward {
+  freeCorruptionLevel: number
+  cookieSix: boolean
+}
+
 type TalismanTypeMap = {
   exemption: ExemptionReward
   chronos: ChronosReward
@@ -109,6 +115,7 @@ type TalismanTypeMap = {
   mortuus: MortuusReward
   plastic: PlasticReward
   wowSquare: WowSquareReward
+  cookieGrandma: GrandmaReward
 }
 
 export type TalismanKeys = keyof TalismanTypeMap
@@ -130,7 +137,9 @@ const rarityValues: Record<number, number> = {
   4: 1.8,
   5: 2.1,
   6: 2.5,
-  7: 3
+  7: 3,
+  8: 3.25,
+  9: 3.5
 }
 
 interface TalismanData<K extends TalismanKeys> {
@@ -182,7 +191,6 @@ export class Talisman<K extends TalismanKeys> {
 
     this.fragmentsInvested = data.fragmentsInvested ?? noTalismanFragments
     this.updateLevelAndSpentFromInvested()
-    this.updateTalismanDisplay()
   }
 
   get costTNL () {
@@ -224,6 +232,11 @@ export class Talisman<K extends TalismanKeys> {
     return this._isUnlocked()
   }
 
+  set fragments (fragments: Record<TalismanCraftItems, number>) {
+    this.fragmentsInvested = { ...fragments }
+    this.updateLevelAndSpentFromInvested()
+  }
+
   affordableNextLevel (budget: Record<TalismanCraftItems, number>): boolean {
     const costs = this.costs(this.baseMult, this.level)
 
@@ -257,6 +270,7 @@ export class Talisman<K extends TalismanKeys> {
     }
 
     this.level = level
+    this.updateTalismanDisplay()
   }
 
   updateResourcePredefinedLevel (level: number): void {
@@ -395,7 +409,8 @@ export class Talisman<K extends TalismanKeys> {
       thrift: this.talismanBaseCoefficient.thrift * rarityValue * this.level * specialMultiplier,
       superiorIntellect: this.talismanBaseCoefficient.superiorIntellect * rarityValue * this.level * specialMultiplier,
       infiniteAscent: this.talismanBaseCoefficient.infiniteAscent * rarityValue * this.level * specialMultiplier,
-      antiquities: 0
+      antiquities: this.talismanBaseCoefficient.antiquities * rarityValue * this.level * specialMultiplier,
+      horseShoe: this.talismanBaseCoefficient.horseShoe * rarityValue * this.level * specialMultiplier
     }
   }
 
@@ -412,9 +427,12 @@ export class Talisman<K extends TalismanKeys> {
     const thriftHTML = DOMCacheGetOrSet('talismanThriftEffect')
     const sIHTML = DOMCacheGetOrSet('talismanSIEffect')
     const iAHTML = DOMCacheGetOrSet('talismanIAEffect')
+    const antiquitiesHTML = DOMCacheGetOrSet('talismanAntiquitiesEffect')
 
     const inscriptionHTML = DOMCacheGetOrSet('talismanInscriptionBonus')
     const signatureHTML = DOMCacheGetOrSet('talismanSignatureBonus')
+
+    const noResetHTML = DOMCacheGetOrSet('talismanNoResetText')
 
     inscriptionHTML.innerHTML = this.inscriptionDesc
     console.log(this.runeBonuses)
@@ -488,6 +506,25 @@ export class Talisman<K extends TalismanKeys> {
       : (() => {
         DOMCacheGetOrSet('talismanIAEffect').style.display = 'none'
       })()
+    this.runeBonuses.antiquities > 0 && getRune('antiquities').isUnlocked
+      ? (() => {
+        antiquitiesHTML.style.display = 'block'
+        antiquitiesHTML.innerHTML = i18next.t('runes.talismans.bonusRuneLevels.antiquities', {
+          x: format(this.runeBonuses.antiquities, 2, true)
+        })
+      })()
+      : (() => {
+        antiquitiesHTML.style.display = 'none'
+      })()
+
+    resetTiers[this.minimalResetTier] > resetTiers.singularity
+      ? (() => {
+        noResetHTML.style.display = 'block'
+        noResetHTML.innerHTML = i18next.t('runes.talismans.doesNotReset')
+      })()
+      : (() => {
+        antiquitiesHTML.style.display = 'none'
+      })()
   }
 
   updateCostHTML () {
@@ -518,7 +555,7 @@ export class Talisman<K extends TalismanKeys> {
     const el = DOMCacheGetOrSet(`${this.#key}Talisman`)
     const la = DOMCacheGetOrSet(`${this.#key}TalismanLevel`)
 
-    la.textContent = `${this.level}/${this.effectiveLevelCap}`
+    la.textContent = `${format(this.level)}/${format(this.effectiveLevelCap)}`
     const rarity = this.rarity
     if (rarity === 1) {
       el.style.border = '4px solid white'
@@ -640,7 +677,8 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
       thrift: 0.75,
       superiorIntellect: 0,
       infiniteAscent: 0,
-      antiquities: 0
+      antiquities: 0,
+      horseShoe: 0
     },
     minimalResetTier: 'ascension',
     isUnlocked: () => {
@@ -653,7 +691,7 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
     costs: regularCostProgression,
     levelCapIncrease: () => universalTalismanMaxLevelIncreasers(),
     rewards: (n) => {
-      const inscriptValues = [1, 1.05, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6]
+      const inscriptValues = [1, 1.04, 1.08, 1.12, 1.16, 1.20, 1.25, 1.30]
       const speedBonus = (n >= 6) ? 12 : 0
       return {
         inscriptionDesc: i18next.t('runes.talismans.chronos.inscription', {
@@ -673,7 +711,8 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
       thrift: 0.75,
       superiorIntellect: 0.75,
       infiniteAscent: 0,
-      antiquities: 0
+      antiquities: 0,
+      horseShoe: 0
     },
     minimalResetTier: 'ascension',
     isUnlocked: () => {
@@ -686,7 +725,7 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
     costs: regularCostProgression,
     levelCapIncrease: () => universalTalismanMaxLevelIncreasers(),
     rewards: (n) => {
-      const inscriptValues = [1, 1.2, 1.3, 1.4, 1.45, 1.5, 1.55, 1.6]
+      const inscriptValues = [1, 1.04, 1.08, 1.12, 1.16, 1.20, 1.25, 1.30]
       const thriftBonus = (n >= 6) ? 12 : 0
       return {
         inscriptionDesc: i18next.t('runes.talismans.midas.inscription', {
@@ -706,7 +745,8 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
       thrift: 1.5,
       superiorIntellect: 0,
       infiniteAscent: 0,
-      antiquities: 0
+      antiquities: 0,
+      horseShoe: 0
     },
     minimalResetTier: 'ascension',
     isUnlocked: () => {
@@ -741,7 +781,8 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
       thrift: 0.6,
       superiorIntellect: 0.6,
       infiniteAscent: 0,
-      antiquities: 0
+      antiquities: 0,
+      horseShoe: 0
     },
     minimalResetTier: 'ascension',
     isUnlocked: () => {
@@ -754,8 +795,8 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
     costs: regularCostProgression,
     levelCapIncrease: () => universalTalismanMaxLevelIncreasers(),
     rewards: (n) => {
-      const inscriptValues = [1, 1.2, 1.4, 1.6, 1.7, 1.8, 1.9, 2]
-      const SIOOMBonus = (n >= 6) ? Math.floor(getRune('superiorIntellect').freeLevels / 1000) : 0
+      const inscriptValues = [1, 1.04, 1.08, 1.12, 1.16, 1.20, 1.25, 1.30]
+      const SIOOMBonus = (n >= 6) ? 12 : 0
       return {
         inscriptionDesc: i18next.t('runes.talismans.polymath.inscription', {
           val: formatAsPercentIncrease(inscriptValues[n] ?? 1, 0)
@@ -763,7 +804,7 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
         signatureDesc: i18next.t('runes.talismans.polymath.signature', {
           val: format(SIOOMBonus, 0, true)
         }),
-        spiritBonus: inscriptValues[n] ?? 1,
+        ascensionSpeedBonus: inscriptValues[n] ?? 1,
         SIOOMBonus: SIOOMBonus
       }
     },
@@ -774,7 +815,8 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
       thrift: 0,
       superiorIntellect: 1.5,
       infiniteAscent: 0,
-      antiquities: 0
+      antiquities: 0,
+      horseShoe: 0
     },
     minimalResetTier: 'ascension',
     isUnlocked: () => {
@@ -788,7 +830,7 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
     levelCapIncrease: () => universalTalismanMaxLevelIncreasers(),
     rewards: (n) => {
       const inscriptValues = [1, 1.02, 1.04, 1.06, 1.07, 1.08, 1.09, 1.10]
-      const prismOOMBonus = (n >= 6) ? 25 : 0
+      const prismOOMBonus = (n >= 6) ? 12 : 0
       return {
         inscriptionDesc: i18next.t('runes.talismans.mortuus.inscription', {
           val: formatAsPercentIncrease(inscriptValues[n] ?? 1, 0)
@@ -807,7 +849,8 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
       thrift: 0.6,
       superiorIntellect: 0.6,
       infiniteAscent: 0,
-      antiquities: 0
+      antiquities: 0,
+      horseShoe: 0
     },
     minimalResetTier: 'ascension',
     isUnlocked: () => {
@@ -838,7 +881,8 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
       thrift: 0,
       superiorIntellect: 0.75,
       infiniteAscent: 0.005,
-      antiquities: 0
+      antiquities: 0,
+      horseShoe: 0
     },
     minimalResetTier: 'ascension',
     isUnlocked: () => {
@@ -851,14 +895,14 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
     costs: exponentialCostProgression,
     levelCapIncrease: () => universalTalismanMaxLevelIncreasers(),
     rewards: (n) => {
-      const inscriptValues = [1, 1.025, 1.05, 1.1, 1.15, 1.2, 1.3, 1.4]
+      const inscriptValues = [1, 1.025, 1.05, 1.075, 1.1, 1.125, 1.15, 1.2]
       return {
         inscriptionDesc: i18next.t('runes.talismans.wowSquare.inscription', {
           val: formatAsPercentIncrease(inscriptValues[n] ?? 1, 0)
         }),
         signatureDesc: i18next.t('runes.talismans.wowSquare.signature'),
         evenDimBonus: inscriptValues[n] ?? 1,
-        oddDimBonus: n >= 6 ? 1.12 : 1
+        oddDimBonus: n >= 6 ? 1.20 : 1
       }
     },
     talismanBaseCoefficient: {
@@ -868,11 +912,44 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
       thrift: 0,
       superiorIntellect: 1,
       infiniteAscent: 0,
-      antiquities: 0
+      antiquities: 0,
+      horseShoe: 0
     },
     minimalResetTier: 'ascension',
     isUnlocked: () => {
       return player.ascensionCount >= 100
+    }
+  },
+  cookieGrandma: {
+    baseMult: 1e290,
+    maxLevel: 60,
+    costs: exponentialCostProgression,
+    levelCapIncrease: () => 0,
+    rewards: (n) => {
+      const inscriptValues = [0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.15]
+      const cookiesSix = n >= 6
+      return {
+        inscriptionDesc: i18next.t('runes.talismans.cookieGrandma.inscription', {
+          val: format(inscriptValues[n] ?? 0, 2)
+        }),
+        signatureDesc: i18next.t('runes.talismans.cookieGrandma.signature'),
+        freeCorruptionLevel: inscriptValues[n] ?? 0,
+        cookieSix: cookiesSix
+      }
+    },
+    talismanBaseCoefficient: {
+      speed: 1,
+      duplication: 1,
+      prism: 1,
+      thrift: 1,
+      superiorIntellect: 1,
+      infiniteAscent: 0.01,
+      antiquities: 0.01,
+      horseShoe: 0
+    },
+    minimalResetTier: 'never',
+    isUnlocked: () => {
+      return player.cubeUpgrades[80] > 0
     }
   }
 }
@@ -881,26 +958,34 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
 export type TalismansMap = {
   [K in TalismanKeys]: Talisman<K>
 }
-let talismans: TalismansMap | null = null
+let talismans: TalismansMap
 
 export function initTalismans (investments: Record<TalismanKeys, Record<TalismanCraftItems, number>>) {
-  talismans = {} as TalismansMap
-  const keys = Object.keys(talismanData) as TalismanKeys[]
+  if (talismans !== undefined) {
+    for (const talisman of Object.keys(talismans) as TalismanKeys[]) {
+      talismans[talisman].fragments = { ...investments[talisman] }
+    }
+  } else {
+    const upgrades = {} as TalismansMap
+    const keys = Object.keys(talismanData) as TalismanKeys[]
 
-  // Use type assertions after careful validation
-  for (const key of keys) {
-    const data = talismanData[key]
-    const invested = investments[key]
+    // Use type assertions after careful validation
+    for (const key of keys) {
+      const data = talismanData[key]
+      const invested = investments[key]
 
-    const dataWithInvestment = {
-      ...data,
-      fragmentsInvested: invested
+      const dataWithInvestment = {
+        ...data,
+        fragmentsInvested: invested
+      }
+
+      // Use a function that casts the result appropriately
+      const talisman = new Talisman(dataWithInvestment, key) // Here we need to use type assertion because TypeScript can't track
+      ;(upgrades as Record<TalismanKeys, Talisman<TalismanKeys>>)[key] = talisman
+      // the relationship between the key and the generic parameter in the loo
     }
 
-    // Use a function that casts the result appropriately
-    const upgrade = new Talisman(dataWithInvestment, key) // Here we need to use type assertion because TypeScript can't track
-    // the relationship between the key and the generic parameter in the loop
-    talismans[key as 'exemption'] = upgrade as Talisman<'exemption'>
+    talismans = upgrades as TalismansMap
   }
 }
 
@@ -1039,13 +1124,21 @@ const getTalismanResourceInfo = (
   type: keyof typeof talismanResourceCosts,
   percentage = player.buyTalismanShardPercent
 ) => {
+  const resourceCap = 1e270
+
   const obtainiumCost = talismanResourceCosts[type].obtainium
   const offeringCost = talismanResourceCosts[type].offerings
 
-  const maxBuyObtainium = Math.max(1, Math.floor(player.researchPoints / obtainiumCost))
-  const maxBuyOffering = Math.max(1, Math.floor(player.runeshards / offeringCost))
+  const maxBuyObtainium = Math.max(
+    1,
+    Math.floor(Decimal.min(player.obtainium.div(obtainiumCost), resourceCap).toNumber())
+  )
+  const maxBuyOffering = Math.max(
+    1,
+    Math.floor(Decimal.min(player.offerings.div(offeringCost), resourceCap).toNumber())
+  )
   const amountToBuy = Math.max(1, Math.floor(percentage / 100 * Math.min(maxBuyObtainium, maxBuyOffering)))
-  const canBuy = obtainiumCost <= player.researchPoints && offeringCost <= player.runeshards
+  const canBuy = player.obtainium.gte(obtainiumCost) && player.offerings.gte(offeringCost)
   return {
     canBuy, // Boolean, if false will not buy any fragments
     buyAmount: amountToBuy, // Integer, will buy as specified above.
@@ -1136,8 +1229,10 @@ export const buyTalismanResources = (
       achievementaward(239)
     }
 
-    player.researchPoints -= talismanResourcesData.obtainiumCost
-    player.runeshards -= talismanResourcesData.offeringCost
+    console.log(talismanResourcesData.obtainiumCost)
+
+    player.obtainium = player.obtainium.sub(talismanResourcesData.obtainiumCost)
+    player.offerings = player.offerings.sub(talismanResourcesData.offeringCost)
 
     // When dealing with high values, calculations can be very slightly off due to floating point precision
     // and result in buying slightly (usually 1) more than the player can actually afford.
@@ -1146,11 +1241,11 @@ export const buyTalismanResources = (
     // The calculation being done overall is similar to the following calculation:
     // 2.9992198253874083e47 - (Math.floor(2.9992198253874083e47 / 1e20) * 1e20)
     // which, for most values, returns 0, but values like this example will return a negative number instead.
-    if (player.researchPoints < 0) {
-      player.researchPoints = 0
+    if (player.obtainium.lt(0)) {
+      player.obtainium = new Decimal(0)
     }
-    if (player.runeshards < 0) {
-      player.runeshards = 0
+    if (player.offerings.lt(0)) {
+      player.offerings = new Decimal(0)
     }
   }
   updateTalismanCostDisplay(type, percentage)

@@ -21,7 +21,8 @@ export enum resetTiers {
   transcension = 2,
   reincarnation = 3,
   ascension = 4,
-  singularity = 5
+  singularity = 5,
+  never = 6
 }
 
 export const indexToRune: Record<number, RuneKeys> = {
@@ -37,6 +38,30 @@ export const indexToRune: Record<number, RuneKeys> = {
 export const runeToIndex = Object.fromEntries(
   Object.entries(indexToRune).map(([key, value]) => [value as RuneKeys, key as unknown])
 ) as Record<RuneKeys, number>
+
+interface BaseRuneData {
+  costCoefficient: Decimal
+  levelsPerOOM: number
+  levelsPerOOMIncrease: () => number
+  effectiveLevelMult: () => number
+  freeLevels: () => number
+  runeEXPPerOffering: (purchasedLevels: number) => Decimal
+  isUnlocked: () => boolean
+  minimalResetTier: keyof typeof resetTiers
+  runeEXP?: Decimal
+}
+
+interface RuneData<T extends RuneKeys> extends BaseRuneData {
+  rewards(this: void, level: number): RuneTypeMap[T]
+}
+
+interface RuneBlessingData<T extends RuneBlessingKeys> extends BaseRuneData {
+  rewards(this: void, level: number): RuneBlessingTypeMap[T]
+}
+
+interface RuneSpiritData<T extends RuneSpiritKeys> extends BaseRuneData {
+  rewards(this: void, level: number): RuneSpiritTypeMap[T]
+}
 
 interface BaseReward {
   desc: string
@@ -80,6 +105,12 @@ interface AntiquitiesReward extends BaseReward {
   addCodeCooldownReduction: number
 }
 
+interface HorseshoeReward extends BaseReward {
+  ambrosiaLuck: number
+  redLuck: number
+  redLuckConversion: number
+}
+
 type RuneTypeMap = {
   speed: SpeedReward
   duplication: DuplicationReward
@@ -88,33 +119,19 @@ type RuneTypeMap = {
   superiorIntellect: SIReward
   infiniteAscent: IAReward
   antiquities: AntiquitiesReward
+  horseShoe: HorseshoeReward
 }
 
 export type RuneKeys = keyof RuneTypeMap
 
-interface RuneData<T extends RuneKeys> {
-  costCoefficient: number
-  levelsPerOOM: number
-  levelsPerOOMIncrease: () => number
-  rewards(this: void, level: number): RuneTypeMap[T]
-  effectiveLevelMult: () => number
-  freeLevels: () => number
-  runeEXPPerOffering: (purchasedLevels: number) => Decimal
-  isUnlocked: () => boolean
-  minimalResetTier: keyof typeof resetTiers
-
-  runeEXP?: Decimal
-}
-
-export class Rune<K extends RuneKeys> {
+abstract class AbstractRune<K extends string> {
   readonly name: string
   readonly description: string
   readonly valueText: string
 
-  readonly costCoefficient: number
+  readonly costCoefficient: Decimal
   readonly levelsPerOOM: number
   readonly levelsPerOOMIncrease: () => number
-  readonly rewards: (level: number) => RuneTypeMap[K]
   readonly effectiveLevelMult: () => number
   readonly _freeLevels: () => number
   readonly _runeEXPPerOffering: (purchasedLevels: number) => Decimal
@@ -123,17 +140,16 @@ export class Rune<K extends RuneKeys> {
 
   public runeEXP = new Decimal('0')
 
-  #key: K
+  protected abstract readonly key: K // Changed to protected abstract
 
-  constructor (data: RuneData<K>, key: K) {
-    this.name = i18next.t(`runes.${key}.name`)
-    this.description = i18next.t(`runes.${key}.description`)
-    this.valueText = i18next.t(`runes.${key}.values`)
+  constructor (data: BaseRuneData, keyName: string) {
+    this.name = i18next.t(`runes.${keyName}.name`)
+    this.description = i18next.t(`runes.${keyName}.description`)
+    this.valueText = i18next.t(`runes.${keyName}.values`)
 
     this.costCoefficient = data.costCoefficient
     this.levelsPerOOM = data.levelsPerOOM
     this.levelsPerOOMIncrease = data.levelsPerOOMIncrease
-    this.rewards = data.rewards
     this.effectiveLevelMult = data.effectiveLevelMult
     this._freeLevels = data.freeLevels
     this._runeEXPPerOffering = data.runeEXPPerOffering
@@ -141,18 +157,12 @@ export class Rune<K extends RuneKeys> {
     this.minimalResetTier = data.minimalResetTier
 
     this.runeEXP = new Decimal().fromDecimal(data.runeEXP ?? new Decimal('0'))
-
-    this.#key = key
   }
 
   get effectiveLevelsPerOOM () {
     return this.levelsPerOOM + this.levelsPerOOMIncrease()
   }
 
-  /**
-   * Computation is based on the fact that the total EXP to level N is equal to baseMult * (10^(N / lvlPerOOM) - 1)
-   * You may derive this result through algebraic manipulation.
-   */
   get level (): number {
     return Math.floor(this.effectiveLevelsPerOOM * Decimal.log10(this.runeEXP.div(this.costCoefficient).plus(1)))
   }
@@ -173,18 +183,6 @@ export class Rune<K extends RuneKeys> {
 
   get freeLevels (): number {
     return this._freeLevels()
-  }
-
-  get bonus () {
-    if (!this.isUnlocked) {
-      return this.rewards(0)
-    } else {
-      return this.rewards(this.effectiveRuneLevel)
-    }
-  }
-
-  get rewardDesc () {
-    return this.bonus.desc
   }
 
   get perOfferingEXP () {
@@ -211,17 +209,11 @@ export class Rune<K extends RuneKeys> {
     return Decimal.max(1, this.computeEXPLeftToLevel(level).div(this.perOfferingEXP).ceil())
   }
 
-  updatePlayerEXP () {
-    if (player.runes && this.#key in player.runes) {
-      player.runes[this.#key] = new Decimal().fromDecimal(this.runeEXP)
-    } else {
-      console.error(`Player object does not have a property for ${this.#key}.`)
-    }
-  }
+  abstract updatePlayerEXP (): void
 
   updateRuneEXP (exp: Decimal) {
     this.runeEXP = new Decimal().fromDecimal(exp)
-    console.log(this.#key, this.runeEXP)
+    console.log(this.key, this.runeEXP)
     this.updatePlayerEXP()
 
     this.updateRuneEffectHTML()
@@ -241,8 +233,13 @@ export class Rune<K extends RuneKeys> {
     this.updateRuneEffectHTML()
   }
 
-  levelRune (timesLeveled: number, budget: number, auto = false) {
-    let budgetUsed = 0
+  setToLevel (level: number) {
+    const exp = this.computeEXPToLevel(level)
+    this.updateRuneEXP(exp)
+  }
+
+  levelRune (timesLeveled: number, budget: Decimal, auto = false) {
+    let budgetUsed = new Decimal(0)
 
     const expRequired = this.computeEXPLeftToLevel(this.level + timesLeveled)
     const offeringsRequired = Decimal.max(1, expRequired.div(this.perOfferingEXP).ceil())
@@ -252,18 +249,18 @@ export class Rune<K extends RuneKeys> {
       console.log('EXP required', expRequired.toNumber())
     }
 
-    if (offeringsRequired.gt(budget) || offeringsRequired.gt(1e300)) {
+    if (offeringsRequired.gt(budget)) {
       this.addRuneEXP(new Decimal(budget))
       budgetUsed = budget
     } else {
       this.addRuneEXP(offeringsRequired)
-      budgetUsed = offeringsRequired.toNumber()
+      budgetUsed = offeringsRequired
     }
 
     if (!auto) {
       console.log('used budget', budgetUsed)
     }
-    player.runeshards -= budgetUsed
+    player.offerings = player.offerings.sub(budgetUsed)
 
     this.updatePlayerEXP()
     this.updateRuneHTML()
@@ -274,12 +271,46 @@ export class Rune<K extends RuneKeys> {
     }
   }
 
+  abstract updateRuneHTML (): void
+  abstract updateFocusedRuneHTML (): void
+  abstract updateRuneEffectHTML (): void
+}
+
+class Rune<K extends RuneKeys> extends AbstractRune<K> {
+  protected readonly key: K
+  public rewards: (level: number) => RuneTypeMap[K]
+
+  constructor (data: RuneData<K>, key: K) {
+    super(data, key)
+    this.key = key
+    this.rewards = data.rewards
+  }
+
+  get rewardDesc () {
+    return this.bonus.desc
+  }
+
+  get bonus () {
+    if (!this.isUnlocked) {
+      return this.rewards(0)
+    }
+    return this.rewards(this.effectiveRuneLevel)
+  }
+
+  updatePlayerEXP (): void {
+    if (player.runes && this.key in player.runes) {
+      player.runes[this.key as RuneKeys] = new Decimal().fromDecimal(this.runeEXP)
+    } else {
+      console.error(`Player object does not have a property for ${this.key}.`)
+    }
+  }
+
   updateRuneHTML () {
-    DOMCacheGetOrSet(`${this.#key}RuneLevel`).textContent = i18next.t('runes.level', { x: format(this.level, 0, true) })
-    DOMCacheGetOrSet(`${this.#key}RuneFreeLevel`).textContent = i18next.t('runes.freeLevels', {
+    DOMCacheGetOrSet(`${this.key}RuneLevel`).textContent = i18next.t('runes.level', { x: format(this.level, 0, true) })
+    DOMCacheGetOrSet(`${this.key}RuneFreeLevel`).textContent = i18next.t('runes.freeLevels', {
       x: format(this.freeLevels, 0, true)
     })
-    DOMCacheGetOrSet(`${this.#key}RuneTNL`).textContent = i18next.t('runes.TNL', { EXP: format(this.TNL, 2, false) })
+    DOMCacheGetOrSet(`${this.key}RuneTNL`).textContent = i18next.t('runes.TNL', { EXP: format(this.TNL, 2, false) })
   }
 
   updateFocusedRuneHTML () {
@@ -299,7 +330,119 @@ export class Rune<K extends RuneKeys> {
   }
 
   updateRuneEffectHTML () {
-    DOMCacheGetOrSet(`${this.#key}RunePower`).textContent = this.rewardDesc
+    DOMCacheGetOrSet(`${this.key}RunePower`).textContent = this.rewardDesc
+  }
+}
+
+class RuneBlessing<K extends RuneBlessingKeys> extends AbstractRune<K> {
+  protected readonly key: K
+  public rewards: (level: number) => RuneBlessingTypeMap[K]
+
+  constructor (data: RuneBlessingData<K>, key: K) {
+    super(data, key)
+    this.key = key
+    this.rewards = data.rewards
+  }
+
+  get rewardDesc () {
+    return this.bonus.desc
+  }
+
+  get bonus () {
+    if (!this.isUnlocked) {
+      return this.rewards(0)
+    }
+    return this.rewards(this.effectiveRuneLevel)
+  }
+
+  updatePlayerEXP (): void {
+    if (player.runeBlessings && this.key in player.runeBlessings) {
+      player.runeBlessings[this.key as RuneBlessingKeys] = new Decimal().fromDecimal(this.runeEXP)
+    } else {
+      console.error(`Player object does not have a property for ${this.key} in Blessings.`)
+    }
+  }
+
+  updateRuneHTML () {
+    const levelsToDisplay = Math.min(player.runeBlessingBuyAmount, this.getLevelEstimate(player.offerings) - this.level)
+
+    DOMCacheGetOrSet(`${this.key}RuneBlessingLevel`).innerHTML = i18next.t('runes.blessings.blessingLevel', {
+      amount: format(this.level, 0, true)
+    })
+    DOMCacheGetOrSet(`${this.key}RuneBlessingPurchase`).innerHTML = i18next.t('runes.blessings.increaseLevel', {
+      amount: format(levelsToDisplay, 0, true),
+      offerings: format(this.computeOfferingsToLevel(this.level + levelsToDisplay), 0, false)
+    })
+    DOMCacheGetOrSet(`${this.key}RuneBlessingPower`).innerHTML = i18next.t('runes.blessings.blessingPower', {
+      value: format(this.effectiveRuneLevel, 0, true),
+      desc: this.rewardDesc
+    })
+  }
+
+  updateFocusedRuneHTML () {
+  }
+
+  updateRuneEffectHTML () {
+  }
+
+  getLevelEstimate = (extraEXP: Decimal) => {
+    const totalEXP = this.runeEXP.plus(extraEXP)
+    return Math.floor(this.effectiveLevelsPerOOM * Decimal.log10(totalEXP.div(this.costCoefficient).plus(1)))
+  }
+}
+
+class RuneSpirit<K extends RuneSpiritKeys> extends AbstractRune<K> {
+  protected readonly key: K
+  public rewards: (level: number) => RuneSpiritTypeMap[K]
+  constructor (data: RuneSpiritData<K>, key: K) {
+    super(data, key)
+    this.key = key
+    this.rewards = data.rewards
+  }
+
+  get rewardDesc () {
+    return this.bonus.desc
+  }
+
+  get bonus () {
+    if (!this.isUnlocked) {
+      return this.rewards(0)
+    }
+    return this.rewards(this.effectiveRuneLevel)
+  }
+
+  updatePlayerEXP (): void {
+    if (player.runeSpirits && this.key in player.runeSpirits) {
+      player.runeSpirits[this.key as RuneSpiritKeys] = new Decimal().fromDecimal(this.runeEXP)
+    } else {
+      console.error(`Player object does not have a property for ${this.key} in Spirits.`)
+    }
+  }
+
+  updateRuneHTML () {
+    const levelsToDisplay = Math.min(player.runeSpiritBuyAmount, this.getLevelEstimate(player.offerings) - this.level)
+
+    DOMCacheGetOrSet(`${this.key}RuneSpiritLevel`).innerHTML = i18next.t('runes.spirits.spiritLevel', {
+      amount: format(this.level, 0, true)
+    })
+    DOMCacheGetOrSet(`${this.key}RuneSpiritPurchase`).innerHTML = i18next.t('runes.blessings.increaseLevel', {
+      amount: format(levelsToDisplay, 0, true),
+      offerings: format(this.computeOfferingsToLevel(this.level + levelsToDisplay), 0, false)
+    })
+    DOMCacheGetOrSet(`${this.key}RuneSpiritPower`).innerHTML = i18next.t('runes.spirits.spiritPower', {
+      value: format(this.effectiveRuneLevel, 0, true),
+      desc: this.rewardDesc
+    })
+  }
+
+  updateFocusedRuneHTML () {
+  }
+  updateRuneEffectHTML () {
+  }
+
+  getLevelEstimate = (extraEXP: Decimal) => {
+    const totalEXP = this.runeEXP.plus(extraEXP)
+    return Math.floor(this.effectiveLevelsPerOOM * Decimal.log10(totalEXP.div(this.costCoefficient).plus(1)))
   }
 }
 
@@ -373,6 +516,7 @@ export const bonusRuneLevelsAntiquities = () => {
 
 export const speedRuneOOMIncrease = () => {
   return sumContents([
+    player.upgrades[66] * 2,
     player.researches[77],
     player.researches[111],
     CalcECC('ascension', player.challengecompletions[11]),
@@ -385,6 +529,7 @@ export const speedRuneOOMIncrease = () => {
 export const duplicationRuneOOMIncrease = () => {
   return sumContents([
     0.75 * CalcECC('transcend', player.challengecompletions[1]),
+    player.upgrades[66] * 2,
     player.researches[78],
     player.researches[112],
     CalcECC('ascension', player.challengecompletions[11]),
@@ -395,6 +540,7 @@ export const duplicationRuneOOMIncrease = () => {
 
 export const prismRuneOOMIncrease = () => {
   return sumContents([
+    player.upgrades[66] * 2,
     player.researches[79],
     player.researches[113],
     CalcECC('ascension', player.challengecompletions[11]),
@@ -406,6 +552,7 @@ export const prismRuneOOMIncrease = () => {
 
 export const thriftRuneOOMIncrease = () => {
   return sumContents([
+    player.upgrades[66] * 2,
     player.researches[80],
     player.researches[114],
     CalcECC('ascension', player.challengecompletions[11]),
@@ -417,6 +564,7 @@ export const thriftRuneOOMIncrease = () => {
 
 export const superiorIntellectOOMIncrease = () => {
   return sumContents([
+    player.upgrades[66] * 2,
     player.researches[115],
     CalcECC('ascension', player.challengecompletions[11]),
     1.5 * CalcECC('ascension', player.challengecompletions[14]),
@@ -541,7 +689,7 @@ export const antiquitiesEXPMult = () => {
 
 export const runeData: { [K in RuneKeys]: RuneData<K> } = {
   speed: {
-    costCoefficient: 500,
+    costCoefficient: new Decimal(500),
     levelsPerOOM: 150,
     levelsPerOOMIncrease: () => speedRuneOOMIncrease(),
     rewards: (level) => {
@@ -566,7 +714,7 @@ export const runeData: { [K in RuneKeys]: RuneData<K> } = {
     minimalResetTier: 'ascension'
   },
   duplication: {
-    costCoefficient: 5e3,
+    costCoefficient: new Decimal(2500),
     levelsPerOOM: 150,
     levelsPerOOMIncrease: () => duplicationRuneOOMIncrease(),
     rewards: (level) => {
@@ -591,7 +739,7 @@ export const runeData: { [K in RuneKeys]: RuneData<K> } = {
     minimalResetTier: 'ascension'
   },
   prism: {
-    costCoefficient: 2.5e4,
+    costCoefficient: new Decimal(2.5e4),
     levelsPerOOM: 150,
     levelsPerOOMIncrease: () => prismRuneOOMIncrease(),
     rewards: (level) => {
@@ -613,7 +761,7 @@ export const runeData: { [K in RuneKeys]: RuneData<K> } = {
     minimalResetTier: 'ascension'
   },
   thrift: {
-    costCoefficient: 2.5e5,
+    costCoefficient: new Decimal(2.5e5),
     levelsPerOOM: 150,
     levelsPerOOMIncrease: () => thriftRuneOOMIncrease(),
     rewards: (level) => {
@@ -638,7 +786,7 @@ export const runeData: { [K in RuneKeys]: RuneData<K> } = {
     minimalResetTier: 'ascension'
   },
   superiorIntellect: {
-    costCoefficient: 2.5e7,
+    costCoefficient: new Decimal(2.5e7),
     levelsPerOOM: 150,
     levelsPerOOMIncrease: () => superiorIntellectOOMIncrease(),
     rewards: (level) => {
@@ -663,7 +811,7 @@ export const runeData: { [K in RuneKeys]: RuneData<K> } = {
     minimalResetTier: 'ascension'
   },
   infiniteAscent: {
-    costCoefficient: 1e75,
+    costCoefficient: new Decimal(1e75),
     levelsPerOOM: 0.5,
     levelsPerOOMIncrease: () => 0,
     rewards: (level) => {
@@ -685,7 +833,7 @@ export const runeData: { [K in RuneKeys]: RuneData<K> } = {
     minimalResetTier: 'singularity'
   },
   antiquities: {
-    costCoefficient: 1e206,
+    costCoefficient: new Decimal(1e206),
     levelsPerOOM: 1 / 50,
     levelsPerOOMIncrease: () => 0,
     rewards: (level) => {
@@ -700,34 +848,67 @@ export const runeData: { [K in RuneKeys]: RuneData<K> } = {
     runeEXPPerOffering: (purchasedLevels) => universalRuneEXPMult(purchasedLevels).times(antiquitiesEXPMult()),
     isUnlocked: () => player.platonicUpgrades[20] > 0,
     minimalResetTier: 'singularity'
+  },
+  horseShoe: {
+    costCoefficient: new Decimal('1e500'),
+    levelsPerOOM: 1 / 16,
+    levelsPerOOMIncrease: () => 0,
+    rewards: (level) => {
+      const ambrosiaLuck = 5 * level
+      const redLuck = level
+      const redLuckConversion = -0.5 * level / (level + 50)
+      return {
+        desc: i18next.t('runes.horseShoe.effect', {
+          val: format(ambrosiaLuck, 0, true),
+          val2: format(redLuck, 0, true),
+          val3: format(redLuckConversion, 3, false)
+        }),
+        ambrosiaLuck: ambrosiaLuck,
+        redLuck: redLuck,
+        redLuckConversion: redLuckConversion
+      }
+    },
+    effectiveLevelMult: () => 1,
+    freeLevels: () => 0,
+    runeEXPPerOffering: (purchasedLevels) => universalRuneEXPMult(purchasedLevels),
+    isUnlocked: () => player.platonicUpgrades[20] > 0,
+    minimalResetTier: 'singularity'
   }
 }
 
-// Create an object that is NOT on the player, but can be used (once initialized).
 export type RunesMap = {
   [K in RuneKeys]: Rune<K>
 }
 
-export let runes: RunesMap | null = null
+export let runes: RunesMap
 
 export function initRunes (investments: Record<RuneKeys, Decimal>) {
-  runes = {} as RunesMap
-  const keys = Object.keys(runeData) as RuneKeys[]
+  if (runes !== undefined) {
+    console.log(runes)
+    for (const key of Object.keys(runes) as RuneKeys[]) {
+      runes[key].updateRuneEXP(investments[key])
+    }
+  } else {
+    const upgrades = {} as RunesMap
+    const keys = Object.keys(runeData) as RuneKeys[]
 
-  // Use type assertions after careful validation
-  for (const key of keys) {
-    const data = runeData[key]
-    const invested = investments[key]
+    // Use type assertions after careful validation
+    for (const key of keys) {
+      const data = runeData[key]
+      const invested = investments[key]
 
-    const dataWithInvestment = {
-      ...data,
-      runeEXP: new Decimal(invested)
+      const dataWithInvestment = {
+        ...data,
+        runeEXP: new Decimal(invested)
+      }
+
+      // Use a function that casts the result appropriately
+      const rune = new Rune(dataWithInvestment, key) // Here we need to use type assertion because TypeScript can't track
+       // the relationship between the key and the generic parameter in the loop
+      ;(upgrades as Record<RuneKeys, Rune<RuneKeys>>)[key] = rune
     }
 
-    // Use a function that casts the result appropriately
-    const rune = new Rune(dataWithInvestment, key) // Here we need to use type assertion because TypeScript can't track
-    // the relationship between the key and the generic parameter in the loop
-    runes[key as 'speed'] = rune as Rune<'speed'>
+    runes = upgrades as RunesMap
   }
 }
 
@@ -759,6 +940,10 @@ export function resetRunes (tier: keyof typeof resetTiers) {
   for (const rune of Object.values(runes)) {
     if (resetTiers[tier] >= resetTiers[rune.minimalResetTier]) {
       rune.resetRuneEXP()
+    }
+
+    if (resetTiers[tier] === resetTiers[rune.minimalResetTier] && tier === 'ascension') {
+      rune.setToLevel(3 * player.cubeUpgrades[26])
     }
   }
 }
@@ -826,11 +1011,403 @@ export const generateRunesHTML = () => {
   }
 }
 
-export const resetOfferings = () => {
-  player.runeshards = Math.min(1e300, player.runeshards + calculateOfferings())
+/** Blessings */
+
+interface SpeedBlessingReward extends BaseReward {
+  globalSpeed: number
 }
 
-export const sacrificeOfferings = (rune: RuneKeys, budget: number, auto = false) => {
+interface DuplicationBlessingReward extends BaseReward {
+  multiplierBoosts: number
+}
+
+interface PrismBlessingReward extends BaseReward {
+  antSacrificeMult: number
+}
+
+interface ThriftBlessingReward extends BaseReward {
+  accelBoostCostDelay: number
+}
+
+interface SIBlessingReward extends BaseReward {
+  obtToAntExponent: number
+}
+
+type RuneBlessingTypeMap = {
+  speed: SpeedBlessingReward
+  duplication: DuplicationBlessingReward
+  prism: PrismBlessingReward
+  thrift: ThriftBlessingReward
+  superiorIntellect: SIBlessingReward
+}
+
+export type RuneBlessingKeys = keyof RuneBlessingTypeMap
+
+const blessingMultiplier = (key: RuneKeys) => {
+  return productContents([
+    getRune(key).level + getRune(key).freeLevels,
+    1 + (6.9 * player.researches[134]) / 100,
+    getTalisman('midas').bonus.blessingBonus,
+    1 + 0.1 * Math.log10(player.epicFragments + 1) * player.researches[174],
+    1 + (2 * player.researches[194]) / 100,
+    1 + 0.25 * player.researches[160],
+    G.challenge15Rewards.blessingBonus.value
+  ])
+}
+
+export const runeBlessingData: { [K in RuneBlessingKeys]: RuneBlessingData<K> } = {
+  speed: {
+    costCoefficient: new Decimal(1e8),
+    levelsPerOOM: 25,
+    levelsPerOOMIncrease: () => 0,
+    rewards: (level) => {
+      const globalSpeed = 1 + level / 10000
+      return {
+        desc: i18next.t('runes.blessings.rewards.speed', {
+          effect: format(globalSpeed, 3, true)
+        }),
+        globalSpeed
+      }
+    },
+    effectiveLevelMult: () => blessingMultiplier('speed'),
+    freeLevels: () => 0,
+    runeEXPPerOffering: (_purchasedLevels) => new Decimal(1),
+    isUnlocked: () => true,
+    minimalResetTier: 'singularity'
+  },
+  duplication: {
+    costCoefficient: new Decimal(1e10),
+    levelsPerOOM: 25,
+    levelsPerOOMIncrease: () => 0,
+    rewards: (level) => {
+      const multiplierBoosts = 1 + level / 10000
+      return {
+        desc: i18next.t('runes.blessings.rewards.duplication', {
+          effect: format(multiplierBoosts, 3, true)
+        }),
+        multiplierBoosts
+      }
+    },
+    effectiveLevelMult: () => blessingMultiplier('duplication'),
+    freeLevels: () => 0,
+    runeEXPPerOffering: (_purchasedLevels) => new Decimal(1),
+    isUnlocked: () => true,
+    minimalResetTier: 'singularity'
+  },
+  prism: {
+    costCoefficient: new Decimal(1e13),
+    levelsPerOOM: 25,
+    levelsPerOOMIncrease: () => 0,
+    rewards: (level) => {
+      const antSacrificeMult = 1 + level / 10000
+      return {
+        desc: i18next.t('runes.blessings.rewards.prism', {
+          effect: format(antSacrificeMult, 3, true)
+        }),
+        antSacrificeMult
+      }
+    },
+    effectiveLevelMult: () => blessingMultiplier('prism'),
+    freeLevels: () => 0,
+    runeEXPPerOffering: (_purchasedLevels) => new Decimal(1),
+    isUnlocked: () => true,
+    minimalResetTier: 'singularity'
+  },
+  thrift: {
+    costCoefficient: new Decimal(1e16),
+    levelsPerOOM: 25,
+    levelsPerOOMIncrease: () => 0,
+    rewards: (level) => {
+      const accelBoostCostDelay = 1 + level / 10000
+      return {
+        desc: i18next.t('runes.blessings.rewards.thrift', {
+          effect: format(accelBoostCostDelay, 3, true)
+        }),
+        accelBoostCostDelay
+      }
+    },
+    effectiveLevelMult: () => blessingMultiplier('thrift'),
+    freeLevels: () => 0,
+    runeEXPPerOffering: (_purchasedLevels) => new Decimal(1),
+    isUnlocked: () => true,
+    minimalResetTier: 'singularity'
+  },
+  superiorIntellect: {
+    costCoefficient: new Decimal(1e20),
+    levelsPerOOM: 25,
+    levelsPerOOMIncrease: () => 0,
+    rewards: (level) => {
+      const obtToAntExponent = Math.log(1 + level / 10000)
+      return {
+        desc: i18next.t('runes.blessings.rewards.superiorIntellect', {
+          effect: format(obtToAntExponent, 3, true),
+          effect2: format(Decimal.pow(player.obtainium, obtToAntExponent), 2, false)
+        }),
+        obtToAntExponent
+      }
+    },
+    effectiveLevelMult: () => blessingMultiplier('superiorIntellect'),
+    freeLevels: () => 0,
+    runeEXPPerOffering: (_purchasedLevels) => new Decimal(1),
+    isUnlocked: () => true,
+    minimalResetTier: 'singularity'
+  }
+}
+
+export type RuneBlessingMap = {
+  [K in RuneBlessingKeys]: RuneBlessing<K>
+}
+
+export let runeBlessings: RuneBlessingMap
+
+export function initRuneBlessings (investments: Record<RuneBlessingKeys, Decimal>) {
+  if (runeBlessings !== undefined) {
+    for (const key of Object.keys(runeBlessings) as RuneBlessingKeys[]) {
+      runeBlessings[key].updateRuneEXP(investments[key])
+    }
+  } else {
+    const upgrades = {} as RuneBlessingMap
+    const keys = Object.keys(runeBlessingData) as RuneBlessingKeys[]
+
+    // Use type assertions after careful validation
+    for (const key of keys) {
+      const data = runeBlessingData[key]
+      const invested = investments[key]
+
+      const dataWithInvestment = {
+        ...data,
+        runeEXP: new Decimal(invested)
+      }
+
+      // Use a function that casts the result appropriately
+      const rune = new RuneBlessing(dataWithInvestment, key) // Here we need to use type assertion because TypeScript can't track
+       // the relationship between the key and the generic parameter in the loop
+      ;(upgrades as Record<RuneBlessingKeys, RuneBlessing<RuneBlessingKeys>>)[key] = rune
+    }
+
+    runeBlessings = upgrades as RuneBlessingMap
+  }
+}
+
+export function getRuneBlessing<K extends RuneBlessingKeys> (key: K): RuneBlessing<K> {
+  if (runeBlessings === null) {
+    throw new Error('Rune Blessings not initialized. Call initRuneBlessings first.')
+  }
+  return runeBlessings[key]
+}
+
+export function resetRuneBlessings (tier: keyof typeof resetTiers) {
+  if (runeBlessings === null) {
+    throw new Error('Rune Blessings not initialized. Call initRuneBlessings first.')
+  }
+  for (const runeBlessing of Object.values(runeBlessings)) {
+    if (resetTiers[tier] >= resetTiers[runeBlessing.minimalResetTier]) {
+      runeBlessing.resetRuneEXP()
+    }
+  }
+}
+
+/** Spirits */
+
+interface SpeedSpiritReward extends BaseReward {
+  ascensionSpeed: number
+}
+
+interface DuplicationSpiritReward extends BaseReward {
+  wowCubes: number
+}
+
+interface PrismSpiritReward extends BaseReward {
+  crystalCaps: number
+}
+
+interface ThriftSpiritReward extends BaseReward {
+  offerings: number
+}
+
+interface SISpiritReward extends BaseReward {
+  obtainium: number
+}
+
+type RuneSpiritTypeMap = {
+  speed: SpeedSpiritReward
+  duplication: DuplicationSpiritReward
+  prism: PrismSpiritReward
+  thrift: ThriftSpiritReward
+  superiorIntellect: SISpiritReward
+}
+
+export type RuneSpiritKeys = keyof RuneSpiritTypeMap
+
+const spiritMultiplier = (key: RuneKeys) => {
+  return productContents([
+    getRune(key).level + getRune(key).freeLevels,
+    getRuneBlessing(key as RuneBlessingKeys).level,
+    1 + (8 * player.researches[164]) / 100,
+    (player.researches[165] && player.currentChallenge.ascension !== 0) ? 2 : 1,
+    1 + 0.15 * Math.log10(player.legendaryFragments + 1) * player.researches[189],
+    1 + (2 * player.researches[194]) / 100,
+    G.challenge15Rewards.spiritBonus.value,
+    player.corruptions.used.totalCorruptionDifficultyMultiplier
+  ])
+}
+
+export const runeSpiritData: { [K in RuneSpiritKeys]: RuneSpiritData<K> } = {
+  speed: {
+    costCoefficient: new Decimal(1e20),
+    levelsPerOOM: 12,
+    levelsPerOOMIncrease: () => 0,
+    rewards: (level) => {
+      const ascensionSpeed = Math.pow(1 + Math.log(1 + level / 1e8), 1.25)
+      return {
+        desc: i18next.t('runes.spirits.rewards.speed', {
+          effect: format(ascensionSpeed, 3, true)
+        }),
+        ascensionSpeed
+      }
+    },
+    effectiveLevelMult: () => spiritMultiplier('speed'),
+    freeLevels: () => 0,
+    runeEXPPerOffering: (_purchasedLevels) => new Decimal(1),
+    isUnlocked: () => true,
+    minimalResetTier: 'singularity'
+  },
+  duplication: {
+    costCoefficient: new Decimal(1e25),
+    levelsPerOOM: 12,
+    levelsPerOOMIncrease: () => 0,
+    rewards: (level) => {
+      const wowCubes = 1 + level / 1000000
+      return {
+        desc: i18next.t('runes.spirits.rewards.duplication', {
+          effect: format(wowCubes, 3, true)
+        }),
+        wowCubes
+      }
+    },
+    effectiveLevelMult: () => spiritMultiplier('duplication'),
+    freeLevels: () => 0,
+    runeEXPPerOffering: (_purchasedLevels) => new Decimal(1),
+    isUnlocked: () => true,
+    minimalResetTier: 'singularity'
+  },
+  prism: {
+    costCoefficient: new Decimal(1e30),
+    levelsPerOOM: 12,
+    levelsPerOOMIncrease: () => 0,
+    rewards: (level) => {
+      const crystalCaps = 1 + level / 1000000
+      return {
+        desc: i18next.t('runes.spirits.rewards.prism', {
+          effect: format(crystalCaps, 3, true)
+        }),
+        crystalCaps
+      }
+    },
+    effectiveLevelMult: () => spiritMultiplier('prism'),
+    freeLevels: () => 0,
+    runeEXPPerOffering: (_purchasedLevels) => new Decimal(1),
+    isUnlocked: () => true,
+    minimalResetTier: 'singularity'
+  },
+  thrift: {
+    costCoefficient: new Decimal(1e35),
+    levelsPerOOM: 12,
+    levelsPerOOMIncrease: () => 0,
+    rewards: (level) => {
+      const offerings = 1 + level / 1000000
+      return {
+        desc: i18next.t('runes.spirits.rewards.thrift', {
+          effect: format(offerings, 3, true)
+        }),
+        offerings
+      }
+    },
+    effectiveLevelMult: () => spiritMultiplier('thrift'),
+    freeLevels: () => 0,
+    runeEXPPerOffering: (_purchasedLevels) => new Decimal(1),
+    isUnlocked: () => true,
+    minimalResetTier: 'singularity'
+  },
+  superiorIntellect: {
+    costCoefficient: new Decimal(1e40),
+    levelsPerOOM: 12,
+    levelsPerOOMIncrease: () => 0,
+    rewards: (level) => {
+      const obtainium = 1 + level / 1000000
+      return {
+        desc: i18next.t('runes.spirits.rewards.superiorIntellect', {
+          effect: format(obtainium, 3, true)
+        }),
+        obtainium
+      }
+    },
+    effectiveLevelMult: () => spiritMultiplier('superiorIntellect'),
+    freeLevels: () => 0,
+    runeEXPPerOffering: (_purchasedLevels) => new Decimal(1),
+    isUnlocked: () => true,
+    minimalResetTier: 'singularity'
+  }
+}
+
+export type RuneSpiritMap = {
+  [K in RuneSpiritKeys]: RuneSpirit<K>
+}
+
+export let runeSpirits: RuneSpiritMap
+
+export function initRuneSpirits (investments: Record<RuneSpiritKeys, Decimal>) {
+  if (runeSpirits !== undefined) {
+    for (const key of Object.keys(runeSpirits) as RuneSpiritKeys[]) {
+      runeSpirits[key].updateRuneEXP(investments[key])
+    }
+  } else {
+    const upgrades = {} as RuneSpiritMap
+    const keys = Object.keys(runeSpiritData) as RuneSpiritKeys[]
+
+    // Use type assertions after careful validation
+    for (const key of keys) {
+      const data = runeSpiritData[key]
+      const invested = investments[key]
+
+      const dataWithInvestment = {
+        ...data,
+        runeEXP: new Decimal(invested)
+      }
+
+      // Use a function that casts the result appropriately
+      const rune = new RuneSpirit(dataWithInvestment, key) // Here we need to use type assertion because TypeScript can't track
+       // the relationship between the key and the generic parameter in the loop
+      ;(upgrades as Record<RuneSpiritKeys, RuneSpirit<RuneSpiritKeys>>)[key] = rune
+    }
+
+    runeSpirits = upgrades as RuneSpiritMap
+  }
+}
+
+export function getRuneSpirit<K extends RuneSpiritKeys> (key: K): RuneSpirit<K> {
+  if (runeSpirits === null) {
+    throw new Error('Rune Spirits not initialized. Call initRuneSpirits first.')
+  }
+  return runeSpirits[key]
+}
+
+export function resetRuneSpirits (tier: keyof typeof resetTiers) {
+  if (runeSpirits === null) {
+    throw new Error('Rune Spirits not initialized. Call initRuneSpirits first.')
+  }
+  for (const spirit of Object.values(runeSpirits)) {
+    if (resetTiers[tier] >= resetTiers[spirit.minimalResetTier]) {
+      spirit.resetRuneEXP()
+    }
+  }
+}
+
+export const resetOfferings = () => {
+  player.offerings = player.offerings.add(calculateOfferings())
+}
+
+export const sacrificeOfferings = (rune: RuneKeys, budget: Decimal, auto = false) => {
   // if automated && 2x10 cube upgrade bought, this will be >0.
 
   if (!auto) {
@@ -842,10 +1419,10 @@ export const sacrificeOfferings = (rune: RuneKeys, budget: number, auto = false)
 
   let levelsToAdd = player.offeringbuyamount
   if (auto) {
-    levelsToAdd = player.shopUpgrades.offeringAuto
+    levelsToAdd = 20 * player.shopUpgrades.offeringAuto
   }
   if (auto && player.cubeUpgrades[20] > 0) {
-    levelsToAdd *= 2 // limit to max 10k levels per call so the execution doesn't take too long if things get stuck
+    levelsToAdd *= 20
   }
 
   if (!auto) {
@@ -854,5 +1431,39 @@ export const sacrificeOfferings = (rune: RuneKeys, budget: number, auto = false)
 
   getRune(rune).levelRune(levelsToAdd, budget, auto)
 
-  player.runeshards = Math.max(0, player.runeshards ?? 0)
+  player.offerings = Decimal.max(0, player.offerings)
+}
+
+export const buyBlessingLevels = (blessing: RuneBlessingKeys, budget: Decimal, auto = false) => {
+  if (player.achievements[134] === 0) {
+    return
+  }
+
+  const levelsToAdd = player.runeBlessingBuyAmount
+
+  getRuneBlessing(blessing).levelRune(levelsToAdd, budget, auto)
+}
+
+export const buyAllBlessingLevels = (budget: Decimal, auto = false) => {
+  const ratio = 5 // Change if there are more blessings later on
+  for (const key of Object.keys(runeBlessingData) as RuneBlessingKeys[]) {
+    buyBlessingLevels(key, budget.div(ratio), auto)
+  }
+}
+
+export const buySpiritLevels = (spirit: RuneSpiritKeys, budget: Decimal, auto = false) => {
+  if (player.challengecompletions[12] === 0) {
+    return
+  }
+
+  const levelsToAdd = player.runeSpiritBuyAmount
+
+  getRuneSpirit(spirit).levelRune(levelsToAdd, budget, auto)
+}
+
+export const buyAllSpiritLevels = (budget: Decimal, auto = false) => {
+  const ratio = 5 // Change if there are more spirits later on
+  for (const key of Object.keys(runeSpiritData) as RuneSpiritKeys[]) {
+    buySpiritLevels(key, budget.div(ratio), auto)
+  }
 }

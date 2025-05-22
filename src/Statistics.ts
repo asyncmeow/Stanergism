@@ -93,7 +93,7 @@ import {
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { getQuarkBonus } from './Quark'
 import { getRedAmbrosiaUpgrade } from './RedAmbrosiaUpgrades'
-import { getRune, sumOfRuneLevels } from './Runes'
+import { getRune, getRuneBlessing, getRuneSpirit, sumOfRuneLevels } from './Runes'
 import { shopData } from './Shop'
 import { calculateSingularityDebuff, getFastForwardTotalMultiplier } from './singularity'
 import { format, player } from './Synergism'
@@ -114,17 +114,26 @@ export const allCubeStats: StatLine[] = [
   {
     i18n: 'PseudoCoins',
     stat: () => PCoinUpgradeEffects.CUBE_BUFF,
-    color: 'gold'
+    color: 'gold',
+    displayCriterion: () => true
   },
   {
     i18n: 'AscensionTime',
-    stat: () =>
-      Math.pow(Math.min(1, player.ascensionCounter / resetTimeThreshold()), 2)
-      * (1
-        + ((1 / 4) * player.achievements[204]
-            + (1 / 4) * player.achievements[211]
-            + (1 / 2) * player.achievements[218])
-          * Math.max(0, player.ascensionCounter / resetTimeThreshold() - 1))
+    stat: () => {
+      const ascensionCounter = player.ascensionCounter
+      const resetThreshold = resetTimeThreshold()
+      const ach204 = player.achievements[204]
+      const ach211 = player.achievements[211]
+      const ach218 = player.achievements[218]
+
+      return Math.pow(Math.min(1, ascensionCounter / resetThreshold), 2)
+        * (1
+          + ((1 / 4) * ach204
+              + (1 / 4) * ach211
+              + (1 / 2) * ach218)
+            * Math.max(0, ascensionCounter / resetThreshold - 1))
+    },
+    displayCriterion: () => true
   },
   {
     i18n: 'CampaignTutorial',
@@ -413,7 +422,7 @@ export const allWowCubeStats: StatLine[] = [
   },
   {
     i18n: 'SpiritPower',
-    stat: () => 1 + player.corruptions.used.totalCorruptionDifficultyMultiplier * G.effectiveRuneSpiritPower[2]
+    stat: () => getRuneSpirit('duplication').bonus.wowCubes
   },
   {
     i18n: 'PlatonicOpening',
@@ -962,7 +971,10 @@ export const allOfferingStats = [
   },
   {
     i18n: 'ParticleUpgrade3x5',
-    stat: () => 1 + player.upgrades[75] * 2 * Math.min(1, Math.pow(player.maxobtainium / 30000000, 0.5)) // Particle Upgrade 3x5
+    stat: () =>
+      1
+      + player.upgrades[75] * 2
+        * Math.min(1, Math.pow(Decimal.min(player.maxObtainium, 1e10).toNumber() / 30000000, 0.5)) // Particle Upgrade 3x5
   },
   {
     i18n: 'AutoOfferingShop',
@@ -1142,6 +1154,10 @@ export const allQuarkStats: StatLine[] = [
   {
     i18n: 'AchievementPoints',
     stat: () => 1 + player.achievementPoints / 50000
+  },
+  {
+    i18n: 'PlasticTalisman',
+    stat: () => getTalisman('plastic').bonus.quarkBonus
   },
   {
     i18n: 'Achievement250',
@@ -1446,7 +1462,10 @@ export const allObtainiumStats: StatLine[] = [
   },
   {
     i18n: 'ReincarnationUpgrade14',
-    stat: () => (player.upgrades[74] > 0) ? 1 + 4 * Math.min(1, Math.pow(player.maxofferings / 100000, 0.5)) : 1 // Reincarnation Upgrade 14
+    stat: () =>
+      (player.upgrades[74] > 0)
+        ? 1 + 4 * Math.min(1, Math.pow(Decimal.min(player.maxOfferings, 1e10).toNumber() / 100000, 0.5))
+        : 1 // Reincarnation Upgrade 14
   },
   {
     i18n: 'Research3x15',
@@ -1530,7 +1549,7 @@ export const allObtainiumStats: StatLine[] = [
   },
   {
     i18n: 'SpiritPower',
-    stat: () => 1 + player.corruptions.used.totalCorruptionDifficultyMultiplier * G.effectiveRuneSpiritPower[4] // 4th Spirit
+    stat: () => getRuneSpirit('superiorIntellect').bonus.obtainium // Spirit Power
   },
   {
     i18n: 'Research6x19',
@@ -1659,7 +1678,7 @@ export const antSacrificeRewardStats: StatLine[] = [
   },
   {
     i18n: 'RuneBlessing',
-    stat: () => 1 + (20 / 3) * G.effectiveRuneBlessingPower[3]
+    stat: () => getRuneBlessing('prism').bonus.antSacrificeMult // Rune Blessing
   },
   {
     i18n: 'Challenge10',
@@ -1769,7 +1788,7 @@ export const allGlobalSpeedStats: StatLine[] = [
   },
   {
     i18n: 'ObtainiumLog',
-    stat: () => 1 + (1 / 300) * Math.log10(player.maxobtainium + 1) * player.upgrades[70] // Particle upgrade 2x5
+    stat: () => 1 + (1 / 300) * Decimal.log10(player.maxObtainium.plus(1)) * player.upgrades[70] // Particle upgrade 2x5
   },
   {
     i18n: 'Research5x21',
@@ -1797,11 +1816,8 @@ export const allGlobalSpeedStats: StatLine[] = [
   },
   {
     i18n: 'SpeedBlessing',
-    stat: () => 1 + 8 * G.effectiveRuneBlessingPower[1] // speed blessing
-  },
-  {
-    i18n: 'SpeedSpirit',
-    stat: () => 1 + player.corruptions.used.totalCorruptionDifficultyMultiplier * G.effectiveRuneSpiritPower[1] // speed SPIRIT
+    // stat: () => 1 + 8 * G.effectiveRuneBlessingPower[1] // speed blessing
+    stat: () => getRuneBlessing('speed').bonus.globalSpeed // speed blessing
   },
   {
     i18n: 'ChronosCube',
@@ -1851,6 +1867,14 @@ export const allGlobalSpeedDRStats: StatLine[] = [
 ]
 
 export const allAscensionSpeedStats: StatLine[] = [
+  {
+    i18n: 'SpeedSpirit',
+    stat: () => getRuneSpirit('speed').bonus.ascensionSpeed // Speed Spirit
+  },
+  {
+    i18n: 'PolymathTalisman',
+    stat: () => getTalisman('polymath').bonus.ascensionSpeedBonus // Polymath Talisman
+  },
   {
     i18n: 'Chronometer',
     stat: () => 1 + (1.2 / 100) * player.shopUpgrades.chronometer // Chronometer
@@ -2642,11 +2666,6 @@ export const allMiscStats: StatLine[] = [
     color: 'cyan'
   },
   {
-    i18n: 'MaxOfferings',
-    stat: () => player.maxofferings,
-    color: 'orange'
-  },
-  {
     i18n: 'RuneSum',
     stat: () => sumOfRuneLevels(),
     color: 'orange'
@@ -2670,21 +2689,6 @@ export const allMiscStats: StatLine[] = [
     i18n: 'FastestReincarnation',
     stat: () => 1000 * player.fastestreincarnate,
     color: 'green'
-  },
-  {
-    i18n: 'MaxObtainium',
-    stat: () => player.maxobtainium,
-    color: 'pink'
-  },
-  {
-    i18n: 'MaxObtainiumPerSecond',
-    stat: () => player.maxobtainiumpersecond,
-    color: 'pink'
-  },
-  {
-    i18n: 'ObtainiumPerSecond',
-    stat: () => player.obtainiumpersecond,
-    color: 'pink'
   },
   {
     i18n: 'AscensionCount',

@@ -1,13 +1,10 @@
 import type { DecimalSource } from 'break_infinity.js'
 import Decimal from 'break_infinity.js'
-import i18next from 'i18next'
 import { achievementaward } from './Achievements'
-import { DOMCacheGetOrSet } from './Cache/DOM'
-import { calculateRuneBonuses, calculateSummationLinear } from './Calculate'
 import { CalcECC } from './Challenges'
 import { reset } from './Reset'
-import { getRune } from './Runes'
-import { format, player, updateAllMultiplier, updateAllTick } from './Synergism'
+import { getRune, getRuneBlessing } from './Runes'
+import { player, updateAllMultiplier, updateAllTick } from './Synergism'
 import type { FirstToFifth, OneToFive, ZeroToFour } from './types/Synergism'
 import { crystalupgradedescriptions, upgradeupdate } from './Upgrades'
 import { smallestInc } from './Utility'
@@ -747,12 +744,12 @@ export const boostAccelerator = (automated?: boolean) => {
         player.acceleratorBoostCost = player.acceleratorBoostCost.times(1e10).times(
           Decimal.pow(10, player.acceleratorBoostBought)
         )
-        if (player.acceleratorBoostBought > (1000 * (1 + 2 * G.effectiveRuneBlessingPower[4]))) {
+        if (player.acceleratorBoostBought > (1000 * getRuneBlessing('thrift').bonus.accelBoostCostDelay)) {
           player.acceleratorBoostCost = player.acceleratorBoostCost.times(
             Decimal.pow(
               10,
-              Math.pow(player.acceleratorBoostBought - (1000 * (1 + 2 * G.effectiveRuneBlessingPower[4])), 2)
-                / (1 + 2 * G.effectiveRuneBlessingPower[4])
+              Math.pow(player.acceleratorBoostBought - (1000 * getRuneBlessing('thrift').bonus.accelBoostCostDelay), 2)
+                / getRuneBlessing('thrift').bonus.accelBoostCostDelay
             )
           )
         }
@@ -866,7 +863,7 @@ const getAcceleratorBoostCost = (level = 1): Decimal => {
   level--
   const buymax = Math.pow(10, 15)
   const base = new Decimal(1e3)
-  const eff = 1 + 2 * G.effectiveRuneBlessingPower[4]
+  const eff = getRuneBlessing('thrift').bonus.accelBoostCostDelay
   const linSum = (n: number) => n * (n + 1) / 2
   const sqrSum = (n: number) => n * (n + 1) * (2 * n + 1) / 6
   let cost = base
@@ -1224,39 +1221,7 @@ export const buyTesseractBuilding = (index: OneToFive, amount = player.tesseract
   player[ascendBuildingIndex].cost = intCost * Math.pow(1 + buyTo, 3)
 }
 
-export const buyRuneBonusLevels = (type: 'Blessings' | 'Spirits', index: number) => {
-  const unlocked = type === 'Spirits' ? player.challengecompletions[12] > 0 : player.achievements[134] === 1
-  if (unlocked && isFinite(player.runeshards) && player.runeshards > 0) {
-    let baseCost: number
-    let baseLevels: number
-    let levelCap: number
-    if (type === 'Spirits') {
-      baseCost = G.spiritBaseCost
-      baseLevels = player.runeSpiritLevels[index]
-      levelCap = player.runeSpiritBuyAmount
-    } else {
-      baseCost = G.blessingBaseCost
-      baseLevels = player.runeBlessingLevels[index]
-      levelCap = player.runeBlessingBuyAmount
-    }
-
-    const [level, cost] = calculateSummationLinear(baseLevels, baseCost, player.runeshards, levelCap)
-    if (type === 'Spirits') {
-      player.runeSpiritLevels[index] = level
-    } else {
-      player.runeBlessingLevels[index] = level
-    }
-
-    player.runeshards -= cost
-
-    if (player.runeshards < 0) {
-      player.runeshards = 0
-    }
-
-    updateRuneBlessing(type, index)
-  }
-}
-
+/*
 export const updateRuneBlessing = (type: 'Blessings' | 'Spirits', index: number) => {
   if (index === 1) {
     const requirementArray = [0, 1e5, 1e8, 1e11]
@@ -1296,35 +1261,38 @@ export const updateRuneBlessing = (type: 'Blessings' | 'Spirits', index: number)
   }
 }
 
+// WHY
 export const buyAllBlessings = (type: 'Blessings' | 'Spirits', percentage = 100, auto = false) => {
   const unlocked = type === 'Spirits' ? player.challengecompletions[12] > 0 : player.achievements[134] === 1
   if (unlocked) {
-    const runeshards = Math.floor(player.runeshards / 100 * percentage / 5)
+    const runeshards = Decimal.floor(player.offerings.div(500).times(percentage))
     for (let index = 1; index < 6; index++) {
-      if (isFinite(player.runeshards) && player.runeshards > 0) {
+      if (player.offerings.gte(1)) {
         let baseCost: number
         let baseLevels: number
-        const levelCap = 1e300
+        let levelCap: number
         if (type === 'Spirits') {
           baseCost = G.spiritBaseCost
           baseLevels = player.runeSpiritLevels[index]
+          levelCap = Math.max(0, 1e150 - player.runeSpiritLevels[index])
         } else {
           baseCost = G.blessingBaseCost
           baseLevels = player.runeBlessingLevels[index]
+          levelCap = Math.max(0, 1e150 - player.runeBlessingLevels[index])
         }
 
-        const [level, cost] = calculateSummationLinear(baseLevels, baseCost, runeshards, levelCap)
-        if (level > baseLevels && (!auto || (level - baseLevels) * 10000 > baseLevels)) {
+        const [level, cost] = calculateSummationLinearDecimal(new Decimal(baseLevels), new Decimal(baseCost), runeshards, new Decimal(levelCap))
+        if (level.toNumber() > baseLevels && (!auto || (level.toNumber() - baseLevels) * 10000 > baseLevels)) {
           if (type === 'Spirits') {
-            player.runeSpiritLevels[index] = level
+            player.runeSpiritLevels[index] = level.toNumber()
           } else {
-            player.runeBlessingLevels[index] = level
+            player.runeBlessingLevels[index] = level.toNumber()
           }
 
-          player.runeshards -= cost
+          player.offerings = player.offerings.sub(cost)
 
-          if (player.runeshards < 0) {
-            player.runeshards = 0
+          if (player.offerings.lt(0)) {
+            player.offerings = new Decimal(0)
           }
 
           updateRuneBlessing(type, index)
@@ -1332,4 +1300,4 @@ export const buyAllBlessings = (type: 'Blessings' | 'Spirits', percentage = 100,
       }
     }
   }
-}
+} */

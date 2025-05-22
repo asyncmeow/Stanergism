@@ -10,7 +10,7 @@ import type { OcteractUpgrade } from '../Octeracts'
 import type { IPlatBaseCost } from '../Platonic'
 import type { QuarkHandler } from '../Quark'
 import type { RedAmbrosiaKeys } from '../RedAmbrosiaUpgrades'
-import type { RuneKeys } from '../Runes'
+import type { RuneBlessingKeys, RuneKeys, RuneSpiritKeys } from '../Runes'
 import type { SingularityUpgrade } from '../singularity'
 import type { SingularityChallenge, singularityChallengeData } from '../SingularityChallenges'
 import type { Tabs } from '../Tabs'
@@ -234,11 +234,11 @@ export interface Player {
     reincarnation: number
     ascension: number
   }
-  researchPoints: number
+
+  obtainium: Decimal
+  maxObtainium: Decimal
   obtainiumtimer: number
-  obtainiumpersecond: number
-  maxobtainiumpersecond: number
-  maxobtainium: number
+
   // Ignore the first index. The other 25 are shaped in a 5x5 grid similar to the production appearance
   researches: number[]
 
@@ -278,9 +278,11 @@ export interface Player {
   crystalUpgradesCost: number[]
 
   runes: Record<RuneKeys, Decimal>
+  runeBlessings: Record<RuneBlessingKeys, Decimal>
+  runeSpirits: Record<RuneSpiritKeys, Decimal>
 
-  runeshards: number
-  maxofferings: number
+  offerings: Decimal
+  maxOfferings: Decimal
 
   prestigecounter: number
   transcendcounter: number
@@ -555,8 +557,6 @@ export interface Player {
   autoChallengeStartExponent: number
   autoChallengeTimer: Record<string, number>
 
-  runeBlessingLevels: number[]
-  runeSpiritLevels: number[]
   runeBlessingBuyAmount: number
   runeSpiritBuyAmount: number
 
@@ -856,17 +856,6 @@ export interface GlobalVariables {
   effectiveELO: number
 
   timeWarp: boolean
-
-  blessingMultiplier: number
-  spiritMultiplier: number
-  runeBlessings: number[]
-  runeSpirits: number[]
-
-  effectiveRuneBlessingPower: number[]
-  effectiveRuneSpiritPower: number[]
-
-  blessingBaseCost: number
-  spiritBaseCost: number
 
   triggerChallenge: number
 

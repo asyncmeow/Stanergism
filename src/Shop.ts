@@ -8,8 +8,8 @@ import {
   calculateCashGrabCubeBonus,
   calculateCashGrabQuarkBonus,
   calculateFreeShopInfinityUpgrades,
+  calculateObtainium,
   calculateObtainiumPotionBaseObtainium,
-  calculateObtainiumToDecimal,
   calculateOfferingPotionBaseOfferings,
   calculateOfferingsDecimal,
   calculatePotionValue,
@@ -921,7 +921,7 @@ export const shopDescriptions = (input: ShopUpgradeNames) => {
     case 'obtainiumPotion':
       lol.innerHTML = i18next.t('shop.upgradeEffects.obtainiumPotion', {
         amount: format(
-          calculatePotionValue(player.reincarnationcounter, calculateObtainiumToDecimal(), calculateBaseObtainium()),
+          calculatePotionValue(player.reincarnationcounter, calculateObtainium(), calculateBaseObtainium()),
           2,
           true
         ),
@@ -1743,13 +1743,11 @@ export const useConsumable = async (
       )
 
       if (infiniteAutoBrew && automatic) {
-        player.runeshards += offeringPotionValue * used
-        player.runeshards = Math.min(1e300, player.runeshards)
+        player.offerings = player.offerings.sub(offeringPotionValue.times(used))
         player.shopPotionsConsumed.offering += used
       } else if (player.shopUpgrades.offeringPotion >= used || !spend) {
         player.shopUpgrades.offeringPotion -= spend ? used : 0
-        player.runeshards += offeringPotionValue * used
-        player.runeshards = Math.min(1e300, player.runeshards)
+        player.offerings = player.offerings.add(offeringPotionValue.times(used))
         player.shopPotionsConsumed.offering += used
       }
 
@@ -1763,18 +1761,16 @@ export const useConsumable = async (
 
       const obtainiumPotionValue = calculatePotionValue(
         player.reincarnationcounter,
-        calculateObtainiumToDecimal(),
+        calculateObtainium(),
         calculateBaseObtainium()
       )
 
       if (infiniteAutoBrew && automatic) {
-        player.researchPoints += obtainiumPotionValue * used
-        player.researchPoints = Math.min(1e300, player.researchPoints)
+        player.obtainium = player.obtainium.plus(obtainiumPotionValue.times(used))
         player.shopPotionsConsumed.obtainium += used
       } else if (player.shopUpgrades.obtainiumPotion >= used || !spend) {
         player.shopUpgrades.obtainiumPotion -= spend ? used : 0
-        player.researchPoints += obtainiumPotionValue * used
-        player.researchPoints = Math.min(1e300, player.researchPoints)
+        player.obtainium = player.obtainium.plus(obtainiumPotionValue.times(used))
         player.shopPotionsConsumed.obtainium += used
       }
 

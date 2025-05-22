@@ -63,6 +63,44 @@ export const playerUpdateVarSchema = playerSchema.transform((player) => {
     player.runes.antiquities = new Decimal(player.runeexp[6] ?? 0)
   }
 
+  if (player.runeshards !== undefined) {
+    player.offerings = new Decimal(player.runeshards)
+  }
+
+  if (player.maxofferings !== undefined) {
+    player.maxOfferings = new Decimal(player.maxofferings)
+  }
+
+  if (player.researchPoints !== undefined) {
+    player.obtainium = new Decimal(player.researchPoints)
+  }
+
+  if (player.maxobtainium !== undefined) {
+    player.maxObtainium = new Decimal(player.maxobtainium)
+  }
+
+  if (player.runeBlessingLevels !== undefined) {
+    player.runeBlessings.speed = new Decimal(player.runeBlessingLevels[0] ?? 0)
+    player.runeBlessings.duplication = new Decimal(player.runeBlessingLevels[1] ?? 0)
+    player.runeBlessings.prism = new Decimal(player.runeBlessingLevels[2] ?? 0)
+    player.runeBlessings.thrift = new Decimal(player.runeBlessingLevels[3] ?? 0)
+    player.runeBlessings.superiorIntellect = new Decimal(player.runeBlessingLevels[4] ?? 0)
+  }
+
+  if (player.runeSpiritLevels !== undefined) {
+    player.runeSpirits.speed = new Decimal(player.runeSpiritLevels[0] ?? 0)
+    player.runeSpirits.duplication = new Decimal(player.runeSpiritLevels[1] ?? 0)
+    player.runeSpirits.prism = new Decimal(player.runeSpiritLevels[2] ?? 0)
+    player.runeSpirits.thrift = new Decimal(player.runeSpiritLevels[3] ?? 0)
+    player.runeSpirits.superiorIntellect = new Decimal(player.runeSpiritLevels[4] ?? 0)
+  }
+
+  Reflect.deleteProperty(player, 'runeshards')
+  Reflect.deleteProperty(player, 'maxofferings')
+  Reflect.deleteProperty(player, 'researchPoints')
+  Reflect.deleteProperty(player, 'maxobtainium')
+  Reflect.deleteProperty(player, 'obtainiumpersecond')
+  Reflect.deleteProperty(player, 'maxobtainiumpersecond')
   Reflect.deleteProperty(player, 'runeexp')
   Reflect.deleteProperty(player, 'runelevels')
   Reflect.deleteProperty(player, 'usedCorruptions')
@@ -82,6 +120,7 @@ export const playerUpdateVarSchema = playerSchema.transform((player) => {
   Reflect.deleteProperty(player, 'talismanSix')
   Reflect.deleteProperty(player, 'talismanSeven')
   Reflect.deleteProperty(player, 'offeringpersecond')
+  Reflect.deleteProperty(player, 'runeBlessingLevels')
 
   return player
 })

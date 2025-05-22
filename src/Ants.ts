@@ -141,7 +141,7 @@ const getAntCost = (originalCost: Decimal, buyTo: number, index: number) => {
   return cost
 }
 
-const getAntUpgradeCost = (originalCost: Decimal, buyTo: number, index: number) => {
+export const getAntUpgradeCost = (originalCost: Decimal, buyTo: number, index: number) => {
   ;--buyTo
 
   const cost = originalCost.times(Decimal.pow(G.antUpgradeCostIncreases[index - 1], buyTo))
@@ -279,10 +279,7 @@ export const antUpgradeDescription = (i: number) => {
     x: format(
       Decimal.pow(
         G.antUpgradeCostIncreases[i - 1],
-        // NOTE: This seems to have always been broken, in the worst way
-        // This corruption was previously never used, so it was never noticed
-        // But now it will be used and thus have major balancing issues
-        player.antUpgrades[i - 1]! * G.extinctionMultiplier[player.corruptions.used.extinction]
+        player.antUpgrades[i - 1]!
       ).times(G.antUpgradeBaseCost[i - 1])
     )
   })
@@ -368,10 +365,10 @@ export const sacrificeAnts = async (auto = false) => {
 
       const sacRewards = calculateAntSacrificeRewards()
       player.antSacrificePoints += sacRewards.antSacrificePoints
-      player.runeshards += sacRewards.offerings
+      player.offerings = player.offerings.add(sacRewards.offerings)
 
       if (player.currentChallenge.ascension !== 14) {
-        player.researchPoints += sacRewards.obtainium
+        player.obtainium = player.obtainium.add(sacRewards.obtainium)
       }
 
       const historyEntry: ResetHistoryEntryAntSacrifice = {

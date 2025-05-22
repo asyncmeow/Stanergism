@@ -599,13 +599,13 @@ export const htmlInserts = () => {
   // ALWAYS Update these, for they are the most important resources
   const playerRequirements = [
     'coins',
-    'runeshards',
+    'offerings',
     'prestigePoints',
     'transcendPoints',
     'transcendShards',
     'reincarnationPoints',
     'worlds',
-    'researchPoints'
+    'obtainium'
   ] as const
   const domRequirements = [
     'coinDisplay',
@@ -757,7 +757,7 @@ export const buttoncolorchange = () => {
       ? (player.prestigeShards.gte(
           Decimal.pow(
             10,
-            G.crystalUpgradesCost[0]
+            G.crystalUpgradesCost[0] - getRune('prism').bonus.costDivisorLog10
               + G.crystalUpgradeCostIncrement[0] * Math.floor(Math.pow(player.crystalUpgrades[0] + 0.5 - k, 2) / 2)
           )
         )
@@ -768,7 +768,7 @@ export const buttoncolorchange = () => {
       ? (player.prestigeShards.gte(
           Decimal.pow(
             10,
-            G.crystalUpgradesCost[1]
+            G.crystalUpgradesCost[1] - getRune('prism').bonus.costDivisorLog10
               + G.crystalUpgradeCostIncrement[1] * Math.floor(Math.pow(player.crystalUpgrades[1] + 0.5 - k, 2) / 2)
           )
         )
@@ -779,7 +779,7 @@ export const buttoncolorchange = () => {
       ? (player.prestigeShards.gte(
           Decimal.pow(
             10,
-            G.crystalUpgradesCost[2]
+            G.crystalUpgradesCost[2] - getRune('prism').bonus.costDivisorLog10
               + G.crystalUpgradeCostIncrement[2] * Math.floor(Math.pow(player.crystalUpgrades[2] + 0.5 - k, 2) / 2)
           )
         )
@@ -790,7 +790,7 @@ export const buttoncolorchange = () => {
       ? (player.prestigeShards.gte(
           Decimal.pow(
             10,
-            G.crystalUpgradesCost[3]
+            G.crystalUpgradesCost[3] - getRune('prism').bonus.costDivisorLog10
               + G.crystalUpgradeCostIncrement[3] * Math.floor(Math.pow(player.crystalUpgrades[3] + 0.5 - k, 2) / 2)
           )
         )
@@ -801,7 +801,7 @@ export const buttoncolorchange = () => {
       ? (player.prestigeShards.gte(
           Decimal.pow(
             10,
-            G.crystalUpgradesCost[4]
+            G.crystalUpgradesCost[4] - getRune('prism').bonus.costDivisorLog10
               + G.crystalUpgradeCostIncrement[4] * Math.floor(Math.pow(player.crystalUpgrades[4] + 0.5 - k, 2) / 2)
           )
         )
@@ -813,7 +813,7 @@ export const buttoncolorchange = () => {
   if (G.currentTab === Tabs.Runes) {
     if (getActiveSubTab() === 0) {
       for (const rune of Object.keys(player.runes)) {
-        if (player.runeshards > 0) {
+        if (player.offerings.gt(0)) {
           DOMCacheGetOrSet(`${rune}RuneSacrifice`).classList.add('runeButtonAvailable')
         } else {
           DOMCacheGetOrSet(`${rune}RuneSacrifice`).classList.remove('runeButtonAvailable')
@@ -830,8 +830,8 @@ export const buttoncolorchange = () => {
       const g = DOMCacheGetOrSet('buyTalismanItem7')
       const arr = [a, b, c, d, e, f, g]
       for (let i = 0; i < arr.length; i++) {
-        ;(player.researchPoints > G.talismanResourceObtainiumCosts[i]
-            && player.runeshards > G.talismanResourceOfferingCosts[i])
+        ;(player.obtainium.gte(G.talismanResourceObtainiumCosts[i])
+            && player.offerings.gte(G.talismanResourceOfferingCosts[i]))
           ? arr[i].classList.add('talisminBtnAvailable')
           : arr[i].classList.remove('talisminBtnAvailable')
       }
@@ -903,7 +903,7 @@ export const buttoncolorchange = () => {
       player.antPoints.gte(
           Decimal.pow(
             G.antUpgradeCostIncreases[i - 1],
-            player.antUpgrades[i - 1]! * player.corruptions.used.corruptionEffects('extinction')
+            player.antUpgrades[i - 1]!
           ).times(G.antUpgradeBaseCost[i - 1])
         )
         ? DOMCacheGetOrSet(`antUpgrade${i}`).classList.add('antUpgradeBtnAvailable')

@@ -24,12 +24,10 @@ import {
 import {
   boostAccelerator,
   buyAccelerator,
-  buyAllBlessings,
   buyCrystalUpgrades,
   buyMultiplier,
   buyParticleBuilding,
   buyProducer,
-  buyRuneBonusLevels,
   buyTesseractBuilding
 } from './Buy'
 import { DOMCacheGetOrSet } from './Cache/DOM'
@@ -65,7 +63,18 @@ import { buyPlatonicUpgrades, createPlatonicDescription } from './Platonic'
 import { displayRedAmbrosiaLevels, getRedAmbrosiaUpgrade, resetRedAmbrosiaDisplay } from './RedAmbrosiaUpgrades'
 import { buyResearch, researchDescriptions } from './Research'
 import { resetrepeat, updateAutoCubesOpens, updateAutoReset, updateTesseractAutoBuyAmount } from './Reset'
-import { getRune, runeToIndex, sacrificeOfferings } from './Runes'
+import {
+  buyAllBlessingLevels,
+  buyAllSpiritLevels,
+  buyBlessingLevels,
+  getRune,
+  runeBlessingData,
+  type RuneBlessingKeys,
+  runeSpiritData,
+  type RuneSpiritKeys,
+  runeToIndex,
+  sacrificeOfferings
+} from './Runes'
 import { buyShopUpgrades, resetShopUpgrades, shopData, shopDescriptions, shopUpgradeTypes, useConsumable } from './Shop'
 import { buyGoldenQuarks, getLastUpgradeInfo, singularityPerks } from './singularity'
 import { displayStats } from './Statistics'
@@ -422,7 +431,7 @@ export const generateEventHandlers = () => {
     const activateRune = DOMCacheGetOrSet(`${key}RuneSacrifice`)
     activateRune.addEventListener('mouseover', () => getRune(key).updateFocusedRuneHTML())
     activateRune.addEventListener('focus', () => getRune(key).updateFocusedRuneHTML())
-    activateRune.addEventListener('click', () => sacrificeOfferings(key, player.runeshards, false))
+    activateRune.addEventListener('click', () => sacrificeOfferings(key, player.offerings, false))
   }
 
   // Part 2: Talismans Subtab
@@ -495,21 +504,26 @@ export const generateEventHandlers = () => {
   }
 
   // Part 3: Blessings and Spirits
-  for (let index = 0; index < 5; index++) {
-    DOMCacheGetOrSet(`runeBlessingPurchase${index + 1}`).addEventListener(
+
+  for (const key of Object.keys(runeBlessingData) as RuneBlessingKeys[]) {
+    DOMCacheGetOrSet(`${key}RuneBlessingPurchase`).addEventListener(
       'click',
-      () => buyRuneBonusLevels('Blessings', index + 1)
-    )
-    DOMCacheGetOrSet(`runeSpiritPurchase${index + 1}`).addEventListener(
-      'click',
-      () => buyRuneBonusLevels('Spirits', index + 1)
+      () => buyBlessingLevels(key, player.offerings)
     )
   }
+
+  for (const key of Object.keys(runeSpiritData) as RuneSpiritKeys[]) {
+    DOMCacheGetOrSet(`${key}RuneSpiritPurchase`).addEventListener(
+      'click',
+      () => buyBlessingLevels(key, player.offerings)
+    )
+  }
+
   DOMCacheGetOrSet('buyRuneBlessingInput').addEventListener('blur', () => updateRuneBlessingBuyAmount(1))
   DOMCacheGetOrSet('buyRuneSpiritInput').addEventListener('blur', () => updateRuneBlessingBuyAmount(2))
 
-  DOMCacheGetOrSet('buyAllBlessings').addEventListener('click', () => buyAllBlessings('Blessings'))
-  DOMCacheGetOrSet('buyAllSpirits').addEventListener('click', () => buyAllBlessings('Spirits'))
+  DOMCacheGetOrSet('buyAllBlessings').addEventListener('click', () => buyAllBlessingLevels(player.offerings))
+  DOMCacheGetOrSet('buyAllSpirits').addEventListener('click', () => buyAllSpiritLevels(player.offerings))
 
   // CHALLENGES TAB
   // Part 1: Challenges

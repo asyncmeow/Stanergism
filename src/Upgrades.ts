@@ -4,7 +4,7 @@ import { buyAutobuyers, buyGenerator } from './Automation'
 import { buyUpgrades } from './Buy'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { calculateAnts } from './Calculate'
-import { getRune } from './Runes'
+import { getRune, getRuneSpirit } from './Runes'
 import { format, player } from './Synergism'
 import { revealStuff } from './UpdateHTML'
 import { sumContents } from './Utility'
@@ -23,7 +23,7 @@ const crystalupgdesc: Record<number, () => Record<string, string>> = {
     max: format(
       10 + 0.05 * player.researches[129] * Math.log(player.commonFragments + 1)
           / Math.log(4)
-        + 20 * player.corruptions.used.totalCorruptionDifficultyMultiplier * G.effectiveRuneSpiritPower[3]
+        + getRuneSpirit('prism').bonus.crystalCaps
     )
   })
 }
@@ -179,7 +179,7 @@ const upgradetexts = [
       y: format(Math.min(3, new Decimal(b).toNumber()), 2)
     }
   },
-  () => format(1 / 3 * Math.log(player.maxobtainium + 1) / Math.log(10), 2, true),
+  () => format(1 / 3 * Decimal.log10(player.maxObtainium.plus(1)), 2, true),
   () => null,
   () =>
     Math.min(
@@ -188,8 +188,8 @@ const upgradetexts = [
         + 2 * player.challengecompletions[9] + 2 * player.challengecompletions[10]
     ),
   () => null,
-  () => format(1 + 4 * Math.min(1, Math.pow(player.maxofferings / 100000, 0.5)), 2),
-  () => format(1 + 2 * Math.min(1, Math.pow(player.maxobtainium / 30000000, 0.5)), 2),
+  () => format(1 + 4 * Math.min(1, Math.pow(Decimal.min(player.maxOfferings, 1e10).toNumber() / 100000, 0.5)), 2),
+  () => format(1 + 2 * Math.min(1, Math.pow(Decimal.min(player.maxObtainium, 1e10).toNumber() / 30000000, 0.5)), 2),
   () => null,
   () =>
     format(
@@ -200,7 +200,7 @@ const upgradetexts = [
       ),
       3
     ),
-  () => format(1 + 0.005 * Math.pow(Math.log(player.maxofferings + 1) / Math.log(10), 2), 2, true),
+  () => format(1 + 0.005 * Math.pow(Decimal.log10(player.maxOfferings.plus(1)), 2), 2, true),
   () => null,
   () => null,
   ...Array.from({ length: 39 }, () => () => null),
@@ -390,7 +390,7 @@ const crystalupgeffect: Record<number, () => Record<string, string>> = {
     x: format(
       Math.min(
         10 + 0.05 * player.researches[129] * Math.log(player.commonFragments + 1) / Math.log(4)
-          + 20 * player.corruptions.used.totalCorruptionDifficultyMultiplier * G.effectiveRuneSpiritPower[3],
+          + getRuneSpirit('prism').bonus.crystalCaps,
         0.05 * player.crystalUpgrades[3]
       ),
       2,
