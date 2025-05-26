@@ -5,7 +5,7 @@ import { DOMCacheGetOrSet } from './Cache/DOM'
 import { CalcECC } from './Challenges'
 import { BuffType, calculateEventSourceBuff } from './Event'
 import { addTimers, automaticTools } from './Helper'
-import { hepteractEffective } from './Hepteracts'
+import { getHepteract, hepteractEffective } from './Hepteracts'
 import { disableHotkeys, enableHotkeys } from './Hotkeys'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { quarkHandler } from './Quark'
@@ -1468,7 +1468,7 @@ export const computeAscensionScoreBonusMultiplier = () => {
   if (player.achievements[259] > 0) {
     multiplier *= Math.max(
       1,
-      Math.pow(1.01, Math.log2(player.hepteractCrafts.abyss.CAP))
+      Math.pow(1.01, getHepteract('abyss').TIMES_CAP_EXTENDED)
     )
   }
   if (G.isEvent) {

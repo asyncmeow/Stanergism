@@ -4,7 +4,7 @@ import type { CampaignManager } from '../Campaign'
 import type { Challenge15RewardObject, Challenge15Rewards } from '../Challenges'
 import type { CorruptionLoadout, Corruptions, CorruptionSaves } from '../Corruptions'
 import type { WowCubes, WowHypercubes, WowPlatonicCubes, WowTesseracts } from '../CubeExperimental'
-import type { HepteractCraft } from '../Hepteracts'
+import type { HepteractCraft, HepteractNames, HepteractValues } from '../Hepteracts'
 import type { Category, ResetHistoryEntryUnion } from '../History'
 import type { OcteractUpgrade } from '../Octeracts'
 import type { IPlatBaseCost } from '../Platonic'
@@ -594,7 +594,9 @@ export interface Player {
     time: number
   }
 
-  hepteractCrafts: {
+  hepteracts: Record<HepteractNames, HepteractValues>
+
+  /*hepteractCrafts: {
     chronos: HepteractCraft
     hyperrealism: HepteractCraft
     quark: HepteractCraft
@@ -603,7 +605,7 @@ export interface Player {
     accelerator: HepteractCraft
     acceleratorBoost: HepteractCraft
     multiplier: HepteractCraft
-  }
+  }*/
   overfluxOrbs: number
   overfluxOrbsAutoBuy: boolean
   overfluxPowder: number

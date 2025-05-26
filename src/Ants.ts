@@ -59,7 +59,7 @@ const antUpgradeTexts = [
   () => format(Math.min(9999999, 3 * player.antUpgrades[7 - 1]! + 3 * G.bonusant7), 0, true),
   () =>
     format(calculateSigmoidExponential(999, 1 / 10000 * Math.pow(player.antUpgrades[8 - 1]! + G.bonusant8, 1.1)), 3),
-  () => format(1 * Math.min(1e7, player.antUpgrades[9 - 1]! + G.bonusant9), 0, true),
+  () => format(1 * Math.min(3000, player.antUpgrades[9 - 1]! + G.bonusant9), 0, true),
   () => format(1 + 2 * Math.pow((player.antUpgrades[10 - 1]! + G.bonusant10) / 50, 0.75), 4),
   () => format(1 + 2 * (1 - Math.pow(2, -(player.antUpgrades[11 - 1]! + G.bonusant11) / 125)), 4),
   () => format(calculateSigmoid(2, player.antUpgrades[12 - 1]! + G.bonusant12, 69), 4)

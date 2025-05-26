@@ -13,6 +13,7 @@ import {
 } from './Calculate'
 import { getMaxChallenges } from './Challenges'
 import { version } from './Config'
+import { getHepteract, type HepteractNames } from './Hepteracts'
 import { saveFilename } from './ImportExport'
 import { getRune, type RuneKeys } from './Runes'
 import { friendlyShopName, isShopUpgradeUnlocked, shopData, shopUpgradeTypes } from './Shop'
@@ -179,30 +180,13 @@ export const generateExportSummary = async (): Promise<void> => {
       || player.highestSingularityCount > 0
     ) {
       ascension = `${ascension}----- HEPTERACTS -----\n`
-      ascension = `${ascension}Chronos Hepteract: ${format(player.hepteractCrafts.chronos.BAL, 0, true)}/${
-        format(player.hepteractCrafts.chronos.CAP, 0, true)
-      }\n`
-      ascension = `${ascension}Hyperreal Hepteract: ${format(player.hepteractCrafts.hyperrealism.BAL, 0, true)}/${
-        format(player.hepteractCrafts.hyperrealism.CAP, 0, true)
-      }\n`
-      ascension = `${ascension}Quark Hepteract: ${format(player.hepteractCrafts.quark.BAL, 0, true)}/${
-        format(player.hepteractCrafts.quark.CAP, 0, true)
-      }\n`
-      ascension = `${ascension}Challenge Hepteract: ${format(player.hepteractCrafts.challenge.BAL, 0, true)}/${
-        format(player.hepteractCrafts.challenge.CAP, 0, true)
-      }\n`
-      ascension = `${ascension}Abyss Hepteract: ${format(player.hepteractCrafts.abyss.BAL, 0, true)}/${
-        format(player.hepteractCrafts.abyss.CAP, 0, true)
-      }\n`
-      ascension = `${ascension}Accelerators Hepteract: ${format(player.hepteractCrafts.accelerator.BAL, 0, true)}/${
-        format(player.hepteractCrafts.accelerator.CAP, 0, true)
-      }\n`
-      ascension = `${ascension}Accelerator Boosts Hepteract: ${
-        format(player.hepteractCrafts.acceleratorBoost.BAL, 0, true)
-      }/${format(player.hepteractCrafts.acceleratorBoost.CAP, 0, true)}\n`
-      ascension = `${ascension}Multipliers Hepteract: ${format(player.hepteractCrafts.multiplier.BAL, 0, true)}/${
-        format(player.hepteractCrafts.multiplier.CAP, 0, true)
-      }\n`
+
+      for (const key of Object.keys(player.hepteracts) as HepteractNames[]) {
+        const bal = getHepteract(key).BAL
+        const cap = getHepteract(key).computeActualCap()
+        ascension = `${ascension}${key.toUpperCase()} HEPTERACT: ${format(bal, 0, true)}/${format(cap, 0, true)}\n`
+      }
+
       ascension = `${ascension}----- POWDER & ORBS -----\n`
       ascension = `${ascension}Orbs: ${format(player.overfluxOrbs, 0, true)}\n`
       ascension = `${ascension}Powder: ${format(player.overfluxPowder, 2, true)}\n`

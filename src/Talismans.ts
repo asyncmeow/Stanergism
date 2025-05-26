@@ -435,7 +435,6 @@ export class Talisman<K extends TalismanKeys> {
     const noResetHTML = DOMCacheGetOrSet('talismanNoResetText')
 
     inscriptionHTML.innerHTML = this.inscriptionDesc
-    console.log(this.runeBonuses)
 
     this.rarity >= 6
       ? (() => {
@@ -1228,8 +1227,6 @@ export const buyTalismanResources = (
     if (type === 'mythicalFragment' && player.mythicalFragments >= 1e25 && player.achievements[239] < 1) {
       achievementaward(239)
     }
-
-    console.log(talismanResourcesData.obtainiumCost)
 
     player.obtainium = player.obtainium.sub(talismanResourcesData.obtainiumCost)
     player.offerings = player.offerings.sub(talismanResourcesData.offeringCost)

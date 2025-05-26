@@ -169,16 +169,11 @@ import { dev, lastUpdated, prod, testing, version } from './Config'
 import { WowCubes, WowHypercubes, WowPlatonicCubes, WowTesseracts } from './CubeExperimental'
 import { eventCheck } from './Event'
 import {
-  AbyssHepteract,
-  AcceleratorBoostHepteract,
-  AcceleratorHepteract,
-  ChallengeHepteract,
-  ChronosHepteract,
+  defaultHepteractValues,
   HepteractCraft,
+  hepteractData,
   hepteractEffective,
-  HyperrealismHepteract,
-  MultiplierHepteract,
-  QuarkHepteract,
+  initHepteracts,
   toggleAutoBuyOrbs
 } from './Hepteracts'
 import { disableHotkeys } from './Hotkeys'
@@ -896,7 +891,18 @@ export const player: Player = {
     globalSpeed: 0
   },
 
-  hepteractCrafts: {
+  hepteracts: {
+    chronos: { ...defaultHepteractValues },
+    hyperrealism: { ...defaultHepteractValues },
+    quark: { ...defaultHepteractValues },
+    challenge: { ...defaultHepteractValues },
+    abyss: { ...defaultHepteractValues },
+    accelerator: { ...defaultHepteractValues },
+    acceleratorBoost: { ...defaultHepteractValues },
+    multiplier: { ...defaultHepteractValues }
+  },
+
+  /*hepteractCrafts: {
     chronos: ChronosHepteract,
     hyperrealism: HyperrealismHepteract,
     quark: QuarkHepteract,
@@ -905,7 +911,7 @@ export const player: Player = {
     accelerator: AcceleratorHepteract,
     acceleratorBoost: AcceleratorBoostHepteract,
     multiplier: MultiplierHepteract
-  },
+  },*/
 
   ascendShards: new Decimal('0'),
   autoAscend: false,
@@ -1707,8 +1713,10 @@ export const deepClone = () =>
       [WowTesseracts, (o: WowTesseracts) => new WowTesseracts(o.valueOf())],
       [WowHypercubes, (o: WowHypercubes) => new WowHypercubes(o.valueOf())],
       [WowPlatonicCubes, (o: WowPlatonicCubes) => new WowPlatonicCubes(o.valueOf())],
-      [HepteractCraft, (o: HepteractCraft) => new HepteractCraft(o.valueOf())],
-      [CorruptionLoadout, (o: CorruptionLoadout) => new CorruptionLoadout(o.loadout)],
+      [HepteractCraft, (o: HepteractCraft) =>
+        new HepteractCraft({ ...o.valueOf(), ...hepteractData[o.keyOf()] }, o.keyOf())],
+      [CorruptionLoadout, (o: CorruptionLoadout) =>
+        new CorruptionLoadout(o.loadout)],
       [CorruptionSaves, (o: CorruptionSaves) => new CorruptionSaves(o.corrSaveData)],
       [CampaignManager, (o: CampaignManager) => new CampaignManager(o.campaignManagerData)],
       [SingularityUpgrade, (o: SingularityUpgrade) => new SingularityUpgrade(o.valueOf(), o.key())],
@@ -6238,11 +6246,7 @@ export const reloadShit = (reset = false) => {
   initRuneBlessings(player.runeBlessings)
   initRuneSpirits(player.runeSpirits)
   initTalismans(player.talismans)
-
-  console.log(sumOfRuneLevels())
-  console.log(getRune('duplication').runeEXP)
-  console.log(getRune('duplication').level)
-  console.log(getRune('duplication').freeLevels)
+  initHepteracts(player.hepteracts)
 
   if (!reset) {
     calculateOffline()
@@ -6378,6 +6382,7 @@ window.addEventListener('load', async () => {
   initRuneBlessings(player.runeBlessings)
   initRuneSpirits(player.runeSpirits)
   initTalismans(player.talismans)
+  initHepteracts(player.hepteracts)
   Alert(
     `If you have the time, please submit feedback for the recent update! Form closes May 11, 2025. \n <a href="https://forms.gle/SLVUakXBc9RvEfqz8" style="border: 2px solid gold" target="_blank">CLICK ME!</a>`
   )

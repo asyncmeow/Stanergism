@@ -6,6 +6,7 @@ import { DOMCacheGetOrSet } from './Cache/DOM'
 import { calculateOcteractMultiplier } from './Calculate'
 import { testing, version } from './Config'
 import { addTimers } from './Helper'
+import { getHepteract } from './Hepteracts'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { getQuarkBonus, quarkHandler } from './Quark'
 import { Seed, seededBetween, seededRandom } from './RNG'
@@ -423,63 +424,6 @@ export const promocodes = async (input: string | null, amount?: number) => {
   if (input === null) {
     return Alert(i18next.t('importexport.comeBackSoon'))
   }
-  if (
-    input === '23andme'
-    && !player.codes.get(48)
-    && G.isEvent
-  ) {
-    if (!player.dailyCodeUsed) {
-      return Alert(
-        'This event code gives you another usage of code \'daily\'. Please use that code and try this event code again.'
-      )
-    }
-
-    player.codes.set(48, true)
-    player.quarkstimer = quarkHandler().maxTime
-    player.goldenQuarksTimer = 3600 * 24
-    addTimers('ascension', 8 * 3600)
-    player.dailyCodeUsed = false
-
-    if (
-      player.challenge15Exponent >= 1e15
-      || player.highestSingularityCount > 0
-    ) {
-      player.hepteractCrafts.quark.CAP *= 2
-      player.hepteractCrafts.quark.BAL += Math.min(
-        1e13,
-        player.hepteractCrafts.quark.CAP / 2
-      )
-    }
-    if (player.highestSingularityCount > 0) {
-      player.singularityUpgrades.goldenQuarks1.freeLevels += 1 + Math.floor(player.highestSingularityCount / 10)
-      player.singularityUpgrades.goldenQuarks2.freeLevels += 1 + Math.floor(player.highestSingularityCount / 10)
-      player.singularityUpgrades.goldenQuarks3.freeLevels += 1 + Math.floor(player.highestSingularityCount / 10)
-      if (player.singularityUpgrades.octeractUnlock.getEffect().bonus) {
-        player.octeractUpgrades.octeractImprovedQuarkHept.freeLevels += 0.05
-      }
-    }
-
-    return Alert(
-      `Not sponsored by the company! Your Quark timer(s) have been replenished and you have been given 8 real life hours of Ascension progress! Your daily code has also been reset for you.
-                      ${
-        player.challenge15Exponent >= 1e15
-          || player.highestSingularityCount > 0
-          ? 'Derpsmith also hacked your save to expand Quark Hepteract for free, and (to a limit) automatically filled the extra amount! What a generous, handsome gigachad.'
-          : ''
-      }
-                      ${
-        player.highestSingularityCount > 0
-          ? 'You were also given free levels of GQ1-3!'
-          : ''
-      } 
-                      ${
-        player.singularityUpgrades.octeractUnlock.getEffect()
-            .bonus
-          ? 'Finally, you were given a tiny amount of free Octeract Quark Hepteract Improver upgrade!'
-          : ''
-      }`
-    )
-  }
   if (input === 'synergism2021' && !player.codes.get(1)) {
     player.codes.set(1, true)
     player.offerings = player.offerings.add(25)
@@ -499,9 +443,9 @@ export const promocodes = async (input: string | null, amount?: number) => {
       x: player.worlds.applyBonus(quarks)
     })
   } else if (input === 'alonso bribe' && !player.codes.get(47)) {
-    const craft = player.hepteractCrafts.quark
+    const craft = getHepteract('quark')
 
-    if (!craft.UNLOCKED) {
+    if (!craft.UNLOCKED()) {
       return Alert(i18next.t('importexport.promocodes.bribe.notUnlocked'))
     }
 
@@ -512,7 +456,7 @@ export const promocodes = async (input: string | null, amount?: number) => {
     }
 
     player.codes.set(47, true)
-    craft.CAP = Math.min(1e300, craft.CAP * 2)
+    craft.TIMES_CAP_EXTENDED += 1
 
     return Alert(i18next.t('importexport.promocodes.bribe.thanks'))
   } else if (input.toLowerCase() === 'daily' && !player.dailyCodeUsed) {

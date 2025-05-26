@@ -101,7 +101,7 @@ export const buyResearch = (index: number, auto = false, linGrowth = 0, hover = 
 
   if (canBuy && isResearchUnlocked(index) && !isResearchMaxed(index)) {
     player.researches[index] = metaData.levelCanBuy
-    player.obtainium.sub(metaData.cost)
+    player.obtainium = player.obtainium.sub(metaData.cost)
     // Quick check after upgrading for max. This is to update any automation regardless of auto state
     if (isResearchMaxed(index)) {
       DOMCacheGetOrSet(`res${player.autoResearch || 1}`).classList.remove('researchRoomba')

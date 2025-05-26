@@ -510,8 +510,7 @@ const constUpgEffect: Record<number, () => Record<string, string>> = {
     x: format(2 * player.constantUpgrades[6])
   }),
   7: () => ({
-    x: format(7 * player.constantUpgrades[7]),
-    y: format(3 * player.constantUpgrades[7])
+    x: format(7 * Math.min(1000, player.constantUpgrades[7]))
   }),
   8: () => ({
     x: format(1 + 1 / 10 * player.constantUpgrades[8], 2, true)

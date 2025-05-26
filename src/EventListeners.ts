@@ -37,7 +37,10 @@ import { testing } from './Config'
 import { corruptionCleanseConfirm, corruptionDisplay } from './Corruptions'
 import { buyCubeUpgrades, cubeUpgradeDesc } from './Cubes'
 import {
+  getHepteract,
+  hepteractData,
   hepteractDescriptions,
+  type HepteractNames,
   hepteractToOverfluxOrbDescription,
   overfluxPowderDescription,
   overfluxPowderWarp,
@@ -731,6 +734,25 @@ export const generateEventHandlers = () => {
   DOMCacheGetOrSet('toggleAutoPlatonicUpgrades').addEventListener('click', () => autoPlatonicUpgradesToggle())
 
   // Part 4: Hepteract Subtab
+
+  for (const key of Object.keys(hepteractData) as HepteractNames[]) {
+    const moused = DOMCacheGetOrSet(`${key}Hepteract`)
+    moused.addEventListener('mouseover', () => hepteractDescriptions(key))
+    moused.addEventListener('focus', () => hepteractDescriptions(key))
+
+    const craft = DOMCacheGetOrSet(`${key}HepteractCraft`)
+    craft.addEventListener('click', () => getHepteract(key).craft())
+
+    const craftMax = DOMCacheGetOrSet(`${key}HepteractCraftMax`)
+    craftMax.addEventListener('click', () => getHepteract(key).craft(true))
+
+    const cap = DOMCacheGetOrSet(`${key}HepteractCap`)
+    cap.addEventListener('click', () => getHepteract(key).expand())
+
+    const auto = DOMCacheGetOrSet(`${key}HepteractAuto`)
+    auto.addEventListener('click', () => getHepteract(key).toggleAutomatic())
+  }
+  /*
   DOMCacheGetOrSet('chronosHepteract').addEventListener('mouseover', () => hepteractDescriptions('chronos'))
   DOMCacheGetOrSet('hyperrealismHepteract').addEventListener('mouseover', () => hepteractDescriptions('hyperrealism'))
   DOMCacheGetOrSet('quarkHepteract').addEventListener('mouseover', () => hepteractDescriptions('quark'))
@@ -743,7 +765,7 @@ export const generateEventHandlers = () => {
   )
   DOMCacheGetOrSet('multiplierHepteract').addEventListener('mouseover', () => hepteractDescriptions('multiplier'))
 
-  DOMCacheGetOrSet('chronosHepteractCraft').addEventListener('click', () => player.hepteractCrafts.chronos.craft())
+  DOMCacheGetOrSet('chronosHepteractCraft').addEventListener('click', () => hepteracts.chronos.craft())
   DOMCacheGetOrSet('hyperrealismHepteractCraft').addEventListener(
     'click',
     () => player.hepteractCrafts.hyperrealism.craft()
@@ -835,6 +857,7 @@ export const generateEventHandlers = () => {
     'click',
     () => player.hepteractCrafts.multiplier.toggleAutomatic()
   )
+  */
 
   DOMCacheGetOrSet('hepteractToQuark').addEventListener('mouseover', () => hepteractToOverfluxOrbDescription())
   DOMCacheGetOrSet('hepteractToQuarkTrade').addEventListener('click', () => tradeHepteractToOverfluxOrb())

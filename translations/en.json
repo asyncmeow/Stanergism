@@ -802,7 +802,7 @@
       "6": "Tries to please Ant God... but fails [Additional Offerings!]",
       "7": "Helps you build a few things here and there [+3% Building Cost Delay / level, Cap 9,999,999%]",
       "8": "Knows how to salt and pepper food [Up to 1,000x Rune EXP!]",
-      "9": "Can make your message to Ant God a little more clear [+1 all Rune Levels / level, Cap 10 Million]",
+      "9": "Can make your message to Ant God a little more clear [+1 all Rune Levels / level, Cap 3,000]",
       "10": "Has big brain energy [Additional Obtainium!]",
       "11": "A valuable offering to the Ant God [Gain up to 3x Sacrifice Rewards!]",
       "12": "Betray Ant God increasing the fragility of your dimension [Unlocks ant talisman, Up to 2x faster timers on most things]"
@@ -2635,7 +2635,7 @@
       "4": "Obtainium gain x{{x}}",
       "5": "Ant Speed x{{x}}",
       "6": "+{{x}} free Ant Levels",
-      "7": "+{{x}} free Rune Levels, +{{y}} to Rune Cap",
+      "7": "+{{x}} free Rune Levels",
       "8": "Rune EXP x{{x}}",
       "9": "Runes effectiveness x{{x}}",
       "10": "Cubes/Tesseracts on Ascension x{{x}}"
@@ -3133,7 +3133,7 @@
       "illiteracy": "On this Ascension, this corruption is level {{ level }}. Effect: Obtainium gain ^{{ effect }}",
       "deflation": "On this Ascension, this corruption is level {{ level }}. Effect: Diamond gain ^{{ effect }}",
       "extinction": "On this Ascension, this corruption is level {{ level }}. Effect: Ant Production ^{{ effect }}",
-      "drought": "On this Ascension, this corruption is level {{ level }}. Effect: Offering EXP divided by {{ effect }}",
+      "drought": "On this Ascension, this corruption is level {{ level }}. Effect: Offering EXP is multiplied by {{ effect }}",
       "recession": "On this Ascension, this corruption is level {{ level }}. Effect: Coin Gain ^{{ effect }}"
     },
     "prototypeLevel": {
@@ -3143,7 +3143,7 @@
       "illiteracy": "On next Ascension, this corruption will be level {{ level }}. Effect: Obtainium gain ^{{ effect }}",
       "deflation": "On next Ascension, this corruption will be level {{ level }}. Effect: Diamond gain ^{{ effect }}",
       "extinction": "On next Ascension, this corruption will be level {{ level }}. Effect: Ant Production ^{{ effect }}",
-      "drought": "On next Ascension, this corruption will be level {{ level }}. Effect: Offering EXP divided by {{ effect }}",
+      "drought": "On next Ascension, this corruption will be level {{ level }}. Effect: Offering EXP is multiplied by {{ effect }}",
       "recession": "On next Ascension, this corruption will be level {{ level }}. Effect: Coin Gain ^{{ effect }}"
     },
     "scoreMultiplier": "Current Score Multiplier: {{ curr }} / Next Ascension Score Multiplier: {{ next }}",
@@ -3824,7 +3824,7 @@
       "spiritLevel": "Spirit level: <<orchid|{{amount}}>>",
       "spiritPower": "Spirit Power: <<turquoise|{{value}}>> =-=-= Effect: {{desc}}",
       "rewards": {
-        "speed": "{{effect}}x Ascension Speed",
+        "speed": "{{effect}}x Global Speed",
         "duplication": "{{effect}}x Wow! Cubes by Ascension",
         "prism": "{{effect}}x Additional levels to Crystal caps",
         "thrift": "{{effect}}x Offerings",
@@ -4392,7 +4392,7 @@
       "CubeUpgrade1x3": "Cube Upgrade 1x3:",
       "CubeUpgrade4x7": "Cube Upgrade 4x7:",
       "Challenge12": "Challenge 12:",
-      "SpiritPower": "Fourth Spirit Bonus:",
+      "SpiritPower": "Superior Intellect Spirit:",
       "Research6x19": "Research 6x19:",
       "PlatonicALPHA": "Platonic ALPHA:",
       "PlatonicUpgrade9": "Platonic Upgrade 9:",
@@ -4896,7 +4896,8 @@
         "18": "Raise the base percentage of Constant Upgrade 1 by 0.1% and increase the base percentage cap of Constant Upgrade 2 by 0.3% per level!",
         "19": "The Chronos Hepteract's diminishing return exponent is increased by level/750 (roughly 0.00133). (Base: 1/6)",
         "20": "You know, maybe some things should be left unbought."
-      }
+      },
+      "20Bought": "While I strongly recommended you not to buy this, you did it anyway. For that, you have unlocked the Antiquities of Ant God Rune."
     },
     "hepteractForge": {
       "howDidIGetHere": "How did I get here?",

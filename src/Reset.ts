@@ -28,7 +28,7 @@ import { challengeRequirement } from './Challenges'
 import { c15Corruptions, CorruptionLoadout, corruptionStatsUpdate, type SavedCorruption } from './Corruptions'
 import { WowCubes } from './CubeExperimental'
 import { autoBuyCubeUpgrades, awardAutosCookieUpgrade, updateCubeUpgradeBG } from './Cubes'
-import { getAutoHepteractCrafts } from './Hepteracts'
+import { getAutoHepteractCrafts, getHepteract, resetHepteracts } from './Hepteracts'
 import {
   resetHistoryAdd,
   type ResetHistoryEntryAscend,
@@ -1153,7 +1153,7 @@ export const singularity = (setSingNumber = -1) => {
       hyperTribs: sumContents(hypercubeArray),
       platTribs: sumContents(platonicArray),
       octeracts: player.totalWowOcteracts,
-      quarkHept: player.hepteractCrafts.quark.BAL,
+      quarkHept: getHepteract('quark').BAL,
       kind: 'singularity'
     }
     resetHistoryAdd('singularity', historyEntry)
@@ -1338,14 +1338,10 @@ export const singularity = (setSingNumber = -1) => {
   ) as Player['singularityChallenges']
   hold.iconSet = player.iconSet
 
-  // Quark Hepteract craft is saved entirely. For other crafts we only save their auto setting
-  hold.hepteractCrafts.quark = player.hepteractCrafts.quark
-  for (const craftName of Object.keys(player.hepteractCrafts)) {
-    if (craftName !== 'quark') {
-      const craftKey = craftName as keyof Player['hepteractCrafts']
-      hold.hepteractCrafts[craftKey].AUTO = player.hepteractCrafts[craftKey].AUTO
-    }
-  }
+  resetHepteracts()
+  // Hold hepteract data needed in player after resetHepteracts (preserving AUTO and Quark ValueOf)
+  hold.hepteracts = player.hepteracts
+
   hold.ambrosia = player.ambrosia
   hold.lifetimeAmbrosia = player.lifetimeAmbrosia
   hold.visitedAmbrosiaSubtab = player.visitedAmbrosiaSubtab

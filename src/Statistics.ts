@@ -81,7 +81,7 @@ import {
 import { formatAsPercentIncrease } from './Campaign'
 import { CalcECC, type Challenge15Rewards, challenge15ScoreMultiplier } from './Challenges'
 import { BuffType } from './Event'
-import { hepteractEffective } from './Hepteracts'
+import { getHepteract, hepteractEffective } from './Hepteracts'
 import {
   addCodeBonuses,
   addCodeInterval,
@@ -1241,7 +1241,7 @@ export const allQuarkStats: StatLine[] = [
       1
       + (1 / 10000) * Math.floor(player.octeractUpgrades.octeractQuarkGain.level / 111)
         * player.octeractUpgrades.octeractQuarkGain2.level
-        * Math.floor(1 + Math.log10(Math.max(1, player.hepteractCrafts.quark.BAL)))
+        * Math.floor(1 + Math.log10(Math.max(1, getHepteract('quark').BAL)))
   },
   {
     i18n: 'SingularityPacks',
@@ -1820,6 +1820,10 @@ export const allGlobalSpeedStats: StatLine[] = [
     stat: () => getRuneBlessing('speed').bonus.globalSpeed // speed blessing
   },
   {
+    i18n: 'SpeedSpirit',
+    stat: () => getRuneSpirit('speed').bonus.globalSpeed // speed spirit
+  },
+  {
     i18n: 'ChronosCube',
     stat: () => G.cubeBonusMultiplier[10] // Chronos cube blessing
   },
@@ -1867,10 +1871,6 @@ export const allGlobalSpeedDRStats: StatLine[] = [
 ]
 
 export const allAscensionSpeedStats: StatLine[] = [
-  {
-    i18n: 'SpeedSpirit',
-    stat: () => getRuneSpirit('speed').bonus.ascensionSpeed // Speed Spirit
-  },
   {
     i18n: 'PolymathTalisman',
     stat: () => getTalisman('polymath').bonus.ascensionSpeedBonus // Polymath Talisman
@@ -3258,22 +3258,6 @@ export const c15RewardUpdate = () => {
     if (e >= v.requirement) {
       v.value = G.c15RewardFormulae[key](e)
     }
-  }
-
-  if (G.challenge15Rewards.challengeHepteractUnlocked.value > 0) {
-    void player.hepteractCrafts.challenge.unlock('the Hepteract of Challenge')
-  }
-  if (G.challenge15Rewards.abyssHepteractUnlocked.value > 0) {
-    void player.hepteractCrafts.abyss.unlock('the Hepteract of the Abyss')
-  }
-  if (G.challenge15Rewards.acceleratorHepteractUnlocked.value > 0) {
-    void player.hepteractCrafts.accelerator.unlock('the Hepteract of Way Too Many Accelerators')
-  }
-  if (G.challenge15Rewards.acceleratorBoostHepteractUnlocked.value > 0) {
-    void player.hepteractCrafts.acceleratorBoost.unlock('the Hepteract of Way Too Many Accelerator Boosts')
-  }
-  if (G.challenge15Rewards.multiplierHepteractUnlocked.value > 0) {
-    void player.hepteractCrafts.multiplier.unlock('the Hepteract of Way Too Many Multipliers')
   }
 
   updateDisplayC15Rewards()

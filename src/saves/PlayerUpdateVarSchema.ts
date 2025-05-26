@@ -1,5 +1,6 @@
 import Decimal from 'break_infinity.js'
 import { CorruptionLoadout, type Corruptions, CorruptionSaves } from '../Corruptions'
+import { getHepteract, type HepteractNames } from '../Hepteracts'
 import { getTalisman } from '../Talismans'
 import { convertArrayToCorruption } from './PlayerJsonSchema'
 import { playerSchema } from './PlayerSchema'
@@ -95,6 +96,24 @@ export const playerUpdateVarSchema = playerSchema.transform((player) => {
     player.runeSpirits.superiorIntellect = new Decimal(player.runeSpiritLevels[4] ?? 0)
   }
 
+  if (player.hepteractCrafts !== undefined) {
+    for (const [key, value] of Object.entries(player.hepteractCrafts)) {
+      const k = key as HepteractNames
+      if (value !== undefined) {
+        const BAL = value.BAL ?? 0
+        const TIMES_CAP_EXTENDED = Math.round(Math.log2(value.CAP / value.BASE_CAP)) ?? 0
+        const AUTO = value.AUTO ?? false
+
+        player.hepteracts[k] = { BAL, TIMES_CAP_EXTENDED, AUTO }
+        getHepteract(k).updateVals({
+          BAL,
+          TIMES_CAP_EXTENDED,
+          AUTO
+        })
+      }
+    }
+  }
+
   Reflect.deleteProperty(player, 'runeshards')
   Reflect.deleteProperty(player, 'maxofferings')
   Reflect.deleteProperty(player, 'researchPoints')
@@ -121,6 +140,7 @@ export const playerUpdateVarSchema = playerSchema.transform((player) => {
   Reflect.deleteProperty(player, 'talismanSeven')
   Reflect.deleteProperty(player, 'offeringpersecond')
   Reflect.deleteProperty(player, 'runeBlessingLevels')
+  Reflect.deleteProperty(player, 'hepteractCrafts')
 
   return player
 })

@@ -38,11 +38,17 @@ import { CalcECC } from './Challenges'
 import { version } from './Config'
 import type { IMultiBuy } from './Cubes'
 import { BuffType, consumableEventBuff, eventBuffType, getEvent, getEventBuff } from './Event'
-import type { hepteractTypes } from './Hepteracts'
-import { hepteractTypeList } from './Hepteracts'
+import { getHepteract, hepteractData, type HepteractNames } from './Hepteracts'
 import { allDurableConsumables, type PseudoCoinConsumableNames } from './Login'
 import { getQuarkBonus, quarkHandler } from './Quark'
-import { getRune, getRuneBlessing, getRuneSpirit, type RuneBlessingKeys, type RuneKeys, type RuneSpiritKeys } from './Runes'
+import {
+  getRune,
+  getRuneBlessing,
+  getRuneSpirit,
+  type RuneBlessingKeys,
+  type RuneKeys,
+  type RuneSpiritKeys
+} from './Runes'
 import { getShopCosts, isShopUpgradeUnlocked, shopData, shopUpgradeTypes } from './Shop'
 import { getGoldenQuarkCost } from './singularity'
 import { loadStatisticsUpdate } from './Statistics'
@@ -1095,9 +1101,9 @@ export const visualUpdateCubes = () => {
       )
 
       // Update the grid
-      hepteractTypeList.forEach((type) => {
-        UpdateHeptGridValues(type)
-      })
+      for (const key of Object.keys(hepteractData) as HepteractNames[]) {
+        UpdateHeptGridValues(key)
+      }
 
       // orbs
       DOMCacheGetOrSet('heptGridOrbBalance').textContent = format(
@@ -1124,20 +1130,20 @@ export const visualUpdateCubes = () => {
   }
 }
 
-const UpdateHeptGridValues = (type: hepteractTypes) => {
+const UpdateHeptGridValues = (type: HepteractNames) => {
   const text = `${type}ProgressBarText`
   const bar = `${type}ProgressBar`
   const textEl = DOMCacheGetOrSet(text)
   const barEl = DOMCacheGetOrSet(bar)
-  const unlocked = player.hepteractCrafts[type].UNLOCKED
+  const unlocked = getHepteract(type).UNLOCKED()
 
   if (!unlocked) {
     textEl.textContent = 'LOCKED'
     barEl.style.width = '100%'
     barEl.style.backgroundColor = 'var(--hepteract-bar-red)'
   } else {
-    const balance = player.hepteractCrafts[type].BAL
-    const cap = player.hepteractCrafts[type].computeActualCap()
+    const balance = getHepteract(type).BAL
+    const cap = getHepteract(type).computeActualCap()
     const barWidth = Math.round((balance / cap) * 100)
 
     let barColor = ''

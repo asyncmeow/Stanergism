@@ -213,7 +213,6 @@ abstract class AbstractRune<K extends string> {
 
   updateRuneEXP (exp: Decimal) {
     this.runeEXP = new Decimal().fromDecimal(exp)
-    console.log(this.key, this.runeEXP)
     this.updatePlayerEXP()
 
     this.updateRuneEffectHTML()
@@ -244,11 +243,6 @@ abstract class AbstractRune<K extends string> {
     const expRequired = this.computeEXPLeftToLevel(this.level + timesLeveled)
     const offeringsRequired = Decimal.max(1, expRequired.div(this.perOfferingEXP).ceil())
 
-    if (!auto) {
-      console.log('offerings required', offeringsRequired.toNumber())
-      console.log('EXP required', expRequired.toNumber())
-    }
-
     if (offeringsRequired.gt(budget)) {
       this.addRuneEXP(new Decimal(budget))
       budgetUsed = budget
@@ -257,9 +251,6 @@ abstract class AbstractRune<K extends string> {
       budgetUsed = offeringsRequired
     }
 
-    if (!auto) {
-      console.log('used budget', budgetUsed)
-    }
     player.offerings = player.offerings.sub(budgetUsed)
 
     this.updatePlayerEXP()
@@ -590,6 +581,12 @@ export const firstFiveEffectiveRuneLevelMult = () => {
   ])
 }
 
+export const SIEffectiveRuneLevelMult = () => {
+  return productContents([
+    1 + 1 / 200 * player.researches[84]
+  ])
+}
+
 export const universalRuneEXPMult = (purchasedLevels: number): Decimal => {
   // recycleMult accounted for all recycle chance, but inversed so it's a multiplier instead
   const recycleMultiplier = calculateRecycleMultiplier()
@@ -675,6 +672,7 @@ export const thriftEXPMult = () => {
 export const superiorIntellectEXPMult = () => {
   return [
     1 + CalcECC('reincarnation', player.challengecompletions[9]) / 5,
+    1 + 1 / 20 * player.researches[83],
     player.corruptions.used.corruptionEffects('drought')
   ].reduce((x, y) => x.times(y), new Decimal('1'))
 }
@@ -804,7 +802,7 @@ export const runeData: { [K in RuneKeys]: RuneData<K> } = {
         antSpeed: antSpeed
       }
     },
-    effectiveLevelMult: () => firstFiveEffectiveRuneLevelMult(),
+    effectiveLevelMult: () => firstFiveEffectiveRuneLevelMult() * SIEffectiveRuneLevelMult(),
     freeLevels: () => firstFiveFreeLevels() + bonusRuneLevelsSI(),
     runeEXPPerOffering: (purchasedLevels) => universalRuneEXPMult(purchasedLevels).times(superiorIntellectEXPMult()),
     isUnlocked: () => player.researches[82] > 0,
@@ -884,7 +882,6 @@ export let runes: RunesMap
 
 export function initRunes (investments: Record<RuneKeys, Decimal>) {
   if (runes !== undefined) {
-    console.log(runes)
     for (const key of Object.keys(runes) as RuneKeys[]) {
       runes[key].updateRuneEXP(investments[key])
     }
@@ -1210,7 +1207,7 @@ export function resetRuneBlessings (tier: keyof typeof resetTiers) {
 /** Spirits */
 
 interface SpeedSpiritReward extends BaseReward {
-  ascensionSpeed: number
+  globalSpeed: number
 }
 
 interface DuplicationSpiritReward extends BaseReward {
@@ -1258,12 +1255,12 @@ export const runeSpiritData: { [K in RuneSpiritKeys]: RuneSpiritData<K> } = {
     levelsPerOOM: 12,
     levelsPerOOMIncrease: () => 0,
     rewards: (level) => {
-      const ascensionSpeed = Math.pow(1 + Math.log(1 + level / 1e8), 1.25)
+      const globalSpeed = Math.pow(1 + Math.log(1 + level / 1e8), 1.25)
       return {
         desc: i18next.t('runes.spirits.rewards.speed', {
-          effect: format(ascensionSpeed, 3, true)
+          effect: format(globalSpeed, 3, true)
         }),
-        ascensionSpeed
+        globalSpeed
       }
     },
     effectiveLevelMult: () => spiritMultiplier('speed'),
@@ -1410,9 +1407,6 @@ export const resetOfferings = () => {
 export const sacrificeOfferings = (rune: RuneKeys, budget: Decimal, auto = false) => {
   // if automated && 2x10 cube upgrade bought, this will be >0.
 
-  if (!auto) {
-    console.log(`Sacrificing ${rune} rune with ${budget} budget`)
-  }
   if (!getRune(rune).isUnlocked) {
     return
   }
@@ -1423,10 +1417,6 @@ export const sacrificeOfferings = (rune: RuneKeys, budget: Decimal, auto = false
   }
   if (auto && player.cubeUpgrades[20] > 0) {
     levelsToAdd *= 20
-  }
-
-  if (!auto) {
-    console.log(`Sacrificing ${rune} rune with ${levelsToAdd} levels to add`)
   }
 
   getRune(rune).levelRune(levelsToAdd, budget, auto)
@@ -1447,7 +1437,7 @@ export const buyBlessingLevels = (blessing: RuneBlessingKeys, budget: Decimal, a
 export const buyAllBlessingLevels = (budget: Decimal, auto = false) => {
   const ratio = 5 // Change if there are more blessings later on
   for (const key of Object.keys(runeBlessingData) as RuneBlessingKeys[]) {
-    buyBlessingLevels(key, budget.div(ratio), auto)
+    buyBlessingLevels(key, Decimal.floor(budget.div(ratio)), auto)
   }
 }
 
@@ -1464,6 +1454,6 @@ export const buySpiritLevels = (spirit: RuneSpiritKeys, budget: Decimal, auto = 
 export const buyAllSpiritLevels = (budget: Decimal, auto = false) => {
   const ratio = 5 // Change if there are more spirits later on
   for (const key of Object.keys(runeSpiritData) as RuneSpiritKeys[]) {
-    buySpiritLevels(key, budget.div(ratio), auto)
+    buySpiritLevels(key, Decimal.floor(budget.div(ratio)), auto)
   }
 }

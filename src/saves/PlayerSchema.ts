@@ -4,7 +4,7 @@ import { BlueberryUpgrade, blueberryUpgradeData } from '../BlueberryUpgrades'
 import { CampaignManager, type ICampaignManagerData } from '../Campaign'
 import { CorruptionLoadout, CorruptionSaves } from '../Corruptions'
 import { WowCubes, WowHypercubes, WowPlatonicCubes, WowTesseracts } from '../CubeExperimental'
-import { HepteractCraft } from '../Hepteracts'
+import { hepteractData, type HepteractNames } from '../Hepteracts'
 import { octeractData, OcteractUpgrade } from '../Octeracts'
 import { QuarkHandler } from '../Quark'
 import { singularityData, SingularityUpgrade } from '../singularity'
@@ -70,18 +70,25 @@ const toggleSchema = z.record(z.string(), z.boolean()).transform((record) => {
 const decimalStringSchema = z.string().regex(/^|-?\d+(\.\d{1,2})?$/)
 const integerStringSchema = z.string().regex(/^\d+$/)
 
-const hepteractCraftSchema = (k: keyof Player['hepteractCrafts']) =>
+// TODO: FUCK THIS SHIT.
+const hepteractCraftSchema = (k: HepteractNames) =>
   z.object({
-    AUTO: z.boolean().default(() => blankSave.hepteractCrafts[k].AUTO),
-    BAL: z.number().default(() => blankSave.hepteractCrafts[k].BAL),
-    BASE_CAP: z.number(),
-    CAP: z.number().default(() => blankSave.hepteractCrafts[k].CAP),
-    DISCOUNT: z.number().default(() => blankSave.hepteractCrafts[k].DISCOUNT),
+    AUTO: z.boolean().default(() => blankSave.hepteracts[k].AUTO),
+    BAL: z.number().default(() => blankSave.hepteracts[k].BAL),
+    BASE_CAP: z.number().default(() => hepteractData[k].BASE_CAP),
+    CAP: z.number().default(() => 1000),
+    DISCOUNT: z.number().default(() => 0),
     HEPTERACT_CONVERSION: z.number(),
-    HTML_STRING: z.string().default(() => blankSave.hepteractCrafts[k].HTML_STRING),
+    HTML_STRING: z.string().default(() => k),
     OTHER_CONVERSIONS: z.record(z.string(), z.number()),
-    UNLOCKED: z.boolean().default(() => blankSave.hepteractCrafts[k].UNLOCKED)
+    UNLOCKED: z.boolean().default(() => false)
   })
+
+const newHepteractCraftSchema = z.object({
+  BAL: z.number(),
+  TIMES_CAP_EXTENDED: z.number(),
+  AUTO: z.boolean()
+})
 
 const optionalCorruptionSchema = z.object({
   viscosity: z.number().optional().default(0),
@@ -587,28 +594,29 @@ export const playerSchema = z.object({
   hypercubeBlessings: z.record(z.string(), z.number()).default(() => ({ ...blankSave.hypercubeBlessings })),
   platonicBlessings: z.record(z.string(), z.number()).default(() => ({ ...blankSave.platonicBlessings })),
 
+  hepteracts: z.object({
+    chronos: newHepteractCraftSchema.default(() => blankSave.hepteracts.chronos),
+    hyperrealism: newHepteractCraftSchema.default(() => blankSave.hepteracts.hyperrealism),
+    quark: newHepteractCraftSchema.default(() => blankSave.hepteracts.quark),
+    challenge: newHepteractCraftSchema.default(() => blankSave.hepteracts.challenge),
+    abyss: newHepteractCraftSchema.default(() => blankSave.hepteracts.abyss),
+    accelerator: newHepteractCraftSchema.default(() => blankSave.hepteracts.accelerator),
+    acceleratorBoost: newHepteractCraftSchema.default(() => blankSave.hepteracts.acceleratorBoost),
+    multiplier: newHepteractCraftSchema.default(() => blankSave.hepteracts.multiplier)
+  }).default(() => {
+    return { ...blankSave.hepteracts }
+  }),
+
   hepteractCrafts: z.object({
-    chronos: hepteractCraftSchema('chronos'),
-    hyperrealism: hepteractCraftSchema('hyperrealism'),
-    quark: hepteractCraftSchema('quark'),
-    challenge: hepteractCraftSchema('challenge'),
-    abyss: hepteractCraftSchema('abyss'),
-    accelerator: hepteractCraftSchema('accelerator'),
-    acceleratorBoost: hepteractCraftSchema('acceleratorBoost'),
-    multiplier: hepteractCraftSchema('multiplier')
-  }).transform((crafts) => {
-    return Object.fromEntries(
-      Object.entries(blankSave.hepteractCrafts).map(([key, value]) => {
-        return [
-          key,
-          new HepteractCraft({
-            ...value,
-            ...crafts[key as keyof typeof crafts]
-          })
-        ]
-      })
-    )
-  }).default(() => blankSave.hepteractCrafts),
+    chronos: hepteractCraftSchema('chronos').optional(),
+    hyperrealism: hepteractCraftSchema('hyperrealism').optional(),
+    quark: hepteractCraftSchema('quark').optional(),
+    challenge: hepteractCraftSchema('challenge').optional(),
+    abyss: hepteractCraftSchema('abyss').optional(),
+    accelerator: hepteractCraftSchema('accelerator').optional(),
+    acceleratorBoost: hepteractCraftSchema('acceleratorBoost').optional(),
+    multiplier: hepteractCraftSchema('multiplier').optional()
+  }).optional(),
 
   ascendShards: decimalSchema.default(() => deepClone()(blankSave.ascendShards)),
   autoAscend: z.boolean().default(() => blankSave.autoAscend),
