@@ -5,6 +5,7 @@ import i18next from 'i18next'
 import { totalachievementpoints } from './Achievements'
 import {
   calculateAscensionSpeedMult,
+  calculateBlueberryInventory,
   calculateGlobalSpeedMult,
   calculateGoldenQuarks,
   calculateOcteractMultiplier,
@@ -23,6 +24,7 @@ import type { Player } from './types/Synergism'
 import { Alert } from './UpdateHTML'
 import { formatS, sumContents } from './Utility'
 import { Globals as G } from './Variables'
+import { getRedAmbrosiaUpgrade } from './RedAmbrosiaUpgrades'
 
 export const generateExportSummary = async (): Promise<void> => {
   const titleText = '===== SUMMARY STATS ====='
@@ -413,7 +415,7 @@ export const generateExportSummary = async (): Promise<void> => {
       }
 
       upgradeText = upgradeText + unicodeSymbol
-      upgradeText = `${upgradeText + octUpg.name}:`
+      upgradeText = `${upgradeText} ${octUpg.name}:`
       upgradeText = upgradeText + (octUpg.maxLevel === -1
         ? ` Level ${octUpg.level}`
         : ` Level ${octUpg.level}/${octUpg.maxLevel}`)
@@ -436,8 +438,125 @@ export const generateExportSummary = async (): Promise<void> => {
     octeractUpgradeStats = octeractUpgradeStats + subCategoryDivisor
   }
 
+  // Create EXALT Challenge Completion Stuff
+  let exaltChallengeStats = '\n'
+  if (player.highestSingularityCount >= 25) {
+    exaltChallengeStats =
+      '===== EXALT CHALLENGE COMPLETIONS =====\n - [✔]: Challenge Completed - \n - [✖]: Challenge NOT Completed - \n - [ ]: Challenge NOT Unlocked - \n'
+
+    const exaltChallenges = Object.keys(player.singularityChallenges) as (keyof Player['singularityChallenges'])[]
+    let totalExaltChallengeCompletions = 0
+    let totalExaltChallengeMaxCompletions = 0
+
+    for (const key of exaltChallenges) {
+      let challengeText = ''
+      const exaltChallenge = player.singularityChallenges[key]
+
+      if (exaltChallenge.unlockSingularity <= player.highestSingularityCount) {
+        if (exaltChallenge.completions === exaltChallenge.maxCompletions) {
+          challengeText = '[✔]'
+        } else {
+          challengeText = '[✖]'
+        }
+        totalExaltChallengeCompletions += exaltChallenge.completions
+        totalExaltChallengeMaxCompletions += exaltChallenge.maxCompletions
+      } else {
+        challengeText = '[ ]'
+      }
+
+      challengeText = `${challengeText} ${exaltChallenge.name}:`
+      challengeText = `${challengeText} ${exaltChallenge.completions}/${exaltChallenge.maxCompletions}`
+      challengeText = `${challengeText}\n`
+      exaltChallengeStats = exaltChallengeStats + challengeText
+    }
+
+    exaltChallengeStats = exaltChallengeStats + subCategoryDivisor
+    exaltChallengeStats = `${exaltChallengeStats}Total Challenges Completed: ${totalExaltChallengeCompletions}/${
+      totalExaltChallengeMaxCompletions
+    }\n`
+    exaltChallengeStats = exaltChallengeStats + subCategoryDivisor
+  }
+
+  // Create Octeract Stuff
+  let ambrosiaUpgradeStats = '\n'
+  if (player.visitedAmbrosiaSubtab) {
+    ambrosiaUpgradeStats =
+      '===== AMBROSIA UPGRADES =====\n - [★]: Upgrade is MAXED - \n - [𖥔]: Upgrade is ACTIVE - \n - [ ]: Upgrade INACTIVE - \n'
+    const ambUpgrade = Object.keys(player.blueberryUpgrades) as (keyof Player['blueberryUpgrades'])[]
+
+    let spentBlueberries = 0
+
+    const currentAmbrosia = player.ambrosia
+    const lifetimeAmbrosia = player.lifetimeAmbrosia
+
+    const blueberries = calculateBlueberryInventory()
+
+    for (const key of ambUpgrade) {
+      let upgradeText = ''
+      const ambUpg = player.blueberryUpgrades[key]
+
+      let unicodeSymbol = '[ ]'
+      if (ambUpg.level > 0) {
+        spentBlueberries += ambUpg.blueberryCost
+        unicodeSymbol = (ambUpg.level === ambUpg.maxLevel) ? '[★]' : '[𖥔]'
+      }
+
+      upgradeText = upgradeText + unicodeSymbol
+      upgradeText = `${upgradeText} ${ambUpg.name}:`
+      upgradeText = upgradeText + ` Level ${ambUpg.level}/${ambUpg.maxLevel} [+${format(ambUpg.extraLevels, 0, true)}]`
+
+      upgradeText = upgradeText + (ambUpg.extraLevels > 0
+        ? ` // Effective Level: ${format(ambUpg.effectiveLevels, 0, true)}`
+        : '')
+
+      upgradeText = `${upgradeText}\n`
+      ambrosiaUpgradeStats = ambrosiaUpgradeStats + upgradeText
+    }
+    ambrosiaUpgradeStats = ambrosiaUpgradeStats + subCategoryDivisor
+    ambrosiaUpgradeStats = `${ambrosiaUpgradeStats} Current Ambrosia: ${format(currentAmbrosia, 0, true)}\n`
+    ambrosiaUpgradeStats = `${ambrosiaUpgradeStats} Lifetime Ambrosia: ${format(lifetimeAmbrosia, 0, true)}\n`
+    ambrosiaUpgradeStats = `${ambrosiaUpgradeStats} Total Blueberries: ${format(blueberries, 0, true)}\n`
+    ambrosiaUpgradeStats = `${ambrosiaUpgradeStats} Blueberries Spent: ${format(spentBlueberries, 0, true)}\n`
+    ambrosiaUpgradeStats = `${ambrosiaUpgradeStats} UNSPENT BLUEBERRIES: ${format(blueberries - spentBlueberries, 0, true)}\n`
+
+    ambrosiaUpgradeStats = ambrosiaUpgradeStats + subCategoryDivisor
+  }
+
+  // Create Red Ambrosia Stuff
+
+  let redAmbrosiaUpgradeStats = '\n'
+  if (player.visitedAmbrosiaSubtabRed) {
+    redAmbrosiaUpgradeStats =
+      '===== RED AMBROSIA UPGRADES =====\n - [★]: Upgrade is MAXED - \n - [ ]: Upgrade is NOT MAXED - \n'
+    const redAmbUpgrade = Object.keys(player.redAmbrosiaUpgrades) as (keyof Player['redAmbrosiaUpgrades'])[]
+
+    const currentRedAmbrosia = player.redAmbrosia
+    const lifetimeRedAmbrosia = player.lifetimeRedAmbrosia
+
+    for (const key of redAmbUpgrade) {
+      let upgradeText = ''
+      const redAmbUpg = getRedAmbrosiaUpgrade(key)
+
+      let unicodeSymbol = (redAmbUpg.level === redAmbUpg.maxLevel) ? '[★]' : '[ ]'
+
+      upgradeText = upgradeText + unicodeSymbol
+      upgradeText = `${upgradeText} ${redAmbUpg.name}:`
+      upgradeText = upgradeText + ` Level ${redAmbUpg.level}/${redAmbUpg.maxLevel}`
+
+      upgradeText = `${upgradeText}\n`
+      redAmbrosiaUpgradeStats = redAmbrosiaUpgradeStats + upgradeText
+    }
+    redAmbrosiaUpgradeStats = redAmbrosiaUpgradeStats + subCategoryDivisor
+    redAmbrosiaUpgradeStats =
+      `${redAmbrosiaUpgradeStats} Current Red Ambrosia: ${format(currentRedAmbrosia, 0, true)}\n`
+    redAmbrosiaUpgradeStats =
+      `${redAmbrosiaUpgradeStats} Lifetime Red Ambrosia: ${format(lifetimeRedAmbrosia, 0, true)}\n`
+
+    redAmbrosiaUpgradeStats = redAmbrosiaUpgradeStats + subCategoryDivisor
+  }
+
   const returnString =
-    `${titleText}\n${time}\n${ver}\n${firstPlayed}${resources}${octeract}${singularity}${ascension}${reincarnation}${transcension}${prestige}${shopUpgradeStats}${singularityUpgradeStats}${octeractUpgradeStats}`
+    `${titleText}\n${time}\n${ver}\n${firstPlayed}${resources}${octeract}${singularity}${ascension}${reincarnation}${transcension}${prestige}${shopUpgradeStats}${singularityUpgradeStats}${octeractUpgradeStats}${exaltChallengeStats}${ambrosiaUpgradeStats}${redAmbrosiaUpgradeStats}`
 
   try {
     await navigator.clipboard.writeText(returnString)

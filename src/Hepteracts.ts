@@ -497,7 +497,8 @@ const hepteractEffectiveValues = {
 }
 
 export const hepteractEffective = (data: HepteractNames) => {
-  let effectiveValue = Math.min(player.hepteracts[data].BAL, hepteractEffectiveValues[data].LIMIT)
+  const amount = getHepteract(data).BAL
+  let effectiveValue = Math.min(amount, hepteractEffectiveValues[data].LIMIT)
   let exponentBoost = 0
   if (data === 'chronos') {
     exponentBoost += 1 / 750 * player.platonicUpgrades[19]
@@ -513,7 +514,6 @@ export const hepteractEffective = (data: HepteractNames) => {
     exponentBoost += player.shopUpgrades.improveQuarkHept4 / 100
     exponentBoost += player.shopUpgrades.improveQuarkHept5 / 5000
 
-    const amount = player.hepteracts[data].BAL
     if (1000 < amount && amount <= 1000 * Math.pow(2, 10)) {
       return effectiveValue * Math.pow(amount / 1000, 1 / 2 + exponentBoost)
     } else if (1000 * Math.pow(2, 10) < amount && amount <= 1000 * Math.pow(2, 18)) {
@@ -530,9 +530,9 @@ export const hepteractEffective = (data: HepteractNames) => {
         * Math.pow(amount / (1000 * Math.pow(2, 44)), 1 / 12 + exponentBoost / 6)
     }
   }
-  if (player.hepteracts[data].BAL > hepteractEffectiveValues[data].LIMIT) {
+  if (amount > hepteractEffectiveValues[data].LIMIT) {
     effectiveValue *= Math.pow(
-      player.hepteracts[data].BAL / hepteractEffectiveValues[data].LIMIT,
+      amount / hepteractEffectiveValues[data].LIMIT,
       hepteractEffectiveValues[data].DR + exponentBoost
     )
   }
