@@ -518,9 +518,6 @@ export const hideStuff = () => {
     DOMCacheGetOrSet('runes').style.display = 'block'
     DOMCacheGetOrSet('runestab').style.backgroundColor = 'blue'
     DOMCacheGetOrSet('focusedRuneLevelInfo').textContent = i18next.t('runes.hover')
-    DOMCacheGetOrSet('researchrunebonus').textContent = i18next.t('runes.thanksResearches', {
-      percent: format(100 * G.effectiveLevelMult - 100, 4, true)
-    })
 
     for (const rune of Object.keys(player.runes)) {
       const runeKey = rune as RuneKeys

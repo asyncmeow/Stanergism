@@ -300,6 +300,10 @@ export class Talisman<K extends TalismanKeys> {
   }
 
   buyTalismanLevel (multiBuy = false): void {
+    if (!this.isUnlocked) {
+      return
+    }
+
     const costs = this.costs(this.baseMult, this.level)
     const budget = this.constructBudget()
     const canAffordNextLevel = this.affordableNextLevel(budget)

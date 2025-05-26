@@ -140,6 +140,7 @@ export const playerUpdateVarSchema = playerSchema.transform((player) => {
   Reflect.deleteProperty(player, 'talismanSeven')
   Reflect.deleteProperty(player, 'offeringpersecond')
   Reflect.deleteProperty(player, 'runeBlessingLevels')
+  Reflect.deleteProperty(player, 'runeSpiritLevels')
   Reflect.deleteProperty(player, 'hepteractCrafts')
 
   return player

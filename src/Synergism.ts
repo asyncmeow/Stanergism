@@ -2394,13 +2394,6 @@ const loadSynergy = () => {
     // For blueberry upgrades!
     displayProperLoadoutCount()
 
-    DOMCacheGetOrSet('researchrunebonus').textContent = i18next.t(
-      'runes.thanksResearches',
-      {
-        percent: format(100 * G.effectiveLevelMult - 100, 4, true)
-      }
-    )
-
     DOMCacheGetOrSet('talismanlevelup').style.display = 'none'
 
     DOMCacheGetOrSet('antSacrificeSummary').style.display = 'none'

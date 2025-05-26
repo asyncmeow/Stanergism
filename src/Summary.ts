@@ -16,6 +16,7 @@ import { getMaxChallenges } from './Challenges'
 import { version } from './Config'
 import { getHepteract, type HepteractNames } from './Hepteracts'
 import { saveFilename } from './ImportExport'
+import { getRedAmbrosiaUpgrade } from './RedAmbrosiaUpgrades'
 import { getRune, type RuneKeys } from './Runes'
 import { friendlyShopName, isShopUpgradeUnlocked, shopData, shopUpgradeTypes } from './Shop'
 import { calculateEffectiveSingularities } from './singularity'
@@ -24,7 +25,6 @@ import type { Player } from './types/Synergism'
 import { Alert } from './UpdateHTML'
 import { formatS, sumContents } from './Utility'
 import { Globals as G } from './Variables'
-import { getRedAmbrosiaUpgrade } from './RedAmbrosiaUpgrades'
 
 export const generateExportSummary = async (): Promise<void> => {
   const titleText = '===== SUMMARY STATS ====='
@@ -471,9 +471,8 @@ export const generateExportSummary = async (): Promise<void> => {
     }
 
     exaltChallengeStats = exaltChallengeStats + subCategoryDivisor
-    exaltChallengeStats = `${exaltChallengeStats}Total Challenges Completed: ${totalExaltChallengeCompletions}/${
-      totalExaltChallengeMaxCompletions
-    }\n`
+    exaltChallengeStats =
+      `${exaltChallengeStats}Total Challenges Completed: ${totalExaltChallengeCompletions}/${totalExaltChallengeMaxCompletions}\n`
     exaltChallengeStats = exaltChallengeStats + subCategoryDivisor
   }
 
@@ -503,7 +502,7 @@ export const generateExportSummary = async (): Promise<void> => {
 
       upgradeText = upgradeText + unicodeSymbol
       upgradeText = `${upgradeText} ${ambUpg.name}:`
-      upgradeText = upgradeText + ` Level ${ambUpg.level}/${ambUpg.maxLevel} [+${format(ambUpg.extraLevels, 0, true)}]`
+      upgradeText = `${upgradeText} Level ${ambUpg.level}/${ambUpg.maxLevel} [+${format(ambUpg.extraLevels, 0, true)}]`
 
       upgradeText = upgradeText + (ambUpg.extraLevels > 0
         ? ` // Effective Level: ${format(ambUpg.effectiveLevels, 0, true)}`
@@ -517,7 +516,9 @@ export const generateExportSummary = async (): Promise<void> => {
     ambrosiaUpgradeStats = `${ambrosiaUpgradeStats} Lifetime Ambrosia: ${format(lifetimeAmbrosia, 0, true)}\n`
     ambrosiaUpgradeStats = `${ambrosiaUpgradeStats} Total Blueberries: ${format(blueberries, 0, true)}\n`
     ambrosiaUpgradeStats = `${ambrosiaUpgradeStats} Blueberries Spent: ${format(spentBlueberries, 0, true)}\n`
-    ambrosiaUpgradeStats = `${ambrosiaUpgradeStats} UNSPENT BLUEBERRIES: ${format(blueberries - spentBlueberries, 0, true)}\n`
+    ambrosiaUpgradeStats = `${ambrosiaUpgradeStats} UNSPENT BLUEBERRIES: ${
+      format(blueberries - spentBlueberries, 0, true)
+    }\n`
 
     ambrosiaUpgradeStats = ambrosiaUpgradeStats + subCategoryDivisor
   }
@@ -537,20 +538,22 @@ export const generateExportSummary = async (): Promise<void> => {
       let upgradeText = ''
       const redAmbUpg = getRedAmbrosiaUpgrade(key)
 
-      let unicodeSymbol = (redAmbUpg.level === redAmbUpg.maxLevel) ? '[★]' : '[ ]'
+      const unicodeSymbol = (redAmbUpg.level === redAmbUpg.maxLevel) ? '[★]' : '[ ]'
 
       upgradeText = upgradeText + unicodeSymbol
       upgradeText = `${upgradeText} ${redAmbUpg.name}:`
-      upgradeText = upgradeText + ` Level ${redAmbUpg.level}/${redAmbUpg.maxLevel}`
+      upgradeText = `${upgradeText} Level ${redAmbUpg.level}/${redAmbUpg.maxLevel}`
 
       upgradeText = `${upgradeText}\n`
       redAmbrosiaUpgradeStats = redAmbrosiaUpgradeStats + upgradeText
     }
     redAmbrosiaUpgradeStats = redAmbrosiaUpgradeStats + subCategoryDivisor
-    redAmbrosiaUpgradeStats =
-      `${redAmbrosiaUpgradeStats} Current Red Ambrosia: ${format(currentRedAmbrosia, 0, true)}\n`
-    redAmbrosiaUpgradeStats =
-      `${redAmbrosiaUpgradeStats} Lifetime Red Ambrosia: ${format(lifetimeRedAmbrosia, 0, true)}\n`
+    redAmbrosiaUpgradeStats = `${redAmbrosiaUpgradeStats} Current Red Ambrosia: ${
+      format(currentRedAmbrosia, 0, true)
+    }\n`
+    redAmbrosiaUpgradeStats = `${redAmbrosiaUpgradeStats} Lifetime Red Ambrosia: ${
+      format(lifetimeRedAmbrosia, 0, true)
+    }\n`
 
     redAmbrosiaUpgradeStats = redAmbrosiaUpgradeStats + subCategoryDivisor
   }

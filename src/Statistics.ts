@@ -93,7 +93,14 @@ import {
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { getQuarkBonus } from './Quark'
 import { getRedAmbrosiaUpgrade } from './RedAmbrosiaUpgrades'
-import { getRune, getRuneBlessing, getRuneSpirit, sumOfRuneLevels } from './Runes'
+import {
+  firstFiveEffectiveRuneLevelMult,
+  getRune,
+  getRuneBlessing,
+  getRuneSpirit,
+  SIEffectiveRuneLevelMult,
+  sumOfRuneLevels
+} from './Runes'
 import { shopData } from './Shop'
 import { calculateSingularityDebuff, getFastForwardTotalMultiplier } from './singularity'
 import { format, player } from './Synergism'
@@ -1023,6 +1030,10 @@ export const allOfferingStats = [
     stat: () => 1 + 0.12 * CalcECC('ascension', player.challengecompletions[12]) // Challenge 12
   },
   {
+    i18n: 'ThriftSpirit',
+    stat: () => getRuneSpirit('thrift').bonus.offerings // Thrift
+  },
+  {
     i18n: 'Research8x25',
     stat: () => 1 + (0.01 / 100) * player.researches[200] // Research 8x25
   },
@@ -1147,6 +1158,122 @@ export const allOfferingStats = [
     i18n: 'Event',
     stat: () => 1 + calculateEventBuff(BuffType.Offering), // Event
     color: 'lime'
+  }
+]
+
+export const firstFiveRuneEffectivenessStats: StatLine[] = [
+  {
+    i18n: 'Research1x4',
+    stat: () => 1 + player.researches[4] / 10 * CalcECC('ascension', player.challengecompletions[14]),
+    displayCriterion: () => {
+      const reincarnationCount = player.reincarnationCount
+      const singularity = player.highestSingularityCount
+      return reincarnationCount >= 1 || singularity >= 1
+    }
+  },
+  {
+    i18n: 'Research2x6',
+    stat: () => 1 + player.researches[21] / 100,
+    displayCriterion: () => {
+      const reincarnationCount = player.reincarnationCount
+      const singularity = player.highestSingularityCount
+      return reincarnationCount >= 1 || singularity >= 1
+    }
+  },
+  {
+    i18n: 'Research4x15',
+    stat: () => 1 + player.researches[90] / 100,
+    displayCriterion: () => {
+      const chal8 = player.highestchallengecompletions[8]
+      const singularity = player.highestSingularityCount
+      return chal8 >= 1 || singularity >= 1
+    }
+  },
+  {
+    i18n: 'Research6x6',
+    stat: () => 1 + player.researches[131] / 200,
+    displayCriterion: () => {
+      const ascCount = player.ascensionCount
+      const singularity = player.highestSingularityCount
+      return ascCount >= 1 || singularity >= 1
+    }
+  },
+  {
+    i18n: 'Research6x21',
+    stat: () => 1 + ((player.researches[146] / 200) * 4) / 5,
+    displayCriterion: () => {
+      const chal11 = player.highestchallengecompletions[11]
+      const singularity = player.highestSingularityCount
+      return chal11 >= 1 || singularity >= 1
+    }
+  },
+  {
+    i18n: 'Research7x11',
+    stat: () => 1 + ((player.researches[161] / 200) * 3) / 5,
+    displayCriterion: () => {
+      const chal12 = player.highestchallengecompletions[12]
+      const singularity = player.highestSingularityCount
+      return chal12 >= 1 || singularity >= 1
+    }
+  },
+  {
+    i18n: 'Research8x1',
+    stat: () => 1 + ((player.researches[176] / 200) * 2) / 5,
+    displayCriterion: () => {
+      const chal13 = player.highestchallengecompletions[13]
+      const singularity = player.highestSingularityCount
+      return chal13 >= 1 || singularity >= 1
+    }
+  },
+  {
+    i18n: 'Research8x16',
+    stat: () => 1 + ((player.researches[191] / 200) * 1) / 5,
+    displayCriterion: () => {
+      const chal14 = player.highestchallengecompletions[14]
+      const singularity = player.highestSingularityCount
+      return chal14 >= 1 || singularity >= 1
+    }
+  },
+  {
+    i18n: 'ConstantUpgrade9',
+    stat: () =>
+      1 + ((0.01 * Math.log(player.talismanShards + 1)) / Math.log(4))
+        * Math.min(1, player.constantUpgrades[9]),
+    displayCriterion: () => {
+      const ascCount = player.ascensionCount
+      const singularity = player.highestSingularityCount
+      return ascCount >= 1 || singularity >= 1
+    }
+  },
+  {
+    i18n: 'Challenge15',
+    stat: () => G.challenge15Rewards.runeBonus.value,
+    displayCriterion: () => {
+      const chal14 = player.highestchallengecompletions[14]
+      const singularity = player.highestSingularityCount
+      return chal14 >= 1 || singularity >= 1
+    }
+  },
+  {
+    i18n: 'MidasTribute',
+    stat: () => G.cubeBonusMultiplier[9],
+    displayCriterion: () => {
+      const ascCount = player.ascensionCount
+      const singularity = player.highestSingularityCount
+      return ascCount >= 1 || singularity >= 1
+    }
+  }
+]
+
+export const runeEffectivenessStatsSI: StatLine[] = [
+  {
+    i18n: 'Research4x9',
+    stat: () => 1 + player.researches[84] / 200,
+    displayCriterion: () => {
+      const chal8 = player.highestchallengecompletions[8]
+      const singularity = player.highestSingularityCount
+      return chal8 >= 1 || singularity >= 1
+    }
   }
 ]
 
@@ -2726,6 +2853,7 @@ const associated = new Map<string, string>([
   ['kBaseOffering', 'baseOfferingStats'],
   ['kOfferingMult', 'offeringMultiplierStats'],
   ['kBaseObtainium', 'baseObtainiumStats'],
+  ['kRuneEffectMult', 'runeEffectMultiplierStats'],
   ['kObtIgnoreDR', 'obtainiumIgnoreDRStats'],
   ['kObtMult', 'obtainiumMultiplierStats'],
   ['kGlobalCubeMult', 'globalCubeMultiplierStats'],
@@ -2783,6 +2911,10 @@ export const loadStatisticsUpdate = () => {
         break
       case 'offeringMultiplierStats':
         loadStatisticsOfferingMultipliers()
+        break
+      case 'runeEffectMultiplierStats':
+        loadStatisticsRuneEffectMultFirstFive()
+        loadStatisticsRuneEffectMultSI()
         break
       case 'baseObtainiumStats':
         loadStatisticsObtainiumBase()
@@ -3016,6 +3148,26 @@ export const loadStatisticsOfferingMultipliers = () => {
     'OfferingStat2',
     calculateOfferings,
     'Total2'
+  )
+}
+
+export const loadStatisticsRuneEffectMultFirstFive = () => {
+  loadStatistics(
+    firstFiveRuneEffectivenessStats,
+    'runeEffectFirstFive',
+    'statREMFF',
+    'RuneEffectivenessStatFirstFive',
+    firstFiveEffectiveRuneLevelMult
+  )
+}
+
+export const loadStatisticsRuneEffectMultSI = () => {
+  loadStatistics(
+    runeEffectivenessStatsSI,
+    'runeEffectSI',
+    'statREMSI',
+    'RuneEffectivenessStatSI',
+    () => firstFiveEffectiveRuneLevelMult() * SIEffectiveRuneLevelMult()
   )
 }
 

@@ -3597,7 +3597,8 @@
     "gainExp": "Gain {{amount}}x EXP per offering sacrificed.",
     "recycleChance": "You have {{percent}}% chance of recycling your offerings. This multiplies EXP gain by {{mult}}!",
     "hover": "Hey, hover over a rune icon to get details on what each one does and what benefits they're giving you!",
-    "thanksResearches": "Thanks to researches, your effective levels are increased by {{percent}}%",
+    "thanksResearches": "The effect of the first five Runes is increased by {{percent}}%",
+    "offeringInvested": "<<orange | Invested <b>{{amount}}</b> Offerings>>",
     "speed": {
       "name": "Speed Rune",
       "description": "An energy emanates from this stone. You feel compelled to inscribe power into it with your Offerings.",
@@ -4012,6 +4013,7 @@
       "baseOffering": "Base Offerings",
       "offeringMult": "Offering Multipliers",
       "baseObtainium": "Base Obtainium",
+      "runeEffectMult": "Rune Effectiveness",
       "obtIgnoreDR": "Immaculate Obtainium",
       "obtMult": "Obtainium Multipliers",
       "quarkMult": "Global Quark Multipliers",
@@ -4253,6 +4255,7 @@
       "TutorialBonus": "Campaign - Tutorial Bonus:",
       "CampaignBonus": "Campaign - Offering Bonus:",
       "Challenge12": "Challenge 12:",
+      "ThriftSpirit": "Thrift Spirit Bonus:",
       "Research8x25": "Research 8x25:",
       "AscensionAchievement": "Ascension Count Achievement:",
       "SunMoonAchievements": "Sun & Moon Achievements:",
@@ -4286,6 +4289,26 @@
       "Total": "Offering Multiplier:",
       "HalfMind": "HALF MIND Modifier:",
       "Total2": "Final Offerings Gained:"
+    },
+    "runeEffectFirstFive": {
+      "title": "First Five Runes - Rune Effectiveness Multiplier",
+      "Research1x4": "Research 1x4:",
+      "Research2x6": "Research 2x6:",
+      "Research4x15": "Research 4x15:",
+      "Research6x6": "Research 6x6:",
+      "Research6x21": "Research 6x21:",
+      "Research7x11": "Research 7x11:",
+      "Research8x1": "Research 8x1:",
+      "Research8x16": "Research 8x16:",
+      "ConstantUpgrade9": "Constant Upgrade 9:",
+      "Challenge15": "Challenge 15:",
+      "MidasTribute": "Midas Tribute:",
+      "Total": "Total Multiplier for first five Runes"    
+    },
+    "runeEffectSI": {
+      "title": "Superior Intellect - Specific Rune Effectiveness Multiplier",
+      "Research4x9": "Research 4x9:",
+      "Total": "Total SI Rune Effectiveness Multiplier"
     },
     "globalQuarkMultiplierStats": {
       "title": "Quark Multiplier",
@@ -4760,7 +4783,7 @@
         "6": "Artemis' Tribute x{{amount}}: +{{bonus}}% Ant Speed",
         "7": "Ares' Tribute x{{amount}}: +{{bonus}}% Sacrifice Reward",
         "8": "Moloch's Tribute x{{amount}}: +{{bonus}}% Effective ELO (additive)",
-        "9": "Midas' Tribute x{{amount}}: +{{bonus}} Bonus Rune Levels on Talismans",
+        "9": "Midas' Tribute x{{amount}}: +{{bonus}}% Effective Rune Levels",
         "10": "Chronos' Tribute x{{amount}}: +{{bonus}}% Global Time Acceleration"
       }
     },

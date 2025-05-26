@@ -13,6 +13,7 @@ import { DOMCacheGetOrSet } from './Cache/DOM'
 import { formatAsPercentIncrease } from './Campaign'
 import { CalcECC } from './Challenges'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
+import { firstFiveRuneEffectivenessStats, runeEffectivenessStatsSI } from './Statistics'
 import { getTalisman, getTalismanBonus } from './Talismans'
 import { productContents, sumContents } from './Utility'
 
@@ -355,11 +356,16 @@ class RuneBlessing<K extends RuneBlessingKeys> extends AbstractRune<K> {
   }
 
   updateRuneHTML () {
-    const levelsToDisplay = Math.min(player.runeBlessingBuyAmount, this.getLevelEstimate(player.offerings) - this.level)
+    const levelsToDisplay = Math.min(
+      player.runeBlessingBuyAmount,
+      Math.max(1, this.getLevelEstimate(player.offerings) - this.level)
+    )
 
-    DOMCacheGetOrSet(`${this.key}RuneBlessingLevel`).innerHTML = i18next.t('runes.blessings.blessingLevel', {
-      amount: format(this.level, 0, true)
-    })
+    DOMCacheGetOrSet(`${this.key}RuneBlessingLevel`).innerHTML = `${
+      i18next.t('runes.blessings.blessingLevel', {
+        amount: format(this.level, 0, true)
+      })
+    } <br> ${i18next.t('runes.offeringInvested', { amount: format(this.runeEXP, 0, false) })}`
     DOMCacheGetOrSet(`${this.key}RuneBlessingPurchase`).innerHTML = i18next.t('runes.blessings.increaseLevel', {
       amount: format(levelsToDisplay, 0, true),
       offerings: format(this.computeOfferingsToLevel(this.level + levelsToDisplay), 0, false)
@@ -411,11 +417,16 @@ class RuneSpirit<K extends RuneSpiritKeys> extends AbstractRune<K> {
   }
 
   updateRuneHTML () {
-    const levelsToDisplay = Math.min(player.runeSpiritBuyAmount, this.getLevelEstimate(player.offerings) - this.level)
+    const levelsToDisplay = Math.min(
+      player.runeSpiritBuyAmount,
+      Math.max(1, this.getLevelEstimate(player.offerings) - this.level)
+    )
 
-    DOMCacheGetOrSet(`${this.key}RuneSpiritLevel`).innerHTML = i18next.t('runes.spirits.spiritLevel', {
-      amount: format(this.level, 0, true)
-    })
+    DOMCacheGetOrSet(`${this.key}RuneSpiritLevel`).innerHTML = `${
+      i18next.t('runes.spirits.spiritLevel', {
+        amount: format(this.level, 0, true)
+      })
+    } <br> ${i18next.t('runes.offeringInvested', { amount: format(this.runeEXP, 0, false) })}`
     DOMCacheGetOrSet(`${this.key}RuneSpiritPurchase`).innerHTML = i18next.t('runes.blessings.increaseLevel', {
       amount: format(levelsToDisplay, 0, true),
       offerings: format(this.computeOfferingsToLevel(this.level + levelsToDisplay), 0, false)
@@ -565,26 +576,11 @@ export const superiorIntellectOOMIncrease = () => {
 }
 
 export const firstFiveEffectiveRuneLevelMult = () => {
-  return productContents([
-    1 + player.researches[4] / 10 * CalcECC('ascension', player.challengecompletions[14]), // Research 1x4
-    1 + player.researches[21] / 100, // Research 2x6
-    1 + player.researches[90] / 100, // Research 4x15
-    1 + player.researches[131] / 200, // Research 6x6
-    1 + ((player.researches[161] / 200) * 3) / 5, // Research 7x11
-    1 + ((player.researches[176] / 200) * 2) / 5, // Research 8x1
-    1 + ((player.researches[191] / 200) * 1) / 5, // Research 8x16
-    1 + ((player.researches[146] / 200) * 4) / 5, // Research 6x21
-    1 + ((0.01 * Math.log(player.talismanShards + 1)) / Math.log(4))
-      * Math.min(1, player.constantUpgrades[9]), // Constant Upgrade 9
-    G.challenge15Rewards.runeBonus.value,
-    G.cubeBonusMultiplier[9] // Midas Tribute
-  ])
+  return firstFiveRuneEffectivenessStats.reduce((x, y) => x * y.stat(), 1)
 }
 
 export const SIEffectiveRuneLevelMult = () => {
-  return productContents([
-    1 + 1 / 200 * player.researches[84]
-  ])
+  return runeEffectivenessStatsSI.reduce((x, y) => x * y.stat(), 1)
 }
 
 export const universalRuneEXPMult = (purchasedLevels: number): Decimal => {
