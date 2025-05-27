@@ -3039,8 +3039,13 @@ export const loadStatistics = (
       createdStatLines += 1
     }
 
+    const statLine = DOMCacheGetOrSet(statHTMLName)
     const statNumber = DOMCacheGetOrSet(statNumHTMLName)
 
+    if (obj.displayCriterion) {
+      statLine.style.display = obj.displayCriterion() ? 'block' : 'none'
+    }
+    
     const accuracy = obj.acc ?? 2
     const num = obj.stat()
 

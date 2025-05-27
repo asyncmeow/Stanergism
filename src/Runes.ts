@@ -1054,7 +1054,7 @@ export const runeBlessingData: { [K in RuneBlessingKeys]: RuneBlessingData<K> } 
     levelsPerOOM: 25,
     levelsPerOOMIncrease: () => 0,
     rewards: (level) => {
-      const globalSpeed = 1 + level / 10000
+      const globalSpeed = 1 + level / 1000000
       return {
         desc: i18next.t('runes.blessings.rewards.speed', {
           effect: format(globalSpeed, 3, true)
@@ -1073,7 +1073,7 @@ export const runeBlessingData: { [K in RuneBlessingKeys]: RuneBlessingData<K> } 
     levelsPerOOM: 25,
     levelsPerOOMIncrease: () => 0,
     rewards: (level) => {
-      const multiplierBoosts = 1 + level / 10000
+      const multiplierBoosts = 1 + level / 1000000
       return {
         desc: i18next.t('runes.blessings.rewards.duplication', {
           effect: format(multiplierBoosts, 3, true)
@@ -1092,7 +1092,7 @@ export const runeBlessingData: { [K in RuneBlessingKeys]: RuneBlessingData<K> } 
     levelsPerOOM: 25,
     levelsPerOOMIncrease: () => 0,
     rewards: (level) => {
-      const antSacrificeMult = 1 + level / 10000
+      const antSacrificeMult = 1 + level / 1000000
       return {
         desc: i18next.t('runes.blessings.rewards.prism', {
           effect: format(antSacrificeMult, 3, true)
@@ -1111,7 +1111,7 @@ export const runeBlessingData: { [K in RuneBlessingKeys]: RuneBlessingData<K> } 
     levelsPerOOM: 25,
     levelsPerOOMIncrease: () => 0,
     rewards: (level) => {
-      const accelBoostCostDelay = 1 + level / 10000
+      const accelBoostCostDelay = 1 + level / 1000000
       return {
         desc: i18next.t('runes.blessings.rewards.thrift', {
           effect: format(accelBoostCostDelay, 3, true)
@@ -1130,7 +1130,7 @@ export const runeBlessingData: { [K in RuneBlessingKeys]: RuneBlessingData<K> } 
     levelsPerOOM: 25,
     levelsPerOOMIncrease: () => 0,
     rewards: (level) => {
-      const obtToAntExponent = Math.log(1 + level / 10000)
+      const obtToAntExponent = Math.log(1 + level / 1000000)
       return {
         desc: i18next.t('runes.blessings.rewards.superiorIntellect', {
           effect: format(obtToAntExponent, 3, true),
@@ -1251,7 +1251,7 @@ export const runeSpiritData: { [K in RuneSpiritKeys]: RuneSpiritData<K> } = {
     levelsPerOOM: 12,
     levelsPerOOMIncrease: () => 0,
     rewards: (level) => {
-      const globalSpeed = Math.pow(1 + Math.log(1 + level / 1e8), 1.25)
+      const globalSpeed = 1 + level / 1e9
       return {
         desc: i18next.t('runes.spirits.rewards.speed', {
           effect: format(globalSpeed, 3, true)
@@ -1270,7 +1270,7 @@ export const runeSpiritData: { [K in RuneSpiritKeys]: RuneSpiritData<K> } = {
     levelsPerOOM: 12,
     levelsPerOOMIncrease: () => 0,
     rewards: (level) => {
-      const wowCubes = 1 + level / 1000000
+      const wowCubes = 1 + level / 1e9
       return {
         desc: i18next.t('runes.spirits.rewards.duplication', {
           effect: format(wowCubes, 3, true)
@@ -1289,7 +1289,7 @@ export const runeSpiritData: { [K in RuneSpiritKeys]: RuneSpiritData<K> } = {
     levelsPerOOM: 12,
     levelsPerOOMIncrease: () => 0,
     rewards: (level) => {
-      const crystalCaps = 1 + level / 1000000
+      const crystalCaps = 1 + level / 1e9
       return {
         desc: i18next.t('runes.spirits.rewards.prism', {
           effect: format(crystalCaps, 3, true)
@@ -1308,7 +1308,7 @@ export const runeSpiritData: { [K in RuneSpiritKeys]: RuneSpiritData<K> } = {
     levelsPerOOM: 12,
     levelsPerOOMIncrease: () => 0,
     rewards: (level) => {
-      const offerings = 1 + level / 1000000
+      const offerings = 1 + level / 1e9
       return {
         desc: i18next.t('runes.spirits.rewards.thrift', {
           effect: format(offerings, 3, true)
@@ -1327,7 +1327,8 @@ export const runeSpiritData: { [K in RuneSpiritKeys]: RuneSpiritData<K> } = {
     levelsPerOOM: 12,
     levelsPerOOMIncrease: () => 0,
     rewards: (level) => {
-      const obtainium = 1 + level / 1000000
+      const obtainium = 1 + level / 1e9
+      
       return {
         desc: i18next.t('runes.spirits.rewards.superiorIntellect', {
           effect: format(obtainium, 3, true)
