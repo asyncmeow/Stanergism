@@ -4,6 +4,7 @@ import i18next from 'i18next'
 import { z } from 'zod'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { calculateAmbrosiaGenerationSpeed, calculateOffline, calculateRedAmbrosiaGenerationSpeed } from './Calculate'
+import { prod } from './Config'
 import { updateGlobalsIsEvent } from './Event'
 import { addTimers, automaticTools } from './Helper'
 import { importSynergism } from './ImportExport'
@@ -193,7 +194,7 @@ interface SynergismNotLoggedInResponse extends SynergismUserAPIResponse {
 type CloudSave = null | { save: string }
 
 export async function handleLogin () {
-  const subtabElement = document.querySelector('#accountSubTab > div.scrollbarX')!
+  const subtabElement = document.querySelector('#accountSubTab div#left.scrollbarX')!
   const currentBonus = DOMCacheGetOrSet('currentBonus')
 
   const logoutElement = document.getElementById('logoutButton')
@@ -237,7 +238,7 @@ export async function handleLogin () {
 
   currentBonus.textContent = `Generous patrons give you a bonus of ${globalBonus}% more Quarks!`
 
-  if (location.hostname !== 'synergism.cc') {
+  if (location.hostname !== 'synergism.cc' && prod) {
     // TODO: better error, make link clickable, etc.
     subtabElement.textContent = 'Login is not available here, go to https://synergism.cc instead!'
   } else if (accountType === 'discord' || accountType === 'patreon' || accountType === 'email') {
@@ -377,6 +378,7 @@ export async function handleLogin () {
 
   if (loggedIn) {
     handleWebSocket()
+    handleCloudSaves()
   }
 }
 
@@ -735,4 +737,44 @@ const activateTimeSkip = (name: PseudoCoinTimeskipNames, minutes: number) => {
       Notification('You have activated a JUMBO ambrosia timeskip! Enjoy!')
       break
   }
+}
+
+function handleCloudSaves () {
+  const subtabElement = document.querySelector('#accountSubTab div#right.scrollbarX')!
+  // const table = subtabElement.querySelector('#table')
+
+  const uploadButton = subtabElement.querySelector<HTMLButtonElement>('button#upload')
+
+  // Handle uploading savefiles
+  uploadButton?.addEventListener('click', function(this: typeof uploadButton) {
+    this.disabled = true
+    const originalText = this.textContent
+    this.innerHTML = '<span class="spinner"></span> Uploading...'
+
+    const save = localStorage.getItem('Synergysave2')
+    assert(save !== null, 'no save')
+
+    const fd = new FormData()
+    fd.set('file', new File([save], player.saveString))
+    fd.set('name', player.saveString)
+
+    fetch('/saves/upload', {
+      method: 'POST',
+      body: fd
+    }).then((response) => {
+      if (!response.ok) {
+        throw new TypeError(`Received status ${response.status}`)
+      }
+
+      this.textContent = i18next.t('settings.cloud.uploadSuccess')
+    }).catch((e) => {
+      console.error(e)
+      this.textContent = i18next.t('settings.cloud.uploadFailed')
+    }).finally(() => {
+      setTimeout(() => {
+        this.disabled = false
+        this.textContent = originalText
+      }, 5000)
+    })
+  })
 }

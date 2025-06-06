@@ -3045,7 +3045,7 @@ export const loadStatistics = (
     if (obj.displayCriterion) {
       statLine.style.display = obj.displayCriterion() ? 'block' : 'none'
     }
-    
+
     const accuracy = obj.acc ?? 2
     const num = obj.stat()
 

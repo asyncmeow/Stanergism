@@ -1,5 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { setupWorker } from 'msw/browser'
+import { cloudSaveHandlers } from './handlers/CloudSaveHandlers'
 import { consumeHandlers } from './websocket'
 
 const GETHandlers = [
@@ -1152,8 +1153,6 @@ const PUTHandlers = [
     const { id } = params
 
     // TODO: Mock buying beyond level 1
-    // I was able to confirm that the new upgrades all worked on the frontend
-    // April 29, 2025
     return HttpResponse.json({
       upgradeId: Number(id),
       level: 1
@@ -1208,5 +1207,6 @@ export const worker = setupWorker(
   }),
   ...GETHandlers,
   ...PUTHandlers,
-  ...consumeHandlers
+  ...consumeHandlers,
+  ...cloudSaveHandlers
 )

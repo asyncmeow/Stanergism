@@ -4005,6 +4005,11 @@
       "inactive": "<<var(--orchid-text-color);|Event Status:>> INACTIVE",
       "activeUntil": "ACTIVE UNTIL: {{x}}",
       "starts": "STARTS {{x}}"
+    },
+    "cloud": {
+      "upload": "Upload Save",
+      "uploadSuccess": "✅ Uploaded Your Save",
+      "uploadFailed": "❌ Failed to Upload"
     }
   },
   "statistics": {

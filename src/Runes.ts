@@ -1328,7 +1328,7 @@ export const runeSpiritData: { [K in RuneSpiritKeys]: RuneSpiritData<K> } = {
     levelsPerOOMIncrease: () => 0,
     rewards: (level) => {
       const obtainium = 1 + level / 1e9
-      
+
       return {
         desc: i18next.t('runes.spirits.rewards.superiorIntellect', {
           effect: format(obtainium, 3, true)
