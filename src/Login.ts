@@ -7,7 +7,7 @@ import { calculateAmbrosiaGenerationSpeed, calculateOffline, calculateRedAmbrosi
 import { prod } from './Config'
 import { updateGlobalsIsEvent } from './Event'
 import { addTimers, automaticTools } from './Helper'
-import { importSynergism } from './ImportExport'
+import { importSynergism, saveFilename } from './ImportExport'
 import { updatePseudoCoins } from './purchases/UpgradesSubtab'
 import { QuarkHandler, setQuarkBonus } from './Quark'
 import { format, player, saveSynergy } from './Synergism'
@@ -32,6 +32,13 @@ interface Consumable {
   ends: number[]
   amount: number
   displayName: string
+}
+
+interface Save {
+  id: number
+  name: string
+  uploadedAt: string
+  save: string
 }
 
 // Consts for Patreon Supporter Roles.
@@ -741,9 +748,59 @@ const activateTimeSkip = (name: PseudoCoinTimeskipNames, minutes: number) => {
 
 function handleCloudSaves () {
   const subtabElement = document.querySelector('#accountSubTab div#right.scrollbarX')!
-  // const table = subtabElement.querySelector('#table')
+  const table = subtabElement.querySelector('#table > #dataGrid')!
 
   const uploadButton = subtabElement.querySelector<HTMLButtonElement>('button#upload')
+
+  function populateTable () {
+    fetch('/saves/retrieve/metadata')
+      .then((response) => response.json())
+      .then((saves: Omit<Save, 'save'>[]) => {
+        const existingRows = table.querySelectorAll('.grid-row')
+        existingRows.forEach((row) => row.remove())
+
+        if (saves.length === 0) {
+          const emptyDiv = document.createElement('div')
+          emptyDiv.className = 'grid-row empty-state'
+          emptyDiv.style.gridColumn = '1 / -1'
+          emptyDiv.textContent = 'No saves available'
+          table.appendChild(emptyDiv)
+          return
+        }
+
+        saves.forEach(({ id, name, uploadedAt }, index) => {
+          const rowDiv = document.createElement('div')
+          rowDiv.className = 'grid-row'
+          rowDiv.style.display = 'contents'
+
+          const idCell = document.createElement('div')
+          idCell.className = 'grid-cell id-cell'
+          idCell.textContent = `#${id}`
+
+          const nameCell = document.createElement('div')
+          nameCell.className = 'grid-cell name-cell'
+          nameCell.textContent = name.length > 60 ? `${name.slice(0, 60)}...` : name
+
+          const dateCell = document.createElement('div')
+          dateCell.className = 'grid-cell date-cell'
+          dateCell.textContent = new Date(uploadedAt).toLocaleString()
+
+          rowDiv.appendChild(idCell)
+          rowDiv.appendChild(nameCell)
+          rowDiv.appendChild(dateCell)
+
+          if (index % 2 === 0) {
+            idCell.classList.add('alt-row')
+            nameCell.classList.add('alt-row')
+            dateCell.classList.add('alt-row')
+          }
+
+          table.appendChild(rowDiv)
+        })
+      })
+  }
+
+  populateTable()
 
   // Handle uploading savefiles
   uploadButton?.addEventListener('click', function(this: typeof uploadButton) {
@@ -754,9 +811,11 @@ function handleCloudSaves () {
     const save = localStorage.getItem('Synergysave2')
     assert(save !== null, 'no save')
 
+    const name = saveFilename()
+
     const fd = new FormData()
-    fd.set('file', new File([save], player.saveString))
-    fd.set('name', player.saveString)
+    fd.set('file', new File([save], name))
+    fd.set('name', name)
 
     fetch('/saves/upload', {
       method: 'POST',
@@ -767,6 +826,7 @@ function handleCloudSaves () {
       }
 
       this.textContent = i18next.t('settings.cloud.uploadSuccess')
+      populateTable()
     }).catch((e) => {
       console.error(e)
       this.textContent = i18next.t('settings.cloud.uploadFailed')
