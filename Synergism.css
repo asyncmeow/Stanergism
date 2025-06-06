@@ -4313,6 +4313,100 @@ img#singularityPerksIcon {
     font-size: 14px;
 }
 
+#accountSubTab div#right.scrollbarX > #table > .grid-table .grid-details-row {
+    background: var(--alert-color);
+    border-left: 3px solid #007bff;
+    margin: 0;
+    padding: 0;
+}
+
+/* Details content container */
+.details-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+    gap: 20px;
+}
+
+/* Details actions section */
+.details-actions {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.details-actions button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.details-actions .btn-download {
+    background: var(--success-color, #28a745);
+    color: white;
+}
+
+.details-actions .btn-download:hover {
+    background: var(--success-hover, #218838);
+}
+
+.details-actions .btn-load {
+    background: var(--primary-color, #007bff);
+    color: white;
+}
+
+.details-actions .btn-load:hover {
+    background: var(--primary-hover, #0056b3);
+}
+
+.details-actions .btn-delete {
+    background: var(--danger-color, #dc3545);
+    color: white;
+}
+
+.details-actions .btn-delete:hover {
+    background: var(--danger-hover, #c82333);
+}
+
+/* Add hover effect to main rows to indicate they're clickable */
+#accountSubTab div#right.scrollbarX > #table > .grid-table .grid-row:hover .grid-cell {
+    background: var(--hover-color, rgb(0 123 255 / 10%));
+}
+
+/* Smooth animation for expanding rows */
+.grid-details-row {
+    animation: slide-down 0.2s ease-out;
+}
+
+@keyframes slide-down {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .details-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .details-actions {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+}
+
 #pixelProgressBar {
     width: 25%;
     height: 30px;

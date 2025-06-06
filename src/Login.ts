@@ -752,12 +752,20 @@ function handleCloudSaves () {
 
   const uploadButton = subtabElement.querySelector<HTMLButtonElement>('button#upload')
 
+  const saves: Omit<Save, 'save'>[] = []
+
   function populateTable () {
     fetch('/saves/retrieve/metadata')
       .then((response) => response.json())
-      .then((saves: Omit<Save, 'save'>[]) => {
+      .then(($saves: Omit<Save, 'save'>[]) => {
+        saves.length = 0
+        saves.push(...$saves)
+
         const existingRows = table.querySelectorAll('.grid-row')
         existingRows.forEach((row) => row.remove())
+
+        const content = table.querySelector('.details-content')
+        content?.remove()
 
         if (saves.length === 0) {
           const emptyDiv = document.createElement('div')
@@ -795,8 +803,70 @@ function handleCloudSaves () {
             dateCell.classList.add('alt-row')
           }
 
+          // Create the expandable details row
+          const detailsRow = document.createElement('div')
+          detailsRow.className = 'grid-details-row'
+          detailsRow.style.display = 'none'
+          detailsRow.style.gridColumn = '1 / -1'
+
+          const detailsContent = document.createElement('div')
+          detailsContent.className = 'details-content'
+          detailsContent.innerHTML = `
+            <div class="details-actions">
+              <button class="btn-download" data-id="${id}">Download</button>
+              <button class="btn-load" data-id="${id}">Load Save</button>
+              <button class="btn-delete" data-id="${id}">Delete</button>
+            </div>
+          `
+
+          detailsRow.appendChild(detailsContent)
+
+          rowDiv.addEventListener('click', () => {
+            const isVisible = detailsRow.style.display !== 'none'
+
+            const allDetailsRows = table.querySelectorAll<HTMLElement>('.grid-details-row')
+            allDetailsRows.forEach((row) => {
+              if (row !== detailsRow) {
+                row.style.display = 'none'
+              }
+            })
+
+            detailsRow.style.display = isVisible ? 'none' : 'block'
+          })
+
+          detailsContent.addEventListener('click', (e) => {
+            e.stopPropagation()
+
+            const target = e.target as HTMLElement
+            const saveId = target.getAttribute('data-id')!
+
+            if (target.classList.contains('btn-download')) {
+              handleDownload(saveId)
+            } else if (target.classList.contains('btn-load')) {
+              handleLoadSave(saveId)
+            } else if (target.classList.contains('btn-delete')) {
+              handleDeleteSave(saveId)
+            }
+          })
+
           table.appendChild(rowDiv)
+          table.appendChild(detailsRow)
         })
+
+        function handleDownload (saveId: string) {
+          console.log('Downloading save:', saveId)
+          // TODO
+        }
+
+        function handleLoadSave (saveId: string) {
+          console.log('Loading save:', saveId)
+          // TODO
+        }
+
+        function handleDeleteSave (saveId: string) {
+          console.log('Deleting save:', saveId)
+          // TODO
+        }
       })
   }
 
