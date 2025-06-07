@@ -456,5 +456,27 @@ export const singularityChallengeData: Record<
         shopUpgrade3: n >= 30
       }
     }
+  },
+  noOfferingPower: {
+    baseReq: 250,
+    maxCompletions: 30,
+    unlockSingularity: 1,
+    HTMLTag: 'noOfferingPower',
+    singularityRequirement: (baseReq: number, completions: number) => {
+      return baseReq + completions
+    },
+    scalingrewardcount: 4,
+    uniquerewardcount: 3,
+    effect: (n: number) => {
+      return {
+        horseShoeUnlock: n > 0,
+        shopUpgrade: n >= 15,
+        talismanUnlock: n >= 30,
+        talismanFreeLevel: 10 * n,
+        talismanRuneEffect: 0.01 * n,
+        antiquityOOM: 1 / 50 * n / 30,
+        horseShoeOOM: 1 / 16 * n / 30
+      }
+    }
   }
 }

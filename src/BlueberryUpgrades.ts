@@ -1,6 +1,7 @@
 import i18next from 'i18next'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { calculateAmbrosiaLuck, calculateBlueberryInventory } from './Calculate'
+import { formatAsPercentIncrease } from './Campaign'
 import { DynamicUpgrade } from './DynamicUpgrade'
 import type { IUpgradeData } from './DynamicUpgrade'
 import { exportData, saveFilename } from './ImportExport'
@@ -776,6 +777,27 @@ export const blueberryUpgradeData: Record<
     },
     extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow5').bonus.freeLevels
   },
+  ambrosiaLuck4: {
+    maxLevel: 50,
+    costPerLevel: 250000,
+    blueberryCost: 5,
+    costFormula: (level, baseCost): number => {
+      return baseCost + 20000 * level
+    },
+    rewards: (n: number) => {
+      const digits = Math.ceil(Math.log10(player.lifetimeRedAmbrosia + 1))
+        + Math.ceil(Math.log10(player.lifetimeAmbrosia + 1))
+      return {
+        ambrosiaLuck: digits * n,
+        desc: String(
+          i18next.t('ambrosia.data.ambrosiaLuck4.effect', {
+            amount: format(digits * n, 0, true)
+          })
+        )
+      }
+    },
+    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow5').bonus.freeLevels
+  },
   ambrosiaPatreon: {
     maxLevel: 1,
     costPerLevel: 1,
@@ -1049,6 +1071,51 @@ export const blueberryUpgradeData: Record<
       }
     },
     extraLevelCalc: () => 0,
+    ignoreEXALT: true
+  },
+  ambrosiaTalismanBonusRuneLevel: {
+    maxLevel: 100,
+    costPerLevel: 100,
+    blueberryCost: 0,
+    costFormula: (level: number, baseCost: number): number => {
+      return baseCost * (Math.pow(level + 1, 2) - Math.pow(level, 2))
+    },
+    rewards: (n: number) => {
+      const val = n / 200
+      return {
+        talismanBonusRuneLevel: val,
+        desc: String(
+          i18next.t('ambrosia.data.ambrosiaTalismanBonusRuneLevel.effect', {
+            amount: formatAsPercentIncrease(1 + val, 2)
+          })
+        )
+      }
+    },
+    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow2').bonus.freeLevels,
+    ignoreEXALT: true
+  },
+  ambrosiaRuneOOMBonus: {
+    maxLevel: 100,
+    costPerLevel: 2500,
+    blueberryCost: 0,
+    costFormula: (level: number, baseCost: number): number => {
+      return Math.ceil(baseCost * (Math.pow(level + 1, 1.5) - Math.pow(level, 1.5)))
+    },
+    rewards: (n: number) => {
+      const val = n
+      const val2 = n / 1000
+      return {
+        runeOOMBonus: val,
+        infiniteAscentOOMBonus: val2,
+        desc: String(
+          i18next.t('ambrosia.data.ambrosiaRuneOOMBonus.effect', {
+            amount: format(val, 0, false),
+            amount2: format(val2, 3, false)
+          })
+        )
+      }
+    },
+    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow4').bonus.freeLevels,
     ignoreEXALT: true
   }
 }

@@ -1676,6 +1676,66 @@ export const singularityData: Record<
         }
       }
     }
+  },
+  singTalismanBonusRunes1: {
+    maxLevel: 5,
+    costPerLevel: 25,
+    minimumSingularity: 1,
+    effect: (n: number) => {
+      return {
+        bonus: n / 100,
+        get desc () {
+          return i18next.t('singularity.data.singTalismanBonusRunes.effect', {
+            n: format(n, 0, true)
+          })
+        }
+      }
+    }
+  },
+  singTalismanBonusRunes2: {
+    maxLevel: 5,
+    costPerLevel: 10000,
+    minimumSingularity: 27,
+    effect: (n: number) => {
+      return {
+        bonus: n / 100,
+        get desc () {
+          return i18next.t('singularity.data.singTalismanBonusRunes2.effect', {
+            n: format(n, 0, true)
+          })
+        }
+      }
+    }
+  },
+  singTalismanBonusRunes3: {
+    maxLevel: 5,
+    costPerLevel: 1e8,
+    minimumSingularity: 99,
+    effect: (n: number) => {
+      return {
+        bonus: n / 100,
+        get desc () {
+          return i18next.t('singularity.data.singTalismanBonusRunes3.effect', {
+            n: format(n, 0, true)
+          })
+        }
+      }
+    }
+  },
+  singTalismanBonusRunes4: {
+    maxLevel: 10,
+    costPerLevel: 3e15,
+    minimumSingularity: 211,
+    effect: (n: number) => {
+      return {
+        bonus: n / 100,
+        get desc () {
+          return i18next.t('singularity.data.singTalismanBonusRunes4.effect', {
+            n: format(n, 0, true)
+          })
+        }
+      }
+    }
   }
 }
 
@@ -2424,6 +2484,18 @@ export const singularityPerks: SingularityPerk[] = [
       }
     },
     ID: 'infiniteShopUpgrades'
+  },
+  {
+    name: () => {
+      return i18next.t('singularity.perks.taxReduction.name')
+    },
+    levels: [281],
+    description: () => {
+      return i18next.t('singularity.perks.taxReduction.default', {
+        amt: format(50, 0)
+      })
+    },
+    ID: 'taxReduction'
   }
 ]
 

@@ -102,9 +102,9 @@ import {
   sumOfRuneLevels
 } from './Runes'
 import { shopData } from './Shop'
-import { calculateSingularityDebuff, getFastForwardTotalMultiplier } from './singularity'
+import { calculateSingularityDebuff, getFastForwardTotalMultiplier, singularityData } from './singularity'
 import { format, player } from './Synergism'
-import { getTalisman, sumOfTalismanRarities } from './Talismans'
+import { getTalisman, sumOfTalismanRarities, universalTalismanBonusMult } from './Talismans'
 import type { GlobalVariables } from './types/Synergism'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
@@ -1070,6 +1070,10 @@ export const allOfferingStats = [
     stat: () => G.challenge15Rewards.offering.value // C15 Reward
   },
   {
+    i18n: 'Antiquities',
+    stat: () => Math.pow(10, getRune('antiquities').bonus.offeringLog10) // Antiquities Rune
+  },
+  {
     i18n: 'SingularityDebuff',
     stat: () => 1 / calculateSingularityDebuff('Offering'), // Singularity Debuff
     color: 'red'
@@ -1528,6 +1532,10 @@ export const allObtainiumIgnoreDRStats: StatLine[] = [
   {
     i18n: 'PlatonicOMEGA',
     stat: () => 1 + 5 * player.platonicUpgrades[15] // Platonic OMEGA
+  },
+  {
+    i18n: 'Antiquities',
+    stat: () => Math.pow(10, getRune('antiquities').bonus.obtainiumLog10) // Antiquities Rune
   },
   {
     i18n: 'CubeUpgradeCx5',
@@ -2133,6 +2141,10 @@ export const allAdditiveLuckMultStats: StatLine[] = [
     i18n: 'Event',
     stat: () => G.isEvent ? calculateEventBuff(BuffType.AmbrosiaLuck) : 0, // Event
     color: 'lime'
+  },
+  {
+    i18n: 'HorseShoeTalisman',
+    stat: () => getTalisman('horseShoe').bonus.luckPercentage // Horseshoe Talisman
   }
 ]
 
@@ -2227,6 +2239,10 @@ export const allAmbrosiaLuckStats: StatLine[] = [
   {
     i18n: 'AmbrosiaUltra',
     stat: () => player.shopUpgrades.shopAmbrosiaUltra * sumOfExaltCompletions() // Ambrosia Ultra Shop Upgrade
+  },
+  {
+    i18n: 'HorseShoeRune',
+    stat: () => getRune('horseShoe').bonus.ambrosiaLuck // Horseshoe Rune
   }
 ]
 
@@ -2638,6 +2654,10 @@ export const allLuckConversionStats: StatLine[] = [
   {
     i18n: 'ShopRedLuck3',
     stat: () => -0.01 * Math.floor(player.shopUpgrades.shopRedLuck3 / 20) // Shop Red Luck III
+  },
+  {
+    i18n: 'HorseShoeRune',
+    stat: () => getRune('horseShoe').bonus.redLuckConversion // Horseshoe Rune
   }
 ]
 
@@ -2679,6 +2699,14 @@ export const allRedAmbrosiaLuckStats: StatLine[] = [
     i18n: 'Viscount',
     stat: () => getRedAmbrosiaUpgrade('viscount').bonus.redLuckBonus, // Viscount Red Ambrosia Upgrade
     color: 'red'
+  },
+  {
+    i18n: 'HorseShoeRune',
+    stat: () => getRune('horseShoe').bonus.redLuck // Horseshoe Rune
+  },
+  {
+    i18n: 'HorseShoeTalisman',
+    stat: () => getTalisman('horseShoe').bonus.redLuck // Horseshoe Talisman
   }
 ]
 
@@ -2781,6 +2809,148 @@ export const allShopTablets: StatLine[] = [
   }
 ]
 
+export const allTalismanRuneBonusStats: StatLine[] = [
+  {
+    i18n: 'Base',
+    stat: () => 1,
+    displayCriterion: () => {
+      const chal9 = player.highestchallengecompletions[9] >= 1
+      return chal9
+    }
+  },
+  {
+    i18n: 'Achievement135',
+    stat: () => {
+      const ach135 = player.achievements[135] === 1 ? 0.02 : 0
+      return ach135
+    },
+    displayCriterion: () => {
+      const chal9 = player.highestchallengecompletions[9] >= 1
+      return chal9
+    }
+  },
+  {
+    i18n: 'Achievement136',
+    stat: () => player.achievements[136] === 1 ? 0.02 : 0,
+    displayCriterion: () => {
+      const chal9 = player.highestchallengecompletions[9] >= 1
+      return chal9
+    }
+  },
+  {
+    i18n: 'Research106',
+    stat: () => player.researches[106] / 1000,
+    displayCriterion: () => {
+      const chal9 = player.highestchallengecompletions[9] >= 1
+      return chal9
+    }
+  },
+  {
+    i18n: 'Research107',
+    stat: () => player.researches[107] / 1000,
+    displayCriterion: () => {
+      const chal9 = player.highestchallengecompletions[9] >= 1
+      return chal9
+    }
+  },
+  {
+    i18n: 'Research116',
+    stat: () => player.researches[116] / 1000,
+    displayCriterion: () => {
+      const chal10 = player.highestchallengecompletions[10] >= 1
+      return chal10
+    }
+  },
+  {
+    i18n: 'Research117',
+    stat: () => player.researches[117] / 1000,
+    displayCriterion: () => {
+      const chal10 = player.highestchallengecompletions[10] >= 1
+      return chal10
+    }
+  },
+  {
+    i18n: 'Research118',
+    stat: () => 2 * player.researches[118] / 1000,
+    displayCriterion: () => {
+      const chal10 = player.highestchallengecompletions[10] >= 1
+      return chal10
+    }
+  },
+  {
+    i18n: 'Research200',
+    stat: () => 0.004 * Math.floor(player.researches[200] / 10000),
+    displayCriterion: () => {
+      const chal14 = player.highestchallengecompletions[14] >= 1
+      return chal14
+    }
+  },
+  {
+    i18n: 'CubeUpgrade50',
+    stat: () => 0.006 * Math.floor(player.cubeUpgrades[50] / 10000),
+    displayCriterion: () => {
+      const chal14 = player.highestchallengecompletions[14] >= 1
+      return chal14
+    }
+  },
+  {
+    i18n: 'Challenge15',
+    stat: () => G.challenge15Rewards.talismanBonus.value - 1,
+    displayCriterion: () => {
+      const chal15 = G.challenge15Rewards.talismanBonus.value > 1
+      return chal15
+    }
+  },
+  {
+    i18n: 'SingularityUpgrade1',
+    stat: () => +player.singularityUpgrades.singTalismanBonusRunes1.getEffect().bonus,
+    displayCriterion: () => {
+      const singStuff =
+        player.highestSingularityCount >= (singularityData.singTalismanBonusRunes1.minimumSingularity ?? 0)
+      return singStuff
+    }
+  },
+  {
+    i18n: 'SingularityUpgrade2',
+    stat: () => +player.singularityUpgrades.singTalismanBonusRunes2.getEffect().bonus,
+    displayCriterion: () => {
+      const singStuff =
+        player.highestSingularityCount >= (singularityData.singTalismanBonusRunes2.minimumSingularity ?? 0)
+      return singStuff
+    }
+  },
+  {
+    i18n: 'SingularityUpgrade3',
+    stat: () => +player.singularityUpgrades.singTalismanBonusRunes3.getEffect().bonus,
+    displayCriterion: () => {
+      const singStuff =
+        player.highestSingularityCount >= (singularityData.singTalismanBonusRunes3.minimumSingularity ?? 0)
+      return singStuff
+    }
+  },
+  {
+    i18n: 'SingularityUpgrade4',
+    stat: () => +player.singularityUpgrades.singTalismanBonusRunes4.getEffect().bonus,
+    displayCriterion: () => {
+      const singStuff =
+        player.highestSingularityCount >= (singularityData.singTalismanBonusRunes4.minimumSingularity ?? 0)
+      return singStuff
+    }
+  },
+  {
+    i18n: 'BlueberryUpgrade',
+    stat: () => +player.blueberryUpgrades.ambrosiaTalismanBonusRuneLevel.bonus.talismanBonusRuneLevel
+  },
+  {
+    i18n: 'NoOfferingPower',
+    stat: () => +player.singularityChallenges.noOfferingPower.rewards.talismanRuneEffect,
+    displayCriterion: () => {
+      const singStuff = player.highestSingularityCount >= 270
+      return singStuff
+    }
+  }
+]
+
 export const allMiscStats: StatLine[] = [
   {
     i18n: 'PrestigeCount',
@@ -2858,6 +3028,7 @@ const associated = new Map<string, string>([
   ['kObtMult', 'obtainiumMultiplierStats'],
   ['kGlobalCubeMult', 'globalCubeMultiplierStats'],
   ['kAntSacrificeMult', 'antSacrificeMultStats'],
+  ['kTalismanRuneBonusMult', 'talismanRuneBonusMultiplierStats'],
   ['kQuarkMult', 'globalQuarkMultiplierStats'],
   ['kGSpeedMultIgnoreDR', 'globalSpeedIgnoreDRStats'],
   ['kGSpeedMult', 'globalSpeedMultiplierStats'],
@@ -2936,6 +3107,9 @@ export const loadStatisticsUpdate = () => {
         break
       case 'antSacrificeMultStats':
         loadStatisticsAntSacrificeMult()
+        break
+      case 'talismanRuneBonusMultiplierStats':
+        loadTalismanRuneBonusMultiplierStats()
         break
       case 'powderMultiplierStats':
         loadStatisticsPowderMultiplier()
@@ -3045,7 +3219,7 @@ export const loadStatistics = (
     if (obj.displayCriterion) {
       statLine.style.display = obj.displayCriterion() ? 'block' : 'none'
     }
-    
+
     const accuracy = obj.acc ?? 2
     const num = obj.stat()
 
@@ -3401,6 +3575,16 @@ export const loadShopVoucherStats = () => {
 export const loadMiscellaneousStats = () => {
   loadStatistics(allMiscStats, 'miscStats', 'sMisc', 'miscStat', () => 0, '', false)
   DOMCacheGetOrSet('gameStageStatistic').innerHTML = i18next.t('statistics.gameStage', { stage: synergismStage(0) })
+}
+
+export const loadTalismanRuneBonusMultiplierStats = () => {
+  loadStatistics(
+    allTalismanRuneBonusStats,
+    'talismanRuneBonusMultiplierStats',
+    'statTRBM',
+    'TalismanRuneBonusStat',
+    universalTalismanBonusMult
+  )
 }
 
 export const c15RewardUpdate = () => {

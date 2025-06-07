@@ -82,18 +82,26 @@ export const playerUpdateVarSchema = playerSchema.transform((player) => {
 
   if (player.runeBlessingLevels !== undefined) {
     player.runeBlessings.speed = new Decimal(Math.pow(Math.min(1e140, player.runeBlessingLevels[1] ?? 0), 2) * 1e8 / 2)
-    player.runeBlessings.duplication = new Decimal(Math.pow(Math.min(1e140, player.runeBlessingLevels[2] ?? 0), 2) * 1e8 / 2)
+    player.runeBlessings.duplication = new Decimal(
+      Math.pow(Math.min(1e140, player.runeBlessingLevels[2] ?? 0), 2) * 1e8 / 2
+    )
     player.runeBlessings.prism = new Decimal(Math.pow(Math.min(1e140, player.runeBlessingLevels[3] ?? 0), 2) * 1e8 / 2)
     player.runeBlessings.thrift = new Decimal(Math.pow(Math.min(1e140, player.runeBlessingLevels[4] ?? 0), 2) * 1e8 / 2)
-    player.runeBlessings.superiorIntellect = new Decimal(Math.pow(Math.min(1e140, player.runeBlessingLevels[5] ?? 0), 2) * 1e8 / 2)
+    player.runeBlessings.superiorIntellect = new Decimal(
+      Math.pow(Math.min(1e140, player.runeBlessingLevels[5] ?? 0), 2) * 1e8 / 2
+    )
   }
 
   if (player.runeSpiritLevels !== undefined) {
     player.runeSpirits.speed = new Decimal(Math.pow(Math.min(1e140, player.runeSpiritLevels[1] ?? 0), 2) * 1e20 / 2)
-    player.runeSpirits.duplication = new Decimal(Math.pow(Math.min(1e140, player.runeSpiritLevels[2] ?? 0), 2) * 1e20 / 2)
+    player.runeSpirits.duplication = new Decimal(
+      Math.pow(Math.min(1e140, player.runeSpiritLevels[2] ?? 0), 2) * 1e20 / 2
+    )
     player.runeSpirits.prism = new Decimal(Math.pow(Math.min(1e140, player.runeSpiritLevels[3] ?? 0), 2) * 1e20 / 2)
     player.runeSpirits.thrift = new Decimal(Math.pow(Math.min(1e140, player.runeSpiritLevels[4] ?? 0), 2) * 1e20 / 2)
-    player.runeSpirits.superiorIntellect = new Decimal(Math.pow(Math.min(1e140, player.runeSpiritLevels[5] ?? 0), 2) * 1e20 / 2)
+    player.runeSpirits.superiorIntellect = new Decimal(
+      Math.pow(Math.min(1e140, player.runeSpiritLevels[5] ?? 0), 2) * 1e20 / 2
+    )
   }
 
   if (player.hepteractCrafts !== undefined) {

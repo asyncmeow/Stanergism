@@ -704,7 +704,8 @@ export const player: Player = {
     mortuus: noTalismanFragments,
     plastic: noTalismanFragments,
     wowSquare: noTalismanFragments,
-    cookieGrandma: noTalismanFragments
+    cookieGrandma: noTalismanFragments,
+    horseShoe: noTalismanFragments
   },
 
   talismanShards: 0,
@@ -1309,6 +1310,22 @@ export const player: Player = {
     singInfiniteShopUpgrades: new SingularityUpgrade(
       singularityData.singInfiniteShopUpgrades,
       'singInfiniteShopUpgrades'
+    ),
+    singTalismanBonusRunes1: new SingularityUpgrade(
+      singularityData.singTalismanBonusRunes1,
+      'singTalismanBonusRunes1'
+    ),
+    singTalismanBonusRunes2: new SingularityUpgrade(
+      singularityData.singTalismanBonusRunes2,
+      'singTalismanBonusRunes2'
+    ),
+    singTalismanBonusRunes3: new SingularityUpgrade(
+      singularityData.singTalismanBonusRunes3,
+      'singTalismanBonusRunes3'
+    ),
+    singTalismanBonusRunes4: new SingularityUpgrade(
+      singularityData.singTalismanBonusRunes4,
+      'singTalismanBonusRunes4'
     )
   },
 
@@ -1484,6 +1501,22 @@ export const player: Player = {
     octeractInfiniteShopUpgrades: new OcteractUpgrade(
       octeractData.octeractInfiniteShopUpgrades,
       'octeractInfiniteShopUpgrades'
+    ),
+    octeractTalismanLevelCap1: new OcteractUpgrade(
+      octeractData.octeractTalismanLevelCap1,
+      'octeractTalismanLevelCap1'
+    ),
+    octeractTalismanLevelCap2: new OcteractUpgrade(
+      octeractData.octeractTalismanLevelCap2,
+      'octeractTalismanLevelCap2'
+    ),
+    octeractTalismanLevelCap3: new OcteractUpgrade(
+      octeractData.octeractTalismanLevelCap3,
+      'octeractTalismanLevelCap3'
+    ),
+    octeractTalismanLevelCap4: new OcteractUpgrade(
+      octeractData.octeractTalismanLevelCap4,
+      'octeractTalismanLevelCap4'
     )
   },
 
@@ -1520,6 +1553,10 @@ export const player: Player = {
     sadisticPrequel: new SingularityChallenge(
       singularityChallengeData.sadisticPrequel,
       'sadisticPrequel'
+    ),
+    noOfferingPower: new SingularityChallenge(
+      singularityChallengeData.noOfferingPower,
+      'noOfferingPower'
     )
   },
 
@@ -1642,6 +1679,18 @@ export const player: Player = {
     ambrosiaSingReduction2: new BlueberryUpgrade(
       blueberryUpgradeData.ambrosiaSingReduction2,
       'ambrosiaSingReduction2'
+    ),
+    ambrosiaTalismanBonusRuneLevel: new BlueberryUpgrade(
+      blueberryUpgradeData.ambrosiaTalismanBonusRuneLevel,
+      'ambrosiaTalismanBonusRuneLevel'
+    ),
+    ambrosiaRuneOOMBonus: new BlueberryUpgrade(
+      blueberryUpgradeData.ambrosiaRuneOOMBonus,
+      'ambrosiaRuneOOMBonus'
+    ),
+    ambrosiaLuck4: new BlueberryUpgrade(
+      blueberryUpgradeData.ambrosiaLuck4,
+      'ambrosiaLuck4'
     )
   },
 

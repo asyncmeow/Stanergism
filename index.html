@@ -1693,6 +1693,9 @@
                     <div id="sadisticPrequelDiv" class="rainbowBorder">
                         <img id="sadisticPrequel" class="challenge" src="Pictures/Default/ExaltChalRainbowEffects.png">
                     </div>
+                    <div id="noOfferingPowerDiv" class="rainbowBorder">
+                        <img id="noOfferingPower" class="challenge" src="Pictures/Default/ExaltChalNoOfferingPower.png">
+                    </div>
                 </div>
                 <div id="singularityChallengeDetails">
                     <p id="singularityChallengesInfo"></p>
@@ -3080,6 +3083,7 @@
                 <button class="statsNerds reincarnationunlock" id="kGSpeedMultIgnoreDR" style="border: 2px solid blue" i18n="statistics.subtabs.gSpeedMultIgnoreDR"></button>
                 <button class="statsNerds prestigeunlock" id="kGSpeedMult" style="border: 2px solid blue" i18n="statistics.subtabs.gSpeedMult"></button>
                 <button class="statsNerds chal8" id="kAntSacrificeMult" style="border: 2px solid burlywood" i18n="statistics.subtabs.antSacrificeMult"></button>
+                <button class="statsNerds chal9" id="kTalismanRuneBonusMult" style="border: 2px solid green" i18n="statistics.subtabs.talismanRuneBonusMult"></button>
                 <button class="statsNerds ascendunlock" id="kASCMult" style="border: 2px solid orange" i18n="statistics.subtabs.ascMult"></button>
                 <button class="statsNerds ascendunlock" id="kGlobalCubeMult" style="border: 2px solid khaki" i18n="statistics.subtabs.globalCubeMult"></button>
                 <button class="statsNerds ascendunlock" id="kCubeMult" style="border: 2px solid darkgoldenrod" i18n="statistics.subtabs.cubeMult"></button>
@@ -3151,6 +3155,10 @@
 
             <div id="globalQuarkMultiplierStats" class="statContainer" style="display: none;" aria-live="polite">
                 <p id="GlobalQuarkStatTitle" class="statPortion" style="color: white; font-size: 1.2em" i18n="statistics.globalQuarkMultiplierStats.title"></p>
+            </div>
+
+            <div id="talismanRuneBonusMultiplierStats" class="statContainer" style="display: none;" aria-live="polite">
+                <p id="talismanRuneBonusStatTitle" class="statPortion" style="color: green; font-size: 1.2em;" i18n="statistics.talismanRuneBonusMultiplierStats.title"></p>
             </div>
 
             <div id="ascensionSpeedMultiplierStats" class="statContainer" style="display: none;" aria-live="polite">
@@ -3854,6 +3862,18 @@
                         <img id="divinePack" alt="divinePack" src="Pictures/Default/SingularityDivinePack.png">
                     </div>
                     <div class="singularityUpgrade">
+                        <img id="singTalismanBonusRunes1" alt="singTalismanBonusRunes1" src="Pictures/Default/SingularityTalismanBonusRunes1.png">
+                    </div>
+                    <div class="singularityUpgrade">
+                        <img id="singTalismanBonusRunes2" alt="singTalismanBonusRunes2" src="Pictures/Default/SingularityTalismanBonusRunes2.png">
+                    </div>
+                    <div class="singularityUpgrade">
+                        <img id="singTalismanBonusRunes3" alt="singTalismanBonusRunes3" src="Pictures/Default/SingularityTalismanBonusRunes3.png">
+                    </div>
+                    <div class="singularityUpgrade">
+                        <img id="singTalismanBonusRunes4" alt="singTalismanBonusRunes4" src="Pictures/Default/SingularityTalismanBonusRunes4.png">
+                    </div>
+                    <div class="singularityUpgrade">
                         <img id="wowPass" alt="wowPass" src="Pictures/Default/SingularityWowPass.png">
                     </div>
                     <div class="singularityUpgrade">
@@ -4130,6 +4150,18 @@
                         <img id="octeractImprovedQuarkHept" src="Pictures/Default/OcteractImprovedQuarkHepteract.png" style="cursor:pointer">
                     </div>
                     <div class="octeractUpgrade">
+                        <img id="octeractTalismanLevelCap1" src="Pictures/Default/OcteractTalismanLevelCap1.png" style="cursor: pointer">
+                    </div>
+                    <div class="octeractUpgrade">
+                        <img id="octeractTalismanLevelCap2" src="Pictures/Default/OcteractTalismanLevelCap2.png" style="cursor: pointer">
+                    </div>
+                    <div class="octeractUpgrade">
+                        <img id="octeractTalismanLevelCap3" src="Pictures/Default/OcteractTalismanLevelCap3.png" style="cursor: pointer">
+                    </div>
+                    <div class="octeractUpgrade">
+                        <img id="octeractTalismanLevelCap4" src="Pictures/Default/OcteractTalismanLevelCap4.png" style="cursor: pointer">
+                    </div>
+                    <div class="octeractUpgrade">
                         <img id="octeractImprovedGlobalSpeed" src="Pictures/Default/OcteractImprovedGlobalSpeed.png" style="cursor: pointer">
                     </div>
                     <div class="octeractUpgrade">
@@ -4318,6 +4350,9 @@
                         <div class="blueberryUpgrade">
                             <img id="ambrosiaSingReduction1" src="Pictures/Default/BlueberrySingReduction.png">
                         </div>
+                        <div class="blueberryUpgrade">
+                            <img id="ambrosiaTalismanBonusRuneLevel" src="Pictures/Default/BlueberryTalismanBonusRuneLevel.png">
+                        </div>
                         <div class="ambrosiaBorder Exalt5x1">
                             <img src="Pictures/RedAmbrosia/AmbrosiaBorders.png">
                         </div>
@@ -4388,6 +4423,9 @@
                         <div class="blueberryUpgrade">
                             <img id="ambrosiaInfiniteShopUpgrades1" src="Pictures/Default/BlueberryInfiniteShopUpgrades.png">
                         </div>
+                        <div class="blueberryUpgrade">
+                            <img id="ambrosiaRuneOOMBonus" src="Pictures/Default/BlueberryRuneOOMBonus.png">
+                        </div>
                         <div class="ambrosiaBorder Exalt5x1">
                             <img src="Pictures/RedAmbrosia/AmbrosiaBorders.png">
                         </div>
@@ -4419,6 +4457,9 @@
                         </div>
                         <div class="blueberryUpgrade">
                             <img id="ambrosiaInfiniteShopUpgrades2" src="Pictures/Default/BlueberryInfiniteShopUpgrades2.png">
+                        </div>
+                        <div class="blueberryUpgrade">
+                            <img id="ambrosiaLuck4" src="Pictures/Default/BlueberryLuck4.png">
                         </div>
                         <div class="ambrosiaBorder Exalt5x1">
                             <img src="Pictures/RedAmbrosia/AmbrosiaBorders.png">

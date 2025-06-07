@@ -104,6 +104,8 @@ interface IAReward extends BaseReward {
 
 interface AntiquitiesReward extends BaseReward {
   addCodeCooldownReduction: number
+  offeringLog10: number
+  obtainiumLog10: number
 }
 
 interface HorseshoeReward extends BaseReward {
@@ -143,6 +145,8 @@ abstract class AbstractRune<K extends string> {
 
   protected abstract readonly key: K // Changed to protected abstract
 
+  private cachedOOM: number
+
   constructor (data: BaseRuneData, keyName: string) {
     this.name = i18next.t(`runes.${keyName}.name`)
     this.description = i18next.t(`runes.${keyName}.description`)
@@ -150,6 +154,7 @@ abstract class AbstractRune<K extends string> {
 
     this.costCoefficient = data.costCoefficient
     this.levelsPerOOM = data.levelsPerOOM
+    this.cachedOOM = this.levelsPerOOM
     this.levelsPerOOMIncrease = data.levelsPerOOMIncrease
     this.effectiveLevelMult = data.effectiveLevelMult
     this._freeLevels = data.freeLevels
@@ -161,11 +166,18 @@ abstract class AbstractRune<K extends string> {
   }
 
   get effectiveLevelsPerOOM () {
-    return this.levelsPerOOM + this.levelsPerOOMIncrease()
+    return this.cachedOOM
+  }
+
+  updateEffectiveLevelsPerOOM () {
+    this.cachedOOM = this.levelsPerOOM + this.levelsPerOOMIncrease()
   }
 
   get level (): number {
-    return Math.floor(this.effectiveLevelsPerOOM * Decimal.log10(this.runeEXP.div(this.costCoefficient).plus(1)))
+    if (player.singularityChallenges.noOfferingPower.enabled && this.isUnlocked) {
+      return 1
+    }
+    return Math.floor(this.cachedOOM * Decimal.log10(this.runeEXP.div(this.costCoefficient).plus(1)))
   }
 
   get TNL (): Decimal {
@@ -174,13 +186,7 @@ abstract class AbstractRune<K extends string> {
     return Decimal.max(0, expReq.sub(this.runeEXP))
   }
 
-  get effectiveRuneLevel (): number {
-    if (player.currentChallenge.reincarnation === 9 && resetTiers[this.minimalResetTier] < resetTiers.singularity) {
-      return 1
-    }
-
-    return (this.level + this.freeLevels) * this.effectiveLevelMult()
-  }
+  abstract get effectiveRuneLevel (): number
 
   get freeLevels (): number {
     return this._freeLevels()
@@ -199,7 +205,7 @@ abstract class AbstractRune<K extends string> {
   }
 
   computeEXPToLevel (level: number) {
-    return new Decimal(this.costCoefficient).times(Decimal.pow(10, level / this.effectiveLevelsPerOOM).minus(1))
+    return new Decimal(this.costCoefficient).times(Decimal.pow(10, level / this.cachedOOM).minus(1))
   }
 
   computeEXPLeftToLevel (level: number) {
@@ -289,6 +295,17 @@ class Rune<K extends RuneKeys> extends AbstractRune<K> {
     return this.rewards(this.effectiveRuneLevel)
   }
 
+  get effectiveRuneLevel (): number {
+    if (
+      (player.currentChallenge.reincarnation === 9 && resetTiers[this.minimalResetTier] < resetTiers.singularity)
+      || player.singularityChallenges.noOfferingPower.enabled
+    ) {
+      return this.effectiveLevelMult()
+    }
+
+    return (this.level + this.freeLevels) * this.effectiveLevelMult()
+  }
+
   updatePlayerEXP (): void {
     if (player.runes && this.key in player.runes) {
       player.runes[this.key as RuneKeys] = new Decimal().fromDecimal(this.runeEXP)
@@ -307,8 +324,8 @@ class Rune<K extends RuneKeys> extends AbstractRune<K> {
 
   updateFocusedRuneHTML () {
     DOMCacheGetOrSet('focusedRuneName').textContent = this.name
-    DOMCacheGetOrSet('focusedRuneDescription').textContent = this.description
-    DOMCacheGetOrSet('focusedRuneValues').textContent = this.valueText
+    DOMCacheGetOrSet('focusedRuneDescription').innerHTML = this.description
+    DOMCacheGetOrSet('focusedRuneValues').innerHTML = this.valueText
     DOMCacheGetOrSet('focusedRuneCoefficient').textContent = i18next.t('runes.runeCoefficientText', {
       x: format(this.levelsPerOOM, 2, true),
       y: format(this.levelsPerOOMIncrease(), 2, true),
@@ -322,7 +339,7 @@ class Rune<K extends RuneKeys> extends AbstractRune<K> {
   }
 
   updateRuneEffectHTML () {
-    DOMCacheGetOrSet(`${this.key}RunePower`).textContent = this.rewardDesc
+    DOMCacheGetOrSet(`${this.key}RunePower`).innerHTML = this.rewardDesc
   }
 }
 
@@ -345,6 +362,14 @@ class RuneBlessing<K extends RuneBlessingKeys> extends AbstractRune<K> {
       return this.rewards(0)
     }
     return this.rewards(this.effectiveRuneLevel)
+  }
+
+  get effectiveRuneLevel (): number {
+    if (player.singularityChallenges.noOfferingPower.enabled) {
+      return 1
+    }
+
+    return (this.level + this.freeLevels) * this.effectiveLevelMult()
   }
 
   updatePlayerEXP (): void {
@@ -406,6 +431,14 @@ class RuneSpirit<K extends RuneSpiritKeys> extends AbstractRune<K> {
       return this.rewards(0)
     }
     return this.rewards(this.effectiveRuneLevel)
+  }
+
+  get effectiveRuneLevel (): number {
+    if (player.singularityChallenges.noOfferingPower.enabled) {
+      return 1
+    }
+
+    return (this.level + this.freeLevels) * this.effectiveLevelMult()
   }
 
   updatePlayerEXP (): void {
@@ -524,7 +557,8 @@ export const speedRuneOOMIncrease = () => {
     CalcECC('ascension', player.challengecompletions[11]),
     1.5 * CalcECC('ascension', player.challengecompletions[14]),
     player.cubeUpgrades[16],
-    getTalisman('chronos').bonus.speedOOMBonus
+    getTalisman('chronos').bonus.speedOOMBonus,
+    +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.runeOOMBonus
   ])
 }
 
@@ -536,7 +570,8 @@ export const duplicationRuneOOMIncrease = () => {
     player.researches[112],
     CalcECC('ascension', player.challengecompletions[11]),
     1.5 * CalcECC('ascension', player.challengecompletions[14]),
-    getTalisman('exemption').bonus.duplicationOOMBonus
+    getTalisman('exemption').bonus.duplicationOOMBonus,
+    +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.runeOOMBonus
   ])
 }
 
@@ -548,7 +583,8 @@ export const prismRuneOOMIncrease = () => {
     CalcECC('ascension', player.challengecompletions[11]),
     1.5 * CalcECC('ascension', player.challengecompletions[14]),
     player.cubeUpgrades[16],
-    getTalisman('mortuus').bonus.prismOOMBonus
+    getTalisman('mortuus').bonus.prismOOMBonus,
+    +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.runeOOMBonus
   ])
 }
 
@@ -560,7 +596,8 @@ export const thriftRuneOOMIncrease = () => {
     CalcECC('ascension', player.challengecompletions[11]),
     1.5 * CalcECC('ascension', player.challengecompletions[14]),
     player.cubeUpgrades[37],
-    getTalisman('midas').bonus.thriftOOMBonus
+    getTalisman('midas').bonus.thriftOOMBonus,
+    +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.runeOOMBonus
   ])
 }
 
@@ -571,7 +608,20 @@ export const superiorIntellectOOMIncrease = () => {
     CalcECC('ascension', player.challengecompletions[11]),
     1.5 * CalcECC('ascension', player.challengecompletions[14]),
     player.cubeUpgrades[37],
-    getTalisman('polymath').bonus.SIOOMBonus
+    getTalisman('polymath').bonus.SIOOMBonus,
+    +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.runeOOMBonus
+  ])
+}
+
+export const infiniteAscentOOMIncrease = () => {
+  return sumContents([
+    +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.infiniteAscentOOMBonus
+  ])
+}
+
+export const antiquitiesOOMIncrease = () => {
+  return sumContents([
+    +player.singularityChallenges.noOfferingPower.rewards.antiquitiesOOMBonus
   ])
 }
 
@@ -807,7 +857,7 @@ export const runeData: { [K in RuneKeys]: RuneData<K> } = {
   infiniteAscent: {
     costCoefficient: new Decimal(1e75),
     levelsPerOOM: 0.5,
-    levelsPerOOMIncrease: () => 0,
+    levelsPerOOMIncrease: () => infiniteAscentOOMIncrease(),
     rewards: (level) => {
       const quarkMult = 1.1 + level / 500
       const cubeMult = 1 + level / 100
@@ -832,9 +882,17 @@ export const runeData: { [K in RuneKeys]: RuneData<K> } = {
     levelsPerOOMIncrease: () => 0,
     rewards: (level) => {
       const addCodeCooldownReduction = level > 0 ? 0.8 - 0.3 * (level - 1) / (level + 10) : 1
+      const offeringLog10 = level
+      const obtainiumLog10 = level
       return {
-        desc: i18next.t('runes.antiquities.effect', { val: format(100 * addCodeCooldownReduction, 2, true) }),
-        addCodeCooldownReduction: addCodeCooldownReduction
+        desc: i18next.t('runes.antiquities.effect', {
+          val: format(Decimal.pow(10, offeringLog10), 0, true),
+          val2: format(Decimal.pow(10, obtainiumLog10), 0, true),
+          val3: format(100 * addCodeCooldownReduction, 2, true)
+        }),
+        addCodeCooldownReduction: addCodeCooldownReduction,
+        offeringLog10: offeringLog10,
+        obtainiumLog10: obtainiumLog10
       }
     },
     effectiveLevelMult: () => 1,
@@ -865,7 +923,10 @@ export const runeData: { [K in RuneKeys]: RuneData<K> } = {
     effectiveLevelMult: () => 1,
     freeLevels: () => 0,
     runeEXPPerOffering: (purchasedLevels) => universalRuneEXPMult(purchasedLevels),
-    isUnlocked: () => player.platonicUpgrades[20] > 0,
+    isUnlocked: () => {
+      const condition = Boolean(player.singularityChallenges.noOfferingPower.rewards.horseShoeUnlock)
+      return condition
+    },
     minimalResetTier: 'singularity'
   }
 }
@@ -899,6 +960,10 @@ export function initRunes (investments: Record<RuneKeys, Decimal>) {
       const rune = new Rune(dataWithInvestment, key) // Here we need to use type assertion because TypeScript can't track
        // the relationship between the key and the generic parameter in the loop
       ;(upgrades as Record<RuneKeys, Rune<RuneKeys>>)[key] = rune
+
+      setInterval(() => {
+        rune.updateEffectiveLevelsPerOOM()
+      }, 1000)
     }
 
     runes = upgrades as RunesMap
@@ -1176,6 +1241,10 @@ export function initRuneBlessings (investments: Record<RuneBlessingKeys, Decimal
       const rune = new RuneBlessing(dataWithInvestment, key) // Here we need to use type assertion because TypeScript can't track
        // the relationship between the key and the generic parameter in the loop
       ;(upgrades as Record<RuneBlessingKeys, RuneBlessing<RuneBlessingKeys>>)[key] = rune
+
+      setInterval(() => {
+        rune.updateEffectiveLevelsPerOOM()
+      }, 1000)
     }
 
     runeBlessings = upgrades as RuneBlessingMap
@@ -1328,7 +1397,7 @@ export const runeSpiritData: { [K in RuneSpiritKeys]: RuneSpiritData<K> } = {
     levelsPerOOMIncrease: () => 0,
     rewards: (level) => {
       const obtainium = 1 + level / 1e9
-      
+
       return {
         desc: i18next.t('runes.spirits.rewards.superiorIntellect', {
           effect: format(obtainium, 3, true)
@@ -1373,6 +1442,10 @@ export function initRuneSpirits (investments: Record<RuneSpiritKeys, Decimal>) {
       const rune = new RuneSpirit(dataWithInvestment, key) // Here we need to use type assertion because TypeScript can't track
        // the relationship between the key and the generic parameter in the loop
       ;(upgrades as Record<RuneSpiritKeys, RuneSpirit<RuneSpiritKeys>>)[key] = rune
+
+      setInterval(() => {
+        rune.updateEffectiveLevelsPerOOM()
+      }, 1000)
     }
 
     runeSpirits = upgrades as RuneSpiritMap

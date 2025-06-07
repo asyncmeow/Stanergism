@@ -113,6 +113,11 @@ export const calculatetax = () => {
   if (player.upgrades[121] > 0) {
     exponent *= 0.5
   }
+
+  if (player.highestSingularityCount >= 281) {
+    exponent *= 0.5
+  }
+
   // Cap the calculation overflow bug || httpsnet
   if (exponent < 1e-300) {
     exponent = 1e-300

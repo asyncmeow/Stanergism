@@ -931,5 +931,65 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
         }
       }
     }
+  },
+  octeractTalismanLevelCap1: {
+    maxLevel: 25,
+    costPerLevel: 1e-5,
+    costFormula: (level: number, baseCost: number) => {
+      return baseCost * Math.pow(level + 1, 5)
+    },
+    effect: (n: number) => {
+      return {
+        bonus: n,
+        get desc () {
+          return i18next.t('octeract.data.octeractTalismanLevelCap1.effect', { n: format(n) })
+        }
+      }
+    }
+  },
+  octeractTalismanLevelCap2: {
+    maxLevel: 35,
+    costPerLevel: 1e10,
+    costFormula: (level: number, baseCost: number) => {
+      return baseCost * Math.pow(level + 1, 10)
+    },
+    effect: (n: number) => {
+      return {
+        bonus: n,
+        get desc () {
+          return i18next.t('octeract.data.octeractTalismanLevelCap2.effect', { n: format(n) })
+        }
+      }
+    }
+  },
+  octeractTalismanLevelCap3: {
+    maxLevel: 40,
+    costPerLevel: 1e20,
+    costFormula: (level: number, baseCost: number) => {
+      return baseCost * Math.pow(level + 1, 20)
+    },
+    effect: (n: number) => {
+      return {
+        bonus: n,
+        get desc () {
+          return i18next.t('octeract.data.octeractTalismanLevelCap3.effect', { n: format(n) })
+        }
+      }
+    }
+  },
+  octeractTalismanLevelCap4: {
+    maxLevel: -1,
+    costPerLevel: 1e40,
+    costFormula: (level: number, baseCost: number) => {
+      return baseCost * Math.pow(10, level)
+    },
+    effect: (n: number) => {
+      return {
+        bonus: n,
+        get desc () {
+          return i18next.t('octeract.data.octeractTalismanLevelCap4.effect', { n: format(n) })
+        }
+      }
+    }
   }
 }

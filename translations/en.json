@@ -116,6 +116,11 @@
         "description": "A darkness emboldens this module. +1 &#9752 Ambrosia Luck/lvl, and the effect is multiplied by the total number of Blueberries you own!",
         "effect": "This third generation Luck module increases &#9752 Ambrosia Luck by {{amount}}"
       },
+      "ambrosiaLuck4": {
+        "name": "Ambrosia Luck Module IV",
+        "description": "<span class=\"rainbowText\">My magical lucky charms!</span> +0.01% &#9752 Ambrosia Luck/lvl, multiplied by the number of total digits in your Lifetime Ambrosia and Red Ambrosia!",
+        "effect": "This fourth generation Luck module increases &#9752 Ambrosia Luck by <span class=\"rainbowText\">{{amount}}%</span>"
+      },
       "ambrosiaPatreon": {
         "name": "Shameless, Ambrosial Patreon Reminder",
         "description": "In every realm, Platonic sells out. +1% Ambrosia Bar Point speed for every +1% Quarks by the Patreon bonus!",
@@ -175,6 +180,16 @@
         "name": "Exo-Chromatic Kinetic Post-Modulated Singularity Stabilizer Module",
         "description": "Retrofitted with... those kinds of Stabilizers, your EXALTED Singularities are a bit smoother. Singularity Penalties are delayed by 1 singularity, if you are ACTUALLY! in an EXALT.",
         "effect": "Singularity Penalties are as if you were {{amount}} Singularities lower."
+      },
+      "ambrosiaTalismanBonusRuneLevel": {
+        "name": "Talisman Ambrosia Embedding Module",
+        "description": "With the power of a lot of Ambrosia, make your Talismans give +0.5% more Bonus Rune Levels, per level! Additive with other bonuses.",
+        "effect": "Talismans give +{{amount}} more Bonus Rune Levels."
+      },
+      "ambrosiaRuneOOMBonus": {
+        "name": "Rune Coefficient Module",
+        "description": "For each of the first five runes, add 1 to their Rune Coefficient per level! For Infinite Ascent, add +0.001 to the Rune Coefficient per level.",
+        "effect": "Runes 1-5 have +{{amount}} Rune Coefficient; IA Rune has +{{amount2}} Rune Coefficient"
       }
     },
     "loadouts": {
@@ -1991,6 +2006,10 @@
         "name": "Orange Infinity Shop Voucher",
         "default": "Gain +0.5 to 'Infinity CO.' Quark Shop upgrades per highest Singularity, minus 200, rounded down!. Currently: {{amt}}",
         "level2": "Gain +0.8 to 'Infinity CO.' Quark Shop upgrades per highest Singularity, minus 200, rounded down! Currently: {{amt}}"
+      },
+      "taxReduction": {
+        "name": "Accountants Clicking at Your Desktop",
+        "default": "Reduce your taxes by 50%!"
       }
     },
     "toString": {
@@ -2398,6 +2417,26 @@
         "name": "Yellow Infinity Shop Voucher",
         "description": "A Shop Voucher, printed on a yellow tablet. Each grants +1 effective level the 'Infinity CO.' Quark Shop upgrades.",
         "effect": "You have +{{n}} free levels of the 'Infinity CO.' Quark Shop upgrades."
+      },
+      "singTalismanBonusRunes1": {
+        "name": "Talisman Buff!",
+        "description": "Talismans give +1% bonus Rune Levels per level, additive to other bonuses.",
+        "effect": "{{n}}% more bonus Rune Levels from Talismans!"
+      },
+      "singTalismanBonusRunes2": {
+        "name": "Talisman Buff! The second",
+        "description": "Talismans give +1% bonus Rune Levels per level, additive to other bonuses.",
+        "effect": "{{n}}% more bonus Rune Levels from Talismans!"
+      },
+      "singTalismanBonusRunes3": {
+        "name": "Talisman Buff! The third",
+        "description": "Talismans give +1% bonus Rune Levels per level, additive to other bonuses.",
+        "effect": "{{n}}% more bonus Rune Levels from Talismans!"
+      },
+      "singTalismanBonusRunes4": {
+        "name": "Talisman Buff! The fourth",
+        "description": "Talismans give +1% bonus Rune Levels per level, additive to other bonuses. Instead of giving five upgrades, Platonic gave this twice as many levels. Game design!",
+        "effect": "{{n}}% more bonus Rune Levels from Talismans!"
       }
     },
     "goldenQuarkAmount": "You have {{goldenQuarks}} Golden Quarks!",
@@ -3581,6 +3620,26 @@
         "name": "Green Infinity Shop Voucher",
         "description": "A Shop Voucher, printed on a green tablet. Each grants +1 effective level for the 'Infinity CO.' Quark Shop upgrades.",
         "effect": "'Infinity CO.' shop upgrades level +{{n}}"
+      },
+      "octeractTalismanLevelCap1": {
+        "name": "Talisman Level Cap Increaser Talisman",
+        "description": "You can't wear this Talisman, but it will give you an extra level to (most) Talisman Level Caps per level!",
+        "effect": "Talisman level cap is increased by {{n}}"
+      },
+      "octeractTalismanLevelCap2": {
+        "name": "Talisman Level Cap Increaser Talisman - UNCOMMON Rarity",
+        "description": "By increasing the rarity of this unwearable Talisman, you gain an extra level to (most) Talisman Level Caps per level!",
+        "effect": "Talisman level cap is increased by {{n}}"
+      },
+      "octeractTalismanLevelCap3": {
+        "name": "Talisman Level Cap Increaser Talisman - EPIC Rarity",
+        "description": "Gain another extra level to (most) Talisman Level Caps per level!",
+        "effect": "Talisman level cap is increased by {{n}}"
+      },
+      "octeractTalismanLevelCap4": {
+        "name": "Talisman Level Cap Increaser Talisman - MYTHIC Rarity",
+        "description": "I think you can guess what the <<crimson | ✎>> Signature of this Talisman would be...",
+        "effect": "Talisman level cap is increased by {{n}}"
       }
     },
     "amount": "You have {{octeracts}} Octeracts!",
@@ -3638,8 +3697,8 @@
     "antiquities": {
       "name": "Antiquities of Ant God",
       "description": "The piece of eight, long thought lost, no longer. It went there and back again.",
-      "values": "I wonder what happens if you feed it your Offerings.",
-      "effect": "You cannot grasp the true form of Ant God's antiques. [Addition itself takes {{val}}% as long]"
+      "values": "Level 1 unlocks something <span class=\"rainbowText\">special</span>! Each level gives 10x Offerings, 10x <<cyan | Immaculate>> Obtainium and makes code 'Add' regenerate faster.",
+      "effect": "Offerings x{{val}}, <<cyan | Immaculate>> Obtainium x{{val2}}, 'Add' code regeneration interval is {{val3}}% as long."
     },
     "horseShoe": {
       "name": "The Horse's Shoe",
@@ -3688,7 +3747,10 @@
         "4": "<<orchid | Epic>>",
         "5": "<<orange | Legendary>>",
         "6": "<<crimson | MYTHIC!>>",
-        "7": "<<cyan | IMMACULATE!>>"
+        "7": "<<cyan | IMMACULATE!>>",
+        "8": "<<red | SPECIAL!>>",
+        "9": "<<gold | EXTRAORDINARY!>>",
+        "10": "<span class=\"rainbowText\">PERFECT!</span>"
       },
       "modifiers": {
         "positive": "{{name}}: Positive",
@@ -3717,7 +3779,7 @@
         "name": "Metaphysical Gem",
         "description": "Do you wear this, or does this wear you?",
         "inscription": "<<gold | ✏>> Inscription: This Talismans' Bonus Rune Levels are increased by <<gold|{{val}}>>.",
-        "signature": "<<crimson | ✎>> Signature: This Talismans' Bonus Rune Levels are further increased by <<crimson|7%>>."
+        "signature": "<<crimson | ✎>> Signature: This Talismans' Bonus Rune Levels are further multiplied by <<crimson|1.07>>."
       },
       "polymath": {
         "name": "Trinket of the Polymath",
@@ -3748,6 +3810,12 @@
         "description": "Kinda burns your neck. Thanks Grandma!",
         "inscription": "<<gold | ✏>> Inscription: Gain <<gold|+{{val}}>> free Corruption Levels!",
         "signature": "<<crimson | ✎>> Signature: Unlock three more Cookie Upgrades in the Cube Upgrades subtab!"
+      },
+      "horseShoe": {
+        "name": "The Horse's Boot",
+        "description": "It's an actual horse shoe!",
+        "inscription": "<<gold | ✏>> Inscription: Gain <<gold|+{{val}}%>> &#9752 Ambrosia Luck.",
+        "signature": "<<crimson | ✎>> Signature: Gain <<crimson|+{{val}}>> &#9861  Red Ambrosia Luck."
       },
       "shards": {
         "shard": "Talisman Shard",
@@ -3951,6 +4019,17 @@
         "UniqueReward2": "10th - A first-tier <<pink|Exalt Upgrade>>",
         "UniqueReward3": "20th - A second-tier <<pink|Exalt Upgrade>>",
         "UniqueReward4": "30th - A particularly Sadistic <<gray|ULTRA Upgrade>>!"
+      },
+      "noOfferingPower": {
+        "name": "Rejected by the Gods",
+        "description": "You're not even recognizable by the gods anymore. Runes, Talismans, Blessings and Spirits are all capped at level 1. NOTE: THIS EXALT IS NORMALLY OBTAINABLE AT <span class=\"rainbowText\">SINGULARITY 281</span>! THIS WILL NOT BE ACCESSIBLE BEFORE THEN AT THE UPDATE.",
+        "ScalingReward1": "+10 <<var(--red-text-color)|Talisman Level Caps>> for any Talisman that resets on Singularity",
+        "ScalingReward2": "+1% <<var(--blueberry-box-color)|Talisman Free Rune Levels>>",
+        "ScalingReward3": "+0.00066 <<var(--amber-text-color)|Rune Coefficient>> for Antiquities!",
+        "ScalingReward4": "+0.00333 <<var(--amber-text-color)|Rune Coefficient>> for... <<burlywood | something>>...",
+        "UniqueReward1": "1st - Unlock <<burlywood | Something Cool... and Runelike>>",
+        "UniqueReward2": "15th - Unlock <<pink | a new Shop Upgrade!>>",
+        "UniqueReward3": "30th - Unlock <<burlywood | Something even Cooler... and Fashionable...>>"
       }
     },
     "intro": "Do you have what it takes to earn EXALT from Ant God?",
@@ -4020,6 +4099,7 @@
       "gSpeedMultIgnoreDR": "Immaculate Global Speed",
       "gSpeedMult": "Global Speed Multipliers",
       "antSacrificeMult": "Ant Sacrifice Multipliers",
+      "talismanRuneBonusMult": "Talisman → Rune Level Mult.",
       "ascMult": "Asc. Speed Multipliers",
       "globalCubeMult": "Global Cube Multipliers",
       "cubeMult": "Cube Multipliers",
@@ -4265,6 +4345,7 @@
       "PlatonicBETA": "Platonic BETA:",
       "PlatonicOMEGA": "Platonic OMEGA:",
       "Challenge15": "Challenge 15:",
+      "Antiquities": "Antiquities of the Ant God:",
       "SingularityDebuff": "Singularity Debuff:",
       "StarterPack": "Singularity Upgrade - Starter Pack:",
       "OfferingCharge": "Singularity Upgrade - Offering Charge:",
@@ -4377,6 +4458,7 @@
       "PlatonicUpgrade9": "Platonic Upgrade 9:",
       "PlatonicBETA": "Platonic BETA:",
       "PlatonicOMEGA": "Platonic OMEGA:",
+      "Antiquities": "Antiquities of the Ant God:",
       "CubeUpgradeCx5": "Cube Upgrade 6x5 (Cx5):",
       "CubeUpgradeCx12": "Cube Upgrade 7x2 (Cx12):",
       "CubeUpgradeCx21": "Cube Upgrade 8x1 (Cx21):",
@@ -4541,6 +4623,7 @@
       "ShopUpgrade": "EXALT Ambrosia Luck Multiplier:",
       "NoAmbrosiaUpgrades": "No Ambrosia Upgrades Challenge:",
       "Cookie5": "Cookie Upgrade 5 (Cx27):",
+      "HorseShoeTalisman": "Horse Shoe Talisman Inscription Bonus:",
       "Event": "Event Bonus:",
       "Total": "Total Additive Luck Multiplier:"
     },
@@ -4569,6 +4652,7 @@
       "AmbrosiaUltra": "Ambrosia Ultra Shop Upgrade:",
       "Viscount": "Benefits of being a Viscount:",
       "AdditiveLuckMult": "Additive Luck Multiplier:",
+      "HorseShoeRune": "Horse Shoe Rune Bonus:",
       "Total": "Ambrosia Luck:",
       "Total2": "Total Ambrosia Luck"
     },
@@ -4702,6 +4786,7 @@
       "ShopRedLuck1": "Low Class Dice of Asmodeus:",
       "ShopRedLuck2": "Dice of Asmodeus:",
       "ShopRedLuck3": "High Class Dice of Asmodeus:",
+      "HorseShoeRune": "Horse Shoe Rune Reduction:",
       "Total": "Ambrosia Luck per 1 Red Ambrosia Luck:"
     },
     "redAmbrosiaLuckStats": {
@@ -4715,6 +4800,8 @@
       "ShopRedLuck2": "Dice of Asmodeus:",
       "ShopRedLuck3": "High Class Dice of Asmodeus:",
       "Viscount": "Benefits of being a Viscount:",
+      "HorseShoeRune": "Horse Shoe Rune Bonus:",
+      "HorseShoeTalisman": "Horse Shoe Talisman Bonus:",
       "Total": "Total Red Ambrosia Luck:"
     },
     "redAmbrosiaGenerationStats": {
@@ -4740,6 +4827,27 @@
       "Indigo": "Indigo Vouchers [Ambrosia 1]:",
       "Violet": "Violet Vouchers [Ambrosia 2]:",
       "Total": "Total Free Levels:"
+    },
+    "talismanRuneBonusMultiplierStats": {
+      "title": "Talisman Rune Bonus Additive Multiplier",
+      "Base": "Base Multiplier",
+      "Achievement135": "Achievement 135:",
+      "Achievement136": "Achievement 136:",
+      "Research106": "Research 5x6:",
+      "Research107": "Research 5x7:",
+      "Research116": "Research 5x16:",
+      "Research117": "Research 5x17:",
+      "Research118": "Research 5x18:",
+      "Research200": "Research 8x25:",
+      "CubeUpgrade50": "Cube Upgrade 5x10:",
+      "NoOfferingPower": "No Offering Power Challenge:",
+      "Challenge15": "Challenge 15:",
+      "SingularityUpgrade1": "Singularity Upgrade - Talisman Rune Bonus:",
+      "SingularityUpgrade2": "Singularity Upgrade - Talisman Rune Bonus II:",
+      "SingularityUpgrade3": "Singularity Upgrade - Talisman Rune Bonus III:",
+      "SingularityUpgrade4": "Singularity Upgrade - Talisman Rune Bonus IV:",
+      "BlueberryUpgrade": "Blueberry Module - Talisman Ambrosia Embedding:",
+      "Total": "Total Talisman Rune Bonus Multiplier:"
     },
     "gameStage": "Current Game Stage: {{stage}}"
   },
@@ -4861,7 +4969,7 @@
         "antSpeed": "• Ant Speed: +{{amount}} [Immaculate!]",
         "bonusAntLevel": "• Bonus Ant Levels: +{{amount}}",
         "cube3": "• All Cube Types III: +{{amount}}",
-        "talismanBonus": "• Talisman Effectiveness: +{{amount}}",
+        "talismanBonus": "• Talisman Bonus Free Levels: +{{amount}}",
         "globalSpeed": "• Global Speed: +{{amount}}",
         "blessingBonus": "• Blessing Effectiveness: +{{amount}}",
         "constantBonus": "• Ascend Building Production: +{{amount}}",
