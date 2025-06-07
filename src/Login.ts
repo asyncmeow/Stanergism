@@ -4,9 +4,10 @@ import i18next from 'i18next'
 import { z } from 'zod'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { calculateAmbrosiaGenerationSpeed, calculateOffline, calculateRedAmbrosiaGenerationSpeed } from './Calculate'
+import { prod } from './Config'
 import { updateGlobalsIsEvent } from './Event'
 import { addTimers, automaticTools } from './Helper'
-import { importSynergism } from './ImportExport'
+import { importSynergism, saveFilename } from './ImportExport'
 import { updatePseudoCoins } from './purchases/UpgradesSubtab'
 import { QuarkHandler, setQuarkBonus } from './Quark'
 import { format, player, saveSynergy } from './Synergism'
@@ -31,6 +32,13 @@ interface Consumable {
   ends: number[]
   amount: number
   displayName: string
+}
+
+interface Save {
+  id: number
+  name: string
+  uploadedAt: string
+  save: string
 }
 
 // Consts for Patreon Supporter Roles.
@@ -193,7 +201,7 @@ interface SynergismNotLoggedInResponse extends SynergismUserAPIResponse {
 type CloudSave = null | { save: string }
 
 export async function handleLogin () {
-  const subtabElement = document.querySelector('#accountSubTab > div.scrollbarX')!
+  const subtabElement = document.querySelector('#accountSubTab div#left.scrollbarX')!
   const currentBonus = DOMCacheGetOrSet('currentBonus')
 
   const logoutElement = document.getElementById('logoutButton')
@@ -237,7 +245,7 @@ export async function handleLogin () {
 
   currentBonus.textContent = `Generous patrons give you a bonus of ${globalBonus}% more Quarks!`
 
-  if (location.hostname !== 'synergism.cc') {
+  if (location.hostname !== 'synergism.cc' && prod) {
     // TODO: better error, make link clickable, etc.
     subtabElement.textContent = 'Login is not available here, go to https://synergism.cc instead!'
   } else if (accountType === 'discord' || accountType === 'patreon' || accountType === 'email') {
@@ -377,6 +385,7 @@ export async function handleLogin () {
 
   if (loggedIn) {
     handleWebSocket()
+    handleCloudSaves()
   }
 }
 
@@ -735,4 +744,167 @@ const activateTimeSkip = (name: PseudoCoinTimeskipNames, minutes: number) => {
       Notification('You have activated a JUMBO ambrosia timeskip! Enjoy!')
       break
   }
+}
+
+function handleCloudSaves () {
+  const subtabElement = document.querySelector('#accountSubTab div#right.scrollbarX')!
+  const table = subtabElement.querySelector('#table > #dataGrid')!
+
+  const uploadButton = subtabElement.querySelector<HTMLButtonElement>('button#upload')
+
+  const saves: Omit<Save, 'save'>[] = []
+
+  function populateTable () {
+    fetch('/saves/retrieve/metadata')
+      .then((response) => response.json())
+      .then(($saves: Omit<Save, 'save'>[]) => {
+        saves.length = 0
+        saves.push(...$saves)
+
+        const existingRows = table.querySelectorAll('.grid-row')
+        existingRows.forEach((row) => row.remove())
+
+        const content = table.querySelector('.details-content')
+        content?.remove()
+
+        if (saves.length === 0) {
+          const emptyDiv = document.createElement('div')
+          emptyDiv.className = 'grid-row empty-state'
+          emptyDiv.style.gridColumn = '1 / -1'
+          emptyDiv.textContent = 'No saves available'
+          table.appendChild(emptyDiv)
+          return
+        }
+
+        saves.forEach(({ id, name, uploadedAt }, index) => {
+          const rowDiv = document.createElement('div')
+          rowDiv.className = 'grid-row'
+          rowDiv.style.display = 'contents'
+
+          const idCell = document.createElement('div')
+          idCell.className = 'grid-cell id-cell'
+          idCell.textContent = `#${id}`
+
+          const nameCell = document.createElement('div')
+          nameCell.className = 'grid-cell name-cell'
+          nameCell.textContent = name.length > 60 ? `${name.slice(0, 60)}...` : name
+
+          const dateCell = document.createElement('div')
+          dateCell.className = 'grid-cell date-cell'
+          dateCell.textContent = new Date(uploadedAt).toLocaleString()
+
+          rowDiv.appendChild(idCell)
+          rowDiv.appendChild(nameCell)
+          rowDiv.appendChild(dateCell)
+
+          if (index % 2 === 0) {
+            idCell.classList.add('alt-row')
+            nameCell.classList.add('alt-row')
+            dateCell.classList.add('alt-row')
+          }
+
+          // Create the expandable details row
+          const detailsRow = document.createElement('div')
+          detailsRow.className = 'grid-details-row'
+          detailsRow.style.display = 'none'
+          detailsRow.style.gridColumn = '1 / -1'
+
+          const detailsContent = document.createElement('div')
+          detailsContent.className = 'details-content'
+          detailsContent.innerHTML = `
+            <div class="details-actions">
+              <button class="btn-download" data-id="${id}">Download</button>
+              <button class="btn-load" data-id="${id}">Load Save</button>
+              <button class="btn-delete" data-id="${id}">Delete</button>
+            </div>
+          `
+
+          detailsRow.appendChild(detailsContent)
+
+          rowDiv.addEventListener('click', () => {
+            const isVisible = detailsRow.style.display !== 'none'
+
+            const allDetailsRows = table.querySelectorAll<HTMLElement>('.grid-details-row')
+            allDetailsRows.forEach((row) => {
+              if (row !== detailsRow) {
+                row.style.display = 'none'
+              }
+            })
+
+            detailsRow.style.display = isVisible ? 'none' : 'block'
+          })
+
+          detailsContent.addEventListener('click', (e) => {
+            e.stopPropagation()
+
+            const target = e.target as HTMLElement
+            const saveId = target.getAttribute('data-id')!
+
+            if (target.classList.contains('btn-download')) {
+              handleDownload(saveId)
+            } else if (target.classList.contains('btn-load')) {
+              handleLoadSave(saveId)
+            } else if (target.classList.contains('btn-delete')) {
+              handleDeleteSave(saveId)
+            }
+          })
+
+          table.appendChild(rowDiv)
+          table.appendChild(detailsRow)
+        })
+
+        function handleDownload (saveId: string) {
+          console.log('Downloading save:', saveId)
+          // TODO
+        }
+
+        function handleLoadSave (saveId: string) {
+          console.log('Loading save:', saveId)
+          // TODO
+        }
+
+        function handleDeleteSave (saveId: string) {
+          console.log('Deleting save:', saveId)
+          // TODO
+        }
+      })
+  }
+
+  populateTable()
+
+  // Handle uploading savefiles
+  uploadButton?.addEventListener('click', function(this: typeof uploadButton) {
+    this.disabled = true
+    const originalText = this.textContent
+    this.innerHTML = '<span class="spinner"></span> Uploading...'
+
+    const save = localStorage.getItem('Synergysave2')
+    assert(save !== null, 'no save')
+
+    const name = saveFilename()
+
+    const fd = new FormData()
+    fd.set('file', new File([save], name))
+    fd.set('name', name)
+
+    fetch('/saves/upload', {
+      method: 'POST',
+      body: fd
+    }).then((response) => {
+      if (!response.ok) {
+        throw new TypeError(`Received status ${response.status}`)
+      }
+
+      this.textContent = i18next.t('settings.cloud.uploadSuccess')
+      populateTable()
+    }).catch((e) => {
+      console.error(e)
+      this.textContent = i18next.t('settings.cloud.uploadFailed')
+    }).finally(() => {
+      setTimeout(() => {
+        this.disabled = false
+        this.textContent = originalText
+      }, 5000)
+    })
+  })
 }
