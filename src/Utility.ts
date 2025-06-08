@@ -32,20 +32,35 @@ export const smallestInc = (x = 0): number => {
  * @returns {number}
  */
 export const sumContents = (array: number[]): number => {
-  array = Array.isArray(array)
-    ? array
-    : Object.values(array)
+  assert(Array.isArray(array))
 
-  return array.reduce((a, b) => a + b, 0)
+  switch (array.length) {
+    case 0: return 0
+    case 1: return array[0]
+    case 2: return array[0] + array[1]
+    case 3: return array[0] + array[1] + array[2]
+    case 4: return array[0] + array[1] + array[2] + array[3]
+    case 5: return array[0] + array[1] + array[2] + array[3] + array[4]
+    default: return array.reduce((a, b) => a + b, 0)
+  }
 }
 
 /**
  * Returns the product of all contents in an array
  * @param array {number[]}
- * @returns {number}
  */
 // TODO: Add a productContents for Decimal, but callable using productContents...
-export const productContents = (array: number[]): number => array.reduce((a, b) => a * b)
+export const productContents = (array: number[]) => {
+  switch (array.length) {
+    case 0: return 0
+    case 1: return array[0]
+    case 2: return array[0] * array[1]
+    case 3: return array[0] * array[1] * array[2]
+    case 4: return array[0] * array[1] * array[2] * array[3]
+    case 5: return array[0] * array[1] * array[2] * array[3] * array[4]
+    default: return array.reduce((a, b) => a * b)
+  }
+}
 
 export const sortWithIndices = (toSort: number[]) => {
   return Array

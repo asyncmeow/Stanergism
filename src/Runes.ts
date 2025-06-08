@@ -162,7 +162,9 @@ abstract class AbstractRune<K extends string> {
     this._isUnlocked = data.isUnlocked
     this.minimalResetTier = data.minimalResetTier
 
-    this.runeEXP = new Decimal().fromDecimal(data.runeEXP ?? new Decimal('0'))
+    if (data.runeEXP != null) {
+      this.runeEXP = Decimal.fromDecimal(data.runeEXP)
+    }
   }
 
   get effectiveLevelsPerOOM () {
@@ -219,7 +221,7 @@ abstract class AbstractRune<K extends string> {
   abstract updatePlayerEXP (): void
 
   updateRuneEXP (exp: Decimal) {
-    this.runeEXP = new Decimal().fromDecimal(exp)
+    this.runeEXP = Decimal.fromDecimal(exp)
     this.updatePlayerEXP()
 
     this.updateRuneEffectHTML()
@@ -308,7 +310,7 @@ class Rune<K extends RuneKeys> extends AbstractRune<K> {
 
   updatePlayerEXP (): void {
     if (player.runes && this.key in player.runes) {
-      player.runes[this.key as RuneKeys] = new Decimal().fromDecimal(this.runeEXP)
+      player.runes[this.key] = Decimal.fromDecimal(this.runeEXP)
     } else {
       console.error(`Player object does not have a property for ${this.key}.`)
     }
@@ -374,7 +376,7 @@ class RuneBlessing<K extends RuneBlessingKeys> extends AbstractRune<K> {
 
   updatePlayerEXP (): void {
     if (player.runeBlessings && this.key in player.runeBlessings) {
-      player.runeBlessings[this.key as RuneBlessingKeys] = new Decimal().fromDecimal(this.runeEXP)
+      player.runeBlessings[this.key as RuneBlessingKeys] = Decimal.fromDecimal(this.runeEXP)
     } else {
       console.error(`Player object does not have a property for ${this.key} in Blessings.`)
     }
@@ -443,7 +445,7 @@ class RuneSpirit<K extends RuneSpiritKeys> extends AbstractRune<K> {
 
   updatePlayerEXP (): void {
     if (player.runeSpirits && this.key in player.runeSpirits) {
-      player.runeSpirits[this.key as RuneSpiritKeys] = new Decimal().fromDecimal(this.runeEXP)
+      player.runeSpirits[this.key] = Decimal.fromDecimal(this.runeEXP)
     } else {
       console.error(`Player object does not have a property for ${this.key} in Spirits.`)
     }
