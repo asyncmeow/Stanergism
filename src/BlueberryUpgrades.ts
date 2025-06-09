@@ -788,10 +788,10 @@ export const blueberryUpgradeData: Record<
       const digits = Math.ceil(Math.log10(player.lifetimeRedAmbrosia + 1))
         + Math.ceil(Math.log10(player.lifetimeAmbrosia + 1))
       return {
-        ambrosiaLuck: digits * n,
+        ambrosiaLuckPercentage: 1/10000 * digits * n,
         desc: String(
           i18next.t('ambrosia.data.ambrosiaLuck4.effect', {
-            amount: format(digits * n, 0, true)
+            amount: formatAsPercentIncrease(1 + digits * n / 10000, 2)
           })
         )
       }

@@ -144,8 +144,6 @@ abstract class AbstractRune<K extends string> {
 
   protected abstract readonly key: K // Changed to protected abstract
 
-  private cachedOOM: number
-
   constructor (data: BaseRuneData, keyName: string) {
     this.name = i18next.t(`runes.${keyName}.name`)
     this.description = i18next.t(`runes.${keyName}.description`)
@@ -153,7 +151,6 @@ abstract class AbstractRune<K extends string> {
 
     this.costCoefficient = data.costCoefficient
     this.levelsPerOOM = data.levelsPerOOM
-    this.cachedOOM = this.levelsPerOOM
     this.levelsPerOOMIncrease = data.levelsPerOOMIncrease
     this.effectiveLevelMult = data.effectiveLevelMult
     this._freeLevels = data.freeLevels
@@ -167,18 +164,14 @@ abstract class AbstractRune<K extends string> {
   }
 
   get effectiveLevelsPerOOM () {
-    return this.cachedOOM
-  }
-
-  updateEffectiveLevelsPerOOM () {
-    this.cachedOOM = this.levelsPerOOM + this.levelsPerOOMIncrease()
+    return this.levelsPerOOM + this.levelsPerOOMIncrease()
   }
 
   get level (): number {
     if (player.singularityChallenges.noOfferingPower.enabled && this.isUnlocked) {
       return 1
     }
-    return Math.floor(this.cachedOOM * Decimal.log10(this.runeEXP.div(this.costCoefficient).plus(1)))
+    return Math.floor(this.effectiveLevelsPerOOM * Decimal.log10(this.runeEXP.div(this.costCoefficient).plus(1)))
   }
 
   get TNL (): Decimal {
@@ -206,7 +199,7 @@ abstract class AbstractRune<K extends string> {
   }
 
   computeEXPToLevel (level: number) {
-    return new Decimal(this.costCoefficient).times(Decimal.pow(10, level / this.cachedOOM).minus(1))
+    return new Decimal(this.costCoefficient).times(Decimal.pow(10, level / this.effectiveLevelsPerOOM).minus(1))
   }
 
   computeEXPLeftToLevel (level: number) {
@@ -965,10 +958,6 @@ export function initRunes (investments: Record<RuneKeys, Decimal>) {
       const rune = new Rune(dataWithInvestment, key) // Here we need to use type assertion because TypeScript can't track
        // the relationship between the key and the generic parameter in the loop
       ;(upgrades as Record<RuneKeys, Rune<RuneKeys>>)[key] = rune
-
-      setInterval(() => {
-        rune.updateEffectiveLevelsPerOOM()
-      }, 1000)
     }
 
     runes = upgrades as RunesMap
@@ -1246,10 +1235,6 @@ export function initRuneBlessings (investments: Record<RuneBlessingKeys, Decimal
       const rune = new RuneBlessing(dataWithInvestment, key) // Here we need to use type assertion because TypeScript can't track
        // the relationship between the key and the generic parameter in the loop
       ;(upgrades as Record<RuneBlessingKeys, RuneBlessing<RuneBlessingKeys>>)[key] = rune
-
-      setInterval(() => {
-        rune.updateEffectiveLevelsPerOOM()
-      }, 1000)
     }
 
     runeBlessings = upgrades as RuneBlessingMap
@@ -1447,10 +1432,6 @@ export function initRuneSpirits (investments: Record<RuneSpiritKeys, Decimal>) {
       const rune = new RuneSpirit(dataWithInvestment, key) // Here we need to use type assertion because TypeScript can't track
        // the relationship between the key and the generic parameter in the loop
       ;(upgrades as Record<RuneSpiritKeys, RuneSpirit<RuneSpiritKeys>>)[key] = rune
-
-      setInterval(() => {
-        rune.updateEffectiveLevelsPerOOM()
-      }, 1000)
     }
 
     runeSpirits = upgrades as RuneSpiritMap

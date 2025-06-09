@@ -2138,14 +2138,18 @@ export const allAdditiveLuckMultStats: StatLine[] = [
     stat: () => 0.001 * player.cubeUpgrades[77] // Cookie 5 (Cx27)
   },
   {
-    i18n: 'Event',
-    stat: () => G.isEvent ? calculateEventBuff(BuffType.AmbrosiaLuck) : 0, // Event
-    color: 'lime'
+    i18n: 'BlueberryUpgrade',
+    stat: () => +player.blueberryUpgrades.ambrosiaLuck4.bonus.ambrosiaLuckPercentage, // Blueberry Upgrade 4
   },
   {
     i18n: 'HorseShoeTalisman',
     stat: () => getTalisman('horseShoe').bonus.luckPercentage // Horseshoe Talisman
-  }
+  },
+  {
+    i18n: 'Event',
+    stat: () => G.isEvent ? calculateEventBuff(BuffType.AmbrosiaLuck) : 0, // Event
+    color: 'lime'
+  },
 ]
 
 export const allAmbrosiaLuckStats: StatLine[] = [
