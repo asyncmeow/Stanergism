@@ -119,7 +119,7 @@
       "ambrosiaLuck4": {
         "name": "Ambrosia Luck Module IV",
         "description": "<span class=\"rainbowText\">My magical lucky charms!</span> +0.01% &#9752 Ambrosia Luck/lvl, multiplied by the number of total digits in your Lifetime Ambrosia and Red Ambrosia!",
-        "effect": "This fourth generation Luck module increases &#9752 Ambrosia Luck by <span class=\"rainbowText\">{{amount}}%</span>"
+        "effect": "This fourth generation Luck module increases &#9752 Ambrosia Luck by <span class=\"rainbowText\">{{amount}}</span>"
       },
       "ambrosiaPatreon": {
         "name": "Shameless, Ambrosial Patreon Reminder",
@@ -4022,7 +4022,7 @@
       },
       "noOfferingPower": {
         "name": "Rejected by the Gods",
-        "description": "You're not even recognizable by the gods anymore. Runes, Talismans, Blessings and Spirits are all capped at level 1. NOTE: THIS EXALT IS NORMALLY OBTAINABLE AT <span class=\"rainbowText\">SINGULARITY 281</span>! THIS WILL NOT BE ACCESSIBLE BEFORE THEN AT THE UPDATE.",
+        "description": "You're not even recognizable by the gods anymore. Runes, Blessings and Spirits are all capped at level 1. While in this challenge, your Taxes are reduced by 90%. NOTE: THIS EXALT IS NORMALLY OBTAINABLE AT <span class=\"rainbowText\">SINGULARITY 281</span>! THIS WILL NOT BE ACCESSIBLE BEFORE THEN AT THE UPDATE.",
         "ScalingReward1": "+10 <<var(--red-text-color)|Talisman Level Caps>> for any Talisman that resets on Singularity",
         "ScalingReward2": "+1% <<var(--blueberry-box-color)|Talisman Free Rune Levels>>",
         "ScalingReward3": "+0.00066 <<var(--amber-text-color)|Rune Coefficient>> for Antiquities!",
@@ -4628,6 +4628,7 @@
       "ShopUpgrade": "EXALT Ambrosia Luck Multiplier:",
       "NoAmbrosiaUpgrades": "No Ambrosia Upgrades Challenge:",
       "Cookie5": "Cookie Upgrade 5 (Cx27):",
+      "BlueberryUpgrade": "Blueberry Module - Ambrosia Luck IV:",
       "HorseShoeTalisman": "Horse Shoe Talisman Inscription Bonus:",
       "Event": "Event Bonus:",
       "Total": "Total Additive Luck Multiplier:"

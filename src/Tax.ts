@@ -118,6 +118,10 @@ export const calculatetax = () => {
     exponent *= 0.5
   }
 
+  if (player.singularityChallenges.noOfferingPower.enabled) {
+    exponent *= 0.1
+  }
+
   // Cap the calculation overflow bug || httpsnet
   if (exponent < 1e-300) {
     exponent = 1e-300

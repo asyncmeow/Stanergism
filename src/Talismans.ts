@@ -209,9 +209,6 @@ export class Talisman<K extends TalismanKeys> {
   }
 
   get effectiveLevelCap () {
-    if (player.singularityChallenges.noOfferingPower.enabled) {
-      return 1
-    }
     return this.maxLevel + this.levelCapIncrease()
   }
 
