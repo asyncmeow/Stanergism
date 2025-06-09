@@ -282,7 +282,7 @@ class Rune<K extends RuneKeys> extends AbstractRune<K> {
   }
 
   get rewardDesc () {
-    return this.bonus.desc
+    return this.bonus.desc()
   }
 
   get bonus () {
@@ -336,7 +336,7 @@ class Rune<K extends RuneKeys> extends AbstractRune<K> {
   }
 
   updateRuneEffectHTML () {
-    DOMCacheGetOrSet(`${this.key}RunePower`).innerHTML = this.rewardDesc()
+    DOMCacheGetOrSet(`${this.key}RunePower`).innerHTML = this.rewardDesc
   }
 }
 
@@ -351,7 +351,7 @@ class RuneBlessing<K extends RuneBlessingKeys> extends AbstractRune<K> {
   }
 
   get rewardDesc () {
-    return this.bonus.desc
+    return this.bonus.desc()
   }
 
   get bonus () {
@@ -420,7 +420,7 @@ class RuneSpirit<K extends RuneSpiritKeys> extends AbstractRune<K> {
   }
 
   get rewardDesc () {
-    return this.bonus.desc
+    return this.bonus.desc()
   }
 
   get bonus () {
