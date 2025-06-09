@@ -15,7 +15,6 @@ import { CalcECC } from './Challenges'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { firstFiveRuneEffectivenessStats, runeEffectivenessStatsSI } from './Statistics'
 import { getTalisman, getTalismanBonus } from './Talismans'
-import { productContents } from './Utility'
 
 export enum resetTiers {
   prestige = 1,
@@ -1108,15 +1107,15 @@ type RuneBlessingTypeMap = {
 export type RuneBlessingKeys = keyof RuneBlessingTypeMap
 
 const blessingMultiplier = (key: RuneKeys) => {
-  return productContents([
-    getRune(key).level + getRune(key).freeLevels,
-    1 + (6.9 * player.researches[134]) / 100,
-    getTalisman('midas').bonus.blessingBonus,
-    1 + 0.1 * Math.log10(player.epicFragments + 1) * player.researches[174],
-    1 + (2 * player.researches[194]) / 100,
-    1 + 0.25 * player.researches[160],
-    G.challenge15Rewards.blessingBonus.value
-  ])
+  return (
+    getRune(key).level + getRune(key).freeLevels
+      * (1 + (6.9 * player.researches[134]) / 100)
+      * (getTalisman('midas').bonus.blessingBonus)
+      * (1 + 0.1 * Math.log10(player.epicFragments + 1) * player.researches[174])
+      * (1 + (2 * player.researches[194]) / 100)
+      * (1 + 0.25 * player.researches[160])
+      * G.challenge15Rewards.blessingBonus.value
+  )
 }
 
 export const runeBlessingData: { [K in RuneBlessingKeys]: RuneBlessingData<K> } = {
@@ -1308,16 +1307,16 @@ type RuneSpiritTypeMap = {
 export type RuneSpiritKeys = keyof RuneSpiritTypeMap
 
 const spiritMultiplier = (key: RuneKeys) => {
-  return productContents([
-    getRune(key).level + getRune(key).freeLevels,
-    getRuneBlessing(key as RuneBlessingKeys).level,
-    1 + (8 * player.researches[164]) / 100,
-    (player.researches[165] && player.currentChallenge.ascension !== 0) ? 2 : 1,
-    1 + 0.15 * Math.log10(player.legendaryFragments + 1) * player.researches[189],
-    1 + (2 * player.researches[194]) / 100,
-    G.challenge15Rewards.spiritBonus.value,
-    player.corruptions.used.totalCorruptionDifficultyMultiplier
-  ])
+  return (
+    getRune(key).level + getRune(key).freeLevels
+      * getRuneBlessing(key as RuneBlessingKeys).level
+      * (1 + (8 * player.researches[164]) / 100)
+      * (player.researches[165] && player.currentChallenge.ascension !== 0 ? 2 : 1)
+      * (1 + 0.15 * Math.log10(player.legendaryFragments + 1) * player.researches[189])
+      * (1 + (2 * player.researches[194]) / 100)
+      * G.challenge15Rewards.spiritBonus.value
+      * player.corruptions.used.totalCorruptionDifficultyMultiplier
+  )
 }
 
 export const runeSpiritData: { [K in RuneSpiritKeys]: RuneSpiritData<K> } = {

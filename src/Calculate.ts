@@ -206,12 +206,10 @@ export const calculateFastForwardResourcesGlobal = (
 export const calculatePotionValue = (resetTime: number, resourceMult: Decimal, baseResource: number) => {
   const potionTimeValue = new Decimal(7200)
   const fastForwardMult = calculateFastForwardResourcesGlobal(resetTime, potionTimeValue, resourceMult, baseResource)
-  const potionMultipliers = productContents([
-    +player.singularityUpgrades.potionBuff.getEffect().bonus
+  const potionMultipliers = +player.singularityUpgrades.potionBuff.getEffect().bonus
     * +player.singularityUpgrades.potionBuff2.getEffect().bonus
     * +player.singularityUpgrades.potionBuff3.getEffect().bonus
     * +player.octeractUpgrades.octeractAutoPotionEfficiency.getEffect().bonus
-  ])
 
   return fastForwardMult.times(potionMultipliers)
 }
@@ -221,10 +219,8 @@ export const calculateResearchAutomaticObtainium = (deltaTime: number) => {
     return new Decimal('0')
   }
 
-  const multiplier = productContents([
-    0.5 * player.researches[61] + 0.1 * player.researches[62],
-    1 + 0.8 * player.cubeUpgrades[3]
-  ])
+  const multiplier = (0.5 * player.researches[61] + 0.1 * player.researches[62])
+    * (1 + 0.8 * player.cubeUpgrades[3])
 
   if (multiplier === 0) {
     return new Decimal('0')
@@ -507,19 +503,17 @@ export const calculateAcceleratorMultiplier = () => {
 
 export const calculateRecycleMultiplier = () => {
   // Factors where recycle bonus comes from
-  const recycleFactors = sumContents([
-    0.05 * player.achievements[80],
-    0.05 * player.achievements[87],
-    0.05 * player.achievements[94],
-    0.05 * player.achievements[101],
-    0.05 * player.achievements[108],
-    0.05 * player.achievements[115],
-    0.075 * player.achievements[122],
-    0.075 * player.achievements[129],
-    0.05 * player.upgrades[61],
-    getRune('thrift').bonus.recycleChance,
-    0.005 * player.cubeUpgrades[2]
-  ])
+  const recycleFactors = 0.05 * player.achievements[80]
+    + 0.05 * player.achievements[87]
+    + 0.05 * player.achievements[94]
+    + 0.05 * player.achievements[101]
+    + 0.05 * player.achievements[108]
+    + 0.05 * player.achievements[115]
+    + 0.075 * player.achievements[122]
+    + 0.075 * player.achievements[129]
+    + 0.05 * player.upgrades[61]
+    + getRune('thrift').bonus.recycleChance
+    + 0.005 * player.cubeUpgrades[2]
 
   return 1 / (1 - recycleFactors)
 }

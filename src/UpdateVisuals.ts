@@ -605,20 +605,20 @@ export const visualUpdateRunes = () => {
     }
 
     const calculateRecycle = calculateRecycleMultiplier()
-    const allRuneExpAdditiveMultiplier = sumContents([
+    const allRuneExpAdditiveMultiplier = (
       // Base amount multiplied per offering
-      1 * calculateRecycle,
+      1 * calculateRecycle
       // +1 if C1 completion
-      Math.min(1, player.highestchallengecompletions[1]),
+      + Math.min(1, player.highestchallengecompletions[1])
       // +0.10 per C1 completion
-      (0.4 / 10) * player.highestchallengecompletions[1],
+      + (0.4 / 10) * player.highestchallengecompletions[1]
       // Research 5x2
-      0.6 * player.researches[22],
+      + 0.6 * player.researches[22]
       // Research 5x3
-      0.3 * player.researches[23],
+      + 0.3 * player.researches[23]
       // Particle Upgrade 1x1
-      2 * player.upgrades[61]
-    ])
+      + 2 * player.upgrades[61]
+    )
 
     DOMCacheGetOrSet('offeringExperienceValue').textContent = i18next.t(
       'runes.gainExp',

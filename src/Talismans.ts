@@ -9,7 +9,6 @@ import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { getRune, resetTiers, type RuneKeys } from './Runes'
 import { allTalismanRuneBonusStats } from './Statistics'
 import { format, player } from './Synergism'
-import { sumContents } from './Utility'
 
 interface TalismanFragmentCost {
   obtainium: number
@@ -674,15 +673,15 @@ const exponentialCostProgression = (baseMult: number, level: number): Record<Tal
 }
 
 export const universalTalismanMaxLevelIncreasers = () => {
-  return sumContents([
-    6 * CalcECC('ascension', player.challengecompletions[13]),
-    Math.floor(player.researches[200] / 400),
-    +player.singularityChallenges.noOfferingPower.rewards.talismanFreeLevel,
-    +player.octeractUpgrades.octeractTalismanLevelCap1.getEffect().bonus,
-    +player.octeractUpgrades.octeractTalismanLevelCap2.getEffect().bonus,
-    +player.octeractUpgrades.octeractTalismanLevelCap3.getEffect().bonus,
-    +player.octeractUpgrades.octeractTalismanLevelCap4.getEffect().bonus
-  ])
+  return (
+    6 * CalcECC('ascension', player.challengecompletions[13])
+    + Math.floor(player.researches[200] / 400)
+    + +player.singularityChallenges.noOfferingPower.rewards.talismanFreeLevel
+    + +player.octeractUpgrades.octeractTalismanLevelCap1.getEffect().bonus
+    + +player.octeractUpgrades.octeractTalismanLevelCap2.getEffect().bonus
+    + +player.octeractUpgrades.octeractTalismanLevelCap3.getEffect().bonus
+    + +player.octeractUpgrades.octeractTalismanLevelCap4.getEffect().bonus
+  )
 }
 
 export const metaphysicsTalismanMaxLevelIncreasers = () => {
