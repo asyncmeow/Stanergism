@@ -4724,6 +4724,10 @@ export const updateAntMultipliers = (): void => {
   if (player.highestSingularityCount >= 100) {
     G.globalAntMult = G.globalAntMult.times(1e6)
   }
+
+  if (player.singularityChallenges.noOfferingPower.enabled) {
+    G.globalAntMult = G.globalAntMult.times(1e10 * Math.pow(2, -player.singularityChallenges.noOfferingPower.completions))
+  }
 }
 
 export const createAnts = (dt: number): void => {
