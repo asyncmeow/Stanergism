@@ -171,6 +171,9 @@ abstract class AbstractRune<K extends string> {
     if (player.singularityChallenges.noOfferingPower.enabled && this.isUnlocked) {
       return 1
     }
+    if (!this.isUnlocked) {
+      return 0
+    }
     return Math.floor(this.effectiveLevelsPerOOM * Decimal.log10(this.runeEXP.div(this.costCoefficient).plus(1)))
   }
 
