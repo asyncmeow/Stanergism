@@ -424,7 +424,7 @@ export class SingularityUpgrade extends DynamicUpgrade {
     return Math.max(linearLevels, polynomialLevels)
   }
 
-  public getEffect (): { bonus: number | boolean; desc: string } {
+  public getEffect (): { bonus: number | boolean; desc: () => string } {
     return this.effect(this.actualTotalLevels())
   }
 
@@ -475,7 +475,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 1 + 0.1 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.goldenQuarks1.effect', {
             n: format(10 * n, 0, true)
           })
@@ -491,7 +491,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 250 ? 1 / Math.log2(n / 62.5) : 1 - Math.min(0.5, n / 500),
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.goldenQuarks2.effect', {
             n: n > 250
               ? format(100 - 100 / Math.log2(n / 62.5), 2, true)
@@ -508,7 +508,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: (n * (n + 1)) / 2,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.goldenQuarks3.effect', {
             n: format((n * (n + 1)) / 2)
           })
@@ -522,7 +522,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.starterPack.effect${n > 0 ? 'Have' : 'HaveNot'}`
           )
@@ -536,7 +536,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.wowPass.effect${n > 0 ? 'Have' : 'HaveNot'}`
           )
@@ -551,7 +551,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.cookies.effect${n > 0 ? 'Have' : 'HaveNot'}`
           )
@@ -566,7 +566,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.cookies2.effect${n > 0 ? 'Have' : 'HaveNot'}`
           )
@@ -581,7 +581,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.cookies3.effect${n > 0 ? 'Have' : 'HaveNot'}`
           )
@@ -596,7 +596,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.cookies4.effect${n > 0 ? 'Have' : 'HaveNot'}`
           )
@@ -612,7 +612,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.cookies5.effect${n > 0 ? 'Have' : 'HaveNot'}`
           )
@@ -627,7 +627,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: (1 + (2 * n) / 100) * (1 + Math.floor(n / 10) / 100),
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.ascensions.effect', {
             n: format(
               (100 + 2 * n) * (1 + Math.floor(n / 10) / 100) - 100,
@@ -645,7 +645,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.corruptionFourteen.effect${n > 0 ? 'Have' : 'HaveNot'}`,
             {
@@ -662,7 +662,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.corruptionFifteen.effect${n > 0 ? 'Have' : 'HaveNot'}`,
             {
@@ -679,7 +679,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 1 + 0.02 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singOfferings1.effect', {
             n: format(2 * n, 0, true)
           })
@@ -694,7 +694,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 1 + 0.08 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singOfferings2.effect', {
             n: format(8 * n, 0, true)
           })
@@ -709,7 +709,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 1 + 0.04 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singOfferings3.effect', {
             n: format(4 * n, 0, true)
           })
@@ -723,7 +723,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 1 + 0.02 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singObtainium1.effect', {
             n: format(2 * n, 0, true)
           })
@@ -738,7 +738,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 1 + 0.08 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singObtainium2.effect', {
             n: format(8 * n, 0, true)
           })
@@ -753,7 +753,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 1 + 0.04 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singObtainium3.effect', {
             n: format(4 * n, 0, true)
           })
@@ -767,7 +767,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 1 + 0.006 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singCubes1.effect', {
             n: format(0.6 * n, 1, true)
           })
@@ -782,7 +782,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 1 + 0.08 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singCubes2.effect', {
             n: format(8 * n, 0, true)
           })
@@ -797,7 +797,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 1 + 0.04 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singCubes3.effect', {
             n: format(4 * n, 0, true)
           })
@@ -812,7 +812,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: (1 + 0.02 * n) * (1 + Math.floor(n / 10) / 100),
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singCubes2.effect', {
             n: format(
               100 * ((1 + 0.02 * n) * (1 + Math.floor(n / 10) / 100) - 1),
@@ -832,7 +832,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: (1 + 0.02 * n) * (1 + Math.floor(n / 10) / 100),
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singCubes3.effect', {
             n: format(
               100 * ((1 + 0.02 * n) * (1 + Math.floor(n / 10) / 100) - 1),
@@ -851,7 +851,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.octeractUnlock.effect${n > 0 ? 'Have' : 'HaveNot'}`
           )
@@ -867,7 +867,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singOcteractPatreonBonus.effect', {
             n
           })
@@ -882,7 +882,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.offeringAutomatic.effect', { n })
         }
       }
@@ -895,7 +895,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.intermediatePack.effect${n > 0 ? 'Have' : 'HaveNot'}`
           )
@@ -910,7 +910,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.advancedPack.effect${n > 0 ? 'Have' : 'HaveNot'}`
           )
@@ -925,7 +925,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.expertPack.effect${n > 0 ? 'Have' : 'HaveNot'}`
           )
@@ -940,7 +940,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.masterPack.effect${n > 0 ? 'Have' : 'HaveNot'}`
           )
@@ -955,7 +955,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.divinePack.effect${n > 0 ? 'Have' : 'HaveNot'}`
           )
@@ -970,7 +970,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.wowPass2.effect${n > 0 ? 'Have' : 'HaveNot'}`
           )
@@ -986,7 +986,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.wowPass3.effect${n > 0 ? 'Have' : 'HaveNot'}`
           )
@@ -1003,7 +1003,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: Math.max(1, 10 * Math.pow(n, 2)),
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.potionBuff.effect', {
             n: format(Math.max(1, 10 * Math.pow(n, 2)), 0, true)
           })
@@ -1019,7 +1019,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: Math.max(1, 2 * n),
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.potionBuff2.effect', {
             n: format(Math.max(1, 2 * n), 0, true)
           })
@@ -1035,7 +1035,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: Math.max(1, 1 + 0.5 * n),
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.potionBuff3.effect', {
             n: format(Math.max(1, 1 + 0.5 * n), 2, true)
           })
@@ -1050,7 +1050,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singChallengeExtension.effect', {
             n: 2 * n,
             m: n
@@ -1066,7 +1066,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singChallengeExtension2.effect', {
             n: 2 * n,
             m: n
@@ -1082,7 +1082,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singChallengeExtension3.effect', {
             n: 2 * n,
             m: n
@@ -1100,7 +1100,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 1 + n / 200,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singQuarkImprover1.effect', {
             n: format(n / 2, 2, true)
           })
@@ -1116,7 +1116,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singQuarkHepteract.effect', {
             n: format(2 * n, 2, true)
           })
@@ -1132,7 +1132,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singQuarkHepteract2.effect', {
             n: format(2 * n, 2, true)
           })
@@ -1148,7 +1148,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singQuarkHepteract3.effect', {
             n: format(2 * n, 2, true)
           })
@@ -1164,7 +1164,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 1 + 0.0125 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singOcteractGain.effect', {
             n: format(1.25 * n, 2, true)
           })
@@ -1180,7 +1180,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 1 + 0.05 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singOcteractGain2.effect', {
             n: format(5 * n, 0, true)
           })
@@ -1196,7 +1196,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 1 + 0.025 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singOcteractGain3.effect', {
             n: format(2.5 * n, 0, true)
           })
@@ -1212,7 +1212,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 1 + 0.02 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singOcteractGain4.effect', {
             n: format(2 * n, 0, true)
           })
@@ -1228,7 +1228,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 1 + 0.01 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singOcteractGain5.effect', {
             n: format(n, 0, true)
           })
@@ -1243,7 +1243,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.platonicTau.effect${n ? 'Have' : 'HaveNot'}`
           )
@@ -1259,7 +1259,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.platonicAlpha.effect${n ? 'Have' : 'HaveNot'}`
           )
@@ -1275,7 +1275,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.platonicDelta.effect${n ? 'Have' : 'HaveNot'}`
           )
@@ -1290,7 +1290,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.platonicPhi.effect${n ? 'Have' : 'HaveNot'}`
           )
@@ -1306,7 +1306,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.singFastForward.effect${n ? 'Have' : 'HaveNot'}`
           )
@@ -1322,7 +1322,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.singFastForward2.effect${n ? 'Have' : 'HaveNot'}`
           )
@@ -1338,7 +1338,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singAscensionSpeed.effect', {
             n: format(1 + 0.03 * n, 2, true),
             m: format(1 - 0.03 * n, 2, true)
@@ -1355,7 +1355,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 0.001 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singAscensionSpeed2.effect', {
             n: format(0.001 * n, 3, true)
           })
@@ -1370,7 +1370,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.ultimatePen.effect', {
             n: n ? '' : 'NOT',
             m: n > 0
@@ -1388,7 +1388,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.halfMind.effect${n ? 'Have' : 'HaveNot'}`
           )
@@ -1404,7 +1404,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.oneMind.effect${n ? 'Have' : 'HaveNot'}`
           )
@@ -1420,7 +1420,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t(
             `singularity.data.wowPass4.effect${n ? 'Have' : 'HaveNot'}`
           )
@@ -1436,7 +1436,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.blueberries.effect', { n })
         }
       }
@@ -1451,7 +1451,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 4 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singAmbrosiaLuck.effect', {
             n: format(4 * n)
           })
@@ -1468,7 +1468,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 2 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singAmbrosiaLuck2.effect', {
             n: format(2 * n)
           })
@@ -1484,7 +1484,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 3 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singAmbrosiaLuck3.effect', {
             n: format(3 * n)
           })
@@ -1500,7 +1500,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 5 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singAmbrosiaLuck4.effect', {
             n: format(5 * n)
           })
@@ -1516,7 +1516,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 1 + n / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singAmbrosiaGeneration.effect', {
             n: format(n)
           })
@@ -1533,7 +1533,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 1 + n / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singAmbrosiaGeneration2.effect', {
             n: format(n)
           })
@@ -1549,7 +1549,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 1 + n / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singAmbrosiaGeneration3.effect', {
             n: format(n)
           })
@@ -1565,7 +1565,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 1 + (2 * n) / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singAmbrosiaGeneration4.effect', {
             n: format(2 * n)
           })
@@ -1582,7 +1582,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singBonusTokens1.effect', {
             n: format(n)
           })
@@ -1604,7 +1604,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 1 + n / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singBonusTokens2.effect', {
             n: format(n)
           })
@@ -1626,7 +1626,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 2 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singBonusTokens3.effect', {
             n: format(2 * n)
           })
@@ -1648,7 +1648,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: 5 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singBonusTokens4.effect', {
             n: format(5 * n)
           })
@@ -1669,7 +1669,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singInfiniteShopUpgrades.effect', {
             n: format(n)
           })
@@ -1684,7 +1684,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singTalismanBonusRunes.effect', {
             n: format(n, 0, true)
           })
@@ -1699,7 +1699,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singTalismanBonusRunes2.effect', {
             n: format(n, 0, true)
           })
@@ -1714,7 +1714,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singTalismanBonusRunes3.effect', {
             n: format(n, 0, true)
           })
@@ -1729,7 +1729,7 @@ export const singularityData: Record<
     effect: (n: number) => {
       return {
         bonus: n / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('singularity.data.singTalismanBonusRunes4.effect', {
             n: format(n, 0, true)
           })

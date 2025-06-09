@@ -180,7 +180,7 @@ export class OcteractUpgrade extends DynamicUpgrade {
     }
   }
 
-  public getEffect (): { bonus: number | boolean; desc: string } {
+  public getEffect (): { bonus: number | boolean; desc: () => string } {
     return this.effect(this.actualTotalLevels())
   }
 
@@ -228,7 +228,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: n > 0 ? 1.4 : 1,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractStarter.effect', { n: (n > 0) ? '' : 'not' })
         }
       }
@@ -243,7 +243,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 1 + 0.011 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractGain.effect', { n: format(n, 0, true) })
         }
       }
@@ -258,7 +258,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 1 + 0.01 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractGain2.effect', { n: format(n, 0, true) })
         }
       }
@@ -280,7 +280,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 1 + 0.011 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractQuarkGain.effect', { n: format(1.1 * n, 0, true) })
         }
       }
@@ -295,7 +295,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractQuarkGain2.effect', { n: n > 0 ? '' : 'NOT' })
         }
       }
@@ -310,7 +310,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractCorruption.effect', { n })
         }
       }
@@ -325,7 +325,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 1 - n / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractGQCostReduce.effect', { n })
         }
       }
@@ -340,7 +340,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 4 * n / 10 + 1,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractExportQuarks.effect', { n: format(40 * n, 0, true) })
         }
       }
@@ -355,7 +355,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractImprovedDaily.effect', { n })
         }
       }
@@ -371,7 +371,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 1 + 0.01 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractImprovedDaily2.effect', { n })
         }
       }
@@ -387,7 +387,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractImprovedDaily3.effect', { n: `${n} +${0.5 * n}%` })
         }
       }
@@ -403,7 +403,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: n / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractImprovedQuarkHept.effect', { n: format(n / 100, 2, true) })
         }
       }
@@ -418,7 +418,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: n / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractImprovedGlobalSpeed.effect', { n: format(n, 0, true) })
         }
       }
@@ -433,7 +433,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: n / 2000,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractImprovedAscensionSpeed.effect', { n: format(n / 20, 2, true) })
         }
       }
@@ -448,7 +448,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: n / 2000,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractImprovedAscensionSpeed2.effect', { n: format(n / 50, 2, true) })
         }
       }
@@ -463,7 +463,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: n > 0,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractImprovedFree.effect', { n: (n > 0) ? '' : 'NOT' })
         }
       }
@@ -478,7 +478,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 0.05 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractImprovedFree2.effect', { n: format(n / 20, 2, true) })
         }
       }
@@ -493,7 +493,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 0.05 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractImprovedFree3.effect', { n: format(n / 20, 2, true) })
         }
       }
@@ -508,7 +508,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 0.001 * n + ((n > 0) ? 0.01 : 0),
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractImprovedFree4.effect', {
             n: format(0.001 * n + ((n > 0) ? 0.01 : 0), 3, true)
           })
@@ -525,7 +525,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractSingUpgradeCap.effect', { n })
         }
       }
@@ -545,7 +545,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 1 + 0.01 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractOfferings1.effect', { n: format(n) })
         }
       }
@@ -564,7 +564,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 1 + 0.01 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractObtainium1.effect', { n: format(n) })
         }
       }
@@ -579,7 +579,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: (1 + n / 100) * (1 + 2 * Math.floor(n / 10) / 100),
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractAscensions.effect', {
             n: format((100 + n) * (1 + 2 * Math.floor(n / 10) / 100) - 100, 1, true)
           })
@@ -596,7 +596,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: (1 + n / 100) * (1 + 2 * Math.floor(n / 10) / 100),
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractAscensions2.effect', {
             n: format((100 + n) * (1 + 2 * Math.floor(n / 10) / 100) - 100, 1, true)
           })
@@ -613,7 +613,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: n / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractAscensionsOcteractGain.effect', { n: format(n, 1, true) })
         }
       }
@@ -628,7 +628,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractFastForward.effect', { n100: 100 * n, n })
         }
       }
@@ -643,7 +643,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 1 + 4 * n / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractAutoPotionSpeed.effect', { n: 4 * n })
         }
       }
@@ -658,7 +658,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 1 + 2 * n / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractAutoPotionEfficiency.effect', { n: 2 * n })
         }
       }
@@ -674,7 +674,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 0.55 + n / 150,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractOneMindImprover.effect', { n: format(0.55 + n / 150, 3, true) })
         }
       }
@@ -691,7 +691,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 4 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractAmbrosiaLuck.effect', { n: format(4 * n) })
         }
       }
@@ -707,7 +707,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 2 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractAmbrosiaLuck2.effect', { n: format(2 * n) })
         }
       }
@@ -723,7 +723,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 3 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractAmbrosiaLuck3.effect', { n: format(3 * n) })
         }
       }
@@ -740,7 +740,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 5 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractAmbrosiaLuck4.effect', { n: format(5 * n) })
         }
       }
@@ -757,7 +757,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 1 + n / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractAmbrosiaGeneration.effect', { n: format(n) })
         }
       }
@@ -773,7 +773,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 1 + n / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractAmbrosiaGeneration2.effect', { n: format(n) })
         }
       }
@@ -789,7 +789,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 1 + n / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractAmbrosiaGeneration3.effect', { n: format(n) })
         }
       }
@@ -806,7 +806,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 1 + 2 * n / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractAmbrosiaGeneration4.effect', { n: format(2 * n) })
         }
       }
@@ -822,7 +822,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractBonusTokens1.effect', { n: format(n) })
         }
       }
@@ -843,7 +843,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 1 + n / 100,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractBonusTokens2.effect', { n: format(n) })
         }
       }
@@ -864,7 +864,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractBonusTokens3.effect', { n: format(n) })
         }
       }
@@ -885,7 +885,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: 2 * n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractBonusTokens4.effect', { n: format(2 * n) })
         }
       }
@@ -911,7 +911,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractBlueberries.effect', { n: format(n) })
         }
       }
@@ -926,7 +926,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractInfiniteShopUpgrades.effect', { n: format(n) })
         }
       }
@@ -941,7 +941,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractTalismanLevelCap1.effect', { n: format(n) })
         }
       }
@@ -956,7 +956,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractTalismanLevelCap2.effect', { n: format(n) })
         }
       }
@@ -971,7 +971,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractTalismanLevelCap3.effect', { n: format(n) })
         }
       }
@@ -986,7 +986,7 @@ export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractDat
     effect: (n: number) => {
       return {
         bonus: n,
-        get desc () {
+        desc: () => {
           return i18next.t('octeract.data.octeractTalismanLevelCap4.effect', { n: format(n) })
         }
       }

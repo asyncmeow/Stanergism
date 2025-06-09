@@ -7,7 +7,7 @@ import { Alert, Prompt } from './UpdateHTML'
 import { visualUpdateAmbrosia } from './UpdateVisuals'
 
 interface BaseReward {
-  desc: string
+  desc: () => string
 }
 
 interface TutorialReward extends BaseReward {
@@ -277,7 +277,7 @@ export class RedAmbrosiaUpgrade<K extends RedAmbrosiaKeys> extends DynamicUpgrad
 
   public get rewardDesc (): string {
     const effectiveLevel = this.level
-    return this.rewards(effectiveLevel).desc
+    return this.rewards(effectiveLevel).desc()
   }
 
   public get bonus () {
@@ -294,7 +294,7 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     rewards: (n: number) => {
       const val = Math.pow(1.01, n)
       return {
-        desc: i18next.t('redAmbrosia.data.tutorial.effect', { amount: formatAsPercentIncrease(val) }),
+        desc: () => i18next.t('redAmbrosia.data.tutorial.effect', { amount: formatAsPercentIncrease(val) }),
         cubeMult: val,
         obtainiumMult: val,
         offeringMult: val
@@ -309,7 +309,7 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     },
     rewards: (n: number) => {
       return {
-        desc: i18next.t('redAmbrosia.data.conversionImprovement1.effect', { amount: n }),
+        desc: () => i18next.t('redAmbrosia.data.conversionImprovement1.effect', { amount: n }),
         conversionImprovement: -n
       }
     },
@@ -322,7 +322,7 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     },
     rewards: (n: number) => {
       return {
-        desc: i18next.t('redAmbrosia.data.conversionImprovement2.effect', { amount: n }),
+        desc: () => i18next.t('redAmbrosia.data.conversionImprovement2.effect', { amount: n }),
         conversionImprovement: -n
       }
     },
@@ -335,7 +335,7 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     },
     rewards: (n: number) => {
       return {
-        desc: i18next.t('redAmbrosia.data.conversionImprovement3.effect', { amount: n }),
+        desc: () => i18next.t('redAmbrosia.data.conversionImprovement3.effect', { amount: n }),
         conversionImprovement: -n
       }
     },
@@ -348,7 +348,7 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     },
     rewards: (n: number) => {
       return {
-        desc: i18next.t('redAmbrosia.data.freeTutorialLevels.effect', { amount: n }),
+        desc: () => i18next.t('redAmbrosia.data.freeTutorialLevels.effect', { amount: n }),
         freeLevels: n
       }
     },
@@ -361,7 +361,7 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     },
     rewards: (n: number) => {
       return {
-        desc: i18next.t('redAmbrosia.data.freeLevelsRow2.effect', { amount: n }),
+        desc: () => i18next.t('redAmbrosia.data.freeLevelsRow2.effect', { amount: n }),
         freeLevels: n
       }
     },
@@ -374,7 +374,7 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     },
     rewards: (n: number) => {
       return {
-        desc: i18next.t('redAmbrosia.data.freeLevelsRow3.effect', { amount: n }),
+        desc: () => i18next.t('redAmbrosia.data.freeLevelsRow3.effect', { amount: n }),
         freeLevels: n
       }
     },
@@ -387,7 +387,7 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     },
     rewards: (n: number) => {
       return {
-        desc: i18next.t('redAmbrosia.data.freeLevelsRow4.effect', { amount: n }),
+        desc: () => i18next.t('redAmbrosia.data.freeLevelsRow4.effect', { amount: n }),
         freeLevels: n
       }
     },
@@ -400,7 +400,7 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     },
     rewards: (n: number) => {
       return {
-        desc: i18next.t('redAmbrosia.data.freeLevelsRow5.effect', { amount: n }),
+        desc: () => i18next.t('redAmbrosia.data.freeLevelsRow5.effect', { amount: n }),
         freeLevels: n
       }
     },
@@ -414,7 +414,7 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     rewards: (n: number) => {
       const val = 1 + n / 500
       return {
-        desc: i18next.t('redAmbrosia.data.blueberryGenerationSpeed.effect', { amount: formatAsPercentIncrease(val) }),
+        desc: () => i18next.t('redAmbrosia.data.blueberryGenerationSpeed.effect', { amount: formatAsPercentIncrease(val) }),
         blueberryGenerationSpeed: val
       }
     },
@@ -428,7 +428,7 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     rewards: (n: number) => {
       const val = 2 * n
       return {
-        desc: i18next.t('redAmbrosia.data.regularLuck.effect', { amount: val }),
+        desc: () => i18next.t('redAmbrosia.data.regularLuck.effect', { amount: val }),
         ambrosiaLuck: val
       }
     },
@@ -442,7 +442,7 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     rewards: (n: number) => {
       const val = 1 + 3 * n / 1000
       return {
-        desc: i18next.t('redAmbrosia.data.redGenerationSpeed.effect', { amount: formatAsPercentIncrease(val) }),
+        desc: () => i18next.t('redAmbrosia.data.redGenerationSpeed.effect', { amount: formatAsPercentIncrease(val) }),
         redAmbrosiaGenerationSpeed: val
       }
     },
@@ -456,7 +456,7 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     rewards: (n: number) => {
       const val = n
       return {
-        desc: i18next.t('redAmbrosia.data.redLuck.effect', { amount: val }),
+        desc: () => i18next.t('redAmbrosia.data.redLuck.effect', { amount: val }),
         redAmbrosiaLuck: val
       }
     },
@@ -470,7 +470,7 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     rewards: (n: number) => {
       const exponent = 0.4 + getRedAmbrosiaUpgrade('redAmbrosiaCubeImprover').bonus.extraExponent
       return {
-        desc: i18next.t('redAmbrosia.data.redAmbrosiaCube.effect', {
+        desc: () => i18next.t('redAmbrosia.data.redAmbrosiaCube.effect', {
           amount: n > 0,
           exponent: format(exponent, 2, true)
         }),
@@ -486,7 +486,7 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     },
     rewards: (n: number) => {
       return {
-        desc: i18next.t('redAmbrosia.data.redAmbrosiaObtainium.effect', { amount: n > 0 }),
+        desc: () => i18next.t('redAmbrosia.data.redAmbrosiaObtainium.effect', { amount: n > 0 }),
         unlockRedAmbrosiaObtainium: n
       }
     },
@@ -499,7 +499,7 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     },
     rewards: (n: number) => {
       return {
-        desc: i18next.t('redAmbrosia.data.redAmbrosiaOffering.effect', { amount: n > 0 }),
+        desc: () => i18next.t('redAmbrosia.data.redAmbrosiaOffering.effect', { amount: n > 0 }),
         unlockRedAmbrosiaOffering: n
       }
     },
@@ -513,7 +513,7 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     rewards: (n: number) => {
       const val = 0.01 * n
       return {
-        desc: i18next.t('redAmbrosia.data.redAmbrosiaCubeImprover.effect', { newExponent: format(0.4 + val, 2, true) }),
+        desc: () => i18next.t('redAmbrosia.data.redAmbrosiaCubeImprover.effect', { newExponent: format(0.4 + val, 2, true) }),
         extraExponent: val
       }
     },
@@ -526,7 +526,7 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     },
     rewards: (n: number) => {
       return {
-        desc: i18next.t('redAmbrosia.data.viscount.effect', { mark: n > 0 ? '✔' : '❌' }),
+        desc: () => i18next.t('redAmbrosia.data.viscount.effect', { mark: n > 0 ? '✔' : '❌' }),
         roleUnlock: n > 0,
         quarkBonus: 1 + 0.1 * n,
         luckBonus: 125 * n,
@@ -542,7 +542,7 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     },
     rewards: (n: number) => {
       return {
-        desc: i18next.t('redAmbrosia.data.infiniteShopUpgrades.effect', { amount: n }),
+        desc: () => i18next.t('redAmbrosia.data.infiniteShopUpgrades.effect', { amount: n }),
         freeLevels: n
       }
     },
@@ -556,7 +556,7 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     rewards: (n: number) => {
       const val = 0.02 * n + ((n > 0) ? 1 : 0)
       return {
-        desc: i18next.t('redAmbrosia.data.redAmbrosiaAccelerator.effect', { amount: format(val, 2, true) }),
+        desc: () => i18next.t('redAmbrosia.data.redAmbrosiaAccelerator.effect', { amount: format(val, 2, true) }),
         ambrosiaTimePerRedAmbrosia: val
       }
     },
@@ -570,7 +570,7 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     rewards: (n: number) => {
       const val = 2 * n
       return {
-        desc: i18next.t('redAmbrosia.data.regularLuck2.effect', { amount: val }),
+        desc: () => i18next.t('redAmbrosia.data.regularLuck2.effect', { amount: val }),
         ambrosiaLuck: val
       }
     },
@@ -584,7 +584,7 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     rewards: (n: number) => {
       const val = 1 + n / 1000
       return {
-        desc: i18next.t('redAmbrosia.data.blueberryGenerationSpeed2.effect', { amount: formatAsPercentIncrease(val) }),
+        desc: () => i18next.t('redAmbrosia.data.blueberryGenerationSpeed2.effect', { amount: formatAsPercentIncrease(val) }),
         blueberryGenerationSpeed: val
       }
     },

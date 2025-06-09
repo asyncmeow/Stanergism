@@ -64,7 +64,7 @@ interface RuneSpiritData<T extends RuneSpiritKeys> extends BaseRuneData {
 }
 
 interface BaseReward {
-  desc: string
+  desc: () => string
 }
 
 interface SpeedReward extends BaseReward {
@@ -340,7 +340,7 @@ class Rune<K extends RuneKeys> extends AbstractRune<K> {
   }
 
   updateRuneEffectHTML () {
-    DOMCacheGetOrSet(`${this.key}RunePower`).innerHTML = this.rewardDesc
+    DOMCacheGetOrSet(`${this.key}RunePower`).innerHTML = this.rewardDesc()
   }
 }
 
@@ -746,7 +746,7 @@ export const runeData: { [K in RuneKeys]: RuneData<K> } = {
       const multiplicativeAccelerators = 1 + level / 400
       const globalSpeed = 2 - Math.exp(-Math.cbrt(level) / 100)
       return {
-        desc: i18next.t('runes.speed.effect', {
+        desc: () => i18next.t('runes.speed.effect', {
           val: format(100 * acceleratorPower, 2, true),
           val2: formatAsPercentIncrease(multiplicativeAccelerators, 2),
           val3: formatAsPercentIncrease(globalSpeed, 2)
@@ -771,7 +771,7 @@ export const runeData: { [K in RuneKeys]: RuneData<K> } = {
       const multiplicativeMultipliers = 1 + level / 400
       const taxReduction = 0.001 + .999 * Math.exp(-Math.cbrt(level) / 10)
       return {
-        desc: i18next.t('runes.duplication.effect', {
+        desc: () => i18next.t('runes.duplication.effect', {
           val: format(multiplierBoosts, 2, true),
           val2: formatAsPercentIncrease(multiplicativeMultipliers, 2),
           val3: format(100 * (1 - taxReduction), 3, true)
@@ -795,7 +795,7 @@ export const runeData: { [K in RuneKeys]: RuneData<K> } = {
       const productionLog10 = Math.max(0, 2 * Math.log10(1 + level / 2) + (level / 2) * Math.log10(2) - Math.log10(256))
       const costDivisorLog10 = Math.floor(level / 10)
       return {
-        desc: i18next.t('runes.prism.effect', {
+        desc: () => i18next.t('runes.prism.effect', {
           val: format(Decimal.pow(10, productionLog10), 2, true),
           val2: format(Decimal.pow(10, costDivisorLog10), 2, true)
         }),
@@ -818,7 +818,7 @@ export const runeData: { [K in RuneKeys]: RuneData<K> } = {
       const recycleChance = 0.25 * (1 - Math.exp(-Math.sqrt(level) / 100))
       const taxReduction = 0.01 + 0.99 * Math.exp(-Math.cbrt(level) / 20)
       return {
-        desc: i18next.t('runes.thrift.effect', {
+        desc: () => i18next.t('runes.thrift.effect', {
           val: format(costDelay, 2, true),
           val2: format(100 * recycleChance, 3, true),
           val3: format(100 * (1 - taxReduction), 2, true)
@@ -843,7 +843,7 @@ export const runeData: { [K in RuneKeys]: RuneData<K> } = {
       const obtainiumMult = 1 + level / 200
       const antSpeed = 1 + Math.pow(level, 2) / 2500
       return {
-        desc: i18next.t('runes.superiorIntellect.effect', {
+        desc: () => i18next.t('runes.superiorIntellect.effect', {
           val: format(offeringMult, 3, true),
           val2: format(obtainiumMult, 3, true),
           val3: format(antSpeed, 3, true)
@@ -867,7 +867,7 @@ export const runeData: { [K in RuneKeys]: RuneData<K> } = {
       const quarkMult = 1.1 + level / 500
       const cubeMult = 1 + level / 100
       return {
-        desc: i18next.t('runes.infiniteAscent.effect', {
+        desc: () => i18next.t('runes.infiniteAscent.effect', {
           val: formatAsPercentIncrease(quarkMult, 2),
           val2: formatAsPercentIncrease(cubeMult, 2)
         }),
@@ -890,7 +890,7 @@ export const runeData: { [K in RuneKeys]: RuneData<K> } = {
       const offeringLog10 = level
       const obtainiumLog10 = level
       return {
-        desc: i18next.t('runes.antiquities.effect', {
+        desc: () => i18next.t('runes.antiquities.effect', {
           val: format(Decimal.pow(10, offeringLog10), 0, true),
           val2: format(Decimal.pow(10, obtainiumLog10), 0, true),
           val3: format(100 * addCodeCooldownReduction, 2, true)
@@ -915,7 +915,7 @@ export const runeData: { [K in RuneKeys]: RuneData<K> } = {
       const redLuck = level
       const redLuckConversion = -0.5 * level / (level + 50)
       return {
-        desc: i18next.t('runes.horseShoe.effect', {
+        desc: () => i18next.t('runes.horseShoe.effect', {
           val: format(ambrosiaLuck, 0, true),
           val2: format(redLuck, 0, true),
           val3: format(redLuckConversion, 3, false)
@@ -1126,7 +1126,7 @@ export const runeBlessingData: { [K in RuneBlessingKeys]: RuneBlessingData<K> } 
     rewards: (level) => {
       const globalSpeed = 1 + level / 1000000
       return {
-        desc: i18next.t('runes.blessings.rewards.speed', {
+        desc: () => i18next.t('runes.blessings.rewards.speed', {
           effect: format(globalSpeed, 3, true)
         }),
         globalSpeed
@@ -1145,7 +1145,7 @@ export const runeBlessingData: { [K in RuneBlessingKeys]: RuneBlessingData<K> } 
     rewards: (level) => {
       const multiplierBoosts = 1 + level / 1000000
       return {
-        desc: i18next.t('runes.blessings.rewards.duplication', {
+        desc: () => i18next.t('runes.blessings.rewards.duplication', {
           effect: format(multiplierBoosts, 3, true)
         }),
         multiplierBoosts
@@ -1164,7 +1164,7 @@ export const runeBlessingData: { [K in RuneBlessingKeys]: RuneBlessingData<K> } 
     rewards: (level) => {
       const antSacrificeMult = 1 + level / 1000000
       return {
-        desc: i18next.t('runes.blessings.rewards.prism', {
+        desc: () => i18next.t('runes.blessings.rewards.prism', {
           effect: format(antSacrificeMult, 3, true)
         }),
         antSacrificeMult
@@ -1183,7 +1183,7 @@ export const runeBlessingData: { [K in RuneBlessingKeys]: RuneBlessingData<K> } 
     rewards: (level) => {
       const accelBoostCostDelay = 1 + level / 1000000
       return {
-        desc: i18next.t('runes.blessings.rewards.thrift', {
+        desc: () => i18next.t('runes.blessings.rewards.thrift', {
           effect: format(accelBoostCostDelay, 3, true)
         }),
         accelBoostCostDelay
@@ -1202,7 +1202,7 @@ export const runeBlessingData: { [K in RuneBlessingKeys]: RuneBlessingData<K> } 
     rewards: (level) => {
       const obtToAntExponent = Math.log(1 + level / 1000000)
       return {
-        desc: i18next.t('runes.blessings.rewards.superiorIntellect', {
+        desc: () => i18next.t('runes.blessings.rewards.superiorIntellect', {
           effect: format(obtToAntExponent, 3, true),
           effect2: format(Decimal.pow(player.obtainium, obtToAntExponent), 2, false)
         }),
@@ -1327,7 +1327,7 @@ export const runeSpiritData: { [K in RuneSpiritKeys]: RuneSpiritData<K> } = {
     rewards: (level) => {
       const globalSpeed = 1 + level / 1e9
       return {
-        desc: i18next.t('runes.spirits.rewards.speed', {
+        desc: () => i18next.t('runes.spirits.rewards.speed', {
           effect: format(globalSpeed, 3, true)
         }),
         globalSpeed
@@ -1346,7 +1346,7 @@ export const runeSpiritData: { [K in RuneSpiritKeys]: RuneSpiritData<K> } = {
     rewards: (level) => {
       const wowCubes = 1 + level / 1e9
       return {
-        desc: i18next.t('runes.spirits.rewards.duplication', {
+        desc: () => i18next.t('runes.spirits.rewards.duplication', {
           effect: format(wowCubes, 3, true)
         }),
         wowCubes
@@ -1365,7 +1365,7 @@ export const runeSpiritData: { [K in RuneSpiritKeys]: RuneSpiritData<K> } = {
     rewards: (level) => {
       const crystalCaps = 1 + level / 1e9
       return {
-        desc: i18next.t('runes.spirits.rewards.prism', {
+        desc: () => i18next.t('runes.spirits.rewards.prism', {
           effect: format(crystalCaps, 3, true)
         }),
         crystalCaps
@@ -1384,7 +1384,7 @@ export const runeSpiritData: { [K in RuneSpiritKeys]: RuneSpiritData<K> } = {
     rewards: (level) => {
       const offerings = 1 + level / 1e9
       return {
-        desc: i18next.t('runes.spirits.rewards.thrift', {
+        desc: () => i18next.t('runes.spirits.rewards.thrift', {
           effect: format(offerings, 3, true)
         }),
         offerings
@@ -1404,7 +1404,7 @@ export const runeSpiritData: { [K in RuneSpiritKeys]: RuneSpiritData<K> } = {
       const obtainium = 1 + level / 1e9
 
       return {
-        desc: i18next.t('runes.spirits.rewards.superiorIntellect', {
+        desc: () => i18next.t('runes.spirits.rewards.superiorIntellect', {
           effect: format(obtainium, 3, true)
         }),
         obtainium
