@@ -15,7 +15,7 @@ import { CalcECC } from './Challenges'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { firstFiveRuneEffectivenessStats, runeEffectivenessStatsSI } from './Statistics'
 import { getTalisman, getTalismanBonus } from './Talismans'
-import { productContents, sumContents } from './Utility'
+import { productContents } from './Utility'
 
 export enum resetTiers {
   prestige = 1,
@@ -484,67 +484,71 @@ class RuneSpirit<K extends RuneSpiritKeys> extends AbstractRune<K> {
 }
 
 export const firstFiveFreeLevels = () => {
-  return sumContents([
-    Math.min(1e3, player.antUpgrades[8] ?? 0 + G.bonusant9),
-    7 * Math.min(player.constantUpgrades[7], 1000)
-  ])
+  return (
+    Math.min(1e3, player.antUpgrades[8] ?? 0 + G.bonusant9)
+    + 7 * Math.min(player.constantUpgrades[7], 1000)
+  )
 }
 
 export const bonusRuneLevelsSpeed = () => {
-  return sumContents([
-    getTalismanBonus('speed'),
-    player.upgrades[27] * (Math.min(50, Math.floor(Decimal.log(player.coins.add(1), 1e10)))
-      + Math.max(0, Math.min(50, Math.floor(Decimal.log(player.coins.add(1), 1e50)) - 10))),
-    player.upgrades[29] * Math.floor(
-      Math.min(
-        100,
-        (player.firstOwnedCoin + player.secondOwnedCoin + player.thirdOwnedCoin + player.fourthOwnedCoin
-          + player.fifthOwnedCoin) / 400
-      )
+  return (
+    getTalismanBonus('speed')
+    + (
+      player.upgrades[27] * (Math.min(50, Math.floor(Decimal.log(player.coins.add(1), 1e10)))
+        + Math.max(0, Math.min(50, Math.floor(Decimal.log(player.coins.add(1), 1e50)) - 10)))
     )
-  ])
+    + player.upgrades[29] * Math.floor(
+        Math.min(
+          100,
+          (player.firstOwnedCoin + player.secondOwnedCoin + player.thirdOwnedCoin + player.fourthOwnedCoin
+            + player.fifthOwnedCoin) / 400
+        )
+      )
+  )
 }
 
 export const bonusRuneLevelsDuplication = () => {
-  return sumContents([
-    getTalismanBonus('duplication'),
-    player.upgrades[28] * Math.min(
-      100,
-      Math.floor(
-        (player.firstOwnedCoin + player.secondOwnedCoin + player.thirdOwnedCoin + player.fourthOwnedCoin
-          + player.fifthOwnedCoin) / 400
+  return (
+    getTalismanBonus('duplication')
+    + player.upgrades[28] * Math.min(
+        100,
+        Math.floor(
+          (player.firstOwnedCoin + player.secondOwnedCoin + player.thirdOwnedCoin + player.fourthOwnedCoin
+            + player.fifthOwnedCoin) / 400
+        )
       )
-    ),
-    player.upgrades[30] * (Math.min(50, Math.floor(Decimal.log(player.coins.add(1), 1e30)))
-      + Math.min(50, Math.floor(Decimal.log(player.coins.add(1), 1e300))))
-  ])
+    + (
+      player.upgrades[30] * (Math.min(50, Math.floor(Decimal.log(player.coins.add(1), 1e30)))
+        + Math.min(50, Math.floor(Decimal.log(player.coins.add(1), 1e300))))
+    )
+  )
 }
 
 export const bonusRuneLevelsPrism = () => {
-  return sumContents([
+  return (
     getTalismanBonus('prism')
-  ])
+  )
 }
 
 export const bonusRuneLevelsThrift = () => {
-  return sumContents([
+  return (
     getTalismanBonus('thrift')
-  ])
+  )
 }
 
 export const bonusRuneLevelsSI = () => {
-  return sumContents([
+  return (
     getTalismanBonus('superiorIntellect')
-  ])
+  )
 }
 
 export const bonusRuneLevelsIA = () => {
-  return sumContents([
-    PCoinUpgradeEffects.INSTANT_UNLOCK_2 ? 6 : 0,
-    player.cubeUpgrades[73],
-    player.campaigns.bonusRune6,
-    getTalismanBonus('infiniteAscent')
-  ])
+  return (
+    (PCoinUpgradeEffects.INSTANT_UNLOCK_2 ? 6 : 0)
+    + player.cubeUpgrades[73]
+    + player.campaigns.bonusRune6
+    + getTalismanBonus('infiniteAscent')
+  )
 }
 
 export const bonusRuneLevelsAntiquities = () => {
@@ -552,79 +556,79 @@ export const bonusRuneLevelsAntiquities = () => {
 }
 
 export const speedRuneOOMIncrease = () => {
-  return sumContents([
-    player.upgrades[66] * 2,
-    player.researches[77],
-    player.researches[111],
-    CalcECC('ascension', player.challengecompletions[11]),
-    1.5 * CalcECC('ascension', player.challengecompletions[14]),
-    player.cubeUpgrades[16],
-    getTalisman('chronos').bonus.speedOOMBonus,
-    +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.runeOOMBonus
-  ])
+  return (
+    player.upgrades[66] * 2
+    + player.researches[77]
+    + player.researches[111]
+    + CalcECC('ascension', player.challengecompletions[11])
+    + 1.5 * CalcECC('ascension', player.challengecompletions[14])
+    + player.cubeUpgrades[16]
+    + getTalisman('chronos').bonus.speedOOMBonus
+    + +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.runeOOMBonus
+  )
 }
 
 export const duplicationRuneOOMIncrease = () => {
-  return sumContents([
-    0.75 * CalcECC('transcend', player.challengecompletions[1]),
-    player.upgrades[66] * 2,
-    player.researches[78],
-    player.researches[112],
-    CalcECC('ascension', player.challengecompletions[11]),
-    1.5 * CalcECC('ascension', player.challengecompletions[14]),
-    getTalisman('exemption').bonus.duplicationOOMBonus,
-    +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.runeOOMBonus
-  ])
+  return (
+    0.75 * CalcECC('transcend', player.challengecompletions[1])
+    + player.upgrades[66] * 2
+    + player.researches[78]
+    + player.researches[112]
+    + CalcECC('ascension', player.challengecompletions[11])
+    + 1.5 * CalcECC('ascension', player.challengecompletions[14])
+    + getTalisman('exemption').bonus.duplicationOOMBonus
+    + +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.runeOOMBonus
+  )
 }
 
 export const prismRuneOOMIncrease = () => {
-  return sumContents([
-    player.upgrades[66] * 2,
-    player.researches[79],
-    player.researches[113],
-    CalcECC('ascension', player.challengecompletions[11]),
-    1.5 * CalcECC('ascension', player.challengecompletions[14]),
-    player.cubeUpgrades[16],
-    getTalisman('mortuus').bonus.prismOOMBonus,
-    +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.runeOOMBonus
-  ])
+  return (
+    player.upgrades[66] * 2
+    + player.researches[79]
+    + player.researches[113]
+    + CalcECC('ascension', player.challengecompletions[11])
+    + 1.5 * CalcECC('ascension', player.challengecompletions[14])
+    + player.cubeUpgrades[16]
+    + getTalisman('mortuus').bonus.prismOOMBonus
+    + +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.runeOOMBonus
+  )
 }
 
 export const thriftRuneOOMIncrease = () => {
-  return sumContents([
-    player.upgrades[66] * 2,
-    player.researches[80],
-    player.researches[114],
-    CalcECC('ascension', player.challengecompletions[11]),
-    1.5 * CalcECC('ascension', player.challengecompletions[14]),
-    player.cubeUpgrades[37],
-    getTalisman('midas').bonus.thriftOOMBonus,
-    +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.runeOOMBonus
-  ])
+  return (
+    player.upgrades[66] * 2
+    + player.researches[80]
+    + player.researches[114]
+    + CalcECC('ascension', player.challengecompletions[11])
+    + 1.5 * CalcECC('ascension', player.challengecompletions[14])
+    + player.cubeUpgrades[37]
+    + getTalisman('midas').bonus.thriftOOMBonus
+    + +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.runeOOMBonus
+  )
 }
 
 export const superiorIntellectOOMIncrease = () => {
-  return sumContents([
-    player.upgrades[66] * 2,
-    player.researches[115],
-    CalcECC('ascension', player.challengecompletions[11]),
-    1.5 * CalcECC('ascension', player.challengecompletions[14]),
-    player.cubeUpgrades[37],
-    getTalisman('polymath').bonus.SIOOMBonus,
-    +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.runeOOMBonus
-  ])
+  return (
+    player.upgrades[66] * 2
+    + player.researches[115]
+    + CalcECC('ascension', player.challengecompletions[11])
+    + 1.5 * CalcECC('ascension', player.challengecompletions[14])
+    + player.cubeUpgrades[37]
+    + getTalisman('polymath').bonus.SIOOMBonus
+    + +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.runeOOMBonus
+  )
 }
 
 export const infiniteAscentOOMIncrease = () => {
-  return sumContents([
+  return (
     +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.infiniteAscentOOMBonus
-  ])
+  )
 }
 
 export const antiquitiesOOMIncrease = () => {
-  return sumContents([
+  return (
     +player.singularityChallenges.noOfferingPower.rewards.antiquitiesOOMBonus
-  ])
+  )
 }
 
 export const firstFiveEffectiveRuneLevelMult = () => {
@@ -648,22 +652,22 @@ export const universalRuneEXPMult = (purchasedLevels: number): Decimal => {
         1 * player.upgrades[66]
       ])
     }*/
-  const allRuneExpAdditiveMultiplier = sumContents([
+  const allRuneExpAdditiveMultiplier = (
     // Base amount multiplied per offering
-    1,
+    1
     // +1 if C1 completion
-    Math.min(1, player.highestchallengecompletions[1]),
+    + Math.min(1, player.highestchallengecompletions[1])
     // +0.10 per C1 completion
-    (0.4 / 10) * player.highestchallengecompletions[1],
+    + (0.4 / 10) * player.highestchallengecompletions[1]
     // Research 5x2
-    0.6 * player.researches[22],
+    + 0.6 * player.researches[22]
     // Research 5x3
-    0.3 * player.researches[23],
+    + 0.3 * player.researches[23]
     // Particle Upgrade 1x1
-    2 * player.upgrades[61],
+    + 2 * player.upgrades[61]
     // Particle upgrade 3x1
-    (player.upgrades[71] * purchasedLevels) / 25
-  ])
+    + (player.upgrades[71] * purchasedLevels) / 25
+  )
 
   // Rune multiplier that gets applied to all runes
   const allRuneExpMultiplier = [
