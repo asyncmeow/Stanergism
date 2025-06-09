@@ -208,7 +208,7 @@ export class SingularityUpgrade extends DynamicUpgrade {
         'general.level'
       )
     } ${format(this.level, 0, true)}${maxLevel}${freeLevelInfo}</span>
-                <span style="color: gold">${this.getEffect().desc}</span>
+                <span style="color: gold">${this.getEffect().desc()}</span>
                 ${i18next.t('singularity.toString.costNextLevel')}: ${
       format(
         costNextLevel,
