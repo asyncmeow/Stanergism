@@ -6371,7 +6371,7 @@ export const reloadShit = (reset = false) => {
 }
 
 window.addEventListener('load', async () => {
-  if (dev) {
+  if (dev || testing) {
     const { worker } = await import('./mock/browser')
     await worker.start({
       serviceWorker: {
