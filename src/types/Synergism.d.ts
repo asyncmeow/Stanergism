@@ -1,18 +1,18 @@
 import type Decimal from 'break_infinity.js'
-import type { BlueberryUpgrade } from '../BlueberryUpgrades'
+import type { BlueberryUpgrade, BlueberryLoadoutMode, BlueberryOpt, BlueberryUpgradeNames } from '../BlueberryUpgrades'
 import type { CampaignManager } from '../Campaign'
 import type { Challenge15RewardObject, Challenge15Rewards } from '../Challenges'
 import type { CorruptionLoadout, Corruptions, CorruptionSaves } from '../Corruptions'
 import type { WowCubes, WowHypercubes, WowPlatonicCubes, WowTesseracts } from '../CubeExperimental'
 import type { HepteractCraft, HepteractNames, HepteractValues } from '../Hepteracts'
 import type { Category, ResetHistoryEntryUnion } from '../History'
-import type { OcteractUpgrade } from '../Octeracts'
+import type { OcteractUpgrade, OcteractDataKeys } from '../Octeracts'
 import type { IPlatBaseCost } from '../Platonic'
 import type { QuarkHandler } from '../Quark'
 import type { RedAmbrosiaKeys } from '../RedAmbrosiaUpgrades'
 import type { RuneBlessingKeys, RuneKeys, RuneSpiritKeys } from '../Runes'
-import type { SingularityUpgrade } from '../singularity'
-import type { SingularityChallenge, singularityChallengeData } from '../SingularityChallenges'
+import type { SingularityUpgrade, SingularityDataKeys } from '../singularity'
+import type { SingularityChallenge, singularityChallengeData, SingularityChallengeDataKeys } from '../SingularityChallenges'
 import type { Tabs } from '../Tabs'
 import type { TalismanCraftItems, TalismanKeys } from '../Talismans'
 
@@ -623,15 +623,15 @@ export interface Player {
   iconSet: number
   notation: string
 
-  singularityUpgrades: Record<keyof typeof singularityData, SingularityUpgrade>
-  octeractUpgrades: Record<keyof typeof octeractData, OcteractUpgrade>
+  singularityUpgrades: Record<SingularityDataKeys, SingularityUpgrade>
+  octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade>
   dailyCodeUsed: boolean
   hepteractAutoCraftPercentage: number
   octeractTimer: number
 
   insideSingularityChallenge: boolean
   singularityChallenges: Record<
-    keyof typeof singularityChallengeData,
+    SingularityChallengeDataKeys,
     SingularityChallenge
   >
 
@@ -644,7 +644,7 @@ export interface Player {
   visitedAmbrosiaSubtabRed: boolean
   spentBlueberries: number
   blueberryUpgrades: Record<
-    keyof typeof blueberryUpgradeData,
+    BlueberryUpgradeNames,
     BlueberryUpgrade
   >
   blueberryLoadouts: Record<number, BlueberryOpt>
@@ -939,7 +939,7 @@ export interface GlobalVariables {
   TIME_PER_AMBROSIA: number
   TIME_PER_RED_AMBROSIA: number
 
-  currentSingChallenge: keyof Player['singularityChallenges'] | undefined
+  currentSingChallenge: SingularityChallengeDataKeys | undefined
 
   coinVanityThresholds: number[]
 }

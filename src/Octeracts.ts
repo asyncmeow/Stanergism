@@ -5,7 +5,6 @@ import { campaignTokenRewardHTMLUpdate } from './Campaign'
 import type { IUpgradeData } from './DynamicUpgrade'
 import { DynamicUpgrade } from './DynamicUpgrade'
 import { format, formatTimeShort, player } from './Synergism'
-import type { Player } from './types/Synergism'
 import { Alert, Prompt } from './UpdateHTML'
 
 export interface IOcteractData extends Omit<IUpgradeData, 'name' | 'description'> {
@@ -14,6 +13,55 @@ export interface IOcteractData extends Omit<IUpgradeData, 'name' | 'description'
   octeractsInvested?: number
   qualityOfLife?: boolean
 }
+
+export type OcteractDataKeys =
+  | 'octeractStarter'
+  | 'octeractGain'
+  | 'octeractGain2'
+  | 'octeractQuarkGain'
+  | 'octeractQuarkGain2'
+  | 'octeractCorruption'
+  | 'octeractGQCostReduce'
+  | 'octeractExportQuarks'
+  | 'octeractImprovedDaily'
+  | 'octeractImprovedDaily2'
+  | 'octeractImprovedDaily3'
+  | 'octeractImprovedQuarkHept'
+  | 'octeractImprovedGlobalSpeed'
+  | 'octeractImprovedAscensionSpeed'
+  | 'octeractImprovedAscensionSpeed2'
+  | 'octeractImprovedFree'
+  | 'octeractImprovedFree2'
+  | 'octeractImprovedFree3'
+  | 'octeractImprovedFree4'
+  | 'octeractSingUpgradeCap'
+  | 'octeractOfferings1'
+  | 'octeractObtainium1'
+  | 'octeractAscensions'
+  | 'octeractAscensions2'
+  | 'octeractAscensionsOcteractGain'
+  | 'octeractFastForward'
+  | 'octeractAutoPotionSpeed'
+  | 'octeractAutoPotionEfficiency'
+  | 'octeractOneMindImprover'
+  | 'octeractAmbrosiaLuck'
+  | 'octeractAmbrosiaLuck2'
+  | 'octeractAmbrosiaLuck3'
+  | 'octeractAmbrosiaLuck4'
+  | 'octeractAmbrosiaGeneration'
+  | 'octeractAmbrosiaGeneration2'
+  | 'octeractAmbrosiaGeneration3'
+  | 'octeractAmbrosiaGeneration4'
+  | 'octeractBonusTokens1'
+  | 'octeractBonusTokens2'
+  | 'octeractBonusTokens3'
+  | 'octeractBonusTokens4'
+  | 'octeractBlueberries'
+  | 'octeractInfiniteShopUpgrades'
+  | 'octeractTalismanLevelCap1'
+  | 'octeractTalismanLevelCap2'
+  | 'octeractTalismanLevelCap3'
+  | 'octeractTalismanLevelCap4'
 
 export class OcteractUpgrade extends DynamicUpgrade {
   readonly costFormula: (level: number, baseCost: number) => number
@@ -218,7 +266,7 @@ export class OcteractUpgrade extends DynamicUpgrade {
   }
 }
 
-export const octeractData: Record<keyof Player['octeractUpgrades'], IOcteractData> = {
+export const octeractData: Record<OcteractDataKeys, IOcteractData> = {
   octeractStarter: {
     costFormula: (level: number, baseCost: number) => {
       return baseCost * (level + 1)

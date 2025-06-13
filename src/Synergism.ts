@@ -187,7 +187,7 @@ import { initRedAmbrosiaUpgrades } from './RedAmbrosiaUpgrades'
 import { playerJsonSchema } from './saves/PlayerJsonSchema'
 import { playerUpdateVarSchema } from './saves/PlayerUpdateVarSchema'
 import { getFastForwardTotalMultiplier, singularityData, SingularityUpgrade } from './singularity'
-import { SingularityChallenge, singularityChallengeData } from './SingularityChallenges'
+import { SingularityChallenge, singularityChallengeData, type SingularityChallengeDataKeys } from './SingularityChallenges'
 import { changeSubTab, changeTab, getActiveSubTab, Tabs } from './Tabs'
 import { settingAnnotation, toggleIconSet, toggleTheme } from './Themes'
 import { clearTimeout, clearTimers, setInterval, setTimeout } from './Timers'
@@ -1874,7 +1874,7 @@ const loadSynergy = () => {
     // TODO(@KhafraDev): remove G.currentSingChallenge
     // fix current sing challenge blank
     if (player.insideSingularityChallenge) {
-      const challenges = Object.keys(player.singularityChallenges)
+      const challenges = Object.keys(player.singularityChallenges) as SingularityChallengeDataKeys[]
       for (let i = 0; i < challenges.length; i++) {
         if (player.singularityChallenges[challenges[i]].enabled) {
           G.currentSingChallenge = singularityChallengeData[challenges[i]].HTMLTag
