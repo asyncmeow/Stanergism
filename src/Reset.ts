@@ -1,6 +1,6 @@
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
-import { achievementaward, ascensionAchievementCheck, challengeachievementcheck } from './Achievements'
+import { achievementaward, achievementManager, challengeachievementcheck } from './Achievements'
 import type { BlueberryLoadoutMode } from './BlueberryUpgrades'
 import { buyTesseractBuilding, calculateTessBuildingsInBudget } from './Buy'
 import type { TesseractBuildings } from './Buy'
@@ -501,9 +501,8 @@ export const reset = (input: resetNames, fast = false, from = 'unknown') => {
     || input === 'ascensionChallenge' || input === 'singularity'
   ) {
     // Fail safe if for some reason ascension achievement isn't awarded. hacky solution but am too tired to fix right now
-    if (player.ascensionCount > 0 && player.achievements[183] < 1) {
-      ascensionAchievementCheck(1)
-    }
+
+    achievementManager.tryUnlockByGroup('ascensionCount')
 
     player.obtainium = player.obtainium.add(obtainiumToGain)
 
@@ -573,7 +572,7 @@ export const reset = (input: resetNames, fast = false, from = 'unknown') => {
   if (input === 'ascension' || input === 'ascensionChallenge' || input === 'singularity') {
     const metaData = CalcCorruptionStuff()
     if (player.challengecompletions[10] > 0) {
-      ascensionAchievementCheck(3, metaData[3])
+      achievementManager.tryUnlockByGroup('ascensionScore')
     }
     // reset auto challenges
     player.currentChallenge.transcension = 0
@@ -690,7 +689,7 @@ export const reset = (input: resetNames, fast = false, from = 'unknown') => {
     calculateAnts()
     calculateAntSacrificeELO()
     calculateObtainium()
-    ascensionAchievementCheck(1)
+    achievementManager.tryUnlockByGroup('ascensionCount')
 
     player.ascensionCounter = 0
     player.ascensionCounterReal = 0

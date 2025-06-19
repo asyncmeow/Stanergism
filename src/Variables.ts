@@ -447,6 +447,7 @@ export const Globals: GlobalVariables = {
     reincarnationChallengeReduction: (e: number) => Math.pow(0.98, Math.log(e / 2.5e4) / Math.log(2)),
     antSpeed: (e: number) => Math.pow(1 + Math.log(e / 2e5) / Math.log(2), 4),
     bonusAntLevel: (e: number) => 1 + ((1 / 20) * Math.log(e / 1.5e5)) / Math.log(2),
+    achievementUnlock: (e: number) => e >= 666666 ? 1 : 0,
     cube3: (e: number) => 1 + ((1 / 150) * Math.log(e / 2.5e5)) / Math.log(2),
     talismanBonus: (e: number) => (e >= 7.5e5) ? 1 + 0.02 + ((1 / 1000) * Math.log(e / 7.5e5)) / Math.log(2) : 1,
     globalSpeed: (e: number) => 1 + ((1 / 20) * Math.log(e / 2.5e6)) / Math.log(2),
@@ -547,6 +548,11 @@ export const Globals: GlobalVariables = {
       value: 1,
       baseValue: 1,
       requirement: 500000
+    },
+    achievementUnlock: {
+      value: 0,
+      baseValue: 0,
+      requirement: 666666
     },
     cube3: {
       value: 1,

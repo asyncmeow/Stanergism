@@ -19,10 +19,13 @@ import { blankGlobals, Globals as G } from './Variables'
 
 import {
   achievementaward,
-  ascensionAchievementCheck,
+  achievementManager,
+  type AchievementRewards,
   buildingAchievementCheck,
   challengeachievementcheck,
-  resetachievementcheck
+  getAchieveReward,
+  numAchievements,
+  resetAchievementCheck
 } from './Achievements'
 import { antSacrificePointsToMultiplier, autoBuyAnts, calculateCrumbToCoinExp } from './Ants'
 import { autoUpgrades } from './Automation'
@@ -485,7 +488,7 @@ export const player: Player = {
     rrow3: false,
     rrow4: false
   },
-  achievements: Array(281).fill(0) as number[],
+  achievements: Array(numAchievements).fill(0) as number[],
 
   achievementPoints: 0,
 
@@ -1781,6 +1784,8 @@ export const saveSynergy = (button?: boolean) => {
   player.offlinetick = Date.now()
   player.loaded1009 = true
   player.loaded1009hotfix1 = true
+
+  player.achievements = [...achievementManager.achArray]
 
   const p = playerJsonSchema.parse(player)
   const save = btoa(JSON.stringify(p))
@@ -4385,7 +4390,7 @@ export const resourceGain = (dt: number): void => {
   )
 
   if (player.ascensionCount > 0) {
-    ascensionAchievementCheck(2)
+    achievementManager.tryUnlockByGroup('constant')
   }
 
   if (
@@ -4865,7 +4870,7 @@ export const resetCheck = async (
       if (manual) {
         void resetConfirmation('prestige')
       } else {
-        resetachievementcheck(1)
+        resetAchievementCheck('prestige')
         reset('prestige')
       }
     }
@@ -4880,7 +4885,7 @@ export const resetCheck = async (
         void resetConfirmation('transcend')
       }
       if (!manual) {
-        resetachievementcheck(2)
+        resetAchievementCheck('transcension')
         reset('transcension')
       }
     }
@@ -4956,7 +4961,7 @@ export const resetCheck = async (
         void resetConfirmation('reincarnate')
       }
       if (!manual) {
-        resetachievementcheck(3)
+        resetAchievementCheck('reincarnation')
         reset('reincarnation')
       }
     }
@@ -5202,11 +5207,11 @@ export const resetConfirmation = async (i: string): Promise<void> => {
     if (player.toggles[28]) {
       const r = await Confirm(i18next.t('main.prestigePrompt'))
       if (r) {
-        resetachievementcheck(1)
+        resetAchievementCheck('prestige')
         reset('prestige')
       }
     } else {
-      resetachievementcheck(1)
+      resetAchievementCheck('prestige')
       reset('prestige')
     }
   }
@@ -5214,11 +5219,11 @@ export const resetConfirmation = async (i: string): Promise<void> => {
     if (player.toggles[29]) {
       const z = await Confirm(i18next.t('main.transcendPrompt'))
       if (z) {
-        resetachievementcheck(2)
+        resetAchievementCheck('transcension')
         reset('transcension')
       }
     } else {
-      resetachievementcheck(2)
+      resetAchievementCheck('transcension')
       reset('transcension')
     }
   }
@@ -5227,11 +5232,11 @@ export const resetConfirmation = async (i: string): Promise<void> => {
       if (player.toggles[30]) {
         const z = await Confirm(i18next.t('main.reincarnatePrompt'))
         if (z) {
-          resetachievementcheck(3)
+          resetAchievementCheck('reincarnation')
           reset('reincarnation')
         }
       } else {
-        resetachievementcheck(3)
+        resetAchievementCheck('reincarnation')
         reset('reincarnation')
       }
     }
@@ -6016,7 +6021,7 @@ const tack = (dt: number) => {
       )
       && player.coinsThisPrestige.gte(1e16)
     ) {
-      resetachievementcheck(1)
+      resetAchievementCheck('prestige')
       reset('prestige', true)
     }
   }
@@ -6029,7 +6034,7 @@ const tack = (dt: number) => {
       && G.autoResetTimers.prestige >= time
       && player.coinsThisPrestige.gte(1e16)
     ) {
-      resetachievementcheck(1)
+      resetAchievementCheck('transcension')
       reset('prestige', true)
     }
   }
@@ -6044,7 +6049,7 @@ const tack = (dt: number) => {
       && player.coinsThisTranscension.gte(1e100)
       && player.currentChallenge.transcension === 0
     ) {
-      resetachievementcheck(2)
+      resetAchievementCheck('transcension')
       reset('transcension', true)
     }
   }
@@ -6058,7 +6063,7 @@ const tack = (dt: number) => {
       && player.coinsThisTranscension.gte(1e100)
       && player.currentChallenge.transcension === 0
     ) {
-      resetachievementcheck(2)
+      resetAchievementCheck('transcension')
       reset('transcension', true)
     }
   }
@@ -6075,7 +6080,7 @@ const tack = (dt: number) => {
         && player.currentChallenge.transcension === 0
         && player.currentChallenge.reincarnation === 0
       ) {
-        resetachievementcheck(3)
+        resetAchievementCheck('reincarnation')
         reset('reincarnation', true)
       }
     }
@@ -6092,7 +6097,7 @@ const tack = (dt: number) => {
         && player.currentChallenge.transcension === 0
         && player.currentChallenge.reincarnation === 0
       ) {
-        resetachievementcheck(3)
+        resetAchievementCheck('reincarnation')
         reset('reincarnation', true)
       }
     }
@@ -6293,6 +6298,13 @@ export const reloadShit = (reset = false) => {
   initRuneSpirits(player.runeSpirits)
   initTalismans(player.talismans)
   initHepteracts(player.hepteracts)
+
+  achievementManager.updateAchievements(player.achievements)
+  
+  for (const k of Object.keys(getAchieveReward) as AchievementRewards[]) {
+    console.log(`Applying reward ${k}: `, achievementManager.getBonus(k))
+  }
+
 
   if (!reset) {
     calculateOffline()

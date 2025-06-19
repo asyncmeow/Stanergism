@@ -729,7 +729,7 @@ export const allOcteractCubeStats: StatLine[] = [
   },
   {
     i18n: 'DivinePack',
-    stat: () => 1 + +(player.corruptions.used.totalLevels) * +player.singularityUpgrades.divinePack.getEffect().bonus
+    stat: () => +player.singularityUpgrades.divinePack.getEffect().bonus
   },
   {
     i18n: 'SingCubes1',

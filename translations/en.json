@@ -2170,26 +2170,26 @@
       },
       "advancedPack": {
         "name": "Advanced Pack",
-        "description": "Now we're cooking with kerosene! Gain +4% Quarks stack with intermediate, +0.33 to all corruption score multipliers, regardless of level!",
+        "description": "Now we're cooking with kerosene! Gain +4% Quarks, additive with intermediate pack, +0.33 to all corruption score multipliers, regardless of level!",
         "effectHave": "You have bought our advanced package.",
         "effectHaveNot": "You have not bought our advanced package."
       },
       "expertPack": {
         "name": "Expert Pack",
-        "description": "That's a handful! Gain +6% Quarks stack with advanced, 1.5x Ascension Score, Code 'add' gives 1.2x Ascension Timer.",
+        "description": "That's a handful! Gain +6% Quarks, additive with other packs, 1.5x Ascension Score, Code 'add' gives 1.2x Ascension Timer.",
         "effectHave": "You have switched to the expert provider.",
         "effectHaveNot": "You have not switched to the expert provider."
       },
       "masterPack": {
         "name": "Master Pack",
-        "description": "A tad insane. Gain +8% Quarks stack with expert, for every level 14 corruption, Ascension score is multiplied by 1.1.",
+        "description": "A tad insane. Gain +8% Quarks, additive with other packs, for every level 14 corruption, Ascension score is multiplied by 1.1.",
         "effectHave": "You have mastered your inner chakras.",
         "effectHaveNot": "You have not mastered your inner chakras."
       },
       "divinePack": {
         "name": "Divine Pack",
-        "description": "OHHHHH. Gain +10% Quarks stack with master, and multiply Octeract gain by 7.77 if corruptions are all set to 14.",
-        "effectHave": "You have found the reason for existence.",
+        "description": "OHHHHH. Gain +10% Quarks, additive with other packs, and multiply Octeract gain by 1.25 for each corruption at level 14 or higher (1.3 for >=15 and 1.4 for >=16)!",
+        "effectHave": "You have found the reason for existence. Current Octeract Bonus: +{{n}}",
         "effectHaveNot": "You have not found the reason for existence."
       },
       "wowPass2": {
@@ -4974,6 +4974,7 @@
         "reincarnationChallengeReduction": "• Challenge 6-10 Requirement Scaling: {{amount}}",
         "antSpeed": "• Ant Speed: +{{amount}} [Immaculate!]",
         "bonusAntLevel": "• Bonus Ant Levels: +{{amount}}",
+        "achievementUnlock": "• Achievement Unlocked! [[252]]",
         "cube3": "• All Cube Types III: +{{amount}}",
         "talismanBonus": "• Talisman Bonus Free Levels: +{{amount}}",
         "globalSpeed": "• Global Speed: +{{amount}}",

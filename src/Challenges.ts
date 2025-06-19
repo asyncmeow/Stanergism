@@ -44,6 +44,7 @@ export type Challenge15Rewards =
   | 'multiplierHepteractUnlocked'
   | 'freeOrbs'
   | 'ascensionSpeed'
+  | 'achievementUnlock'
 
 export type Challenge15RewardsInformation = {
   value: number

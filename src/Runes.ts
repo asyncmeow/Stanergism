@@ -15,6 +15,7 @@ import { CalcECC } from './Challenges'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { firstFiveRuneEffectivenessStats, runeEffectivenessStatsSI } from './Statistics'
 import { getTalisman, getTalismanBonus } from './Talismans'
+import { achievementManager } from './Achievements'
 
 export enum resetTiers {
   prestige = 1,
@@ -964,6 +965,10 @@ export function initRunes (investments: Record<RuneKeys, Decimal>) {
     }
 
     runes = upgrades as RunesMap
+
+    setInterval(() => achievementManager.tryUnlockByGroup('runeLevel'), 1000)
+    setInterval(() => achievementManager.tryUnlockByGroup('runeFreeLevel'), 1000)
+    
   }
 }
 

@@ -1,6 +1,6 @@
 import i18next from 'i18next'
 import { DOMCacheGetOrSet } from './Cache/DOM'
-import { campaignTokenRewardHTMLUpdate } from './Campaign'
+import { campaignTokenRewardHTMLUpdate, formatAsPercentIncrease } from './Campaign'
 import type { IUpgradeData } from './DynamicUpgrade'
 import { DynamicUpgrade } from './DynamicUpgrade'
 import { getRune } from './Runes'
@@ -953,11 +953,17 @@ export const singularityData: Record<
     costPerLevel: 12800,
     minimumSingularity: 36,
     effect: (n: number) => {
+      const corruptions = player.corruptions.used
+      const octMult = Object.values(corruptions.loadout).reduce(
+        (acc, curr) => acc * (curr === 16 ? 1.4 : (curr === 15 ? 1.3 : (curr === 14 ? 1.25 : 1))) , 1)
       return {
-        bonus: n > 0,
+        bonus: octMult,
         desc: () => {
           return i18next.t(
-            `singularity.data.divinePack.effect${n > 0 ? 'Have' : 'HaveNot'}`
+            `singularity.data.divinePack.effect${n > 0 ? 'Have' : 'HaveNot'}`,
+            {
+              n: formatAsPercentIncrease(octMult, 0),
+            }
           )
         }
       }

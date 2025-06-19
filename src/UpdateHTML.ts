@@ -959,7 +959,7 @@ export const updateAchievementBG = () => {
   for (let i = 0; i < fixDisplay2.length; i++) {
     fixDisplay2[i].style.backgroundColor = 'maroon' // Sets the appropriate achs to maroon (red)
   }
-  for (let i = 1; i < player.achievements.length; i++) {
+  for (let i = 1; i < 281; i++) {
     if (player.achievements[i] > 0.5) {
       achievementaward(i) // This sets all completed ach to green
     }
