@@ -19,12 +19,15 @@ import { saveFilename } from './ImportExport'
 import { getRedAmbrosiaUpgrade } from './RedAmbrosiaUpgrades'
 import { getRune, type RuneKeys } from './Runes'
 import { friendlyShopName, isShopUpgradeUnlocked, shopData, shopUpgradeTypes } from './Shop'
-import { calculateEffectiveSingularities } from './singularity'
+import { calculateEffectiveSingularities, type SingularityDataKeys } from './singularity'
 import { format, player } from './Synergism'
 import type { Player } from './types/Synergism'
 import { Alert } from './UpdateHTML'
 import { formatS, sumContents } from './Utility'
 import { Globals as G } from './Variables'
+import type { BlueberryUpgradeNames } from './BlueberryUpgrades'
+import type { OcteractDataKeys } from './Octeracts'
+import type { SingularityChallengeDataKeys } from './SingularityChallenges'
 
 export const generateExportSummary = async (): Promise<void> => {
   const titleText = '===== SUMMARY STATS ====='
@@ -323,7 +326,7 @@ export const generateExportSummary = async (): Promise<void> => {
   if (player.highestSingularityCount > 0) {
     singularityUpgradeStats =
       '===== SINGULARITY UPGRADES =====\n - [★]: Upgrade is MAXED - \n - [∞]: Upgrade is infinite - \n - [✔]: Upgrade is unlocked - \n - [✖]: Upgrade is locked - \n'
-    const singUpgrade = Object.keys(player.singularityUpgrades) as (keyof Player['singularityUpgrades'])[]
+    const singUpgrade = Object.keys(player.singularityUpgrades) as SingularityDataKeys[]
     let totalSingUpgradeCount = -1 // One upgrade cannot ever be leveled, by design, so subtract that from the actual count
     let totalSingInfiniteLevel = 0
     let totalSingUpgradeUnlocked = 0
@@ -390,7 +393,7 @@ export const generateExportSummary = async (): Promise<void> => {
   if (player.singularityUpgrades.octeractUnlock.getEffect().bonus) {
     octeractUpgradeStats =
       '===== OCTERACT UPGRADES =====\n - [★]: Upgrade is MAXED - \n - [∞]: Upgrade is infinite - \n - [ ]: Upgrade INCOMPLETE - \n'
-    const octUpgrade = Object.keys(player.octeractUpgrades) as (keyof Player['octeractUpgrades'])[]
+    const octUpgrade = Object.keys(player.octeractUpgrades) as OcteractDataKeys[]
     let totalOctUpgradeCount = 0
     let totalOctUpgradeMax = 0
     let totalOcteractsSpent = 0
@@ -444,7 +447,7 @@ export const generateExportSummary = async (): Promise<void> => {
     exaltChallengeStats =
       '===== EXALT CHALLENGE COMPLETIONS =====\n - [✔]: Challenge Completed - \n - [✖]: Challenge NOT Completed - \n - [ ]: Challenge NOT Unlocked - \n'
 
-    const exaltChallenges = Object.keys(player.singularityChallenges) as (keyof Player['singularityChallenges'])[]
+    const exaltChallenges = Object.keys(player.singularityChallenges) as SingularityChallengeDataKeys[]
     let totalExaltChallengeCompletions = 0
     let totalExaltChallengeMaxCompletions = 0
 
@@ -481,7 +484,7 @@ export const generateExportSummary = async (): Promise<void> => {
   if (player.visitedAmbrosiaSubtab) {
     ambrosiaUpgradeStats =
       '===== AMBROSIA UPGRADES =====\n - [★]: Upgrade is MAXED - \n - [𖥔]: Upgrade is ACTIVE - \n - [ ]: Upgrade INACTIVE - \n'
-    const ambUpgrade = Object.keys(player.blueberryUpgrades) as (keyof Player['blueberryUpgrades'])[]
+    const ambUpgrade = Object.keys(player.blueberryUpgrades) as BlueberryUpgradeNames[]
 
     let spentBlueberries = 0
 

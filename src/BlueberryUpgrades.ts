@@ -9,12 +9,11 @@ import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { getQuarkBonus } from './Quark'
 import { getRedAmbrosiaUpgrade } from './RedAmbrosiaUpgrades'
 import { format, player } from './Synergism'
-import type { Player } from './types/Synergism'
 import { Alert, Confirm, Prompt } from './UpdateHTML'
 import { visualUpdateAmbrosia } from './UpdateVisuals'
 import { assert } from './Utility'
 
-export type blueberryUpgradeNames =
+export type BlueberryUpgradeNames =
   | 'ambrosiaTutorial'
   | 'ambrosiaQuarks1'
   | 'ambrosiaCubes1'
@@ -31,6 +30,7 @@ export type blueberryUpgradeNames =
   | 'ambrosiaQuarks3'
   | 'ambrosiaCubes3'
   | 'ambrosiaLuck3'
+  | 'ambrosiaLuck4'
   | 'ambrosiaObtainium1'
   | 'ambrosiaOffering1'
   | 'ambrosiaBaseOffering1'
@@ -42,8 +42,11 @@ export type blueberryUpgradeNames =
   | 'ambrosiaInfiniteShopUpgrades1'
   | 'ambrosiaInfiniteShopUpgrades2'
   | 'ambrosiaSingReduction2'
+  | 'ambrosiaPatreon'
+  | 'ambrosiaTalismanBonusRuneLevel'
+  | 'ambrosiaRuneOOMBonus'
 
-export type BlueberryOpt = Partial<Record<blueberryUpgradeNames, number>>
+export type BlueberryOpt = Partial<Record<BlueberryUpgradeNames, number>>
 export type BlueberryLoadoutMode = 'saveTree' | 'loadTree'
 
 export interface IBlueberryData extends Omit<IUpgradeData, 'name' | 'description' | 'effect'> {
@@ -213,7 +216,7 @@ export class BlueberryUpgrade extends DynamicUpgrade {
     if (this.preRequisites !== undefined) {
       preReqText = String(i18next.t('ambrosia.prerequisite'))
       for (const [prereq, val] of Object.entries(this.preRequisites)) {
-        const k = prereq as keyof Player['blueberryUpgrades']
+        const k = prereq as BlueberryUpgradeNames
         const color = player.blueberryUpgrades[k].level >= val ? 'green' : 'red'
         const met = player.blueberryUpgrades[k].level >= val
           ? ''
@@ -276,7 +279,7 @@ export class BlueberryUpgrade extends DynamicUpgrade {
   checkPrerequisites (): boolean {
     if (this.preRequisites !== undefined) {
       for (const [prereq, val] of Object.entries(this.preRequisites)) {
-        const k = prereq as keyof Player['blueberryUpgrades']
+        const k = prereq as BlueberryUpgradeNames
         if (player.blueberryUpgrades[k].level < val) {
           return false
         }
@@ -349,7 +352,7 @@ export class BlueberryUpgrade extends DynamicUpgrade {
 }
 
 export const blueberryUpgradeData: Record<
-  keyof Player['blueberryUpgrades'],
+  BlueberryUpgradeNames,
   IBlueberryData
 > = {
   ambrosiaTutorial: {
@@ -1136,7 +1139,7 @@ export const displayProperLoadoutCount = () => {
 
 export const resetBlueberryTree = async (giveAlert = true) => {
   for (const upgrade of Object.keys(player.blueberryUpgrades)) {
-    const k = upgrade as keyof Player['blueberryUpgrades']
+    const k = upgrade as BlueberryUpgradeNames
     player.blueberryUpgrades[k].refund()
     player.blueberryUpgrades[k].updateCaches()
   }
@@ -1160,7 +1163,7 @@ export const validateBlueberryTree = (modules: BlueberryOpt) => {
   let meetsBlueberries = true
 
   for (const [key, val] of Object.entries(modules)) {
-    const k = key as keyof Player['blueberryUpgrades']
+    const k = key as BlueberryUpgradeNames
 
     // Nix malicious or bad values
     if (
@@ -1226,7 +1229,8 @@ export const getBlueberryTree = () => {
 export const fixBlueberryLevel = (modules: BlueberryOpt) => {
   return Object.fromEntries(
     Object.entries(modules).map(([key, value]) => {
-      return [key, Math.min(value, player.blueberryUpgrades[key].maxLevel)]
+      const k = key as BlueberryUpgradeNames
+      return [k, Math.min(value, player.blueberryUpgrades[k].maxLevel)]
     })
   )
 }
@@ -1254,7 +1258,7 @@ export const createBlueberryTree = async (modules: BlueberryOpt) => {
   const actualModules = fixBlueberryLevel(modules)
 
   for (const [key, val] of Object.entries(actualModules)) {
-    const k = key as keyof Player['blueberryUpgrades']
+    const k = key as BlueberryUpgradeNames
     const { costFormula, costPerLevel, blueberryCost } = player.blueberryUpgrades[k]
 
     if (val > 0) {
@@ -1323,7 +1327,7 @@ export const createLoadoutDescription = (
      */
     if (!val) continue
 
-    const k = key as keyof Player['blueberryUpgrades']
+    const k = key as BlueberryUpgradeNames
     const name = player.blueberryUpgrades[k].name
     str = `${str}<span style="color:orange">${name}</span> <span style="color:yellow">lv${val}</span> | `
   }
@@ -1351,12 +1355,12 @@ export const updateBlueberryLoadoutCount = () => {
   }
 }
 
-export const highlightPrerequisites = (k: blueberryUpgradeNames) => {
+export const highlightPrerequisites = (k: BlueberryUpgradeNames) => {
   const preReq = blueberryUpgradeData[k].prerequisites
   if (preReq === undefined) return
 
   for (const key of Object.keys(blueberryUpgradeData)) {
-    const k2 = key as blueberryUpgradeNames
+    const k2 = key as BlueberryUpgradeNames
     const elm = DOMCacheGetOrSet(k2)
     if (preReq[k2] !== undefined) {
       elm.classList.add('blueberryPrereq')
@@ -1368,7 +1372,7 @@ export const highlightPrerequisites = (k: blueberryUpgradeNames) => {
 
 export const resetHighlights = () => {
   for (const key of Object.keys(blueberryUpgradeData)) {
-    const k = key as blueberryUpgradeNames
+    const k = key as BlueberryUpgradeNames
     const elm = DOMCacheGetOrSet(k)
     elm.classList.remove('blueberryPrereq')
   }
@@ -1378,7 +1382,7 @@ export const displayOnlyLoadout = (loadout: BlueberryOpt) => {
   const loadoutKeys = Object.keys(loadout)
 
   for (const key of Object.keys(blueberryUpgradeData)) {
-    const k = key as blueberryUpgradeNames
+    const k = key as BlueberryUpgradeNames
     const elm = DOMCacheGetOrSet(k)
     const level = loadout[k] || 0 // Get the level from the loadout, default to 0 if not present
     const parent = elm.parentElement!
@@ -1419,7 +1423,7 @@ export const displayOnlyLoadout = (loadout: BlueberryOpt) => {
 
 export const resetLoadoutOnlyDisplay = () => {
   for (const key of Object.keys(blueberryUpgradeData)) {
-    const k = key as blueberryUpgradeNames
+    const k = key as BlueberryUpgradeNames
     const elm = DOMCacheGetOrSet(k)
     const parent = elm.parentElement!
     elm.classList.remove('notInLoadout')

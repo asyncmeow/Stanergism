@@ -4,7 +4,6 @@ import { calculateGoldenQuarks } from './Calculate'
 import { singularity } from './Reset'
 import { getRune } from './Runes'
 import { player } from './Synergism'
-import type { Player } from './types/Synergism'
 import { Alert, Confirm } from './UpdateHTML'
 import { toOrdinal } from './Utility'
 import { Globals as G } from './Variables'
@@ -13,7 +12,7 @@ export interface ISingularityChallengeData {
   baseReq: number
   maxCompletions: number
   unlockSingularity: number
-  HTMLTag: keyof Player['singularityChallenges']
+  HTMLTag: SingularityChallengeDataKeys
   singularityRequirement: (baseReq: number, completions: number) => number
   effect: (n: number) => Record<string, number | boolean>
   scalingrewardcount: number
@@ -24,6 +23,16 @@ export interface ISingularityChallengeData {
   highestSingularityCompleted?: number
   cacheUpdates?: (() => void)[]
 }
+
+export type SingularityChallengeDataKeys =
+  | 'noSingularityUpgrades'
+  | 'oneChallengeCap'
+  | 'noOcteracts'
+  | 'limitedAscensions'
+  | 'noAmbrosiaUpgrades'
+  | 'limitedTime'
+  | 'sadisticPrequel'
+  | 'noOfferingPower'
 
 export class SingularityChallenge {
   public name
@@ -302,7 +311,7 @@ export class SingularityChallenge {
 }
 
 export const singularityChallengeData: Record<
-  keyof Player['singularityUpgrades'],
+  SingularityChallengeDataKeys,
   ISingularityChallengeData
 > = {
   noSingularityUpgrades: {

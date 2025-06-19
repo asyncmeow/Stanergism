@@ -9,7 +9,7 @@ import {
   updateAntDescription
 } from './Ants'
 import {
-  type blueberryUpgradeNames,
+  type BlueberryUpgradeNames,
   createLoadoutDescription,
   displayLevelsBlueberry,
   displayOnlyLoadout,
@@ -79,7 +79,7 @@ import {
   sacrificeOfferings
 } from './Runes'
 import { buyShopUpgrades, resetShopUpgrades, shopData, shopDescriptions, shopUpgradeTypes, useConsumable } from './Shop'
-import { buyGoldenQuarks, getLastUpgradeInfo, singularityPerks } from './singularity'
+import { buyGoldenQuarks, getLastUpgradeInfo, type SingularityDataKeys, singularityPerks } from './singularity'
 import { displayStats } from './Statistics'
 import { generateExportSummary } from './Summary'
 import { player, resetCheck, saveSynergy } from './Synergism'
@@ -137,6 +137,8 @@ import {
   upgradedescriptions
 } from './Upgrades'
 import { Globals as G } from './Variables'
+import type { OcteractDataKeys } from './Octeracts'
+import type { SingularityChallengeDataKeys } from './SingularityChallenges'
 
 /* STYLE GUIDE */
 /*
@@ -896,20 +898,18 @@ TODO: Fix this entire tab it's utter shit
   }
   DOMCacheGetOrSet('buySingularityQuarksButton').addEventListener('click', () => buyGoldenQuarks())
   // SINGULARITY TAB
-  const singularityUpgrades = Object.keys(
-    player.singularityUpgrades
-  ) as (keyof Player['singularityUpgrades'])[]
+  const singularityUpgrades = Object.keys(player.singularityUpgrades) as SingularityDataKeys[]
   for (const key of singularityUpgrades) {
     if (key === 'offeringAutomatic') {
       continue
     }
-    DOMCacheGetOrSet(`${String(key)}`).addEventListener(
+    DOMCacheGetOrSet(key).addEventListener(
       'mouseover',
-      () => player.singularityUpgrades[`${String(key)}`].updateUpgradeHTML()
+      () => player.singularityUpgrades[key].updateUpgradeHTML()
     )
-    DOMCacheGetOrSet(`${String(key)}`).addEventListener(
+    DOMCacheGetOrSet(key).addEventListener(
       'click',
-      (event) => player.singularityUpgrades[`${String(key)}`].buyLevel(event)
+      (event) => player.singularityUpgrades[key].buyLevel(event)
     )
   }
   DOMCacheGetOrSet('actualSingularityUpgradeContainer').addEventListener(
@@ -949,17 +949,15 @@ TODO: Fix this entire tab it's utter shit
   }
 
   // Octeract Upgrades
-  const octeractUpgrades = Object.keys(
-    player.octeractUpgrades
-  ) as (keyof Player['octeractUpgrades'])[]
+  const octeractUpgrades = Object.keys(player.octeractUpgrades) as OcteractDataKeys[]
   for (const key of octeractUpgrades) {
-    DOMCacheGetOrSet(`${String(key)}`).addEventListener(
+    DOMCacheGetOrSet(key).addEventListener(
       'mouseover',
-      () => player.octeractUpgrades[`${String(key)}`].updateUpgradeHTML()
+      () => player.octeractUpgrades[key].updateUpgradeHTML()
     )
-    DOMCacheGetOrSet(`${String(key)}`).addEventListener(
+    DOMCacheGetOrSet(key).addEventListener(
       'click',
-      (event) => player.octeractUpgrades[`${String(key)}`].buyLevel(event)
+      (event) => player.octeractUpgrades[key].buyLevel(event)
     )
   }
 
@@ -973,42 +971,40 @@ TODO: Fix this entire tab it's utter shit
   )
 
   // EXALT
-  const singularityChallenges = Object.keys(
-    player.singularityChallenges
-  ) as (keyof Player['singularityChallenges'])[]
+  const singularityChallenges = Object.keys(player.singularityChallenges) as SingularityChallengeDataKeys[]
   for (const key of singularityChallenges) {
-    DOMCacheGetOrSet(`${String(key)}`).addEventListener(
+    DOMCacheGetOrSet(key).addEventListener(
       'mouseover',
-      () => player.singularityChallenges[`${String(key)}`].updateChallengeHTML()
+      () => player.singularityChallenges[key].updateChallengeHTML()
     )
-    DOMCacheGetOrSet(`${String(key)}`).addEventListener(
+    DOMCacheGetOrSet(key).addEventListener(
       'click',
-      () => player.singularityChallenges[`${String(key)}`].challengeEntryHandler()
+      () => player.singularityChallenges[key].challengeEntryHandler()
     )
   }
 
   // BLUEBERRY UPGRADES
   const blueberryUpgrades = Object.keys(
     player.blueberryUpgrades
-  ) as (keyof Player['blueberryUpgrades'])[]
+  ) as BlueberryUpgradeNames[]
   for (const key of blueberryUpgrades) {
-    const k = key as blueberryUpgradeNames
-    DOMCacheGetOrSet(`${String(key)}`).addEventListener(
+    const k = key as BlueberryUpgradeNames
+    DOMCacheGetOrSet(key).addEventListener(
       'mouseover',
       () => {
-        player.blueberryUpgrades[`${String(key)}`].updateUpgradeHTML()
+        player.blueberryUpgrades[key].updateUpgradeHTML()
         highlightPrerequisites(k)
       }
     )
-    DOMCacheGetOrSet(`${String(key)}`).addEventListener(
+    DOMCacheGetOrSet(key).addEventListener(
       'mouseout',
       () => {
         resetHighlights()
       }
     )
-    DOMCacheGetOrSet(`${String(key)}`).addEventListener(
+    DOMCacheGetOrSet(key).addEventListener(
       'click',
-      (event) => player.blueberryUpgrades[`${String(key)}`].buyLevel(event)
+      (event) => player.blueberryUpgrades[key].buyLevel(event)
     )
   }
 

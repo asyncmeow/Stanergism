@@ -1,14 +1,14 @@
 import Decimal, { type DecimalSource } from 'break_infinity.js'
 import { z, type ZodNumber, type ZodType } from 'zod'
-import { BlueberryUpgrade, blueberryUpgradeData } from '../BlueberryUpgrades'
+import { BlueberryUpgrade, blueberryUpgradeData, type BlueberryUpgradeNames } from '../BlueberryUpgrades'
 import { CampaignManager, type ICampaignManagerData } from '../Campaign'
 import { CorruptionLoadout, CorruptionSaves } from '../Corruptions'
 import { WowCubes, WowHypercubes, WowPlatonicCubes, WowTesseracts } from '../CubeExperimental'
 import { hepteractData, type HepteractNames } from '../Hepteracts'
-import { octeractData, OcteractUpgrade } from '../Octeracts'
+import { octeractData, type OcteractDataKeys, OcteractUpgrade } from '../Octeracts'
 import { QuarkHandler } from '../Quark'
-import { singularityData, SingularityUpgrade } from '../singularity'
-import { SingularityChallenge, singularityChallengeData } from '../SingularityChallenges'
+import { singularityData, type SingularityDataKeys, SingularityUpgrade } from '../singularity'
+import { SingularityChallenge, singularityChallengeData, type SingularityChallengeDataKeys } from '../SingularityChallenges'
 import { blankSave, deepClone } from '../Synergism'
 import { noTalismanFragments } from '../Talismans'
 import type { Player } from '../types/Synergism'
@@ -25,9 +25,13 @@ const decimalSchema = z.custom<DecimalSource>((value) => {
 
 const arrayStartingWithNull = (s: ZodType) => z.tuple([z.null()]).rest(s)
 
-const arrayExtend = <K extends keyof Player, Value extends Player[K]>(array: Value, k: K) => {
-  if (array.length < blankSave[k].length) {
-    array.push(...blankSave[k].slice(array.length))
+const arrayExtend = <
+  K extends keyof Player,
+  Value extends Player[K] extends Array<infer V> ? V[] : never
+>(array: Value, k: K) => {
+  const b = blankSave[k] as Value
+  if (array.length < b.length) {
+    array.push(...b.slice(array.length))
   }
   return array
 }
@@ -725,9 +729,10 @@ export const playerSchema = z.object({
   singularityUpgrades: z.record(z.string(), singularityUpgradeSchema('goldenQuarksInvested'))
     .transform((upgrades) =>
       Object.fromEntries(
-        Object.keys(singularityData).filter((k) => k in upgrades || k in blankSave.singularityUpgrades).map((k) => {
+        Object.keys(singularityData).filter((k) => k in upgrades || k in blankSave.singularityUpgrades).map((key) => {
+          const k = key as SingularityDataKeys
           const { level, goldenQuarksInvested, toggleBuy, freeLevels } = upgrades[k]
-            ?? blankSave.singularityUpgrades[k as keyof typeof blankSave['singularityUpgrades']]
+            ?? blankSave.singularityUpgrades[k]
 
           return [
             k,
@@ -754,9 +759,9 @@ export const playerSchema = z.object({
   octeractUpgrades: z.record(z.string(), singularityUpgradeSchema('octeractsInvested'))
     .transform((upgrades) =>
       Object.fromEntries(
-        Object.keys(octeractData).map((k) => {
-          const { level, octeractsInvested, toggleBuy, freeLevels } = upgrades[k]
-            ?? blankSave.octeractUpgrades[k as keyof typeof blankSave['octeractUpgrades']]
+        Object.keys(octeractData).map((key) => {
+          const k = key as OcteractDataKeys
+          const { level, octeractsInvested, toggleBuy, freeLevels } = upgrades[k] ?? blankSave.octeractUpgrades[k]
 
           return [
             k,
@@ -793,7 +798,8 @@ export const playerSchema = z.object({
   )
     .transform((upgrades) =>
       Object.fromEntries(
-        Object.keys(blankSave.singularityChallenges).map((k) => {
+        Object.keys(blankSave.singularityChallenges).map((key) => {
+          const k = key as SingularityChallengeDataKeys
           const { completions, highestSingularityCompleted, enabled } = upgrades[k]
             ?? blankSave.singularityChallenges[k]
 
@@ -831,7 +837,8 @@ export const playerSchema = z.object({
   blueberryUpgrades: z.record(z.string(), singularityUpgradeSchema('blueberriesInvested', 'ambrosiaInvested'))
     .transform((upgrades) =>
       Object.fromEntries(
-        Object.keys(blankSave.blueberryUpgrades).map((k) => {
+        Object.keys(blankSave.blueberryUpgrades).map((key) => {
+          const k = key as BlueberryUpgradeNames
           const { level, ambrosiaInvested, blueberriesInvested, toggleBuy, freeLevels } = upgrades[k]
             ?? blankSave.blueberryUpgrades[k]
 

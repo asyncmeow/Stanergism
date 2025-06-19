@@ -50,7 +50,7 @@ import {
   type RuneSpiritKeys
 } from './Runes'
 import { getShopCosts, isShopUpgradeUnlocked, shopData, shopUpgradeTypes } from './Shop'
-import { getGoldenQuarkCost } from './singularity'
+import { getGoldenQuarkCost, type SingularityDataKeys } from './singularity'
 import { loadStatisticsUpdate } from './Statistics'
 import { format, formatTimeShort, player } from './Synergism'
 import { getActiveSubTab, Tabs } from './Tabs'
@@ -58,6 +58,7 @@ import { getTalisman, type TalismanKeys } from './Talismans'
 import type { Player, ZeroToFour } from './types/Synergism'
 import { sumContents, timeReminingHours } from './Utility'
 import { Globals as G } from './Variables'
+import type { OcteractDataKeys } from './Octeracts'
 
 export const visualUpdateBuildings = () => {
   if (G.currentTab !== Tabs.Buildings) {
@@ -1367,9 +1368,7 @@ export const visualUpdateSingularity = () => {
       }
     )
 
-    const keys = Object.keys(
-      player.singularityUpgrades
-    ) as (keyof Player['singularityUpgrades'])[]
+    const keys = Object.keys(player.singularityUpgrades) as SingularityDataKeys[]
     const val = G.shopEnhanceVision
 
     for (const key of keys) {
@@ -1377,7 +1376,7 @@ export const visualUpdateSingularity = () => {
         continue
       }
       const singItem = player.singularityUpgrades[key]
-      const el = DOMCacheGetOrSet(`${String(key)}`)
+      const el = DOMCacheGetOrSet(key)
       if (
         singItem.maxLevel !== -1
         && singItem.level >= singItem.computeMaxLevel()
@@ -1400,9 +1399,7 @@ export const visualUpdateSingularity = () => {
       }
     }
   } else if (getActiveSubTab() === 2) {
-    const keys = Object.keys(
-      player.octeractUpgrades
-    ) as (keyof Player['octeractUpgrades'])[]
+    const keys = Object.keys(player.octeractUpgrades) as OcteractDataKeys[]
     const val = G.shopEnhanceVision
 
     for (const key of keys) {
