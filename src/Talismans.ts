@@ -3,12 +3,11 @@ import i18next from 'i18next'
 import { achievementManager, ungroupedNameMap } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { isShopTalismanUnlocked } from './Calculate'
-import { formatAsPercentIncrease } from './Campaign'
 import { CalcECC } from './Challenges'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { getRune, resetTiers, type RuneKeys } from './Runes'
 import { allTalismanRuneBonusStats } from './Statistics'
-import { format, player } from './Synergism'
+import { format, player, formatAsPercentIncrease } from './Synergism'
 
 interface TalismanFragmentCost {
   obtainium: number

@@ -3358,6 +3358,10 @@ export const formatTimeShort = (
   )
 }
 
+export const formatAsPercentIncrease = (n: number, accuracy = 2) => {
+  return `${format((n - 1) * 100, accuracy, true)}%`
+}
+
 export const updateAllTick = (): void => {
   let a = 0
 

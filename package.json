@@ -45,7 +45,8 @@
     "watch:tsc": "npx -p typescript tsc --watch",
     "prepare": "husky install",
     "cloudflare:build": "node scripts/needsBundling.js || npm run build:esbuild",
-    "msw:init": "npx -y msw init . --save"
+    "msw:init": "npx -y msw init . --save",
+    "check-circular": "madge --circular src/"
   },
   "repository": {
     "type": "git",

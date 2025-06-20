@@ -4,14 +4,13 @@ import {
   calculateSigmoidExponential,
   isIARuneUnlocked
 } from './Calculate'
-import { format, player } from './Synergism'
+import { format, player, formatAsPercentIncrease } from './Synergism'
 import { Globals as G } from './Variables'
 
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
 import { achievementManager } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
-import { formatAsPercentIncrease } from './Campaign'
 import { CalcECC } from './Challenges'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { firstFiveRuneEffectivenessStats, runeEffectivenessStatsSI } from './Statistics'

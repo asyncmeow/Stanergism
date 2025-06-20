@@ -10,7 +10,7 @@ import {
   maxCorruptionLevel
 } from './Corruptions'
 import { reset } from './Reset'
-import { format, player } from './Synergism'
+import { format, formatAsPercentIncrease, player } from './Synergism'
 import { IconSets } from './Themes'
 import { Alert, Confirm, Notification } from './UpdateHTML'
 
@@ -1415,10 +1415,6 @@ export const campaignDatas: Record<CampaignKeys, ICampaignData> = {
     limit: 140,
     cardinal: 50
   }
-}
-
-export const formatAsPercentIncrease = (n: number, accuracy = 2) => {
-  return `${format((n - 1) * 100, accuracy, true)}%`
 }
 
 // For icons, display them only if the player has enough tokens and fits the other requirements

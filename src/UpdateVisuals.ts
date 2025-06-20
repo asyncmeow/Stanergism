@@ -35,7 +35,6 @@ import {
   calculateTotalOcteractQuarkBonus,
   calculateTotalSalvage
 } from './Calculate'
-import { formatAsPercentIncrease } from './Campaign'
 import { CalcECC } from './Challenges'
 import { version } from './Config'
 import type { IMultiBuy } from './Cubes'
@@ -55,7 +54,7 @@ import {
 import { getShopCosts, isShopUpgradeUnlocked, shopData, shopUpgradeTypes } from './Shop'
 import { getGoldenQuarkCost, type SingularityDataKeys } from './singularity'
 import { loadStatisticsUpdate } from './Statistics'
-import { format, formatTimeShort, player } from './Synergism'
+import { format, formatAsPercentIncrease, formatTimeShort, player } from './Synergism'
 import { getActiveSubTab, Tabs } from './Tabs'
 import { getTalisman, type TalismanKeys } from './Talismans'
 import type { Player, ZeroToFour } from './types/Synergism'

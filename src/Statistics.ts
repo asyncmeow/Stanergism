@@ -80,7 +80,6 @@ import {
   resetTimeThreshold,
   sumOfExaltCompletions
 } from './Calculate'
-import { formatAsPercentIncrease } from './Campaign'
 import { CalcECC, type Challenge15Rewards, challenge15ScoreMultiplier } from './Challenges'
 import { BuffType } from './Event'
 import { getHepteract, hepteractEffective } from './Hepteracts'
@@ -105,7 +104,7 @@ import {
 } from './Runes'
 import { shopData } from './Shop'
 import { calculateSingularityDebuff, getFastForwardTotalMultiplier, singularityData } from './singularity'
-import { format, player } from './Synergism'
+import { format, formatAsPercentIncrease, player } from './Synergism'
 import { getTalisman, sumOfTalismanRarities, universalTalismanBonusMult } from './Talismans'
 import type { GlobalVariables } from './types/Synergism'
 import { sumContents } from './Utility'

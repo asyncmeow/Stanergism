@@ -2,6 +2,9 @@ import i18next from 'i18next'
 import { format } from './Synergism'
 import { Alert, Prompt } from './UpdateHTML'
 
+console.log('DynamicUpgrade.ts loaded')
+console.log('DynamicUpgrade.ts loaded', new Date().toLocaleTimeString())
+
 export interface IUpgradeData {
   name: string
   description: string
