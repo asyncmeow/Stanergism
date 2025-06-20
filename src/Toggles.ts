@@ -1,5 +1,5 @@
 import i18next from 'i18next'
-import { achievementaward } from './Achievements'
+import { achievementManager, ungroupedNameMap } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { getChallengeConditions } from './Challenges'
 import { corruptionDisplay, corruptionLoadoutTableUpdate, type Corruptions } from './Corruptions'
@@ -71,7 +71,10 @@ export const toggleChallenges = (i: number, auto = false) => {
     }
   }
   if (
-    (i >= 11 && i <= 15) && (i === 11 ? player.achievements[141] === 1 : player.highestchallengecompletions[i - 1] > 0)
+    (i >= 11 && i <= 15)
+    && (i === 11
+      ? Boolean(achievementManager.getBonus('ascensionUnlock'))
+      : player.highestchallengecompletions[i - 1] > 0)
     && ((!auto && !player.toggles[31]) || player.challengecompletions[10] > 0
       || (player.currentChallenge.transcension === 0 && player.currentChallenge.reincarnation === 0
         && player.currentChallenge.ascension === 0))
@@ -91,9 +94,9 @@ export const toggleChallenges = (i: number, auto = false) => {
 
   if (
     player.currentChallenge.transcension !== 0 && player.currentChallenge.reincarnation !== 0
-    && player.currentChallenge.ascension !== 0 && player.achievements[238] < 1
+    && player.currentChallenge.ascension !== 0
   ) {
-    achievementaward(238)
+    achievementManager.tryUnlock(ungroupedNameMap.metaChallenged)
   }
 }
 

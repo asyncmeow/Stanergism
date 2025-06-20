@@ -1,18 +1,22 @@
 import type Decimal from 'break_infinity.js'
-import type { BlueberryUpgrade, BlueberryLoadoutMode, BlueberryOpt, BlueberryUpgradeNames } from '../BlueberryUpgrades'
+import type { BlueberryLoadoutMode, BlueberryOpt, BlueberryUpgrade, BlueberryUpgradeNames } from '../BlueberryUpgrades'
 import type { CampaignManager } from '../Campaign'
 import type { Challenge15RewardObject, Challenge15Rewards } from '../Challenges'
 import type { CorruptionLoadout, Corruptions, CorruptionSaves } from '../Corruptions'
 import type { WowCubes, WowHypercubes, WowPlatonicCubes, WowTesseracts } from '../CubeExperimental'
 import type { HepteractCraft, HepteractNames, HepteractValues } from '../Hepteracts'
 import type { Category, ResetHistoryEntryUnion } from '../History'
-import type { OcteractUpgrade, OcteractDataKeys } from '../Octeracts'
+import type { OcteractDataKeys, OcteractUpgrade } from '../Octeracts'
 import type { IPlatBaseCost } from '../Platonic'
 import type { QuarkHandler } from '../Quark'
 import type { RedAmbrosiaKeys } from '../RedAmbrosiaUpgrades'
 import type { RuneBlessingKeys, RuneKeys, RuneSpiritKeys } from '../Runes'
-import type { SingularityUpgrade, SingularityDataKeys } from '../singularity'
-import type { SingularityChallenge, singularityChallengeData, SingularityChallengeDataKeys } from '../SingularityChallenges'
+import type { SingularityDataKeys, SingularityUpgrade } from '../singularity'
+import type {
+  SingularityChallenge,
+  singularityChallengeData,
+  SingularityChallengeDataKeys
+} from '../SingularityChallenges'
 import type { Tabs } from '../Tabs'
 import type { TalismanCraftItems, TalismanKeys } from '../Talismans'
 

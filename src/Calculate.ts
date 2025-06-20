@@ -1,17 +1,17 @@
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
-import { achievementaward } from './Achievements'
+import { achievementManager, ungroupedNameMap } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { CalcECC } from './Challenges'
 import { BuffType, calculateEventSourceBuff } from './Event'
 import { addTimers, automaticTools } from './Helper'
-import { getHepteract, hepteractEffective } from './Hepteracts'
+import { hepteractEffective } from './Hepteracts'
 import { disableHotkeys, enableHotkeys } from './Hotkeys'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { quarkHandler } from './Quark'
 import { getRedAmbrosiaUpgrade } from './RedAmbrosiaUpgrades'
 import { reset } from './Reset'
-import { getRune, getRuneBlessing, sumOfRuneLevels } from './Runes'
+import { getRuneBlessing, sumOfRuneLevels } from './Runes'
 import {
   allAdditiveLuckMultStats,
   allAmbrosiaBlueberryStats,
@@ -37,6 +37,7 @@ import {
   allQuarkStats,
   allRedAmbrosiaGenerationSpeedStats,
   allRedAmbrosiaLuckStats,
+  allSalvageStats,
   allShopTablets,
   allTesseractStats,
   allWowCubeStats,
@@ -254,7 +255,7 @@ export const calculateAntSacrificeObtainium = () => {
   const baseObtainium = calculateBaseObtainium()
   calculateAntSacrificeELO()
 
-  const timeMult = antSacrificeTimeStats(player.antSacrificeTimer, player.achievements[177] > 0).reduce(
+  const timeMult = antSacrificeTimeStats(player.antSacrificeTimer, true).reduce(
     (a, b) => a * b.stat(),
     1
   )
@@ -274,7 +275,7 @@ export const calculateAntSacrificeOffering = () => {
 
   calculateAntSacrificeELO()
 
-  const timeMult = offeringObtainiumTimeModifiers(player.antSacrificeTimer, player.achievements[177] > 0).reduce(
+  const timeMult = offeringObtainiumTimeModifiers(player.antSacrificeTimer, true).reduce(
     (a, b) => a * b.stat(),
     1
   )
@@ -307,12 +308,12 @@ export const calculateGlobalSpeedMult = () => {
   const totalTimeMultiplier = normalMult * immaculateMult
   // Achievement Stuffs
   // One second in 100 years
-  if (totalTimeMultiplier < 1 / (3600 * 24 * 365 * 100) && player.achievements[241] < 1) {
-    achievementaward(241)
+  if (totalTimeMultiplier < 1 / (3600 * 24 * 365 * 100)) {
+    achievementManager.tryUnlock(ungroupedNameMap.verySlow)
   }
   // One hour in a second
-  if (totalTimeMultiplier > 3600 && player.achievements[242] < 1) {
-    achievementaward(242)
+  if (totalTimeMultiplier > 3600) {
+    achievementManager.tryUnlock(ungroupedNameMap.veryFast)
   }
 
   return totalTimeMultiplier
@@ -409,21 +410,7 @@ export const calculateTotalAcceleratorBoost = () => {
   if (player.upgrades[31] > 0.5) {
     b += (Math.floor(G.totalCoinOwned / 2000) * 100) / 100
   }
-  if (player.achievements[7] > 0.5) {
-    b += Math.floor(player.firstOwnedCoin / 2000)
-  }
-  if (player.achievements[14] > 0.5) {
-    b += Math.floor(player.secondOwnedCoin / 2000)
-  }
-  if (player.achievements[21] > 0.5) {
-    b += Math.floor(player.thirdOwnedCoin / 2000)
-  }
-  if (player.achievements[28] > 0.5) {
-    b += Math.floor(player.fourthOwnedCoin / 2000)
-  }
-  if (player.achievements[35] > 0.5) {
-    b += Math.floor(player.fifthOwnedCoin / 2000)
-  }
+  b += +achievementManager.getBonus('accelBoosts')
 
   b += player.researches[93]
     * Math.floor(
@@ -463,9 +450,6 @@ export const calculateTotalAcceleratorBoost = () => {
 
 export const calculateAcceleratorMultiplier = () => {
   G.acceleratorMultiplier = 1
-  G.acceleratorMultiplier *= 1 + player.achievements[60] / 100
-  G.acceleratorMultiplier *= 1 + player.achievements[61] / 100
-  G.acceleratorMultiplier *= 1 + player.achievements[62] / 100
   G.acceleratorMultiplier *= 1
     + (1 / 5)
       * player.researches[1]
@@ -501,21 +485,19 @@ export const calculateAcceleratorMultiplier = () => {
   }
 }
 
-export const calculateRecycleMultiplier = () => {
-  // Factors where recycle bonus comes from
-  const recycleFactors = 0.05 * player.achievements[80]
-    + 0.05 * player.achievements[87]
-    + 0.05 * player.achievements[94]
-    + 0.05 * player.achievements[101]
-    + 0.05 * player.achievements[108]
-    + 0.05 * player.achievements[115]
-    + 0.075 * player.achievements[122]
-    + 0.075 * player.achievements[129]
-    + 0.05 * player.upgrades[61]
-    + getRune('thrift').bonus.recycleChance
-    + 0.005 * player.cubeUpgrades[2]
+export const calculateTotalSalvage = () => {
+  return allSalvageStats.reduce((a, b) => a + b.stat(), 0)
+}
 
-  return 1 / (1 - recycleFactors)
+export const calculateSalvageRuneEXPMultiplier = () => {
+  // Factors where Salvage comes from
+  const salvage = calculateTotalSalvage()
+
+  if (salvage < 90) {
+    return 1 / (1 - salvage / 100)
+  } else {
+    return 10 * Math.exp(1 / 10 * Math.sqrt(salvage - 90))
+  }
 }
 
 export const calculateAnts = () => {
@@ -651,26 +633,12 @@ export const calculateAntSacrificeELO = () => {
     G.antELO += 4 * player.seventhOwnedAnts
     G.antELO += 8 * player.eighthOwnedAnts
     G.antELO += 666 * player.researches[178]
-    G.antELO *= 1
-      + 0.01 * player.achievements[180]
-      + 0.02 * player.achievements[181]
-      + 0.03 * player.achievements[182]
+    G.antELO += +achievementManager.getBonus('antELOAdditive')
+    G.antELO *= +achievementManager.getBonus('antELOMultiplicative')
     G.antELO *= 1 + player.researches[110] / 100
     G.antELO *= 1 + (2.5 * player.researches[148]) / 100
     G.antELO *= getTalisman('mortuus').bonus.antBonus
 
-    if (player.achievements[176] === 1) {
-      G.antELO += 25
-    }
-    if (player.achievements[177] === 1) {
-      G.antELO += 50
-    }
-    if (player.achievements[178] === 1) {
-      G.antELO += 75
-    }
-    if (player.achievements[179] === 1) {
-      G.antELO += 100
-    }
     G.antELO += 25 * player.researches[108]
     G.antELO += 25 * player.researches[109]
     G.antELO += 40 * player.researches[123]
@@ -694,15 +662,8 @@ export const calculateAntSacrificeELO = () => {
 
 export const calculateAntSacrificeMultipliers = () => {
   G.timeMultiplier = Math.min(1, Math.pow(player.antSacrificeTimer / 10, 2))
-  if (player.achievements[177] === 0) {
-    G.timeMultiplier *= Math.min(
-      1000,
-      Math.max(1, player.antSacrificeTimer / 10)
-    )
-  }
-  if (player.achievements[177] > 0) {
-    G.timeMultiplier *= Math.max(1, player.antSacrificeTimer / 10)
-  }
+  G.timeMultiplier *= Math.max(1, player.antSacrificeTimer / 10)
+
   G.timeMultiplier *= player.singularityUpgrades.halfMind.getEffect().bonus ? calculateGlobalSpeedMult() / 10 : 1
 
   G.upgradeMultiplier = 1
@@ -710,12 +671,6 @@ export const calculateAntSacrificeMultipliers = () => {
     + 2 * (1 - Math.pow(2, -(player.antUpgrades[11 - 1]! + G.bonusant11) / 125))
   G.upgradeMultiplier *= 1 + player.researches[103] / 20
   G.upgradeMultiplier *= 1 + player.researches[104] / 20
-  if (player.achievements[132] === 1) {
-    G.upgradeMultiplier *= 1.25
-  }
-  if (player.achievements[137] === 1) {
-    G.upgradeMultiplier *= 1.25
-  }
   G.upgradeMultiplier *= getRuneBlessing('prism').bonus.antSacrificeMult
   G.upgradeMultiplier *= 1 + (1 / 50) * CalcECC('reincarnation', player.challengecompletions[10])
   G.upgradeMultiplier *= 1 + (1 / 50) * player.researches[122]
@@ -956,7 +911,7 @@ export const calculateOffline = (forceTime = 0, fromTips = false) => {
     }
 
     // Auto Ant Sacrifice Stuff
-    if (player.achievements[173] > 0) {
+    if (achievementManager.getBonus('antSacrificeUnlock')) {
       automaticTools('antSacrifice', timeTick)
     }
 
@@ -1455,16 +1410,7 @@ export const computeAscensionScoreBonusMultiplier = () => {
   if (player.cubeUpgrades[41] > 0) {
     multiplier *= 1 + 0.05 * player.cubeUpgrades[41]
   }
-  if (player.achievements[267] > 0) {
-    multiplier *= 1
-      + Math.min(1, (1 / 100000) * Decimal.log(player.ascendShards.add(1), 10))
-  }
-  if (player.achievements[259] > 0) {
-    multiplier *= Math.max(
-      1,
-      Math.pow(1.01, getHepteract('abyss').TIMES_CAP_EXTENDED)
-    )
-  }
+  multiplier *= +achievementManager.getBonus('ascensionScore')
   if (G.isEvent) {
     multiplier *= 1 + calculateEventBuff(BuffType.AscensionScore)
   }
@@ -1631,7 +1577,6 @@ export const CalcCorruptionStuff = () => {
   // Calculation of Hepteracts :)))))
   let hepteractGain = G.challenge15Rewards.hepteractsUnlocked.value
       && effectiveScore >= 1.666e17
-      && player.achievements[255] > 0
     ? 1
     : 0
   hepteractGain *= calculateHepteractMultiplier()
@@ -1657,48 +1602,30 @@ export const CalcCorruptionStuff = () => {
 export const calcAscensionCount = () => {
   let ascCount = 1
 
+  if (player.challengecompletions[10] === 0) {
+    return 0
+  }
+
   if (player.singularityChallenges.limitedAscensions.enabled) {
     return ascCount
   }
 
-  if (player.challengecompletions[10] > 0 && player.achievements[197] === 1) {
-    const { effectiveScore } = calculateAscensionScore()
-
-    if (player.ascensionCounter >= resetTimeThreshold()) {
-      if (player.achievements[188] > 0) {
-        ascCount += 99
-      }
-
-      ascCount *= 1
-        + (player.ascensionCounter / resetTimeThreshold() - 1)
-          * 0.2
-          * (player.achievements[189]
-            + player.achievements[202]
-            + player.achievements[209]
-            + player.achievements[216]
-            + player.achievements[223])
-    }
-
-    ascCount *= player.achievements[187] && Math.floor(effectiveScore) > 1e8
-      ? Math.log10(Math.floor(effectiveScore) + 1) - 1
-      : 1
-    ascCount *= G.challenge15Rewards.ascensions.value
-    ascCount *= player.achievements[260] > 0 ? 1.1 : 1
-    ascCount *= player.achievements[261] > 0 ? 1.1 : 1
-    ascCount *= player.platonicUpgrades[15] > 0 ? 2 : 1
-    ascCount *= 1 + 0.02 * player.platonicUpgrades[16]
-    ascCount *= 1
-      + 0.02
-        * player.platonicUpgrades[16]
-        * Math.min(1, player.overfluxPowder / 100000)
-    ascCount *= 1 + player.singularityCount / 10
-    ascCount *= +player.singularityUpgrades.ascensions.getEffect().bonus
-    ascCount *= +player.octeractUpgrades.octeractAscensions.getEffect().bonus
-    ascCount *= +player.octeractUpgrades.octeractAscensions2.getEffect().bonus
-    ascCount *= player.singularityUpgrades.oneMind.getEffect().bonus
-      ? calculateAscensionSpeedMult() / 10
-      : 1
-  }
+  ascCount += +achievementManager.getBonus('ascensionCountAdditive')
+  ascCount *= +achievementManager.getBonus('ascensionCountMultiplier')
+  ascCount *= G.challenge15Rewards.ascensions.value
+  ascCount *= player.platonicUpgrades[15] > 0 ? 2 : 1
+  ascCount *= 1 + 0.02 * player.platonicUpgrades[16]
+  ascCount *= 1
+    + 0.02
+      * player.platonicUpgrades[16]
+      * Math.min(1, player.overfluxPowder / 100000)
+  ascCount *= 1 + player.singularityCount / 10
+  ascCount *= +player.singularityUpgrades.ascensions.getEffect().bonus
+  ascCount *= +player.octeractUpgrades.octeractAscensions.getEffect().bonus
+  ascCount *= +player.octeractUpgrades.octeractAscensions2.getEffect().bonus
+  ascCount *= player.singularityUpgrades.oneMind.getEffect().bonus
+    ? calculateAscensionSpeedMult() / 10
+    : 1
 
   return Math.floor(ascCount)
 }

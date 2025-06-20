@@ -1,5 +1,6 @@
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
+import { achievementManager } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import {
   calculateAllCubeMultiplier,
@@ -73,6 +74,7 @@ import {
   calculateTotalOcteractObtainiumBonus,
   calculateTotalOcteractOfferingBonus,
   calculateTotalOcteractQuarkBonus,
+  calculateTotalSalvage,
   derpsmithCornucopiaBonus,
   isIARuneUnlocked,
   resetTimeThreshold,
@@ -129,18 +131,24 @@ export const allCubeStats: StatLine[] = [
     stat: () => {
       const ascensionCounter = player.ascensionCounter
       const resetThreshold = resetTimeThreshold()
-      const ach204 = player.achievements[204]
-      const ach211 = player.achievements[211]
-      const ach218 = player.achievements[218]
+      const scale = achievementManager.getBonus('ascensionRewardScaling')
 
-      return Math.pow(Math.min(1, ascensionCounter / resetThreshold), 2)
-        * (1
-          + ((1 / 4) * ach204
-              + (1 / 4) * ach211
-              + (1 / 2) * ach218)
-            * Math.max(0, ascensionCounter / resetThreshold - 1))
+      if (scale) {
+        return Math.pow(Math.min(1, ascensionCounter / resetThreshold), 2)
+          * (1 + Math.max(0, ascensionCounter / resetThreshold - 1))
+      } else {
+        return Math.pow(Math.min(1, ascensionCounter / resetThreshold), 2)
+      }
     },
     displayCriterion: () => true
+  },
+  {
+    i18n: 'AchievementBonus',
+    stat: () => +achievementManager.getBonus('allCubeGain')
+  },
+  {
+    i18n: 'SynergismLevel',
+    stat: () => achievementManager.cubeBonus
   },
   {
     i18n: 'CampaignTutorial',
@@ -151,27 +159,6 @@ export const allCubeStats: StatLine[] = [
     i18n: 'Campaign',
     stat: () => player.campaigns.cubeBonus,
     displayCriterion: () => player.challengecompletions[11] > 0
-  },
-  {
-    i18n: 'SunMoon',
-    stat: () =>
-      1
-      + (6 / 100) * player.achievements[250]
-      + (10 / 100) * player.achievements[251],
-    displayCriterion: () => player.challengecompletions[14] > 0
-  },
-  {
-    i18n: 'SpeedAchievement',
-    stat: () =>
-      1
-      + player.achievements[240]
-        * Math.min(
-          0.5,
-          Math.max(
-            0.1,
-            (1 / 20) * Math.log10(calculateGlobalSpeedMult() + 0.01)
-          )
-        )
   },
   {
     i18n: 'Challenge15',
@@ -349,6 +336,10 @@ export const allWowCubeStats: StatLine[] = [
     stat: () => calculateAllCubeMultiplier()
   },
   {
+    i18n: 'AchievementBonus',
+    stat: () => +achievementManager.getBonus('wowCubeGain')
+  },
+  {
     i18n: 'SeasonPass1',
     stat: () => 1 + (2.25 * player.shopUpgrades.seasonPass) / 100
   },
@@ -389,45 +380,6 @@ export const allWowCubeStats: StatLine[] = [
         * Math.min(1, player.constantUpgrades[10])
   },
   {
-    i18n: 'Achievement189',
-    stat: () => 1 + player.achievements[189] * Math.min(2, player.ascensionCount / 2.5e8)
-  },
-  {
-    i18n: 'Achievement193',
-    stat: () =>
-      1
-      + (player.achievements[193] * Decimal.log(player.ascendShards.add(1), 10))
-        / 400
-  },
-  {
-    i18n: 'Achievement195',
-    stat: () =>
-      1
-      + Math.min(
-        250,
-        (player.achievements[195]
-          * Decimal.log(player.ascendShards.add(1), 10))
-          / 400
-      )
-  },
-  {
-    i18n: 'Achievement198-201',
-    stat: () =>
-      1
-      + (4 / 100)
-        * (player.achievements[198]
-          + player.achievements[199]
-          + player.achievements[200])
-      + (3 / 100) * player.achievements[201]
-  },
-  {
-    i18n: 'Achievement254',
-    stat: () =>
-      1
-      + Math.min(0.15, (0.6 / 100) * Math.log10(calculateAscensionScore().effectiveScore + 1))
-        * player.achievements[254]
-  },
-  {
     i18n: 'SpiritPower',
     stat: () => getRuneSpirit('duplication').bonus.wowCubes
   },
@@ -461,6 +413,10 @@ export const allTesseractStats: StatLine[] = [
     stat: () => calculateAllCubeMultiplier()
   },
   {
+    i18n: 'AchievementBonus',
+    stat: () => +achievementManager.getBonus('wowTesseractGain')
+  },
+  {
     i18n: 'SeasonPass1',
     stat: () => 1 + (2.25 * player.shopUpgrades.seasonPass) / 100
   },
@@ -479,36 +435,6 @@ export const allTesseractStats: StatLine[] = [
   {
     i18n: 'CubeUpgrade4x8',
     stat: () => 1 + (1 / 200) * player.cubeUpgrades[38] * player.corruptions.used.totalLevels
-  },
-  {
-    i18n: 'Achievement195',
-    stat: () =>
-      1 + Math.min(
-        250,
-        (player.achievements[195] * Decimal.log(player.ascendShards.add(1), 10)) / 400
-      )
-  },
-  {
-    i18n: 'Achievement202',
-    stat: () => 1 + player.achievements[202] * Math.min(2, player.ascensionCount / 5e8)
-  },
-  {
-    i18n: 'Achievement205-208',
-    stat: () =>
-      1 + (4 / 100) * (
-          player.achievements[205]
-          + player.achievements[206]
-          + player.achievements[207]
-        )
-      + (3 / 100) * player.achievements[208]
-  },
-  {
-    i18n: 'Achievement255',
-    stat: () =>
-      1 + Math.min(
-          0.15,
-          (0.6 / 100) * Math.log10(calculateAscensionScore().effectiveScore + 1)
-        ) * player.achievements[255]
   },
   {
     i18n: 'PlatonicCube',
@@ -530,42 +456,16 @@ export const allHypercubeStats: StatLine[] = [
     stat: () => calculateAllCubeMultiplier()
   },
   {
+    i18n: 'AchievementBonus',
+    stat: () => +achievementManager.getBonus('wowHypercubeGain')
+  },
+  {
     i18n: 'SeasonPass2',
     stat: () => 1 + (1.5 * player.shopUpgrades.seasonPass2) / 100
   },
   {
     i18n: 'WowSquare',
     stat: () => getTalisman('wowSquare').bonus.oddDimBonus
-  },
-  {
-    i18n: 'Achievement212-215',
-    stat: () =>
-      1 + (4 / 100) * (
-          player.achievements[212]
-          + player.achievements[213]
-          + player.achievements[214]
-        )
-      + (3 / 100) * player.achievements[215]
-  },
-  {
-    i18n: 'Achievement216',
-    stat: () => 1 + player.achievements[216] * Math.min(2, player.ascensionCount / 1e9)
-  },
-  {
-    i18n: 'Achievement253',
-    stat: () => 1 + (1 / 10) * player.achievements[253]
-  },
-  {
-    i18n: 'Achievement256',
-    stat: () =>
-      1 + Math.min(
-          0.15,
-          (0.6 / 100) * Math.log10(calculateAscensionScore().effectiveScore + 1)
-        ) * player.achievements[256]
-  },
-  {
-    i18n: 'Achievement265',
-    stat: () => 1 + Math.min(2, player.ascensionCount / 2.5e10) * player.achievements[265]
   },
   {
     i18n: 'PlatonicCube',
@@ -591,42 +491,16 @@ export const allPlatonicCubeStats: StatLine[] = [
     stat: () => calculateAllCubeMultiplier()
   },
   {
+    i18n: 'AchievementBonus',
+    stat: () => +achievementManager.getBonus('wowPlatonicGain')
+  },
+  {
     i18n: 'SeasonPass2',
     stat: () => 1 + (1.5 * player.shopUpgrades.seasonPass2) / 100
   },
   {
     i18n: 'WowSquare',
     stat: () => getTalisman('wowSquare').bonus.evenDimBonus
-  },
-  {
-    i18n: 'Achievement196',
-    stat: () =>
-      1 + Math.min(
-        20,
-        ((player.achievements[196] * 1) / 5000) * Decimal.log(player.ascendShards.add(1), 10)
-      )
-  },
-  {
-    i18n: 'Achievement219-222',
-    stat: () =>
-      1 + (4 / 100) * (
-          player.achievements[219]
-          + player.achievements[220]
-          + player.achievements[221]
-        )
-      + (3 / 100) * player.achievements[222]
-  },
-  {
-    i18n: 'Achievement223',
-    stat: () => 1 + player.achievements[223] * Math.min(2, player.ascensionCount / 1.337e9)
-  },
-  {
-    i18n: 'Achievement257',
-    stat: () =>
-      1 + Math.min(
-          0.15,
-          (0.6 / 100) * Math.log10(calculateAscensionScore().effectiveScore + 1)
-        ) * player.achievements[257]
   },
   {
     i18n: 'PlatonicCube',
@@ -648,36 +522,16 @@ export const allHepteractCubeStats: StatLine[] = [
     stat: () => calculateAllCubeMultiplier()
   },
   {
+    i18n: 'AchievementBonus',
+    stat: () => +achievementManager.getBonus('wowHepteractGain')
+  },
+  {
     i18n: 'SeasonPass3',
     stat: () => 1 + (1.5 * player.shopUpgrades.seasonPass3) / 100
   },
   {
     i18n: 'WowSquare',
     stat: () => getTalisman('wowSquare').bonus.oddDimBonus
-  },
-  {
-    i18n: 'Achievement258',
-    stat: () =>
-      1 + Math.min(
-          0.15,
-          (0.6 / 100) * Math.log10(calculateAscensionScore().effectiveScore + 1)
-        ) * player.achievements[258]
-  },
-  {
-    i18n: 'Achievement264',
-    stat: () => 1 + Math.min(0.4, player.ascensionCount / 2e13) * player.achievements[264]
-  },
-  {
-    i18n: 'Achievement265',
-    stat: () => 1 + Math.min(0.2, player.ascensionCount / 8e14) * player.achievements[265]
-  },
-  {
-    i18n: 'Achievement270',
-    stat: () =>
-      Math.min(
-        2,
-        1 + (1 / 1000000) * Decimal.log(player.ascendShards.add(1), 10) * player.achievements[270]
-      )
   }
 ]
 
@@ -895,14 +749,6 @@ export const allBaseOfferingStats: StatLine[] = [
     stat: () => player.reincarnationCount > 0 ? 5 : 0 // Reincarnated
   },
   {
-    i18n: 'Achievements',
-    stat: () =>
-      Math.min(player.prestigecounter / 1800, 1)
-      * ((player.achievements[37] > 0 ? 15 : 0)
-        + (player.achievements[44] > 0 ? 15 : 0)
-        + (player.achievements[52] > 0 ? 25 : 0)) // Achievements 37, 44, 52 (Based on Prestige Timer)
-  },
-  {
     i18n: 'Challenge1',
     stat: () => (player.challengecompletions[2] > 0) ? 2 : 0 // Challenge 2x1
   },
@@ -950,6 +796,14 @@ export const allOfferingStats = [
     stat: () => 1 + Math.pow(Decimal.log(player.prestigeShards.add(1), 10), 1 / 2) / 5 // Prestige Shards
   },
   {
+    i18n: 'AchievementBonus',
+    stat: () => +achievementManager.getBonus('multiplicativeOffering') // Achievement Bonus
+  },
+  {
+    i18n: 'SynergismLevel',
+    stat: () => achievementManager.offeringBonus // Synergism Level
+  },
+  {
     i18n: 'SuperiorIntellect',
     stat: () => getRune('superiorIntellect').bonus.offeringMult // Superior Intellect Rune
   },
@@ -959,18 +813,6 @@ export const allOfferingStats = [
       1 + 1 / 50 * CalcECC('reincarnation', player.challengecompletions[6])
       + 1 / 25 * CalcECC('reincarnation', player.challengecompletions[8])
       + 1 / 25 * CalcECC('reincarnation', player.challengecompletions[10]) // Reincarnation Challenges
-  },
-  {
-    i18n: 'AlchemyAchievement5',
-    stat: () => 1 + (10 * player.achievements[33]) / 100 // Alchemy Achievement 5
-  },
-  {
-    i18n: 'AlchemyAchievement6',
-    stat: () => 1 + (15 * player.achievements[34]) / 100 // Alchemy Achievement 6
-  },
-  {
-    i18n: 'AlchemyAchievement7',
-    stat: () => 1 + (25 * player.achievements[35]) / 100 // Alchemy Achievement 7
   },
   {
     i18n: 'DiamondUpgrade4x3',
@@ -1036,14 +878,6 @@ export const allOfferingStats = [
   {
     i18n: 'Research8x25',
     stat: () => 1 + (0.01 / 100) * player.researches[200] // Research 8x25
-  },
-  {
-    i18n: 'AscensionAchievement',
-    stat: () => 1 + Math.min(1, player.ascensionCount / 1e6) * player.achievements[187] // Ascension Count Achievement
-  },
-  {
-    i18n: 'SunMoonAchievements',
-    stat: () => 1 + 0.6 * player.achievements[250] + 1 * player.achievements[251] // Sun&Moon Achievements
   },
   {
     i18n: 'CubeUpgrade5x6',
@@ -1283,24 +1117,16 @@ export const runeEffectivenessStatsSI: StatLine[] = [
 
 export const allQuarkStats: StatLine[] = [
   {
-    i18n: 'AchievementPoints',
-    stat: () => 1 + player.achievementPoints / 50000
+    i18n: 'AchievementBonus',
+    stat: () => +achievementManager.getBonus('quarkGain')
+  },
+  {
+    i18n: 'SynergismLevel',
+    stat: () => achievementManager.quarkBonus
   },
   {
     i18n: 'PlasticTalisman',
     stat: () => getTalisman('plastic').bonus.quarkBonus
-  },
-  {
-    i18n: 'Achievement250',
-    stat: () => player.achievements[250] > 0 ? 1.05 : 1
-  },
-  {
-    i18n: 'Achievement251',
-    stat: () => player.achievements[251] > 0 ? 1.05 : 1
-  },
-  {
-    i18n: 'Achievement266',
-    stat: () => player.achievements[266] > 0 ? 1 + Math.min(0.1, player.ascensionCount / 1e16) : 1
   },
   {
     i18n: 'PlatonicALPHA',
@@ -1459,10 +1285,6 @@ export const allBaseObtainiumStats: StatLine[] = [
     color: 'gold'
   },
   {
-    i18n: 'Achievement51',
-    stat: () => (player.achievements[51] > 0) ? 4 : 0 // Achievement 51
-  },
-  {
     i18n: 'ShopPotionBonus',
     stat: () => calculateObtainiumPotionBaseObtainium().amount // Potion Permanent Bonus
   },
@@ -1584,6 +1406,14 @@ export const allObtainiumStats: StatLine[] = [
     stat: () => Math.pow(Decimal.log(player.transcendShards.add(1), 10) / 300, 2) // Transcend Shards
   },
   {
+    i18n: 'AchievementBonus',
+    stat: () => +achievementManager.getBonus('multiplicativeObtainium') // Achievement Bonus
+  },
+  {
+    i18n: 'SynergismLevel',
+    stat: () => achievementManager.obtainiumBonus // Synergism Level
+  },
+  {
     i18n: 'ReincarnationUpgrade9',
     stat: () =>
       (player.upgrades[69] > 0)
@@ -1631,36 +1461,8 @@ export const allObtainiumStats: StatLine[] = [
     stat: () => getRune('superiorIntellect').bonus.obtainiumMult
   },
   {
-    i18n: 'ChallengeAchievements',
-    stat: () =>
-      1 + 0.01 * player.achievements[84] + 0.03 * player.achievements[91] + 0.05 * player.achievements[98]
-      + 0.07 * player.achievements[105] + 0.09 * player.achievements[112] + 0.11 * player.achievements[119]
-      + 0.13 * player.achievements[126] + 0.15 * player.achievements[133] + 0.17 * player.achievements[140]
-      + 0.19 * player.achievements[147] // Challenge Achievements
-  },
-  {
     i18n: 'Ant10',
     stat: () => 1 + 2 * Math.pow((player.antUpgrades[10 - 1]! + G.bonusant10) / 50, 2 / 3) // Ant 10
-  },
-  {
-    i18n: 'Achievement53',
-    stat: () => (player.achievements[53] > 0) ? 1 + sumOfRuneLevels() / 800 : 1 // Achievement 53
-  },
-  {
-    i18n: 'Achievement128',
-    stat: () => (player.achievements[128] > 0) ? 1.5 : 1 // Achievement 128
-  },
-  {
-    i18n: 'Achievement129',
-    stat: () => (player.achievements[129] > 0) ? 1.25 : 1 // Achievement 129
-  },
-  {
-    i18n: 'Achievement188',
-    stat: () => (player.achievements[188] > 0) ? 1 + Math.min(2, player.ascensionCount / 5e6) : 1 // Achievement 188
-  },
-  {
-    i18n: 'Achievement250_251',
-    stat: () => 1 + 0.6 * player.achievements[250] + player.achievements[251] // Achievement 250, 251
   },
   {
     i18n: 'CubeBonus',
@@ -1792,6 +1594,10 @@ export const offeringObtainiumTimeModifiers = (time: number, timeMultCheck: bool
 
 export const antSacrificeRewardStats: StatLine[] = [
   {
+    i18n: 'AchievementBonus',
+    stat: () => +achievementManager.getBonus('sacrificeMult')
+  },
+  {
     i18n: 'AntUpgrade11',
     stat: () => 1 + 2 * (1 - Math.pow(2, -(player.antUpgrades[11 - 1]! + G.bonusant11) / 125))
   },
@@ -1802,14 +1608,6 @@ export const antSacrificeRewardStats: StatLine[] = [
   {
     i18n: 'Research104',
     stat: () => 1 + player.researches[104] / 20
-  },
-  {
-    i18n: 'Achievement132',
-    stat: () => player.achievements[132] === 1 ? 1.25 : 1
-  },
-  {
-    i18n: 'Achievement137',
-    stat: () => player.achievements[137] === 1 ? 1.25 : 1
   },
   {
     i18n: 'RuneBlessing',
@@ -1856,16 +1654,6 @@ export const antSacrificeRewardStats: StatLine[] = [
 
 export const antSacrificeTimeStats = (time: number, timeMultCheck: boolean): StatLine[] => {
   return [
-    {
-      i18n: 'NoAchievement177',
-      stat: () =>
-        player.achievements[177] === 0
-          ? Math.min(
-            1000,
-            Math.max(1, player.antSacrificeTimer / resetTimeThreshold())
-          )
-          : 1
-    },
     {
       i18n: 'ThresholdPenalty',
       stat: () => Math.min(1, Math.pow(time / resetTimeThreshold(), 2)),
@@ -2027,14 +1815,6 @@ export const allAscensionSpeedStats: StatLine[] = [
     stat: () => 1 + (0.6 / 1000) * hepteractEffective('chronos') // Chronos Hepteract
   },
   {
-    i18n: 'Achievement262',
-    stat: () => 1 + Math.min(0.1, (1 / 100) * Math.log10(player.ascensionCount + 1)) * player.achievements[262] // Achievement 262 Bonus
-  },
-  {
-    i18n: 'Achievement263',
-    stat: () => 1 + Math.min(0.1, (1 / 100) * Math.log10(player.ascensionCount + 1)) * player.achievements[263] // Achievement 263 Bonus
-  },
-  {
     i18n: 'PlatonicOMEGA',
     stat: () => 1 + 0.002 * player.corruptions.used.totalLevels * player.platonicUpgrades[15] // Platonic Omega
   },
@@ -2139,7 +1919,7 @@ export const allAdditiveLuckMultStats: StatLine[] = [
   },
   {
     i18n: 'BlueberryUpgrade',
-    stat: () => +player.blueberryUpgrades.ambrosiaLuck4.bonus.ambrosiaLuckPercentage, // Blueberry Upgrade 4
+    stat: () => +player.blueberryUpgrades.ambrosiaLuck4.bonus.ambrosiaLuckPercentage // Blueberry Upgrade 4
   },
   {
     i18n: 'HorseShoeTalisman',
@@ -2149,7 +1929,7 @@ export const allAdditiveLuckMultStats: StatLine[] = [
     i18n: 'Event',
     stat: () => G.isEvent ? calculateEventBuff(BuffType.AmbrosiaLuck) : 0, // Event
     color: 'lime'
-  },
+  }
 ]
 
 export const allAmbrosiaLuckStats: StatLine[] = [
@@ -2355,20 +2135,16 @@ export const allPowderMultiplierStats: StatLine[] = [
     stat: () => 1 / 100 // Base value of 0.01 (1%)
   },
   {
+    i18n: 'AchievementBonus',
+    stat: () => +achievementManager.getBonus('overfluxConversionRate') // Achievement Bonus
+  },
+  {
     i18n: 'Challenge15',
     stat: () => G.challenge15Rewards.powder.value // Challenge 15 Reward
   },
   {
     i18n: 'ShopPowderEX',
     stat: () => 1 + player.shopUpgrades.powderEX / 50 // powderEX shop upgrade (2% per level, max 20%)
-  },
-  {
-    i18n: 'Achievement256',
-    stat: () => 1 + player.achievements[256] / 20 // Achievement 256 (5%)
-  },
-  {
-    i18n: 'Achievement257',
-    stat: () => 1 + player.achievements[257] / 20 // Achievement 257 (5%)
   },
   {
     i18n: 'PlatonicUpgrade4x1',
@@ -2462,8 +2238,8 @@ export const allGoldenQuarkPurchaseCostStats: StatLine[] = [
     color: 'gold'
   },
   {
-    i18n: 'AchievementPoints',
-    stat: () => 1 - 0.1 * Math.min(1, player.achievementPoints / 10000)
+    i18n: 'SynergismLevel',
+    stat: () => achievementManager.goldQuarkDiscountMultiplier // Synergism Level Bonus
   },
   {
     i18n: 'CubeUpgrade6x10',
@@ -2823,19 +2599,8 @@ export const allTalismanRuneBonusStats: StatLine[] = [
     }
   },
   {
-    i18n: 'Achievement135',
-    stat: () => {
-      const ach135 = player.achievements[135] === 1 ? 0.02 : 0
-      return ach135
-    },
-    displayCriterion: () => {
-      const chal9 = player.highestchallengecompletions[9] >= 1
-      return chal9
-    }
-  },
-  {
-    i18n: 'Achievement136',
-    stat: () => player.achievements[136] === 1 ? 0.02 : 0,
+    i18n: 'AchievementBonus',
+    stat: () => +achievementManager.getBonus('talismanPower'),
     displayCriterion: () => {
       const chal9 = player.highestchallengecompletions[9] >= 1
       return chal9
@@ -2955,6 +2720,29 @@ export const allTalismanRuneBonusStats: StatLine[] = [
   }
 ]
 
+export const allSalvageStats: StatLine[] = [
+  {
+    i18n: 'AchievementBonus',
+    stat: () => +achievementManager.getBonus('salvage')
+  },
+  {
+    i18n: 'SynergismLevel',
+    stat: () => achievementManager.salvageBonus
+  },
+  {
+    i18n: 'UpgradeBonus',
+    stat: () => 5 * player.upgrades[61] // Upgrade 61
+  },
+  {
+    i18n: 'RuneBonus',
+    stat: () => getRune('thrift').bonus.salvage // Thrift Rune
+  },
+  {
+    i18n: 'CubeUpgrade2',
+    stat: () => 0.5 * player.cubeUpgrades[2] // Cube Upgrade 2
+  }
+]
+
 export const allMiscStats: StatLine[] = [
   {
     i18n: 'PrestigeCount',
@@ -3026,6 +2814,7 @@ const associated = new Map<string, string>([
   ['kMisc', 'miscStats'],
   ['kBaseOffering', 'baseOfferingStats'],
   ['kOfferingMult', 'offeringMultiplierStats'],
+  ['kSalvage', 'salvageStats'],
   ['kBaseObtainium', 'baseObtainiumStats'],
   ['kRuneEffectMult', 'runeEffectMultiplierStats'],
   ['kObtIgnoreDR', 'obtainiumIgnoreDRStats'],
@@ -3090,6 +2879,9 @@ export const loadStatisticsUpdate = () => {
       case 'runeEffectMultiplierStats':
         loadStatisticsRuneEffectMultFirstFive()
         loadStatisticsRuneEffectMultSI()
+        break
+      case 'salvageStats':
+        loadSalvageStats()
         break
       case 'baseObtainiumStats':
         loadStatisticsObtainiumBase()
@@ -3591,6 +3383,18 @@ export const loadTalismanRuneBonusMultiplierStats = () => {
   )
 }
 
+export const loadSalvageStats = () => {
+  loadStatistics(
+    allSalvageStats,
+    'salvageStats',
+    'statSalv',
+    'SalvageStat',
+    calculateTotalSalvage
+  )
+
+  DOMCacheGetOrSet('salvageExtra').innerHTML = i18next.t('statistics.salvageStats.extraInfo')
+}
+
 export const c15RewardUpdate = () => {
   type Key = keyof GlobalVariables['challenge15Rewards']
   const e = player.challenge15Exponent
@@ -3711,14 +3515,14 @@ export const gameStages = (): Stage[] => {
       stage: 5,
       tier: 4,
       name: 'ant-sacrifice',
-      unlocked: player.achievements[173] === 1,
+      unlocked: Boolean(achievementManager.getBonus('antSacrificeUnlock')),
       reset: player.unlocks.reincarnate
     },
     {
       stage: 6,
       tier: 4,
       name: 'sacrifice-ascension',
-      unlocked: player.achievements[183] === 1,
+      unlocked: player.ascensionCount > 0,
       reset: player.unlocks.reincarnate
     },
     {
@@ -3726,91 +3530,91 @@ export const gameStages = (): Stage[] => {
       tier: 5,
       name: 'ascension-challenge10',
       unlocked: player.ascensionCount > 1,
-      reset: player.achievements[183] === 1
+      reset: player.ascensionCount > 0
     },
     {
       stage: 8,
       tier: 5,
       name: 'challenge10-challenge11',
-      unlocked: player.achievements[197] === 1,
-      reset: player.achievements[183] === 1
+      unlocked: player.challengecompletions[11] > 0,
+      reset: player.ascensionCount > 0
     },
     {
       stage: 9,
       tier: 5,
       name: 'challenge11-challenge12',
-      unlocked: player.achievements[204] === 1,
-      reset: player.achievements[183] === 1
+      unlocked: player.challengecompletions[12] > 0,
+      reset: player.ascensionCount > 0
     },
     {
       stage: 10,
       tier: 5,
       name: 'challenge12-challenge13',
-      unlocked: player.achievements[211] === 1,
-      reset: player.achievements[183] === 1
+      unlocked: player.challengecompletions[13] > 0,
+      reset: player.ascensionCount > 0
     },
     {
       stage: 11,
       tier: 5,
       name: 'challenge13-challenge14',
-      unlocked: player.achievements[218] === 1,
-      reset: player.achievements[183] === 1
+      unlocked: player.challengecompletions[14] > 0,
+      reset: player.ascensionCount > 0
     },
     {
       stage: 12,
       tier: 5,
       name: 'challenge14-w5x10max',
       unlocked: player.cubeUpgrades[50] >= 100000,
-      reset: player.achievements[183] === 1
+      reset: player.ascensionCount > 0
     },
     {
       stage: 13,
       tier: 5,
       name: 'w5x10max-alpha',
       unlocked: player.platonicUpgrades[5] > 0,
-      reset: player.achievements[183] === 1
+      reset: player.ascensionCount > 0
     },
     {
       stage: 14,
       tier: 5,
       name: 'alpha-p2x1x10',
       unlocked: player.platonicUpgrades[6] >= 10,
-      reset: player.achievements[183] === 1
+      reset: player.ascensionCount > 0
     },
     {
       stage: 15,
       tier: 5,
       name: 'p2x1x10-p3x1',
       unlocked: player.platonicUpgrades[11] > 0,
-      reset: player.achievements[183] === 1
+      reset: player.ascensionCount > 0
     },
     {
       stage: 16,
       tier: 5,
       name: 'p3x1-beta',
       unlocked: player.platonicUpgrades[10] > 0,
-      reset: player.achievements[183] === 1
+      reset: player.ascensionCount > 0
     },
     {
       stage: 17,
       tier: 5,
       name: 'beta-1e15-expo',
       unlocked: player.challenge15Exponent >= G.challenge15Rewards.hepteractsUnlocked.requirement,
-      reset: player.achievements[183] === 1
+      reset: player.ascensionCount > 0
     },
     {
       stage: 18,
       tier: 5,
       name: '1e15-expo-omega',
       unlocked: player.platonicUpgrades[15] > 0,
-      reset: player.achievements[183] === 1
+      reset: player.ascensionCount > 0
     },
     {
       stage: 19,
       tier: 5,
       name: 'omega-singularity',
       unlocked: player.singularityCount > 0 && getRune('antiquities').level > 0,
-      reset: player.achievements[183] === 1
+      reset: player.ascensionCount > 0
     },
     {
       stage: 20,

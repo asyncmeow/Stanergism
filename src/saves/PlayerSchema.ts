@@ -8,7 +8,11 @@ import { hepteractData, type HepteractNames } from '../Hepteracts'
 import { octeractData, type OcteractDataKeys, OcteractUpgrade } from '../Octeracts'
 import { QuarkHandler } from '../Quark'
 import { singularityData, type SingularityDataKeys, SingularityUpgrade } from '../singularity'
-import { SingularityChallenge, singularityChallengeData, type SingularityChallengeDataKeys } from '../SingularityChallenges'
+import {
+  SingularityChallenge,
+  singularityChallengeData,
+  type SingularityChallengeDataKeys
+} from '../SingularityChallenges'
 import { blankSave, deepClone } from '../Synergism'
 import { noTalismanFragments } from '../Talismans'
 import type { Player } from '../types/Synergism'

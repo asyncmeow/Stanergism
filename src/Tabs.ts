@@ -1,3 +1,4 @@
+import { achievementManager } from './Achievements'
 import { DOMCacheGetOrSet, DOMCacheHas } from './Cache/DOM'
 import { prod } from './Config'
 import { pressedKeys } from './Hotkeys'
@@ -118,7 +119,7 @@ const subtabInfo: Record<Tabs, SubTab> = {
       {
         subTabID: 'tesseract',
         get unlocked () {
-          return player.achievements[183] > 0
+          return player.ascensionCount > 0
         },
         buttonID: 'switchToTesseractBuilding'
       }
@@ -146,21 +147,21 @@ const subtabInfo: Record<Tabs, SubTab> = {
       {
         subTabID: '2',
         get unlocked () {
-          return player.achievements[134] > 0
+          return Boolean(achievementManager.getBonus('talismanUnlock'))
         },
         buttonID: 'toggleRuneSubTab2'
       },
       {
         subTabID: '3',
         get unlocked () {
-          return player.achievements[134] > 0
+          return Boolean(achievementManager.getBonus('blessingUnlock'))
         },
         buttonID: 'toggleRuneSubTab3'
       },
       {
         subTabID: '4',
         get unlocked () {
-          return player.achievements[204] > 0
+          return Boolean(achievementManager.getBonus('spiritUnlock'))
         },
         buttonID: 'toggleRuneSubTab4'
       }
@@ -195,42 +196,42 @@ const subtabInfo: Record<Tabs, SubTab> = {
       {
         subTabID: '1',
         get unlocked () {
-          return player.achievements[141] > 0
+          return Boolean(achievementManager.getBonus('ascensionUnlock'))
         },
         buttonID: 'switchCubeSubTab1'
       },
       {
         subTabID: '2',
         get unlocked () {
-          return player.achievements[197] > 0
+          return Boolean(achievementManager.getBonus('tesseractUnlock'))
         },
         buttonID: 'switchCubeSubTab2'
       },
       {
         subTabID: '3',
         get unlocked () {
-          return player.achievements[211] > 0
+          return Boolean(achievementManager.getBonus('hypercubeUnlock'))
         },
         buttonID: 'switchCubeSubTab3'
       },
       {
         subTabID: '4',
         get unlocked () {
-          return player.achievements[218] > 0
+          return Boolean(achievementManager.getBonus('platonicUnlock'))
         },
         buttonID: 'switchCubeSubTab4'
       },
       {
         subTabID: '5',
         get unlocked () {
-          return player.achievements[141] > 0
+          return Boolean(achievementManager.getBonus('ascensionUnlock'))
         },
         buttonID: 'switchCubeSubTab5'
       },
       {
         subTabID: '6',
         get unlocked () {
-          return player.achievements[218] > 0
+          return Boolean(achievementManager.getBonus('platonicUnlock'))
         },
         buttonID: 'switchCubeSubTab6'
       },
@@ -254,14 +255,14 @@ const subtabInfo: Record<Tabs, SubTab> = {
       {
         subTabID: 'true',
         get unlocked () {
-          return player.achievements[141] > 0
+          return Boolean(achievementManager.getBonus('ascensionUnlock'))
         },
         buttonID: 'corrStatsBtn'
       },
       {
         subTabID: 'false',
         get unlocked () {
-          return player.achievements[141] > 0
+          return Boolean(achievementManager.getBonus('ascensionUnlock'))
         },
         buttonID: 'corrLoadoutsBtn'
       }
@@ -603,12 +604,12 @@ tabRow.appendButton(
     .makeDraggable()
     .makeRemoveable(),
   new $Tab({ class: 'chal8', id: 'anttab', i18n: 'tabs.main.antHill' })
-    .setUnlockedState(() => player.achievements[127] > 0)
+    .setUnlockedState(() => Boolean(achievementManager.getBonus('antHillUnlock')))
     .setType(Tabs.AntHill)
     .makeDraggable()
     .makeRemoveable(),
   new $Tab({ class: 'chal10', id: 'cubetab', i18n: 'tabs.main.wowCubes' })
-    .setUnlockedState(() => player.achievements[141] > 0)
+    .setUnlockedState(() => Boolean(achievementManager.getBonus('ascensionUnlock')))
     .setType(Tabs.WowCubes)
     .makeDraggable()
     .makeRemoveable(),

@@ -1,15 +1,15 @@
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
 import { DOMCacheGetOrSet } from './Cache/DOM'
-import { CalcCorruptionStuff, calculateGlobalSpeedMult } from './Calculate'
+import { CalcCorruptionStuff, calculateAscensionScore, calculateGlobalSpeedMult } from './Calculate'
+import { formatAsPercentIncrease } from './Campaign'
+import { getHepteract } from './Hepteracts'
+import { getRune, getRuneBlessing, getRuneSpirit, sumOfRuneLevels } from './Runes'
 import { format, player } from './Synergism'
+import type { resetNames } from './types/Synergism'
 import { Alert, Notification, revealStuff } from './UpdateHTML'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
-import { antSacrificePointsToMultiplier } from './Ants'
-import { getRune, getRuneBlessing, getRuneSpirit, sumOfRuneLevels } from './Runes'
-import { getHepteract } from './Hepteracts'
-import type { resetNames } from './types/Synergism'
 
 // dprint-ignore
 export const achievementpointvalues = [
@@ -155,7 +155,6 @@ export const resetAchievementCheck = (reset: resetNames) => {
     achievementManager.tryUnlockByGroup('transcendPointGain')
   }
   if (reset === 'reincarnation') {
-
     achievementManager.tryUnlock(ungroupedNameMap.reincarnationNoAccelerator)
     achievementManager.tryUnlock(ungroupedNameMap.reincarnationNoMult)
     achievementManager.tryUnlock(ungroupedNameMap.reincarnationNoCoinUpgrade)
@@ -163,73 +162,63 @@ export const resetAchievementCheck = (reset: resetNames) => {
     achievementManager.tryUnlock(ungroupedNameMap.reincarnationNoCoinDiamondMythosUpgrade)
     achievementManager.tryUnlock(ungroupedNameMap.reincarnationMinimumUpgrades)
     achievementManager.tryUnlockByGroup('reincarnationPointGain')
-
   }
 }
 
-/**
- * Array of [index, bar to get achievement if greater than, achievement number]
- */
-// dprint-ignore
-const challengeCompletionsBar: [number, number, number][] = [
-  [1, 0.5, 78], [1, 2.5, 79], [1, 4.5, 80], [1, 9.5, 81], [1, 19.5, 82], [1, 49.5, 83], [1, 74.5, 84],
-  [2, 0.5, 85], [2, 2.5, 86], [2, 4.5, 87], [2, 9.5, 88], [2, 19.5, 89], [2, 49.5, 90], [2, 74.5, 91],
-  [3, 0.5, 92], [3, 2.5, 93], [3, 4.5, 94], [3, 9.5, 95], [3, 19.5, 96], [3, 49.5, 97], [3, 74.5, 98],
-  [4, 0.5, 99], [4, 2.5, 100], [4, 4.5, 101], [4, 9.5, 102], [4, 19.5, 103], [4, 49.5, 104], [4, 74.5, 105],
-  [5, 0.5, 106], [5, 2.5, 107], [5, 4.5, 108], [5, 9.5, 109], [5, 19.5, 110], [5, 49.5, 111], [5, 74.5, 112],
-  [6, 0.5, 113], [6, 1.5, 114], [6, 2.5, 115], [6, 4.5, 116], [6, 9.5, 117], [6, 14.5, 118], [6, 24.5, 119],
-  [7, 0.5, 120], [7, 1.5, 121], [7, 2.5, 122], [7, 4.5, 123], [7, 9.5, 124], [7, 14.5, 125], [7, 24.5, 126],
-  [8, 0.5, 127], [8, 1.5, 128], [8, 2.5, 129], [8, 4.5, 130], [8, 9.5, 131], [8, 19.5, 132], [8, 24.5, 133],
-  [9, 0.5, 134], [9, 1.5, 135], [9, 2.5, 136], [9, 4.5, 137], [9, 9.5, 138], [9, 19.5, 139], [9, 24.5, 140],
-  [10, 0.5, 141], [10, 1.5, 142], [10, 2.5, 143], [10, 4.5, 144], [10, 9.5, 145], [10, 19.5, 146], [10, 24.5, 147],
-  [15, 0.5, 252]
-]
-
-const challengeCompletionsNotAuto: Record<number, [string, number]> = {
-  1: ['1e1000', 75],
-  2: ['1e1000', 76],
-  3: ['1e99999', 77],
-  5: ['1e120000', 63]
-}
-
-export const challengeachievementcheck = (i: number, auto?: boolean) => {
-  const generatorcheck = sumContents(player.upgrades.slice(101, 106))
-
-  for (const [, bar, ach] of challengeCompletionsBar.filter(([o]) => o === i)) {
-    if (player.challengecompletions[i] > bar && player.achievements[ach] < 1) {
-      achievementaward(ach)
-    }
-  }
-
-  // Challenges 1, 2, 3 check for not buying generators and getting X coins
-  // Challenge 5 check for not buying Acc/Acc Boosts and getting 1.00e120,000 coins
-  if ([1, 2, 3, 5].includes(i) && !auto) {
-    const [gte, ach] = challengeCompletionsNotAuto[i]
-    if (i === 5) {
-      if (
-        player.coinsThisTranscension.gte(gte) && player.acceleratorBought === 0 && player.acceleratorBoostBought === 0
-      ) {
-        achievementaward(ach)
+export const challengeAchievementCheck = (i: number) => {
+  switch (i) {
+    case 1:
+      achievementManager.tryUnlockByGroup('challenge1')
+      achievementManager.tryUnlock(ungroupedNameMap.chal1NoGen)
+      break
+    case 2:
+      achievementManager.tryUnlockByGroup('challenge2')
+      achievementManager.tryUnlock(ungroupedNameMap.chal2NoGen)
+      break
+    case 3:
+      achievementManager.tryUnlockByGroup('challenge3')
+      achievementManager.tryUnlock(ungroupedNameMap.chal3NoGen)
+      break
+    case 4:
+      achievementManager.tryUnlockByGroup('challenge4')
+      break
+    case 5:
+      achievementManager.tryUnlockByGroup('challenge5')
+      achievementManager.tryUnlock(ungroupedNameMap.diamondSearch)
+      break
+    case 6:
+      achievementManager.tryUnlockByGroup('challenge6')
+      break
+    case 7:
+      achievementManager.tryUnlockByGroup('challenge7')
+      break
+    case 8:
+      achievementManager.tryUnlockByGroup('challenge8')
+      break
+    case 9:
+      achievementManager.tryUnlockByGroup('challenge9')
+      break
+    case 10:
+      achievementManager.tryUnlockByGroup('challenge10')
+      break
+    case 11:
+      achievementManager.tryUnlockByGroup('challenge11')
+      if (player.challengecompletions[10] > 50 && player.corruptions.used.extinction >= 5) {
+        achievementManager.tryUnlock(ungroupedNameMap.extraChallenging)
       }
-    } else if (player.coinsThisTranscension.gte(gte) && generatorcheck === 0) {
-      achievementaward(ach)
-    }
-  }
-
-  if (i >= 11 && i <= 14) {
-    const challengeArray = [0, 1, 2, 3, 5, 10, 20, 30]
-    for (let j = 1; j <= 7; j++) {
-      if (player.challengecompletions[i] >= challengeArray[j] && player.achievements[119 + 7 * i + j] < 1) {
-        achievementaward(119 + 7 * i + j)
-      }
-    }
-  }
-
-  if (
-    player.challengecompletions[10] >= 50 && i === 11 && player.corruptions.used.extinction >= 5
-    && player.achievements[247] < 1
-  ) {
-    achievementaward(247)
+      break
+    case 12:
+      achievementManager.tryUnlockByGroup('challenge12')
+      break
+    case 13:
+      achievementManager.tryUnlockByGroup('challenge13')
+      break
+    case 14:
+      achievementManager.tryUnlockByGroup('challenge14')
+      break
+    case 15:
+      achievementManager.tryUnlock(ungroupedNameMap.sadisticAch)
+      break
   }
 }
 
@@ -241,62 +230,7 @@ export const buildingAchievementCheck = () => {
   achievementManager.tryUnlockByGroup('fifthOwnedCoin')
 }
 
-export const ascensionAchievementCheck = (i: number, score = 0) => {
-  if (i === 1) {
-    // dprint-ignore
-    const ascendCountArray = [
-      0, 1, 2, 10, 100, 1000, 14142, 141421, 1414213, // Column 1
-      1e7, 1e8, 2e9, 4e10, 8e11, 1.6e13, 1e14 // Column 2
-    ]
-
-    for (let j = 1; j <= 7; j++) {
-      if (player.ascensionCount >= ascendCountArray[j] && player.achievements[182 + j] < 1) {
-        achievementaward(182 + j)
-      }
-      if (player.ascensionCount >= ascendCountArray[j + 8] && player.achievements[259 + j] < 1) {
-        achievementaward(259 + j)
-      }
-    }
-    if (player.ascensionCount >= ascendCountArray[8] && player.achievements[240] < 1) {
-      achievementaward(240)
-    }
-  }
-  if (i === 2) {
-    // dprint-ignore
-    const constantArray = [
-      0, 3.14, 1e6, 4.32e10, 6.9e21, 1.509e33, 1e66, '1.8e308', // Column 1
-      '1e1000', '1e5000', '1e15000', '1e50000', '1e100000', '1e300000', '1e1000000' // Column 2
-    ]
-
-    for (let j = 1; j <= 7; j++) {
-      if (player.ascendShards.gte(constantArray[j]) && player.achievements[189 + j] < 1) {
-        achievementaward(189 + j)
-      }
-      if (player.ascendShards.gte(constantArray[j + 7]) && player.achievements[266 + j] < 1) {
-        achievementaward(266 + j)
-      }
-    }
-  }
-  if (i === 3) {
-    // dprint-ignore
-    const scoreArray = [
-      0, 1e5, 1e6, 1e7, 1e8, 1e9, 5e9, 2.5e10, // Column 1
-      1e12, 1e14, 1e17, 2e18, 4e19, 1e21, 1e23 // Column 2
-    ]
-    for (let j = 1; j <= 7; j++) {
-      if (score >= scoreArray[j] && player.achievements[224 + j] < 1) {
-        achievementaward(224 + j)
-      }
-
-      if (score >= scoreArray[7 + j] && player.achievements[252 + j] < 1) {
-        achievementaward(252 + j)
-      }
-    }
-  }
-}
-
 export const getAchievementQuarks = (i: number) => {
-
   const globalQuarkMultiplier = player.worlds.applyBonus(1)
   let actualMultiplier = globalQuarkMultiplier
   if (actualMultiplier > 100) {
@@ -353,25 +287,123 @@ export const achievementaward = (num: number) => {
   DOMCacheGetOrSet(`ach${num}`).classList.add('green-background')
 }
 
-
 /* June 9, 2025 Achievements System Rewrite */
-export type AchievementGroups = 'firstOwnedCoin' | 'secondOwnedCoin' | 'thirdOwnedCoin' | 'fourthOwnedCoin' | 'fifthOwnedCoin' |
-'prestigePointGain' | 'transcendPointGain' | 'reincarnationPointGain' | 'challenge1' | 'challenge2' | 'challenge3' | 'challenge4' | 'challenge5' |
-'challenge6' | 'challenge7' | 'challenge8' | 'challenge9' | 'challenge10' | 'accelerators' | 'acceleratorBoosts' | 'multipliers' | 'antCrumbs' |
-'sacMult' | 'ascensionCount' | 'constant' | 'challenge11' | 'challenge12' | 'challenge13' | 'challenge14' |
-'ascensionScore' | 'speedBlessing' | 'speedSpirit' | 'singularityCount' | 'runeLevel' | 'runeFreeLevel' | 'ungrouped'
+export type AchievementGroups =
+  | 'firstOwnedCoin'
+  | 'secondOwnedCoin'
+  | 'thirdOwnedCoin'
+  | 'fourthOwnedCoin'
+  | 'fifthOwnedCoin'
+  | 'prestigePointGain'
+  | 'transcendPointGain'
+  | 'reincarnationPointGain'
+  | 'challenge1'
+  | 'challenge2'
+  | 'challenge3'
+  | 'challenge4'
+  | 'challenge5'
+  | 'challenge6'
+  | 'challenge7'
+  | 'challenge8'
+  | 'challenge9'
+  | 'challenge10'
+  | 'accelerators'
+  | 'acceleratorBoosts'
+  | 'multipliers'
+  | 'antCrumbs'
+  | 'sacMult'
+  | 'ascensionCount'
+  | 'constant'
+  | 'challenge11'
+  | 'challenge12'
+  | 'challenge13'
+  | 'challenge14'
+  | 'ascensionScore'
+  | 'speedBlessing'
+  | 'speedSpirit'
+  | 'singularityCount'
+  | 'runeLevel'
+  | 'runeFreeLevel'
+  | 'ungrouped'
 
-export type AchievementRewards = 'acceleratorPower' | 'workerAutobuyer' | 'investmentAutobuyer' | 'printerAutobuyer' | 'mintAutobuyer' | 'alchemyAutobuyer' |
-'accelerators' | 'multipliers' | 'accelBoosts' | 'offeringPrestigeTimer' | 'crystalMultiplier' | 'duplicationRuneUnlock' |
-'autoPrestigeFeature' | 'prismRuneUnlock' | 'taxReduction' | 'particleGain' | 'multiplicativeObtainium' | 'conversionExponent' |
-'refineryAutobuy' | 'coalPlantAutobuy' | 'coalRigAutobuy' | 'pickaxeAutobuy' | 'pandorasBoxAutobuy' | 'crystalUpgrade1Autobuy' |
-'crystalUpgrade2Autobuy' | 'crystalUpgrade3Autobuy' | 'crystalUpgrade4Autobuy' | 'crystalUpgrade5Autobuy' | 'recycleChance' | 'exemptionTalisman' | 'chronosTalisman' |
-'midasTalisman' | 'metaphysicsTalisman' | 'polymathTalisman' | 'chal7Researches' | 'chal8Researches' | 'chal9Researches' | 
-'talismanPower' | 'sacrificeMult' | 'ascensionUnlock' | 'antSpeed' | 'antSacrificeUnlock' | 'antAutobuyers' | 'antUpgradeAutobuyers' | 'antELOAdditive' | 'antELOMultiplicative' |
-'wowSquareTalisman' | 'ascensionCountMultiplier' | 'ascensionCountAdditive' | 'multiplicativeOffering' | 'allCubeGain' | 'wowCubeGain' | 'wowTesseractGain' | 
-'wowHypercubeGain' | 'wowPlatonicGain' | 'quarkGain' | 'wowHepteractGain' | 'ascensionScore' | 'constUpgrade1Buff' | 'constUpgrade2Buff' | 'platonicToHypercubes' |
-'statTracker' | 'ascensionRewardScaling'
-
+export type AchievementRewards =
+  | 'acceleratorPower'
+  | 'workerAutobuyer'
+  | 'investmentAutobuyer'
+  | 'printerAutobuyer'
+  | 'mintAutobuyer'
+  | 'alchemyAutobuyer'
+  | 'accelerators'
+  | 'multipliers'
+  | 'accelBoosts'
+  | 'offeringPrestigeTimer'
+  | 'crystalMultiplier'
+  | 'duplicationRuneUnlock'
+  | 'autoPrestigeFeature'
+  | 'prismRuneUnlock'
+  | 'taxReduction'
+  | 'particleGain'
+  | 'multiplicativeObtainium'
+  | 'conversionExponent'
+  | 'refineryAutobuy'
+  | 'coalPlantAutobuy'
+  | 'coalRigAutobuy'
+  | 'pickaxeAutobuy'
+  | 'pandorasBoxAutobuy'
+  | 'crystalUpgrade1Autobuy'
+  | 'crystalUpgrade2Autobuy'
+  | 'crystalUpgrade3Autobuy'
+  | 'crystalUpgrade4Autobuy'
+  | 'crystalUpgrade5Autobuy'
+  | 'salvage'
+  | 'exemptionTalisman'
+  | 'chronosTalisman'
+  | 'midasTalisman'
+  | 'metaphysicsTalisman'
+  | 'polymathTalisman'
+  | 'chal7Researches'
+  | 'chal8Researches'
+  | 'chal9Researches'
+  | 'talismanPower'
+  | 'sacrificeMult'
+  | 'ascensionUnlock'
+  | 'antSpeed'
+  | 'antSacrificeUnlock'
+  | 'antAutobuyers'
+  | 'antUpgradeAutobuyers'
+  | 'antELOAdditive'
+  | 'antELOMultiplicative'
+  | 'wowSquareTalisman'
+  | 'ascensionCountMultiplier'
+  | 'ascensionCountAdditive'
+  | 'multiplicativeOffering'
+  | 'allCubeGain'
+  | 'wowCubeGain'
+  | 'wowTesseractGain'
+  | 'wowHypercubeGain'
+  | 'wowPlatonicGain'
+  | 'quarkGain'
+  | 'wowHepteractGain'
+  | 'ascensionScore'
+  | 'constUpgrade1Buff'
+  | 'constUpgrade2Buff'
+  | 'platonicToHypercubes'
+  | 'statTracker'
+  | 'ascensionRewardScaling'
+  | 'overfluxConversionRate'
+  | 'accelAutobuyer'
+  | 'multAutobuyer'
+  | 'diamondUpgrade18'
+  | 'diamondUpgrade19'
+  | 'diamondUpgrade20'
+  | 'thriftRuneUnlock'
+  | 'blessingUnlock'
+  | 'talismanUnlock'
+  | 'spiritUnlock'
+  | 'tesseractUnlock'
+  | 'hypercubeUnlock'
+  | 'platonicUnlock'
+  | 'antHillUnlock'
 
 export type AchievementReward = Partial<Record<AchievementRewards, () => number>>
 
@@ -380,14 +412,14 @@ export interface Achievement {
   unlockCondition: () => boolean
   group: AchievementGroups
   reward?: AchievementReward
+  checkReset?: () => boolean
 }
 
 export class AchievementManager {
-  
   achievementMap: { [index: number]: boolean } = {}
   _totalPoints: number
 
-  constructor(achievements: number[]) {
+  constructor (achievements: number[]) {
     achievements.forEach((val, index) => {
       this.achievementMap[index] = val > 0
     })
@@ -396,13 +428,13 @@ export class AchievementManager {
     this.updateTotalPoints()
   }
 
-  updateTotalPoints() {
+  updateTotalPoints () {
     this._totalPoints = Object.entries(this.achievementMap)
       .filter(([, unlocked]) => unlocked)
       .reduce((sum, [index]) => sum + achievements[Number(index)].pointValue, 0)
   }
 
-  updateAchievements(achievements: number[]) {
+  updateAchievements (achievements: number[]) {
     achievements.forEach((val, index) => {
       this.achievementMap[index] = val > 0
     })
@@ -413,8 +445,7 @@ export class AchievementManager {
     return this._totalPoints
   }
 
-  tryUnlock(i: number) {
-
+  tryUnlock (i: number) {
     if (this.achievementMap[i]) {
       return // Already unlocked
     }
@@ -426,20 +457,20 @@ export class AchievementManager {
         void Notification(i18next.t('achievements.notification', { m: description }))
       }
       this.achievementMap[i] = true
+      player.achievements[i] = 1 // This marks it as unlocked
       this._totalPoints += achievement.pointValue
       player.worlds.add(getAchievementQuarks(i), false)
       revealStuff()
     }
   }
 
-  tryUnlockByGroup(group: AchievementGroups) {
-
+  tryUnlockByGroup (group: AchievementGroups) {
     if (group === 'ungrouped') {
       throw new Error('We do not support unlocking by Ungrouped for now!')
     }
 
     if (!achievementsByGroup[group]) {
-      throw new Error(`Achievement group ${group} has no members!`);
+      throw new Error(`Achievement group ${group} has no members!`)
     }
 
     for (const idx of achievementsByGroup[group]) {
@@ -447,27 +478,45 @@ export class AchievementManager {
     }
   }
 
-  getBonus(reward: AchievementRewards) {
+  getBonus (reward: AchievementRewards) {
     return getAchieveReward[reward](this.achievementMap)
+  }
+
+  resetAchievements () {
+    this._totalPoints = 0
+
+    Object.keys(achievements).forEach((idx) => {
+      const index = Number(idx)
+      const achievement = achievements[index]
+
+      if (achievement.checkReset?.()) {
+        // Do not reset if checkReset returns true
+        return
+      }
+
+      this.achievementMap[index] = false // Reset the achievement
+      player.achievements[index] = 0
+    })
+
+    this.updateTotalPoints() // Update total points after resetting
   }
 
   // Convert achievementMap to an array of numbers, where 1 means unlocked and 0 means not unlocked
   // Used when saving with the player schema
-  get achArray(): number[] {
-    return Object.values(this.achievementMap).map(val => (val ? 1 : 0))
+  get achArray (): number[] {
+    return Object.values(this.achievementMap).map((val) => (val ? 1 : 0))
   }
 
-  get level(): number {
+  get level (): number {
     if (this.totalPoints < 2500) {
       return Math.floor(this.totalPoints / 50)
-    }
-    else {
+    } else {
       return 50 + Math.floor((this.totalPoints - 2500) / 100)
     }
   }
 
   // Unlocks with level 0 (Default perk)
-  get offeringBonus(): number {
+  get offeringBonus (): number {
     let percentage = 0
     const level = this.level
     percentage += 2 * level
@@ -481,12 +530,12 @@ export class AchievementManager {
   }
 
   // Unlocks with level 0 (Default perk)
-  get salvageBonus(): number {
+  get salvageBonus (): number {
     return this.level
   }
 
   // Unlocks with level 5
-  get obtainiumBonus(): number {
+  get obtainiumBonus (): number {
     let percentage = 0
     const level = this.level - 5
     percentage += 2 * level
@@ -500,7 +549,7 @@ export class AchievementManager {
   }
 
   // Unlocks with level 50
-  get quarkBonus(): number {
+  get quarkBonus (): number {
     if (this.level < 50) {
       return 1
     }
@@ -508,17 +557,16 @@ export class AchievementManager {
   }
 
   // Unlocks with level 10
-  get cubeBonus(): number {
+  get cubeBonus (): number {
     if (this.getBonus('ascensionUnlock')) {
       return 1 + 0.01 * Math.max(0, this.level - 10)
-    }
-    else {
+    } else {
       return 1
     }
   }
 
   // Unlocks with level 100
-  get goldQuarkDiscountMultiplier(): number {
+  get goldQuarkDiscountMultiplier (): number {
     if (this.level < 100) {
       return 1
     }
@@ -526,180 +574,853 @@ export class AchievementManager {
   }
 
   // Unlocks at level 100
-  get ambrosiaLuck(): number {
+  get ambrosiaLuck (): number {
     if (this.level < 100) {
       return 1
     }
     return 3 * Math.max(0, this.level - 100) + 2 * Math.max(0, this.level - 200)
   }
-
 }
 
 // NOTE: Right now, if achievements share a group, the one with the higher 'id' is known to be the one that is meant to be
 // Unlocked last. This is a limitation I hope to eventually fix.
 export const achievements: { [index: number]: Achievement } = {
-  0: { pointValue: 0, unlockCondition: () => true, group: 'ungrouped'}, // Free Achievement Perhaps?
+  0: { pointValue: 0, unlockCondition: () => true, group: 'ungrouped' }, // Free Achievement Perhaps?
   1: { pointValue: 5, unlockCondition: () => player.firstOwnedCoin >= 1, group: 'firstOwnedCoin' },
   2: { pointValue: 10, unlockCondition: () => player.firstOwnedCoin >= 10, group: 'firstOwnedCoin' },
-  3: { pointValue: 15, unlockCondition: () => player.firstOwnedCoin >= 100, group: 'firstOwnedCoin', reward: { acceleratorPower: () => 0.001 } },
-  4: { pointValue: 20, unlockCondition: () => player.firstOwnedCoin >= 1000, group: 'firstOwnedCoin', reward: { workerAutobuyer: () => 1 } },
-  5: { pointValue: 25, unlockCondition: () => player.firstOwnedCoin >= 5000, group: 'firstOwnedCoin', reward: { accelerators: () => Math.floor(player.firstOwnedCoin / 500) } },
-  6: { pointValue: 30, unlockCondition: () => player.firstOwnedCoin >= 10000, group: 'firstOwnedCoin', reward: { multipliers: () => Math.floor(player.firstOwnedCoin / 1000) } },
-  7: { pointValue: 35, unlockCondition: () => player.firstOwnedCoin >= 20000, group: 'firstOwnedCoin', reward: { accelBoosts: () => Math.floor(player.firstOwnedCoin / 2000) } },
+  3: {
+    pointValue: 15,
+    unlockCondition: () => player.firstOwnedCoin >= 100,
+    group: 'firstOwnedCoin',
+    reward: { acceleratorPower: () => 0.001 }
+  },
+  4: {
+    pointValue: 20,
+    unlockCondition: () => player.firstOwnedCoin >= 1000,
+    group: 'firstOwnedCoin',
+    reward: { workerAutobuyer: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 2
+  },
+  5: {
+    pointValue: 25,
+    unlockCondition: () => player.firstOwnedCoin >= 5000,
+    group: 'firstOwnedCoin',
+    reward: { accelerators: () => Math.floor(player.firstOwnedCoin / 500) }
+  },
+  6: {
+    pointValue: 30,
+    unlockCondition: () => player.firstOwnedCoin >= 10000,
+    group: 'firstOwnedCoin',
+    reward: { multipliers: () => Math.floor(player.firstOwnedCoin / 1000) }
+  },
+  7: {
+    pointValue: 35,
+    unlockCondition: () => player.firstOwnedCoin >= 20000,
+    group: 'firstOwnedCoin',
+    reward: { accelBoosts: () => Math.floor(player.firstOwnedCoin / 2000) }
+  },
   8: { pointValue: 5, unlockCondition: () => player.secondOwnedCoin >= 1, group: 'secondOwnedCoin' },
   9: { pointValue: 10, unlockCondition: () => player.secondOwnedCoin >= 10, group: 'secondOwnedCoin' },
-  10: { pointValue: 15, unlockCondition: () => player.secondOwnedCoin >= 100, group: 'secondOwnedCoin', reward: { acceleratorPower: () => 0.0015 } },
-  11: { pointValue: 20, unlockCondition: () => player.secondOwnedCoin >= 500, group: 'secondOwnedCoin', reward: { investmentAutobuyer: () => 1 } },
-  12: { pointValue: 25, unlockCondition: () => player.secondOwnedCoin >= 5000, group: 'secondOwnedCoin', reward: { accelerators: () => Math.floor(player.secondOwnedCoin / 500) } },
-  13: { pointValue: 30, unlockCondition: () => player.secondOwnedCoin >= 10000, group: 'secondOwnedCoin', reward: { multipliers: () => Math.floor(player.secondOwnedCoin / 1000) } },
-  14: { pointValue: 35, unlockCondition: () => player.secondOwnedCoin >= 20000, group: 'secondOwnedCoin', reward: { accelBoosts: () => Math.floor(player.secondOwnedCoin / 2000) } },
+  10: {
+    pointValue: 15,
+    unlockCondition: () => player.secondOwnedCoin >= 100,
+    group: 'secondOwnedCoin',
+    reward: { acceleratorPower: () => 0.0015 }
+  },
+  11: {
+    pointValue: 20,
+    unlockCondition: () => player.secondOwnedCoin >= 500,
+    group: 'secondOwnedCoin',
+    reward: { investmentAutobuyer: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 2
+  },
+  12: {
+    pointValue: 25,
+    unlockCondition: () => player.secondOwnedCoin >= 5000,
+    group: 'secondOwnedCoin',
+    reward: { accelerators: () => Math.floor(player.secondOwnedCoin / 500) }
+  },
+  13: {
+    pointValue: 30,
+    unlockCondition: () => player.secondOwnedCoin >= 10000,
+    group: 'secondOwnedCoin',
+    reward: { multipliers: () => Math.floor(player.secondOwnedCoin / 1000) }
+  },
+  14: {
+    pointValue: 35,
+    unlockCondition: () => player.secondOwnedCoin >= 20000,
+    group: 'secondOwnedCoin',
+    reward: { accelBoosts: () => Math.floor(player.secondOwnedCoin / 2000) }
+  },
   15: { pointValue: 5, unlockCondition: () => player.thirdOwnedCoin >= 1, group: 'thirdOwnedCoin' },
   16: { pointValue: 10, unlockCondition: () => player.thirdOwnedCoin >= 10, group: 'thirdOwnedCoin' },
-  17: { pointValue: 15, unlockCondition: () => player.thirdOwnedCoin >= 100, group: 'thirdOwnedCoin', reward: { acceleratorPower: () => 0.002 } },
-  18: { pointValue: 20, unlockCondition: () => player.thirdOwnedCoin >= 333, group: 'thirdOwnedCoin', reward: { printerAutobuyer: () => 1 } },
-  19: { pointValue: 25, unlockCondition: () => player.thirdOwnedCoin >= 5000, group: 'thirdOwnedCoin', reward: { accelerators: () => Math.floor(player.thirdOwnedCoin / 500) } },
-  20: { pointValue: 30, unlockCondition: () => player.thirdOwnedCoin >= 10000, group: 'thirdOwnedCoin', reward: { multipliers: () => Math.floor(player.thirdOwnedCoin / 1000) } },
-  21: { pointValue: 35, unlockCondition: () => player.thirdOwnedCoin >= 20000, group: 'thirdOwnedCoin', reward: { accelBoosts: () => Math.floor(player.thirdOwnedCoin / 2000) } },
+  17: {
+    pointValue: 15,
+    unlockCondition: () => player.thirdOwnedCoin >= 100,
+    group: 'thirdOwnedCoin',
+    reward: { acceleratorPower: () => 0.002 }
+  },
+  18: {
+    pointValue: 20,
+    unlockCondition: () => player.thirdOwnedCoin >= 333,
+    group: 'thirdOwnedCoin',
+    reward: { printerAutobuyer: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 2
+  },
+  19: {
+    pointValue: 25,
+    unlockCondition: () => player.thirdOwnedCoin >= 5000,
+    group: 'thirdOwnedCoin',
+    reward: { accelerators: () => Math.floor(player.thirdOwnedCoin / 500) }
+  },
+  20: {
+    pointValue: 30,
+    unlockCondition: () => player.thirdOwnedCoin >= 10000,
+    group: 'thirdOwnedCoin',
+    reward: { multipliers: () => Math.floor(player.thirdOwnedCoin / 1000) }
+  },
+  21: {
+    pointValue: 35,
+    unlockCondition: () => player.thirdOwnedCoin >= 20000,
+    group: 'thirdOwnedCoin',
+    reward: { accelBoosts: () => Math.floor(player.thirdOwnedCoin / 2000) }
+  },
   22: { pointValue: 5, unlockCondition: () => player.fourthOwnedCoin >= 1, group: 'fourthOwnedCoin' },
   23: { pointValue: 10, unlockCondition: () => player.fourthOwnedCoin >= 10, group: 'fourthOwnedCoin' },
-  24: { pointValue: 15, unlockCondition: () => player.thirdOwnedCoin >= 100, group: 'thirdOwnedCoin', reward: { acceleratorPower: () => 0.002 } },
-  25: { pointValue: 20, unlockCondition: () => player.thirdOwnedCoin >= 333, group: 'thirdOwnedCoin', reward: { mintAutobuyer: () => 1 } },
-  26: { pointValue: 25, unlockCondition: () => player.thirdOwnedCoin >= 5000, group: 'thirdOwnedCoin', reward: { accelerators: () => Math.floor(player.thirdOwnedCoin / 500) } },
-  27: { pointValue: 30, unlockCondition: () => player.thirdOwnedCoin >= 10000, group: 'thirdOwnedCoin', reward: { multipliers: () => Math.floor(player.thirdOwnedCoin / 1000) } },
-  28: { pointValue: 35, unlockCondition: () => player.thirdOwnedCoin >= 20000, group: 'thirdOwnedCoin', reward: { accelBoosts: () => Math.floor(player.thirdOwnedCoin / 2000) } },
+  24: {
+    pointValue: 15,
+    unlockCondition: () => player.thirdOwnedCoin >= 100,
+    group: 'thirdOwnedCoin',
+    reward: { acceleratorPower: () => 0.002 }
+  },
+  25: {
+    pointValue: 20,
+    unlockCondition: () => player.thirdOwnedCoin >= 333,
+    group: 'thirdOwnedCoin',
+    reward: { mintAutobuyer: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 2
+  },
+  26: {
+    pointValue: 25,
+    unlockCondition: () => player.thirdOwnedCoin >= 5000,
+    group: 'thirdOwnedCoin',
+    reward: { accelerators: () => Math.floor(player.thirdOwnedCoin / 500) }
+  },
+  27: {
+    pointValue: 30,
+    unlockCondition: () => player.thirdOwnedCoin >= 10000,
+    group: 'thirdOwnedCoin',
+    reward: { multipliers: () => Math.floor(player.thirdOwnedCoin / 1000) }
+  },
+  28: {
+    pointValue: 35,
+    unlockCondition: () => player.thirdOwnedCoin >= 20000,
+    group: 'thirdOwnedCoin',
+    reward: { accelBoosts: () => Math.floor(player.thirdOwnedCoin / 2000) }
+  },
   29: { pointValue: 5, unlockCondition: () => player.fifthOwnedCoin >= 1, group: 'fifthOwnedCoin' },
   30: { pointValue: 10, unlockCondition: () => player.fifthOwnedCoin >= 10, group: 'fifthOwnedCoin' },
-  31: { pointValue: 15, unlockCondition: () => player.fifthOwnedCoin >= 66, group: 'fifthOwnedCoin', reward: { acceleratorPower: () => 0.003 } },
-  32: { pointValue: 20, unlockCondition: () => player.fifthOwnedCoin >= 200, group: 'fifthOwnedCoin', reward: { alchemyAutobuyer: () => 1 } },
-  33: { pointValue: 25, unlockCondition: () => player.fifthOwnedCoin >= 6666, group: 'fifthOwnedCoin', reward: { accelerators: () => Math.floor(player.fifthOwnedCoin / 500) } },
-  34: { pointValue: 30, unlockCondition: () => player.fifthOwnedCoin >= 17777, group: 'fifthOwnedCoin', reward: { multipliers: () => Math.floor(player.fifthOwnedCoin / 1000) } },
-  35: { pointValue: 35, unlockCondition: () => player.fifthOwnedCoin >= 42777, group: 'fifthOwnedCoin', reward: { accelBoosts: () => Math.floor(player.fifthOwnedCoin / 2000) } },
-  36: { pointValue: 5, unlockCondition: () => G.prestigePointGain.gte(1), group: 'prestigePointGain', reward: { offeringPrestigeTimer: () => 1 } },
-  37: { pointValue: 10, unlockCondition: () => G.prestigePointGain.gte(1e6), group: 'prestigePointGain', reward: { crystalMultiplier: () => Math.max(1, Decimal.log(player.prestigePoints, Math.E)) } },
-  38: { pointValue: 15, unlockCondition: () => G.prestigePointGain.gte(1e100), group: 'prestigePointGain', reward: { duplicationRuneUnlock: () => 1 } },
+  31: {
+    pointValue: 15,
+    unlockCondition: () => player.fifthOwnedCoin >= 66,
+    group: 'fifthOwnedCoin',
+    reward: { acceleratorPower: () => 0.003 }
+  },
+  32: {
+    pointValue: 20,
+    unlockCondition: () => player.fifthOwnedCoin >= 200,
+    group: 'fifthOwnedCoin',
+    reward: { alchemyAutobuyer: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 2
+  },
+  33: {
+    pointValue: 25,
+    unlockCondition: () => player.fifthOwnedCoin >= 6666,
+    group: 'fifthOwnedCoin',
+    reward: { accelerators: () => Math.floor(player.fifthOwnedCoin / 500) }
+  },
+  34: {
+    pointValue: 30,
+    unlockCondition: () => player.fifthOwnedCoin >= 17777,
+    group: 'fifthOwnedCoin',
+    reward: { multipliers: () => Math.floor(player.fifthOwnedCoin / 1000) }
+  },
+  35: {
+    pointValue: 35,
+    unlockCondition: () => player.fifthOwnedCoin >= 42777,
+    group: 'fifthOwnedCoin',
+    reward: { accelBoosts: () => Math.floor(player.fifthOwnedCoin / 2000) }
+  },
+  36: {
+    pointValue: 5,
+    unlockCondition: () => G.prestigePointGain.gte(1),
+    group: 'prestigePointGain',
+    reward: { offeringPrestigeTimer: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 2
+  },
+  37: {
+    pointValue: 10,
+    unlockCondition: () => G.prestigePointGain.gte(1e6),
+    group: 'prestigePointGain',
+    reward: { crystalMultiplier: () => Math.max(1, Decimal.log(player.prestigePoints, Math.E)) },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  38: {
+    pointValue: 15,
+    unlockCondition: () => G.prestigePointGain.gte(1e100),
+    group: 'prestigePointGain',
+    reward: { duplicationRuneUnlock: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
   39: { pointValue: 20, unlockCondition: () => G.prestigePointGain.gte('1e1000'), group: 'prestigePointGain' },
   40: { pointValue: 25, unlockCondition: () => G.prestigePointGain.gte('1e10000'), group: 'prestigePointGain' },
   41: { pointValue: 30, unlockCondition: () => G.prestigePointGain.gte('1e77777'), group: 'prestigePointGain' },
   42: { pointValue: 35, unlockCondition: () => G.prestigePointGain.gte('1e250000'), group: 'prestigePointGain' },
-  43: { pointValue: 5, unlockCondition: () => G.transcendPointGain.gte(1), group: 'transcendPointGain', reward: { autoPrestigeFeature: () => 1 } },
-  44: { pointValue: 10, unlockCondition: () => G.transcendPointGain.gte(1e6), group: 'transcendPointGain', reward: { prismRuneUnlock: () => 1 } },
-  45: { pointValue: 15, unlockCondition: () => G.transcendPointGain.gte(1e50), group: 'transcendPointGain', reward: { taxReduction: () => 0.95 } },
-  46: { pointValue: 20, unlockCondition: () => G.transcendPointGain.gte(1e308), group: 'transcendPointGain', reward: { taxReduction: () => 0.95 } },
-  47: { pointValue: 25, unlockCondition: () => G.transcendPointGain.gte('1e1500'), group: 'transcendPointGain', reward: { taxReduction: () => 0.9 } },
+  43: {
+    pointValue: 5,
+    unlockCondition: () => G.transcendPointGain.gte(1),
+    group: 'transcendPointGain',
+    reward: { autoPrestigeFeature: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 2
+  },
+  44: {
+    pointValue: 10,
+    unlockCondition: () => G.transcendPointGain.gte(1e6),
+    group: 'transcendPointGain',
+    reward: { prismRuneUnlock: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  45: {
+    pointValue: 15,
+    unlockCondition: () => G.transcendPointGain.gte(1e50),
+    group: 'transcendPointGain',
+    reward: { taxReduction: () => 0.95 }
+  },
+  46: {
+    pointValue: 20,
+    unlockCondition: () => G.transcendPointGain.gte(1e308),
+    group: 'transcendPointGain',
+    reward: { taxReduction: () => 0.95 }
+  },
+  47: {
+    pointValue: 25,
+    unlockCondition: () => G.transcendPointGain.gte('1e1500'),
+    group: 'transcendPointGain',
+    reward: { taxReduction: () => 0.9 }
+  },
   48: { pointValue: 30, unlockCondition: () => G.transcendPointGain.gte('1e25000'), group: 'transcendPointGain' },
   49: { pointValue: 35, unlockCondition: () => G.transcendPointGain.gte('1e100000'), group: 'transcendPointGain' },
-  50: { pointValue: 5, unlockCondition: () => G.reincarnationPointGain.gte(1), group: 'reincarnationPointGain', reward: { particleGain: () => 2 } },
+  50: {
+    pointValue: 5,
+    unlockCondition: () => G.reincarnationPointGain.gte(1),
+    group: 'reincarnationPointGain',
+    reward: { particleGain: () => 2 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
   51: { pointValue: 10, unlockCondition: () => G.reincarnationPointGain.gte(1e5), group: 'reincarnationPointGain' },
   52: { pointValue: 15, unlockCondition: () => G.reincarnationPointGain.gte(1e30), group: 'reincarnationPointGain' },
-  53: { pointValue: 20, unlockCondition: () => G.reincarnationPointGain.gte(1e200), group: 'reincarnationPointGain', reward: { multiplicativeObtainium: () => 1/800 * sumOfRuneLevels() } },
-  54: { pointValue: 25, unlockCondition: () => G.reincarnationPointGain.gte('1e1500'), group: 'reincarnationPointGain' },
-  55: { pointValue: 30, unlockCondition: () => G.reincarnationPointGain.gte('1e5000'), group: 'reincarnationPointGain' },
-  56: { pointValue: 35, unlockCondition: () => G.reincarnationPointGain.gte('1e7777'), group: 'reincarnationPointGain' },
-  57: { pointValue: 5, unlockCondition: () => player.prestigenomultiplier, group: 'ungrouped', reward: { multipliers: () => 1 } },
-  58: { pointValue: 10, unlockCondition: () => player.transcendnomultiplier, group: 'ungrouped', reward: { multipliers: () => 2 } },
-  59: { pointValue: 15, unlockCondition: () => player.reincarnatenomultiplier, group: 'ungrouped', reward: { multipliers: () => 4 } },
-  60: { pointValue: 20, unlockCondition: () => player.prestigenoaccelerator, group: 'ungrouped', reward: { accelerators: () => 2 } },
-  61: { pointValue: 25, unlockCondition: () => player.transcendnoaccelerator, group: 'ungrouped', reward: { accelerators: () => 4 } },
-  62: { pointValue: 30, unlockCondition: () => player.reincarnatenoaccelerator, group: 'ungrouped', reward: { accelerators: () => 8 } },
-  63: { pointValue: 35, unlockCondition: () => { return player.coinsThisTranscension.gte("1e120000") && player.acceleratorBought === 0 && player.acceleratorBoostBought === 0}, group: 'ungrouped'},
-  64: { pointValue: 5, unlockCondition: () => player.prestigenocoinupgrades, group: 'ungrouped'},
-  65: { pointValue: 10, unlockCondition: () => player.transcendnocoinupgrades, group: 'ungrouped'},
-  66: { pointValue: 15, unlockCondition: () => player.transcendnocoinorprestigeupgrades, group: 'ungrouped'},
-  67: { pointValue: 15, unlockCondition: () => player.reincarnatenocoinupgrades, group: 'ungrouped'},
-  68: { pointValue: 20, unlockCondition: () => player.reincarnatenocoinorprestigeupgrades, group: 'ungrouped'},
-  69: { pointValue: 30, unlockCondition: () => player.reincarnatenocoinprestigeortranscendupgrades, group: 'ungrouped'},
-  70: { pointValue: 40, unlockCondition: () => player.reincarnatenocoinprestigetranscendorgeneratorupgrades, group: 'ungrouped'},
-  71: { pointValue: 10, unlockCondition: () => { return sumContents(player.upgrades.slice(101, 106)) === 1 && player.upgrades[102] === 1 }, group: 'ungrouped', reward: { conversionExponent: () => 0.01 } },
-  72: { pointValue: 10, unlockCondition: () => { return sumContents(player.upgrades.slice(101, 106)) === 1 && player.upgrades[103] === 1 }, group: 'ungrouped', reward: { conversionExponent: () => 0.01 } },
-  73: { pointValue: 15, unlockCondition: () => { return sumContents(player.upgrades.slice(101, 106)) === 1 && player.upgrades[104] === 1 }, group: 'ungrouped', reward: { conversionExponent: () => 0.01 } },
-  74: { pointValue: 20, unlockCondition: () => { return sumContents(player.upgrades.slice(101, 106)) === 1 && player.upgrades[105] === 1 }, group: 'ungrouped', reward: { conversionExponent: () => 0.01 } },
-  75: { pointValue: 25, unlockCondition: () => { return player.currentChallenge.transcension === 1 && player.coinsThisTranscension.gte('1e1000') && sumContents(player.upgrades.slice(101,106)) === 0 }, group: 'ungrouped', reward: { conversionExponent: () => 0.01 } },
-  76: { pointValue: 25, unlockCondition: () => { return player.currentChallenge.transcension === 2 && player.coinsThisTranscension.gte('1e1000') && sumContents(player.upgrades.slice(101,106)) === 0 }, group: 'ungrouped', reward: { conversionExponent: () => 0.01 } },
-  77: { pointValue: 50, unlockCondition: () => { return player.currentChallenge.transcension === 3 && player.coinsThisTranscension.gte('1e99999') && sumContents(player.upgrades.slice(101,106)) === 0 }, group: 'ungrouped', reward: { conversionExponent: () => 0.01 } },
-  78: { pointValue: 5, unlockCondition: () => player.challengecompletions[1] >= 1, group: 'challenge1', reward: { refineryAutobuy: () => 1 } },
-  79: { pointValue: 10, unlockCondition: () => player.challengecompletions[1] >= 3, group: 'challenge1', reward: { crystalUpgrade1Autobuy: () => 1 } },
-  80: { pointValue: 15, unlockCondition: () => player.challengecompletions[1] >= 5, group: 'challenge1', reward: { recycleChance: () => 0.05 } },
+  53: {
+    pointValue: 20,
+    unlockCondition: () => G.reincarnationPointGain.gte(1e200),
+    group: 'reincarnationPointGain',
+    reward: { multiplicativeObtainium: () => 1 / 800 * sumOfRuneLevels() }
+  },
+  54: {
+    pointValue: 25,
+    unlockCondition: () => G.reincarnationPointGain.gte('1e1500'),
+    group: 'reincarnationPointGain'
+  },
+  55: {
+    pointValue: 30,
+    unlockCondition: () => G.reincarnationPointGain.gte('1e5000'),
+    group: 'reincarnationPointGain'
+  },
+  56: {
+    pointValue: 35,
+    unlockCondition: () => G.reincarnationPointGain.gte('1e7777'),
+    group: 'reincarnationPointGain'
+  },
+  57: {
+    pointValue: 5,
+    unlockCondition: () => player.prestigenomultiplier,
+    group: 'ungrouped',
+    reward: { multipliers: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  58: {
+    pointValue: 10,
+    unlockCondition: () => player.transcendnomultiplier,
+    group: 'ungrouped',
+    reward: { multipliers: () => 2 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  59: {
+    pointValue: 15,
+    unlockCondition: () => player.reincarnatenomultiplier,
+    group: 'ungrouped',
+    reward: { multipliers: () => 4 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  60: {
+    pointValue: 20,
+    unlockCondition: () => player.prestigenoaccelerator,
+    group: 'ungrouped',
+    reward: { accelerators: () => 2 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  61: {
+    pointValue: 25,
+    unlockCondition: () => player.transcendnoaccelerator,
+    group: 'ungrouped',
+    reward: { accelerators: () => 4 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  62: {
+    pointValue: 30,
+    unlockCondition: () => player.reincarnatenoaccelerator,
+    group: 'ungrouped',
+    reward: { accelerators: () => 8 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  63: {
+    pointValue: 35,
+    unlockCondition: () => {
+      return player.coinsThisTranscension.gte('1e120000') && player.acceleratorBought === 0
+        && player.acceleratorBoostBought === 0
+    },
+    group: 'ungrouped',
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  64: {
+    pointValue: 5,
+    unlockCondition: () => player.prestigenocoinupgrades,
+    group: 'ungrouped',
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  65: {
+    pointValue: 10,
+    unlockCondition: () => player.transcendnocoinupgrades,
+    group: 'ungrouped',
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  66: {
+    pointValue: 15,
+    unlockCondition: () => player.transcendnocoinorprestigeupgrades,
+    group: 'ungrouped',
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  67: {
+    pointValue: 15,
+    unlockCondition: () => player.reincarnatenocoinupgrades,
+    group: 'ungrouped',
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  68: {
+    pointValue: 20,
+    unlockCondition: () => player.reincarnatenocoinorprestigeupgrades,
+    group: 'ungrouped',
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  69: {
+    pointValue: 30,
+    unlockCondition: () => player.reincarnatenocoinprestigeortranscendupgrades,
+    group: 'ungrouped',
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  70: {
+    pointValue: 40,
+    unlockCondition: () => player.reincarnatenocoinprestigetranscendorgeneratorupgrades,
+    group: 'ungrouped',
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  71: {
+    pointValue: 10,
+    unlockCondition: () => {
+      return sumContents(player.upgrades.slice(101, 106)) === 1 && player.upgrades[102] === 1
+    },
+    group: 'ungrouped',
+    reward: { conversionExponent: () => 0.01 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  72: {
+    pointValue: 10,
+    unlockCondition: () => {
+      return sumContents(player.upgrades.slice(101, 106)) === 1 && player.upgrades[103] === 1
+    },
+    group: 'ungrouped',
+    reward: { conversionExponent: () => 0.01 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  73: {
+    pointValue: 15,
+    unlockCondition: () => {
+      return sumContents(player.upgrades.slice(101, 106)) === 1 && player.upgrades[104] === 1
+    },
+    group: 'ungrouped',
+    reward: { conversionExponent: () => 0.01 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  74: {
+    pointValue: 20,
+    unlockCondition: () => {
+      return sumContents(player.upgrades.slice(101, 106)) === 1 && player.upgrades[105] === 1
+    },
+    group: 'ungrouped',
+    reward: { conversionExponent: () => 0.01 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  75: {
+    pointValue: 25,
+    unlockCondition: () => {
+      return player.currentChallenge.transcension === 1 && player.coinsThisTranscension.gte('1e1000')
+        && sumContents(player.upgrades.slice(101, 106)) === 0
+    },
+    group: 'ungrouped',
+    reward: { conversionExponent: () => 0.01 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  76: {
+    pointValue: 25,
+    unlockCondition: () => {
+      return player.currentChallenge.transcension === 2 && player.coinsThisTranscension.gte('1e1000')
+        && sumContents(player.upgrades.slice(101, 106)) === 0
+    },
+    group: 'ungrouped',
+    reward: { conversionExponent: () => 0.01 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  77: {
+    pointValue: 50,
+    unlockCondition: () => {
+      return player.currentChallenge.transcension === 3 && player.coinsThisTranscension.gte('1e99999')
+        && sumContents(player.upgrades.slice(101, 106)) === 0
+    },
+    group: 'ungrouped',
+    reward: { conversionExponent: () => 0.01 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  78: {
+    pointValue: 5,
+    unlockCondition: () => player.challengecompletions[1] >= 1,
+    group: 'challenge1',
+    reward: { refineryAutobuy: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  79: {
+    pointValue: 10,
+    unlockCondition: () => player.challengecompletions[1] >= 3,
+    group: 'challenge1',
+    reward: { crystalUpgrade1Autobuy: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  80: {
+    pointValue: 15,
+    unlockCondition: () => player.challengecompletions[1] >= 5,
+    group: 'challenge1',
+    reward: { salvage: () => 3, multAutobuyer: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
   81: { pointValue: 20, unlockCondition: () => player.challengecompletions[1] >= 10, group: 'challenge1' },
-  82: { pointValue: 25, unlockCondition: () => player.challengecompletions[1] >= 20, group: 'challenge1', reward: { taxReduction: () => 0.96 } },
+  82: {
+    pointValue: 25,
+    unlockCondition: () => player.challengecompletions[1] >= 20,
+    group: 'challenge1',
+    reward: { taxReduction: () => 0.96 }
+  },
   83: { pointValue: 30, unlockCondition: () => player.challengecompletions[1] >= 50, group: 'challenge1' },
-  84: { pointValue: 35, unlockCondition: () => player.challengecompletions[1] >= 75, group: 'challenge1', reward: { multiplicativeObtainium: () => 1.05 } },
-  85: { pointValue: 5, unlockCondition: () => player.challengecompletions[2] >= 1, group: 'challenge2', reward: { coalPlantAutobuy: () => 1 } },
-  86: { pointValue: 10, unlockCondition: () => player.challengecompletions[2] >= 3, group: 'challenge2', reward: { crystalUpgrade2Autobuy: () => 1 } },
-  87: { pointValue: 15, unlockCondition: () => player.challengecompletions[2] >= 5, group: 'challenge2', reward: { recycleChance: () => 0.05} },
+  84: {
+    pointValue: 35,
+    unlockCondition: () => player.challengecompletions[1] >= 75,
+    group: 'challenge1',
+    reward: { multiplicativeObtainium: () => 1.05 }
+  },
+  85: {
+    pointValue: 5,
+    unlockCondition: () => player.challengecompletions[2] >= 1,
+    group: 'challenge2',
+    reward: { coalPlantAutobuy: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  86: {
+    pointValue: 10,
+    unlockCondition: () => player.challengecompletions[2] >= 3,
+    group: 'challenge2',
+    reward: { crystalUpgrade2Autobuy: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  87: {
+    pointValue: 15,
+    unlockCondition: () => player.challengecompletions[2] >= 5,
+    group: 'challenge2',
+    reward: { salvage: () => 3, accelAutobuyer: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
   88: { pointValue: 20, unlockCondition: () => player.challengecompletions[2] >= 10, group: 'challenge2' },
-  89: { pointValue: 25, unlockCondition: () => player.challengecompletions[2] >= 20, group: 'challenge2', reward: { taxReduction: () => 0.96 } },
+  89: {
+    pointValue: 25,
+    unlockCondition: () => player.challengecompletions[2] >= 20,
+    group: 'challenge2',
+    reward: { taxReduction: () => 0.96 }
+  },
   90: { pointValue: 30, unlockCondition: () => player.challengecompletions[2] >= 50, group: 'challenge2' },
-  91: { pointValue: 35, unlockCondition: () => player.challengecompletions[2] >= 75, group: 'challenge2', reward: { multiplicativeObtainium: () => 1.05 } },
-  92: { pointValue: 5, unlockCondition: () => player.challengecompletions[3] >= 1, group: 'challenge3', reward: { coalRigAutobuy: () => 1 } },
-  93: { pointValue: 10, unlockCondition: () => player.challengecompletions[3] >= 3, group: 'challenge3', reward: { crystalUpgrade3Autobuy: () => 1 } },
-  94: { pointValue: 15, unlockCondition: () => player.challengecompletions[3] >= 5, group: 'challenge3', reward: { recycleChance: () => 0.05} },
+  91: {
+    pointValue: 35,
+    unlockCondition: () => player.challengecompletions[2] >= 75,
+    group: 'challenge2',
+    reward: { multiplicativeObtainium: () => 1.05 }
+  },
+  92: {
+    pointValue: 5,
+    unlockCondition: () => player.challengecompletions[3] >= 1,
+    group: 'challenge3',
+    reward: { coalRigAutobuy: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  93: {
+    pointValue: 10,
+    unlockCondition: () => player.challengecompletions[3] >= 3,
+    group: 'challenge3',
+    reward: { crystalUpgrade3Autobuy: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  94: {
+    pointValue: 15,
+    unlockCondition: () => player.challengecompletions[3] >= 5,
+    group: 'challenge3',
+    reward: { salvage: () => 4 }
+  },
   95: { pointValue: 20, unlockCondition: () => player.challengecompletions[3] >= 10, group: 'challenge3' },
-  96: { pointValue: 25, unlockCondition: () => player.challengecompletions[3] >= 20, group: 'challenge3', reward: { taxReduction: () => 0.96 } },
+  96: {
+    pointValue: 25,
+    unlockCondition: () => player.challengecompletions[3] >= 20,
+    group: 'challenge3',
+    reward: { taxReduction: () => 0.96 }
+  },
   97: { pointValue: 30, unlockCondition: () => player.challengecompletions[3] >= 50, group: 'challenge3' },
-  98: { pointValue: 35, unlockCondition: () => player.challengecompletions[3] >= 75, group: 'challenge3', reward: { multiplicativeObtainium: () => 1.05 } },
-  99: { pointValue: 5, unlockCondition: () => player.challengecompletions[4] >= 1, group: 'challenge4', reward: { pickaxeAutobuy: () => 1 } },
-  100: { pointValue: 10, unlockCondition: () => player.challengecompletions[4] >= 3, group: 'challenge4', reward: { crystalUpgrade4Autobuy: () => 1 } },
-  101: { pointValue: 15, unlockCondition: () => player.challengecompletions[4] >= 5, group: 'challenge4', reward: { recycleChance: () => 0.05} },
-  102: { pointValue: 20, unlockCondition: () => player.challengecompletions[4] >= 10, group: 'challenge4' },
-  103: { pointValue: 25, unlockCondition: () => player.challengecompletions[4] >= 20, group: 'challenge4', reward: { taxReduction: () => 0.96 } },
+  98: {
+    pointValue: 35,
+    unlockCondition: () => player.challengecompletions[3] >= 75,
+    group: 'challenge3',
+    reward: { multiplicativeObtainium: () => 1.05 }
+  },
+  99: {
+    pointValue: 5,
+    unlockCondition: () => player.challengecompletions[4] >= 1,
+    group: 'challenge4',
+    reward: { pickaxeAutobuy: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  100: {
+    pointValue: 10,
+    unlockCondition: () => player.challengecompletions[4] >= 3,
+    group: 'challenge4',
+    reward: { crystalUpgrade4Autobuy: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  101: {
+    pointValue: 15,
+    unlockCondition: () => player.challengecompletions[4] >= 5,
+    group: 'challenge4',
+    reward: { salvage: () => 5 }
+  },
+  102: {
+    pointValue: 20,
+    unlockCondition: () => player.challengecompletions[4] >= 10,
+    group: 'challenge4',
+    reward: { thriftRuneUnlock: () => 1 }
+  },
+  103: {
+    pointValue: 25,
+    unlockCondition: () => player.challengecompletions[4] >= 20,
+    group: 'challenge4',
+    reward: { taxReduction: () => 0.96 }
+  },
   104: { pointValue: 30, unlockCondition: () => player.challengecompletions[4] >= 50, group: 'challenge4' },
-  105: { pointValue: 35, unlockCondition: () => player.challengecompletions[4] >= 75, group: 'challenge4', reward: { multiplicativeObtainium: () => 1.05 } },
-  106: { pointValue: 5, unlockCondition: () => player.challengecompletions[5] >= 1, group: 'challenge5', reward: { pandorasBoxAutobuy: () => 1 } },
-  107: { pointValue: 10, unlockCondition: () => player.challengecompletions[5] >= 3, group: 'challenge5', reward: { crystalUpgrade5Autobuy: () => 1 } },
-  108: { pointValue: 15, unlockCondition: () => player.challengecompletions[5] >= 5, group: 'challenge5', reward: { recycleChance: () => 0.05} },
+  105: {
+    pointValue: 35,
+    unlockCondition: () => player.challengecompletions[4] >= 75,
+    group: 'challenge4',
+    reward: { multiplicativeObtainium: () => 1.05 }
+  },
+  106: {
+    pointValue: 5,
+    unlockCondition: () => player.challengecompletions[5] >= 1,
+    group: 'challenge5',
+    reward: { pandorasBoxAutobuy: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  107: {
+    pointValue: 10,
+    unlockCondition: () => player.challengecompletions[5] >= 3,
+    group: 'challenge5',
+    reward: { crystalUpgrade5Autobuy: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 3
+  },
+  108: {
+    pointValue: 15,
+    unlockCondition: () => player.challengecompletions[5] >= 5,
+    group: 'challenge5',
+    reward: { salvage: () => 5 }
+  },
   109: { pointValue: 20, unlockCondition: () => player.challengecompletions[5] >= 10, group: 'challenge5' },
-  110: { pointValue: 25, unlockCondition: () => player.challengecompletions[5] >= 20, group: 'challenge5', reward: { taxReduction: () => 0.96 } },
+  110: {
+    pointValue: 25,
+    unlockCondition: () => player.challengecompletions[5] >= 20,
+    group: 'challenge5',
+    reward: { taxReduction: () => 0.96 }
+  },
   111: { pointValue: 30, unlockCondition: () => player.challengecompletions[5] >= 50, group: 'challenge5' },
-  112: { pointValue: 35, unlockCondition: () => player.challengecompletions[5] >= 75, group: 'challenge5', reward: { multiplicativeObtainium: () => 1.05 } },
-  113: { pointValue: 5, unlockCondition: () => player.challengecompletions[6] >= 1, group: 'challenge6' },
+  112: {
+    pointValue: 35,
+    unlockCondition: () => player.challengecompletions[5] >= 75,
+    group: 'challenge5',
+    reward: { multiplicativeObtainium: () => 1.05 }
+  },
+  113: {
+    pointValue: 5,
+    unlockCondition: () => player.challengecompletions[6] >= 1,
+    group: 'challenge6',
+    checkReset: () => player.highestSingularityCount >= 4
+  },
   114: { pointValue: 10, unlockCondition: () => player.challengecompletions[6] >= 2, group: 'challenge6' },
-  115: { pointValue: 15, unlockCondition: () => player.challengecompletions[6] >= 3, group: 'challenge6', reward: { recycleChance: () => 0.05 } },
+  115: {
+    pointValue: 15,
+    unlockCondition: () => player.challengecompletions[6] >= 3,
+    group: 'challenge6',
+    reward: { salvage: () => 5 }
+  },
   116: { pointValue: 20, unlockCondition: () => player.challengecompletions[6] >= 5, group: 'challenge6' },
-  117: { pointValue: 25, unlockCondition: () => player.challengecompletions[6] >= 10, group: 'challenge6', reward: { taxReduction: () => 0.95 } },
-  118: { pointValue: 30, unlockCondition: () => player.challengecompletions[6] >= 15, group: 'challenge6', reward: { taxReduction: () => Math.pow(0.9925, player.challengecompletions[6] + player.challengecompletions[7] + player.challengecompletions[8] + player.challengecompletions[9] + player.challengecompletions[10])} },
-  119: { pointValue: 35, unlockCondition: () => player.challengecompletions[6] >= 25, group: 'challenge6', reward: { exemptionTalisman: () => 0} },
-  120: { pointValue: 5, unlockCondition: () => player.challengecompletions[7] >= 1, group: 'challenge7' },
+  117: {
+    pointValue: 25,
+    unlockCondition: () => player.challengecompletions[6] >= 10,
+    group: 'challenge6',
+    reward: { taxReduction: () => 0.95 }
+  },
+  118: {
+    pointValue: 30,
+    unlockCondition: () => player.challengecompletions[6] >= 15,
+    group: 'challenge6',
+    reward: {
+      taxReduction: () =>
+        Math.pow(
+          0.9925,
+          player.challengecompletions[6] + player.challengecompletions[7] + player.challengecompletions[8]
+            + player.challengecompletions[9] + player.challengecompletions[10]
+        )
+    }
+  },
+  119: {
+    pointValue: 35,
+    unlockCondition: () => player.challengecompletions[6] >= 25,
+    group: 'challenge6',
+    reward: { exemptionTalisman: () => 0 }
+  },
+  120: {
+    pointValue: 5,
+    unlockCondition: () => player.challengecompletions[7] >= 1,
+    group: 'challenge7',
+    reward: { diamondUpgrade18: () => 0 },
+    checkReset: () => player.highestSingularityCount >= 7
+  },
   121: { pointValue: 10, unlockCondition: () => player.challengecompletions[7] >= 2, group: 'challenge7' },
-  122: { pointValue: 15, unlockCondition: () => player.challengecompletions[7] >= 3, group: 'challenge7', reward: { recycleChance: () => 0.075 } },
+  122: {
+    pointValue: 15,
+    unlockCondition: () => player.challengecompletions[7] >= 3,
+    group: 'challenge7',
+    reward: { salvage: () => 5 }
+  },
   123: { pointValue: 20, unlockCondition: () => player.challengecompletions[7] >= 5, group: 'challenge7' },
-  124: { pointValue: 25, unlockCondition: () => player.challengecompletions[7] >= 10, group: 'challenge7', reward: { taxReduction: () => 0.95, chal7Researches: () => 1} },
-  125: { pointValue: 30, unlockCondition: () => player.challengecompletions[7] >= 15, group: 'challenge7', reward: { multiplicativeObtainium: () => 1.05 } },
-  126: { pointValue: 35, unlockCondition: () => player.challengecompletions[7] >= 25, group: 'challenge7', reward: { chronosTalisman: () => 1 } },
-  127: { pointValue: 5, unlockCondition: () => player.challengecompletions[8] >= 1, group: 'challenge8', reward: { chal8Researches: () => 1 } },
+  124: {
+    pointValue: 25,
+    unlockCondition: () => player.challengecompletions[7] >= 10,
+    group: 'challenge7',
+    reward: { taxReduction: () => 0.95, chal7Researches: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 10
+  },
+  125: {
+    pointValue: 30,
+    unlockCondition: () => player.challengecompletions[7] >= 15,
+    group: 'challenge7',
+    reward: { multiplicativeObtainium: () => 1.05 }
+  },
+  126: {
+    pointValue: 35,
+    unlockCondition: () => player.challengecompletions[7] >= 25,
+    group: 'challenge7',
+    reward: { chronosTalisman: () => 1 }
+  },
+  127: {
+    pointValue: 5,
+    unlockCondition: () => player.challengecompletions[8] >= 1,
+    group: 'challenge8',
+    reward: { chal8Researches: () => 1, diamondUpgrade19: () => 1, antHillUnlock: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 10
+  },
   128: { pointValue: 10, unlockCondition: () => player.challengecompletions[8] >= 2, group: 'challenge8' },
-  129: { pointValue: 15, unlockCondition: () => player.challengecompletions[8] >= 3, group: 'challenge8', reward: { recycleChance: () => 0.075 } },
+  129: {
+    pointValue: 15,
+    unlockCondition: () => player.challengecompletions[8] >= 3,
+    group: 'challenge8',
+    reward: { salvage: () => 6 }
+  },
   130: { pointValue: 20, unlockCondition: () => player.challengecompletions[8] >= 5, group: 'challenge8' },
-  131: { pointValue: 25, unlockCondition: () => player.challengecompletions[8] >= 10, group: 'challenge8', reward: { taxReduction: () => 0.95 } },
-  132: { pointValue: 30, unlockCondition: () => player.challengecompletions[8] >= 15, group: 'challenge8', reward: { multiplicativeObtainium: () => 1.05 } },
-  133: { pointValue: 35, unlockCondition: () => player.challengecompletions[8] >= 25, group: 'challenge8', reward: { midasTalisman: () => 1 } },
-  134: { pointValue: 5, unlockCondition: () => player.challengecompletions[9] >= 1, group: 'challenge9', reward: { chal9Researches: () => 1 } },
-  135: { pointValue: 10, unlockCondition: () => player.challengecompletions[9] >= 2, group: 'challenge9', reward: { talismanPower: () => 0.02 } },
-  136: { pointValue: 15, unlockCondition: () => player.challengecompletions[9] >= 3, group: 'challenge9', reward: { talismanPower: () => 0.02 } },
-  137: { pointValue: 20, unlockCondition: () => player.challengecompletions[9] >= 5, group: 'challenge9', reward: { sacrificeMult: () => 1.25 } },
+  131: {
+    pointValue: 25,
+    unlockCondition: () => player.challengecompletions[8] >= 10,
+    group: 'challenge8',
+    reward: { taxReduction: () => 0.95 }
+  },
+  132: {
+    pointValue: 30,
+    unlockCondition: () => player.challengecompletions[8] >= 15,
+    group: 'challenge8',
+    reward: { multiplicativeObtainium: () => 1.05 }
+  },
+  133: {
+    pointValue: 35,
+    unlockCondition: () => player.challengecompletions[8] >= 25,
+    group: 'challenge8',
+    reward: { midasTalisman: () => 1 }
+  },
+  134: {
+    pointValue: 5,
+    unlockCondition: () => player.challengecompletions[9] >= 1,
+    group: 'challenge9',
+    reward: { chal9Researches: () => 1, diamondUpgrade20: () => 1, blessingUnlock: () => 1, talismanUnlock: () => 1 },
+    checkReset: () => player.highestSingularityCount >= 20
+  },
+  135: {
+    pointValue: 10,
+    unlockCondition: () => player.challengecompletions[9] >= 2,
+    group: 'challenge9',
+    reward: { talismanPower: () => 0.02 }
+  },
+  136: {
+    pointValue: 15,
+    unlockCondition: () => player.challengecompletions[9] >= 3,
+    group: 'challenge9',
+    reward: { talismanPower: () => 0.02, salvage: () => 7 }
+  },
+  137: {
+    pointValue: 20,
+    unlockCondition: () => player.challengecompletions[9] >= 5,
+    group: 'challenge9',
+    reward: { sacrificeMult: () => 1.25 }
+  },
   138: { pointValue: 25, unlockCondition: () => player.challengecompletions[9] >= 10, group: 'challenge9' },
-  139: { pointValue: 30, unlockCondition: () => player.challengecompletions[9] >= 15, group: 'challenge9', reward: { multiplicativeObtainium: () => 1.05} },
-  140: { pointValue: 35, unlockCondition: () => player.challengecompletions[9] >= 25, group: 'challenge9', reward: { metaphysicsTalisman: () => 1 } },
-  141: { pointValue: 5, unlockCondition: () => player.challengecompletions[10] >= 1, group: 'challenge10', reward: { ascensionUnlock: () => 1 } },
+  139: {
+    pointValue: 30,
+    unlockCondition: () => player.challengecompletions[9] >= 15,
+    group: 'challenge9',
+    reward: { multiplicativeObtainium: () => 1.05 }
+  },
+  140: {
+    pointValue: 35,
+    unlockCondition: () => player.challengecompletions[9] >= 25,
+    group: 'challenge9',
+    reward: { metaphysicsTalisman: () => 1 }
+  },
+  141: {
+    pointValue: 5,
+    unlockCondition: () => player.challengecompletions[10] >= 1,
+    group: 'challenge10',
+    reward: { ascensionUnlock: () => 1 }
+  },
   142: { pointValue: 10, unlockCondition: () => player.challengecompletions[10] >= 2, group: 'challenge10' },
-  143: { pointValue: 15, unlockCondition: () => player.challengecompletions[10] >= 3, group: 'challenge10' },
-  144: { pointValue: 20, unlockCondition: () => player.challengecompletions[10] >= 5, group: 'challenge10', reward: { talismanPower: () => 0.025 } },
-  145: { pointValue: 25, unlockCondition: () => player.challengecompletions[10] >= 10, group: 'challenge10', reward: { talismanPower: () => 0.025 } },
-  146: { pointValue: 30, unlockCondition: () => player.challengecompletions[10] >= 15, group: 'challenge10', reward: { multiplicativeObtainium: () => 1.05 } },
-  147: { pointValue: 35, unlockCondition: () => player.challengecompletions[10] >= 25, group: 'challenge10', reward: { polymathTalisman: () => 1 } },
+  143: {
+    pointValue: 15,
+    unlockCondition: () => player.challengecompletions[10] >= 3,
+    group: 'challenge10',
+    reward: { salvage: () => 7 }
+  },
+  144: {
+    pointValue: 20,
+    unlockCondition: () => player.challengecompletions[10] >= 5,
+    group: 'challenge10',
+    reward: { talismanPower: () => 0.025 }
+  },
+  145: {
+    pointValue: 25,
+    unlockCondition: () => player.challengecompletions[10] >= 10,
+    group: 'challenge10',
+    reward: { talismanPower: () => 0.025 }
+  },
+  146: {
+    pointValue: 30,
+    unlockCondition: () => player.challengecompletions[10] >= 15,
+    group: 'challenge10',
+    reward: { multiplicativeObtainium: () => 1.05 }
+  },
+  147: {
+    pointValue: 35,
+    unlockCondition: () => player.challengecompletions[10] >= 25,
+    group: 'challenge10',
+    reward: { polymathTalisman: () => 1 }
+  },
   148: { pointValue: 5, unlockCondition: () => player.acceleratorBought >= 5, group: 'accelerators' },
-  149: { pointValue: 10, unlockCondition: () => player.acceleratorBought >= 25, group: 'accelerators', reward: { acceleratorPower: () => 0.01 } },
+  149: {
+    pointValue: 10,
+    unlockCondition: () => player.acceleratorBought >= 25,
+    group: 'accelerators',
+    reward: { acceleratorPower: () => 0.01 }
+  },
   150: { pointValue: 15, unlockCondition: () => player.acceleratorBought >= 100, group: 'accelerators' },
-  151: { pointValue: 20, unlockCondition: () => player.acceleratorBought >= 666, group: 'accelerators', reward: { accelerators: () => 5 } },
-  152: { pointValue: 25, unlockCondition: () => player.acceleratorBought >= 2000, group: 'accelerators', reward: { accelerators: () => 12 } },
-  153: { pointValue: 30, unlockCondition: () => player.acceleratorBought >= 12500, group: 'accelerators', reward: { accelerators: () => 25 } },
-  154: { pointValue: 35, unlockCondition: () => player.acceleratorBought >= 100000, group: 'accelerators', reward: { accelerators: () => 50 } },
+  151: {
+    pointValue: 20,
+    unlockCondition: () => player.acceleratorBought >= 666,
+    group: 'accelerators',
+    reward: { accelerators: () => 5 }
+  },
+  152: {
+    pointValue: 25,
+    unlockCondition: () => player.acceleratorBought >= 2000,
+    group: 'accelerators',
+    reward: { accelerators: () => 12 }
+  },
+  153: {
+    pointValue: 30,
+    unlockCondition: () => player.acceleratorBought >= 12500,
+    group: 'accelerators',
+    reward: { accelerators: () => 25 }
+  },
+  154: {
+    pointValue: 35,
+    unlockCondition: () => player.acceleratorBought >= 100000,
+    group: 'accelerators',
+    reward: { accelerators: () => 50 }
+  },
   155: { pointValue: 5, unlockCondition: () => player.multiplierBought >= 2, group: 'multipliers' },
-  156: { pointValue: 10, unlockCondition: () => player.multiplierBought >= 20, group: 'multipliers', reward: { multipliers: () => 1 } },
+  156: {
+    pointValue: 10,
+    unlockCondition: () => player.multiplierBought >= 20,
+    group: 'multipliers',
+    reward: { multipliers: () => 1 }
+  },
   157: { pointValue: 15, unlockCondition: () => player.multiplierBought >= 100, group: 'multipliers' },
-  158: { pointValue: 20, unlockCondition: () => player.multiplierBought >= 500, group: 'multipliers', reward: { multipliers: () => 1 } },
-  159: { pointValue: 25, unlockCondition: () => player.multiplierBought >= 2000, group: 'multipliers', reward: { multipliers: () => 3 } },
-  160: { pointValue: 30, unlockCondition: () => player.multiplierBought >= 12500, group: 'multipliers', reward: { multipliers: () => 6 } },
-  161: { pointValue: 35, unlockCondition: () => player.multiplierBought >= 100000, group: 'multipliers', reward: { multipliers: () => 10 } },
+  158: {
+    pointValue: 20,
+    unlockCondition: () => player.multiplierBought >= 500,
+    group: 'multipliers',
+    reward: { multipliers: () => 1 }
+  },
+  159: {
+    pointValue: 25,
+    unlockCondition: () => player.multiplierBought >= 2000,
+    group: 'multipliers',
+    reward: { multipliers: () => 3 }
+  },
+  160: {
+    pointValue: 30,
+    unlockCondition: () => player.multiplierBought >= 12500,
+    group: 'multipliers',
+    reward: { multipliers: () => 6 }
+  },
+  161: {
+    pointValue: 35,
+    unlockCondition: () => player.multiplierBought >= 100000,
+    group: 'multipliers',
+    reward: { multipliers: () => 10 }
+  },
   162: { pointValue: 5, unlockCondition: () => player.acceleratorBoostBought >= 2, group: 'acceleratorBoosts' },
   163: { pointValue: 10, unlockCondition: () => player.acceleratorBoostBought >= 10, group: 'acceleratorBoosts' },
   164: { pointValue: 15, unlockCondition: () => player.acceleratorBoostBought >= 50, group: 'acceleratorBoosts' },
@@ -707,78 +1428,342 @@ export const achievements: { [index: number]: Achievement } = {
   166: { pointValue: 25, unlockCondition: () => player.acceleratorBoostBought >= 1000, group: 'acceleratorBoosts' },
   167: { pointValue: 30, unlockCondition: () => player.acceleratorBoostBought >= 5000, group: 'acceleratorBoosts' },
   168: { pointValue: 35, unlockCondition: () => player.acceleratorBoostBought >= 15000, group: 'acceleratorBoosts' },
-  169: { pointValue: 5, unlockCondition: () => player.antPoints.gte(3), group: 'antCrumbs', reward: { antSpeed: () => Decimal.log(player.antPoints.plus(10), 10) } },
+  169: {
+    pointValue: 5,
+    unlockCondition: () => player.antPoints.gte(3),
+    group: 'antCrumbs',
+    reward: { antSpeed: () => Decimal.log(player.antPoints.plus(10), 10) }
+  },
   170: { pointValue: 10, unlockCondition: () => player.antPoints.gte(1e5), group: 'antCrumbs' },
-  171: { pointValue: 15, unlockCondition: () => player.antPoints.gte(666666666), group: 'antCrumbs', reward: { antSpeed: () => 1.2 } },
-  172: { pointValue: 20, unlockCondition: () => player.antPoints.gte(1e20), group: 'antCrumbs', reward: { antSpeed: () => 1.25 } },
-  173: { pointValue: 25, unlockCondition: () => player.antPoints.gte(1e40), group: 'antCrumbs', reward: { antSpeed: () => 1.4, antSacrificeUnlock: () => 1, antAutobuyers: () => 1 } },
-  174: { pointValue: 30, unlockCondition: () => player.antPoints.gte('1e500'), group: 'antCrumbs', reward: { antSpeed: () => 1 + Math.log10(player.antSacrificePoints + 1) } },
+  171: {
+    pointValue: 15,
+    unlockCondition: () => player.antPoints.gte(666666666),
+    group: 'antCrumbs',
+    reward: { antSpeed: () => 1.2 }
+  },
+  172: {
+    pointValue: 20,
+    unlockCondition: () => player.antPoints.gte(1e20),
+    group: 'antCrumbs',
+    reward: { antSpeed: () => 1.25 }
+  },
+  173: {
+    pointValue: 25,
+    unlockCondition: () => player.antPoints.gte(1e40),
+    group: 'antCrumbs',
+    reward: { antSpeed: () => 1.4, antSacrificeUnlock: () => 1, antAutobuyers: () => 1 }
+  },
+  174: {
+    pointValue: 30,
+    unlockCondition: () => player.antPoints.gte('1e500'),
+    group: 'antCrumbs',
+    reward: { antSpeed: () => 1 + Math.log10(player.antSacrificePoints + 1) }
+  },
   175: { pointValue: 35, unlockCondition: () => player.antPoints.gte('1e2500'), group: 'antCrumbs' },
-  176: { pointValue: 5, unlockCondition: () => antSacrificePointsToMultiplier(player.antSacrificePoints) >= 2, group: 'sacMult', reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 2, antELOAdditive: () => 25 } },
-  177: { pointValue: 10, unlockCondition: () => antSacrificePointsToMultiplier(player.antSacrificePoints) >= 6, group: 'sacMult', reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 1, antELOAdditive: () => 50 } },
-  178: { pointValue: 15, unlockCondition: () => antSacrificePointsToMultiplier(player.antSacrificePoints) >= 20, group: 'sacMult', reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 2, antELOAdditive: () => 75 } },
-  179: { pointValue: 20, unlockCondition: () => antSacrificePointsToMultiplier(player.antSacrificePoints) >= 100, group: 'sacMult', reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 1, antELOAdditive: () => 100 } },
-  180: { pointValue: 25, unlockCondition: () => antSacrificePointsToMultiplier(player.antSacrificePoints) >= 500, group: 'sacMult', reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 2, antELOMultiplicative: () => 1.01 } },
-  181: { pointValue: 30, unlockCondition: () => antSacrificePointsToMultiplier(player.antSacrificePoints) >= 6666, group: 'sacMult', reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 1, antELOMultiplicative: () => 1.02 } },
-  182: { pointValue: 35, unlockCondition: () => antSacrificePointsToMultiplier(player.antSacrificePoints) >= 77777, group: 'sacMult', reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 2, antELOMultiplicative: () => 1.03 } },
+  176: {
+    pointValue: 5,
+    unlockCondition: () => player.antSacrificePoints >= 666 && player.secondOwnedAnts > 0,
+    group: 'sacMult',
+    reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 2, antELOAdditive: () => 25 },
+    checkReset: () => player.highestSingularityCount >= 10
+  },
+  177: {
+    pointValue: 10,
+    unlockCondition: () => player.antSacrificePoints >= 5000 && player.thirdOwnedAnts > 0,
+    group: 'sacMult',
+    reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 1, antELOAdditive: () => 50 },
+    checkReset: () => player.highestSingularityCount >= 10
+  },
+  178: {
+    pointValue: 15,
+    unlockCondition: () => player.antSacrificePoints >= 25000 && player.fourthOwnedAnts > 0,
+    group: 'sacMult',
+    reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 2, antELOAdditive: () => 75 },
+    checkReset: () => player.highestSingularityCount >= 10
+  },
+  179: {
+    pointValue: 20,
+    unlockCondition: () => player.antSacrificePoints >= 1e5 && player.fifthOwnedAnts > 0,
+    group: 'sacMult',
+    reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 1, antELOAdditive: () => 100 },
+    checkReset: () => player.highestSingularityCount >= 10
+  },
+  180: {
+    pointValue: 25,
+    unlockCondition: () => player.antSacrificePoints >= 1e6 && player.sixthOwnedAnts > 0,
+    group: 'sacMult',
+    reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 2, antELOMultiplicative: () => 1.01 },
+    checkReset: () => player.highestSingularityCount >= 10
+  },
+  181: {
+    pointValue: 30,
+    unlockCondition: () => player.antSacrificePoints >= 1e7 && player.seventhOwnedAnts > 0,
+    group: 'sacMult',
+    reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 1, antELOMultiplicative: () => 1.02 },
+    checkReset: () => player.highestSingularityCount >= 10
+  },
+  182: {
+    pointValue: 35,
+    unlockCondition: () => player.antSacrificePoints >= 1e8 && player.eighthOwnedAnts > 0,
+    group: 'sacMult',
+    reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 2, antELOMultiplicative: () => 1.03 },
+    checkReset: () => player.highestSingularityCount >= 10
+  },
   183: { pointValue: 5, unlockCondition: () => player.ascensionCount >= 1, group: 'ascensionCount' },
   184: { pointValue: 10, unlockCondition: () => player.ascensionCount >= 2, group: 'ascensionCount' },
   185: { pointValue: 15, unlockCondition: () => player.ascensionCount >= 10, group: 'ascensionCount' },
-  186: { pointValue: 20, unlockCondition: () => player.ascensionCount >= 100, group: 'ascensionCount', reward: { wowSquareTalisman: () => 1 } },
-  187: { pointValue: 25, unlockCondition: () => player.ascensionCount >= 1000, group: 'ascensionCount', reward: { ascensionCountMultiplier: () => 2, multiplicativeOffering: () => 1 + Math.min(1, player.ascensionCount / 1e6) } },
-  188: { pointValue: 30, unlockCondition: () => player.ascensionCount >= 14142, group: 'ascensionCount', reward: { ascensionCountAdditive: () => (player.ascensionCounter > 10) ? 100 : 0, multiplicativeObtainium: () => 1 + Math.min(1, player.ascensionCount / 5e6) } },
-  189: { pointValue: 35, unlockCondition: () => player.ascensionCount >= 141421, group: 'ascensionCount', reward: { ascensionCountAdditive: () => (player.ascensionCounter > 10) ? player.ascensionCounterReal * 2 : 0, wowCubeGain: () => 1 + 2 * Math.min(1, player.ascensionCount / 5e8) } },
+  186: {
+    pointValue: 20,
+    unlockCondition: () => player.ascensionCount >= 100,
+    group: 'ascensionCount',
+    reward: { wowSquareTalisman: () => 1 }
+  },
+  187: {
+    pointValue: 25,
+    unlockCondition: () => player.ascensionCount >= 1000,
+    group: 'ascensionCount',
+    reward: {
+      ascensionCountMultiplier: () => Math.log10(calculateAscensionScore().effectiveScore + 100) - 1,
+      multiplicativeOffering: () => 1 + Math.min(1, player.ascensionCount / 1e6)
+    }
+  },
+  188: {
+    pointValue: 30,
+    unlockCondition: () => player.ascensionCount >= 14142,
+    group: 'ascensionCount',
+    reward: {
+      ascensionCountAdditive: () => (player.ascensionCounter > 10) ? 100 : 0,
+      multiplicativeObtainium: () => 1 + Math.min(1, player.ascensionCount / 5e6)
+    }
+  },
+  189: {
+    pointValue: 35,
+    unlockCondition: () => player.ascensionCount >= 141421,
+    group: 'ascensionCount',
+    reward: {
+      ascensionCountAdditive: () => (player.ascensionCounter > 10) ? player.ascensionCounterReal * 2 : 0,
+      wowCubeGain: () => 1 + 2 * Math.min(1, player.ascensionCount / 5e8)
+    }
+  },
   190: { pointValue: 5, unlockCondition: () => player.ascendShards.gte(3.14), group: 'constant' },
   191: { pointValue: 10, unlockCondition: () => player.ascendShards.gte(1e6), group: 'constant' },
   192: { pointValue: 15, unlockCondition: () => player.ascendShards.gte(4.32e10), group: 'constant' },
-  193: { pointValue: 20, unlockCondition: () => player.ascendShards.gte(6.9e21), group: 'constant', reward: { wowCubeGain: () => 1 + Decimal.log(player.ascendShards.add(1), 10)/ 400  } },
+  193: {
+    pointValue: 20,
+    unlockCondition: () => player.ascendShards.gte(6.9e21),
+    group: 'constant',
+    reward: { wowCubeGain: () => 1 + Decimal.log(player.ascendShards.add(1), 10) / 400 }
+  },
   194: { pointValue: 25, unlockCondition: () => player.ascendShards.gte(1.509e33), group: 'constant' },
-  195: { pointValue: 30, unlockCondition: () => player.ascendShards.gte(1e66), group: 'constant', reward: { wowCubeGain: () => 1 + 249 * Math.min(1, Decimal.log(player.ascendShards.plus(1), 10) / 100000), wowTesseractGain: () =>  1 + 249 * Math.min(1, Decimal.log(player.ascendShards.plus(1), 10) / 100000) } },
-  196: { pointValue: 35, unlockCondition: () => player.ascendShards.gte('1.8e308'), group: 'constant', reward: { wowPlatonicGain: () => 1 + 19 * Math.min(1, Decimal.log(player.ascendShards.plus(1), 10) / 100000) } },
-  197: { pointValue: 10, unlockCondition: () => player.challengecompletions[11] >= 1, group: 'challenge11', reward: { statTracker: () => 1 } },
-  198: { pointValue: 20, unlockCondition: () => player.challengecompletions[11] >= 2, group: 'challenge11', reward: { wowCubeGain: () => 1.02 } },
-  199: { pointValue: 30, unlockCondition: () => player.challengecompletions[11] >= 3, group: 'challenge11', reward: { wowCubeGain: () => 1.02 } },
-  200: { pointValue: 40, unlockCondition: () => player.challengecompletions[11] >= 5, group: 'challenge11', reward: { wowCubeGain: () => 1.02 } },
-  201: { pointValue: 50, unlockCondition: () => player.challengecompletions[11] >= 10, group: 'challenge11', reward: { wowCubeGain: () => 1.02 } },
-  202: { pointValue: 60, unlockCondition: () => player.challengecompletions[11] >= 20, group: 'challenge11', reward: { ascensionCountAdditive: () => player.ascensionCounter * 2} },
-  203: { pointValue: 70, unlockCondition: () => player.challengecompletions[11] >= 30, group: 'challenge11', reward: { talismanPower: () => 0.01 } },
-  204: { pointValue: 10, unlockCondition: () => player.challengecompletions[12] >= 1, group: 'challenge12', reward: { ascensionRewardScaling: () => 1 } },
-  205: { pointValue: 20, unlockCondition: () => player.challengecompletions[12] >= 2, group: 'challenge12', reward: { wowTesseractGain: () => 1.02 } },
-  206: { pointValue: 30, unlockCondition: () => player.challengecompletions[12] >= 3, group: 'challenge12', reward: { wowTesseractGain: () => 1.02 } },
-  207: { pointValue: 40, unlockCondition: () => player.challengecompletions[12] >= 5, group: 'challenge12', reward: { wowTesseractGain: () => 1.02 } },
-  208: { pointValue: 50, unlockCondition: () => player.challengecompletions[12] >= 10, group: 'challenge12', reward: { wowTesseractGain: () => 1.02 } },
-  209: { pointValue: 60, unlockCondition: () => player.challengecompletions[12] >= 20, group: 'challenge12', reward: { ascensionCountAdditive: () => player.ascensionCounter * 2 } },
-  210: { pointValue: 70, unlockCondition: () => player.challengecompletions[12] >= 30, group: 'challenge12', reward: { talismanPower: () => 0.01 } },
-  211: { pointValue: 10, unlockCondition: () => player.challengecompletions[13] >= 1, group: 'challenge13', reward: { wowHypercubeGain: () => 1.05 } },
-  212: { pointValue: 20, unlockCondition: () => player.challengecompletions[13] >= 2, group: 'challenge13', reward: { wowHypercubeGain: () => 1.02 } },
-  213: { pointValue: 30, unlockCondition: () => player.challengecompletions[13] >= 3, group: 'challenge13', reward: { wowHypercubeGain: () => 1.02 } },
-  214: { pointValue: 40, unlockCondition: () => player.challengecompletions[13] >= 5, group: 'challenge13', reward: { wowHypercubeGain: () => 1.02 } },
-  215: { pointValue: 50, unlockCondition: () => player.challengecompletions[13] >= 10, group: 'challenge13', reward: { wowHypercubeGain: () => 1.02 } },
-  216: { pointValue: 60, unlockCondition: () => player.challengecompletions[13] >= 20, group: 'challenge13', reward: { ascensionCountAdditive: () => player.ascensionCounter * 2 } },
-  217: { pointValue: 70, unlockCondition: () => player.challengecompletions[13] >= 30, group: 'challenge13', reward: { talismanPower: () => 0.01 } },
-  218: { pointValue: 10, unlockCondition: () => player.challengecompletions[14] >= 1, group: 'challenge14', reward: { wowPlatonicGain: () => 1.05 } },
-  219: { pointValue: 20, unlockCondition: () => player.challengecompletions[14] >= 2, group: 'challenge14', reward: { wowPlatonicGain: () => 1.02 } },
-  220: { pointValue: 30, unlockCondition: () => player.challengecompletions[14] >= 3, group: 'challenge14', reward: { wowPlatonicGain: () => 1.02 } },
-  221: { pointValue: 40, unlockCondition: () => player.challengecompletions[14] >= 5, group: 'challenge14', reward: { wowPlatonicGain: () => 1.02 } },
-  222: { pointValue: 50, unlockCondition: () => player.challengecompletions[14] >= 10, group: 'challenge14', reward: { wowPlatonicGain: () => 1.02 } },
-  223: { pointValue: 60, unlockCondition: () => player.challengecompletions[14] >= 20, group: 'challenge14', reward: { ascensionCountAdditive: () => player.ascensionCounter * 2, wowPlatonicGain: () => 1 + 2 * Math.min(1, player.ascensionCount / 2.674e9) } },
+  195: {
+    pointValue: 30,
+    unlockCondition: () => player.ascendShards.gte(1e66),
+    group: 'constant',
+    reward: {
+      wowCubeGain: () => 1 + 249 * Math.min(1, Decimal.log(player.ascendShards.plus(1), 10) / 100000),
+      wowTesseractGain: () => 1 + 249 * Math.min(1, Decimal.log(player.ascendShards.plus(1), 10) / 100000)
+    }
+  },
+  196: {
+    pointValue: 35,
+    unlockCondition: () => player.ascendShards.gte('1.8e308'),
+    group: 'constant',
+    reward: { wowPlatonicGain: () => 1 + 19 * Math.min(1, Decimal.log(player.ascendShards.plus(1), 10) / 100000) }
+  },
+  197: {
+    pointValue: 10,
+    unlockCondition: () => player.challengecompletions[11] >= 1,
+    group: 'challenge11',
+    reward: { statTracker: () => 1, tesseractUnlock: () => 1 }
+  },
+  198: {
+    pointValue: 20,
+    unlockCondition: () => player.challengecompletions[11] >= 2,
+    group: 'challenge11',
+    reward: { wowCubeGain: () => 1.02 }
+  },
+  199: {
+    pointValue: 30,
+    unlockCondition: () => player.challengecompletions[11] >= 3,
+    group: 'challenge11',
+    reward: { wowCubeGain: () => 1.02 }
+  },
+  200: {
+    pointValue: 40,
+    unlockCondition: () => player.challengecompletions[11] >= 5,
+    group: 'challenge11',
+    reward: { wowCubeGain: () => 1.02 }
+  },
+  201: {
+    pointValue: 50,
+    unlockCondition: () => player.challengecompletions[11] >= 10,
+    group: 'challenge11',
+    reward: { wowCubeGain: () => 1.02 }
+  },
+  202: {
+    pointValue: 60,
+    unlockCondition: () => player.challengecompletions[11] >= 20,
+    group: 'challenge11',
+    reward: { ascensionCountAdditive: () => player.ascensionCounter * 2 }
+  },
+  203: {
+    pointValue: 70,
+    unlockCondition: () => player.challengecompletions[11] >= 30,
+    group: 'challenge11',
+    reward: { talismanPower: () => 0.01 }
+  },
+  204: {
+    pointValue: 10,
+    unlockCondition: () => player.challengecompletions[12] >= 1,
+    group: 'challenge12',
+    reward: { ascensionRewardScaling: () => 1, spiritUnlock: () => 1 }
+  },
+  205: {
+    pointValue: 20,
+    unlockCondition: () => player.challengecompletions[12] >= 2,
+    group: 'challenge12',
+    reward: { wowTesseractGain: () => 1.02 }
+  },
+  206: {
+    pointValue: 30,
+    unlockCondition: () => player.challengecompletions[12] >= 3,
+    group: 'challenge12',
+    reward: { wowTesseractGain: () => 1.02 }
+  },
+  207: {
+    pointValue: 40,
+    unlockCondition: () => player.challengecompletions[12] >= 5,
+    group: 'challenge12',
+    reward: { wowTesseractGain: () => 1.02 }
+  },
+  208: {
+    pointValue: 50,
+    unlockCondition: () => player.challengecompletions[12] >= 10,
+    group: 'challenge12',
+    reward: { wowTesseractGain: () => 1.02 }
+  },
+  209: {
+    pointValue: 60,
+    unlockCondition: () => player.challengecompletions[12] >= 20,
+    group: 'challenge12',
+    reward: { ascensionCountAdditive: () => player.ascensionCounter * 2 }
+  },
+  210: {
+    pointValue: 70,
+    unlockCondition: () => player.challengecompletions[12] >= 30,
+    group: 'challenge12',
+    reward: { talismanPower: () => 0.01 }
+  },
+  211: {
+    pointValue: 10,
+    unlockCondition: () => player.challengecompletions[13] >= 1,
+    group: 'challenge13',
+    reward: { wowHypercubeGain: () => 1.05, hypercubeUnlock: () => 1 }
+  },
+  212: {
+    pointValue: 20,
+    unlockCondition: () => player.challengecompletions[13] >= 2,
+    group: 'challenge13',
+    reward: { wowHypercubeGain: () => 1.02 }
+  },
+  213: {
+    pointValue: 30,
+    unlockCondition: () => player.challengecompletions[13] >= 3,
+    group: 'challenge13',
+    reward: { wowHypercubeGain: () => 1.02 }
+  },
+  214: {
+    pointValue: 40,
+    unlockCondition: () => player.challengecompletions[13] >= 5,
+    group: 'challenge13',
+    reward: { wowHypercubeGain: () => 1.02 }
+  },
+  215: {
+    pointValue: 50,
+    unlockCondition: () => player.challengecompletions[13] >= 10,
+    group: 'challenge13',
+    reward: { wowHypercubeGain: () => 1.02 }
+  },
+  216: {
+    pointValue: 60,
+    unlockCondition: () => player.challengecompletions[13] >= 20,
+    group: 'challenge13',
+    reward: { ascensionCountAdditive: () => player.ascensionCounter * 2 }
+  },
+  217: {
+    pointValue: 70,
+    unlockCondition: () => player.challengecompletions[13] >= 30,
+    group: 'challenge13',
+    reward: { talismanPower: () => 0.01 }
+  },
+  218: {
+    pointValue: 10,
+    unlockCondition: () => player.challengecompletions[14] >= 1,
+    group: 'challenge14',
+    reward: { wowPlatonicGain: () => 1.05, platonicUnlock: () => 1 }
+  },
+  219: {
+    pointValue: 20,
+    unlockCondition: () => player.challengecompletions[14] >= 2,
+    group: 'challenge14',
+    reward: { wowPlatonicGain: () => 1.02 }
+  },
+  220: {
+    pointValue: 30,
+    unlockCondition: () => player.challengecompletions[14] >= 3,
+    group: 'challenge14',
+    reward: { wowPlatonicGain: () => 1.02 }
+  },
+  221: {
+    pointValue: 40,
+    unlockCondition: () => player.challengecompletions[14] >= 5,
+    group: 'challenge14',
+    reward: { wowPlatonicGain: () => 1.02 }
+  },
+  222: {
+    pointValue: 50,
+    unlockCondition: () => player.challengecompletions[14] >= 10,
+    group: 'challenge14',
+    reward: { wowPlatonicGain: () => 1.02 }
+  },
+  223: {
+    pointValue: 60,
+    unlockCondition: () => player.challengecompletions[14] >= 20,
+    group: 'challenge14',
+    reward: {
+      ascensionCountAdditive: () => player.ascensionCounter * 2,
+      wowPlatonicGain: () => 1 + 2 * Math.min(1, player.ascensionCount / 2.674e9)
+    }
+  },
   224: { pointValue: 70, unlockCondition: () => player.challengecompletions[14] >= 30, group: 'challenge14' },
-  225: { pointValue: 5, unlockCondition: () => CalcCorruptionStuff()[3] >= 1e5, group: 'ascensionScore'},
-  226: { pointValue: 10, unlockCondition: () => CalcCorruptionStuff()[3] >= 1e6, group: 'ascensionScore'},
-  227: { pointValue: 15, unlockCondition: () => CalcCorruptionStuff()[3] >= 1e7, group: 'ascensionScore'},
-  228: { pointValue: 20, unlockCondition: () => CalcCorruptionStuff()[3] >= 1e8, group: 'ascensionScore'},
-  229: { pointValue: 25, unlockCondition: () => CalcCorruptionStuff()[3] >= 1e9, group: 'ascensionScore'},
-  230: { pointValue: 30, unlockCondition: () => CalcCorruptionStuff()[3] >= 5e9, group: 'ascensionScore'},
-  231: { pointValue: 35, unlockCondition: () => CalcCorruptionStuff()[3] >= 2.5e10, group: 'ascensionScore'},
-  232: { pointValue: 10, unlockCondition: () => getRuneBlessing('speed').level >= 100, group: 'speedBlessing'},
-  233: { pointValue: 20, unlockCondition: () => getRuneBlessing('speed').level >= 250, group: 'speedBlessing'},
-  234: { pointValue: 30, unlockCondition: () => getRuneBlessing('speed').level >= 500, group: 'speedBlessing'},
-  235: { pointValue: 10, unlockCondition: () => getRuneSpirit('speed').level >= 100, group: 'speedSpirit'},
-  236: { pointValue: 20, unlockCondition: () => getRuneSpirit('speed').level >= 250, group: 'speedSpirit'},
-  237: { pointValue: 30, unlockCondition: () => getRuneSpirit('speed').level >= 500, group: 'speedSpirit'},
-  238: { pointValue: 50, unlockCondition: () => { return player.currentChallenge.transcension !== 0 && player.currentChallenge.reincarnation !== 0 && player.currentChallenge.ascension !== 0 }, group: 'ungrouped' },
+  225: { pointValue: 5, unlockCondition: () => CalcCorruptionStuff()[3] >= 1e5, group: 'ascensionScore' },
+  226: { pointValue: 10, unlockCondition: () => CalcCorruptionStuff()[3] >= 1e6, group: 'ascensionScore' },
+  227: { pointValue: 15, unlockCondition: () => CalcCorruptionStuff()[3] >= 1e7, group: 'ascensionScore' },
+  228: { pointValue: 20, unlockCondition: () => CalcCorruptionStuff()[3] >= 1e8, group: 'ascensionScore' },
+  229: { pointValue: 25, unlockCondition: () => CalcCorruptionStuff()[3] >= 1e9, group: 'ascensionScore' },
+  230: { pointValue: 30, unlockCondition: () => CalcCorruptionStuff()[3] >= 5e9, group: 'ascensionScore' },
+  231: { pointValue: 35, unlockCondition: () => CalcCorruptionStuff()[3] >= 2.5e10, group: 'ascensionScore' },
+  232: { pointValue: 10, unlockCondition: () => getRuneBlessing('speed').level >= 100, group: 'speedBlessing' },
+  233: { pointValue: 20, unlockCondition: () => getRuneBlessing('speed').level >= 250, group: 'speedBlessing' },
+  234: { pointValue: 30, unlockCondition: () => getRuneBlessing('speed').level >= 500, group: 'speedBlessing' },
+  235: { pointValue: 10, unlockCondition: () => getRuneSpirit('speed').level >= 100, group: 'speedSpirit' },
+  236: { pointValue: 20, unlockCondition: () => getRuneSpirit('speed').level >= 250, group: 'speedSpirit' },
+  237: { pointValue: 30, unlockCondition: () => getRuneSpirit('speed').level >= 500, group: 'speedSpirit' },
+  238: {
+    pointValue: 50,
+    unlockCondition: () => {
+      return player.currentChallenge.transcension !== 0 && player.currentChallenge.reincarnation !== 0
+        && player.currentChallenge.ascension !== 0
+    },
+    group: 'ungrouped'
+  },
   239: { pointValue: 50, unlockCondition: () => player.mythicalFragments >= 1e25, group: 'ungrouped' },
-  240: { pointValue: 50, unlockCondition: () => player.ascensionCount >= 1414213, group: 'ungrouped', reward: { allCubeGain: () => 1.2 } },
+  240: {
+    pointValue: 50,
+    unlockCondition: () => player.ascensionCount >= 1414213,
+    group: 'ungrouped',
+    reward: { allCubeGain: () => 1.2 }
+  },
   // 241: Global speed is SLOW
   241: { pointValue: 50, unlockCondition: () => true, group: 'ungrouped' },
   // 242: Global speed is FAST
@@ -788,7 +1773,7 @@ export const achievements: { [index: number]: Achievement } = {
   // 244: :smith:
   244: { pointValue: 50, unlockCondition: () => true, group: 'ungrouped' },
   // 245: High Speed Blessing
-  245: { pointValue: 50, unlockCondition: () => getRuneBlessing('speed').level >= 2222, group: 'speedBlessing'},
+  245: { pointValue: 50, unlockCondition: () => getRuneBlessing('speed').level >= 2222, group: 'speedBlessing' },
   // 246: Open 1 cube with a ton of cube tributes already
   246: { pointValue: 50, unlockCondition: () => true, group: 'ungrouped' },
   // 247: Extra challenging
@@ -798,30 +1783,143 @@ export const achievements: { [index: number]: Achievement } = {
   // 249: Overtaxed
   249: { pointValue: 50, unlockCondition: () => true, group: 'ungrouped' },
   // 250: Thousand Suns
-  250: { pointValue: 100, unlockCondition: () => player.researches[200] === 1e5, group: 'ungrouped', reward: { allCubeGain: () => 1.05, multiplicativeObtainium: () => 1.1, multiplicativeOffering: () => 1.5, quarkGain: () => 1.05 } },
+  250: {
+    pointValue: 100,
+    unlockCondition: () => player.researches[200] === 1e5,
+    group: 'ungrouped',
+    reward: {
+      allCubeGain: () => 1.05,
+      multiplicativeObtainium: () => 1.1,
+      multiplicativeOffering: () => 1.5,
+      quarkGain: () => 1.05
+    }
+  },
   // 251: Thousand Moons
-  251: { pointValue: 150, unlockCondition: () => player.cubeUpgrades[50] === 1e5, group: 'ungrouped', reward: { allCubeGain: () => 1.05, multiplicativeObtainium: () => 1.5, multiplicativeOffering: () => 1.1, quarkGain: () => 1.05 } },
+  251: {
+    pointValue: 150,
+    unlockCondition: () => player.cubeUpgrades[50] === 1e5,
+    group: 'ungrouped',
+    reward: {
+      allCubeGain: () => 1.05,
+      multiplicativeObtainium: () => 1.5,
+      multiplicativeOffering: () => 1.1,
+      quarkGain: () => 1.05
+    }
+  },
   // 252: Sadistic II
-  252: { pointValue: 50, unlockCondition: () => G.challenge15Rewards.achievementUnlock.value === 1, group: 'ungrouped'},
-  253: { pointValue: 40, unlockCondition: () => CalcCorruptionStuff()[3] >= 1e12, group: 'ascensionScore', reward: { wowHypercubeGain: () => 1.1 }},
-  254: { pointValue: 45, unlockCondition: () => CalcCorruptionStuff()[3] >= 1e14, group: 'ascensionScore', reward: { wowCubeGain: () => 1.1 }},
-  255: { pointValue: 50, unlockCondition: () => CalcCorruptionStuff()[3] >= 1e17, group: 'ascensionScore', reward: { wowTesseractGain: () => 1.1 }},
-  256: { pointValue: 55, unlockCondition: () => CalcCorruptionStuff()[3] >= 2e18, group: 'ascensionScore', reward: { wowPlatonicGain: () => 1.1 }},
-  257: { pointValue: 60, unlockCondition: () => CalcCorruptionStuff()[3] >= 4e19, group: 'ascensionScore', reward: { allCubeGain: () => 1.1 }},
-  258: { pointValue: 65, unlockCondition: () => CalcCorruptionStuff()[3] >= 1e21, group: 'ascensionScore', reward: { wowHepteractGain: () => 1.1 } },
-  259: { pointValue: 70, unlockCondition: () => CalcCorruptionStuff()[3] >= 1e23, group: 'ascensionScore', reward: { ascensionScore: () => Math.pow(1.01, getHepteract('abyss').TIMES_CAP_EXTENDED) }},
-  260: { pointValue: 40, unlockCondition: () => player.ascensionCount >= 1e7, group: 'ascensionCount', reward: { ascensionCountMultiplier: () => 1.1 } },
-  261: { pointValue: 45, unlockCondition: () => player.ascensionCount >= 1e8, group: 'ascensionCount', reward: { ascensionCountMultiplier: () => 1.1 } },
-  262: { pointValue: 50, unlockCondition: () => player.ascensionCount >= 2e9, group: 'ascensionCount', reward: { allCubeGain: () => 1.1 } },
-  263: { pointValue: 55, unlockCondition: () => player.ascensionCount >= 4e10, group: 'ascensionCount', reward: { allCubeGain: () => 1.1 } },
-  264: { pointValue: 60, unlockCondition: () => player.ascensionCount >= 8e11, group: 'ascensionCount', reward: { allCubeGain: () => 1 + 0.2 * Math.min(player.ascensionCount / 8e12, 1) } },
-  265: { pointValue: 65, unlockCondition: () => player.ascensionCount >= 1.6e13, group: 'ascensionCount', reward: { allCubeGain: () => 1 + 0.2 * Math.min(player.ascensionCount / 1.6e14, 1) } },
-  266: { pointValue: 70, unlockCondition: () => player.ascensionCount >= 1e14, group: 'ascensionCount', reward: { quarkGain: () => 1 + 0.1 * Math.min(player.ascensionCount / 1e15, 1) } },
-  267: { pointValue: 40, unlockCondition: () => player.ascendShards.gte('1e1000'), group: 'constant', reward: { ascensionScore: () => 1 + Math.min(Decimal.log(player.ascendShards.add(1), 10) / 1e5, 1) } },
+  252: {
+    pointValue: 50,
+    unlockCondition: () => G.challenge15Rewards.achievementUnlock.value === 1,
+    group: 'ungrouped'
+  },
+  253: {
+    pointValue: 40,
+    unlockCondition: () => CalcCorruptionStuff()[3] >= 1e12,
+    group: 'ascensionScore',
+    reward: { wowHypercubeGain: () => 1.1 }
+  },
+  254: {
+    pointValue: 45,
+    unlockCondition: () => CalcCorruptionStuff()[3] >= 1e14,
+    group: 'ascensionScore',
+    reward: { wowCubeGain: () => 1.1 }
+  },
+  255: {
+    pointValue: 50,
+    unlockCondition: () => CalcCorruptionStuff()[3] >= 1e17,
+    group: 'ascensionScore',
+    reward: { wowTesseractGain: () => 1.1 }
+  },
+  256: {
+    pointValue: 55,
+    unlockCondition: () => CalcCorruptionStuff()[3] >= 2e18,
+    group: 'ascensionScore',
+    reward: { wowPlatonicGain: () => 1.1, overfluxConversionRate: () => 1.05 }
+  },
+  257: {
+    pointValue: 60,
+    unlockCondition: () => CalcCorruptionStuff()[3] >= 4e19,
+    group: 'ascensionScore',
+    reward: { allCubeGain: () => 1.1, overfluxConversionRate: () => 1.05 }
+  },
+  258: {
+    pointValue: 65,
+    unlockCondition: () => CalcCorruptionStuff()[3] >= 1e21,
+    group: 'ascensionScore',
+    reward: { wowHepteractGain: () => 1.1 }
+  },
+  259: {
+    pointValue: 70,
+    unlockCondition: () => CalcCorruptionStuff()[3] >= 1e23,
+    group: 'ascensionScore',
+    reward: { ascensionScore: () => Math.pow(1.01, getHepteract('abyss').TIMES_CAP_EXTENDED) }
+  },
+  260: {
+    pointValue: 40,
+    unlockCondition: () => player.ascensionCount >= 1e7,
+    group: 'ascensionCount',
+    reward: { ascensionCountMultiplier: () => 1.1 }
+  },
+  261: {
+    pointValue: 45,
+    unlockCondition: () => player.ascensionCount >= 1e8,
+    group: 'ascensionCount',
+    reward: { ascensionCountMultiplier: () => 1.1 }
+  },
+  262: {
+    pointValue: 50,
+    unlockCondition: () => player.ascensionCount >= 2e9,
+    group: 'ascensionCount',
+    reward: { allCubeGain: () => 1.1 }
+  },
+  263: {
+    pointValue: 55,
+    unlockCondition: () => player.ascensionCount >= 4e10,
+    group: 'ascensionCount',
+    reward: { allCubeGain: () => 1.1 }
+  },
+  264: {
+    pointValue: 60,
+    unlockCondition: () => player.ascensionCount >= 8e11,
+    group: 'ascensionCount',
+    reward: { allCubeGain: () => 1 + 0.2 * Math.min(player.ascensionCount / 8e12, 1) }
+  },
+  265: {
+    pointValue: 65,
+    unlockCondition: () => player.ascensionCount >= 1.6e13,
+    group: 'ascensionCount',
+    reward: { allCubeGain: () => 1 + 0.2 * Math.min(player.ascensionCount / 1.6e14, 1) }
+  },
+  266: {
+    pointValue: 70,
+    unlockCondition: () => player.ascensionCount >= 1e14,
+    group: 'ascensionCount',
+    reward: { quarkGain: () => 1 + 0.1 * Math.min(player.ascensionCount / 1e15, 1) }
+  },
+  267: {
+    pointValue: 40,
+    unlockCondition: () => player.ascendShards.gte('1e1000'),
+    group: 'constant',
+    reward: { ascensionScore: () => 1 + Math.min(Decimal.log(player.ascendShards.add(1), 10) / 1e5, 1) }
+  },
   268: { pointValue: 45, unlockCondition: () => player.ascendShards.gte('1e5000'), group: 'constant' },
   269: { pointValue: 50, unlockCondition: () => player.ascendShards.gte('1e15000'), group: 'constant' },
-  270: { pointValue: 55, unlockCondition: () => player.ascendShards.gte('1e50000'), group: 'constant', reward: { wowHepteractGain: () => 1 + Math.min(Decimal.log(player.ascendShards.add(1), 10) / 1e6, 1), constUpgrade1Buff: () => 0.01, constUpgrade2Buff: () => 0.01 } },
-  271: { pointValue: 60, unlockCondition: () => player.ascendShards.gte('1e100000'), group: 'constant', reward: { platonicToHypercubes: () => Math.min(1, Decimal.log(player.ascendShards.add(1), 10) / 1e6) } },
+  270: {
+    pointValue: 55,
+    unlockCondition: () => player.ascendShards.gte('1e50000'),
+    group: 'constant',
+    reward: {
+      wowHepteractGain: () => 1 + Math.min(Decimal.log(player.ascendShards.add(1), 10) / 1e6, 1),
+      constUpgrade1Buff: () => 0.01,
+      constUpgrade2Buff: () => 0.01
+    }
+  },
+  271: {
+    pointValue: 60,
+    unlockCondition: () => player.ascendShards.gte('1e100000'),
+    group: 'constant',
+    reward: { platonicToHypercubes: () => Math.min(1, Decimal.log(player.ascendShards.add(1), 10) / 1e6) }
+  },
   272: { pointValue: 65, unlockCondition: () => player.ascendShards.gte('1e300000'), group: 'constant' },
   273: { pointValue: 70, unlockCondition: () => player.ascendShards.gte('1e1000000'), group: 'constant' },
   274: { pointValue: 10, unlockCondition: () => player.highestSingularityCount >= 1, group: 'singularityCount' },
@@ -831,30 +1929,46 @@ export const achievements: { [index: number]: Achievement } = {
   278: { pointValue: 50, unlockCondition: () => player.highestSingularityCount >= 5, group: 'singularityCount' },
   279: { pointValue: 60, unlockCondition: () => player.highestSingularityCount >= 7, group: 'singularityCount' },
   280: { pointValue: 70, unlockCondition: () => player.highestSingularityCount >= 10, group: 'singularityCount' },
-  281: { pointValue: 40, unlockCondition: () => player.firstOwnedCoin >= 1e5, group: 'firstOwnedCoin'},
-  282: { pointValue: 45, unlockCondition: () => player.firstOwnedCoin >= 1e6, group: 'firstOwnedCoin'},
-  283: { pointValue: 50, unlockCondition: () => player.firstOwnedCoin >= 1e8, group: 'firstOwnedCoin'},
-  284: { pointValue: 40, unlockCondition: () => player.secondOwnedCoin >= 1e6, group: 'secondOwnedCoin'},
-  285: { pointValue: 45, unlockCondition: () => player.secondOwnedCoin >= 1e8, group: 'secondOwnedCoin'},
-  286: { pointValue: 50, unlockCondition: () => player.secondOwnedCoin >= 1e9, group: 'secondOwnedCoin'},
-  287: { pointValue: 40, unlockCondition: () => player.thirdOwnedCoin >= 1e7, group: 'thirdOwnedCoin'},
-  288: { pointValue: 45, unlockCondition: () => player.thirdOwnedCoin >= 1e8, group: 'thirdOwnedCoin'},
-  289: { pointValue: 50, unlockCondition: () => player.thirdOwnedCoin >= 5e9, group: 'thirdOwnedCoin'},
-  290: { pointValue: 40, unlockCondition: () => player.fourthOwnedCoin >= 1e8, group: 'fourthOwnedCoin'},
-  291: { pointValue: 45, unlockCondition: () => player.fourthOwnedCoin >= 1e9, group: 'fourthOwnedCoin'},
-  292: { pointValue: 50, unlockCondition: () => player.fourthOwnedCoin >= 2e10, group: 'fourthOwnedCoin'},
-  293: { pointValue: 40, unlockCondition: () => player.fifthOwnedCoin >= 1e9, group: 'fifthOwnedCoin'},
-  294: { pointValue: 45, unlockCondition: () => player.fifthOwnedCoin >= 2e10, group: 'fifthOwnedCoin'},
-  295: { pointValue: 50, unlockCondition: () => player.fifthOwnedCoin >= 1e12, group: 'fifthOwnedCoin'},
-  296: { pointValue: 40, unlockCondition: () => G.prestigePointGain.gte('1e10000000'), group: 'prestigePointGain'},
-  297: { pointValue: 45, unlockCondition: () => G.prestigePointGain.gte('1e10000000000'), group: 'prestigePointGain'},
-  298: { pointValue: 50, unlockCondition: () => G.prestigePointGain.gte('1e10000000000000'), group: 'prestigePointGain'},
-  299: { pointValue: 40, unlockCondition: () => G.prestigePointGain.gte('1e2500000'), group: 'transcendPointGain'},
-  300: { pointValue: 45, unlockCondition: () => G.prestigePointGain.gte('1e2500000000'), group: 'transcendPointGain'},
-  301: { pointValue: 50, unlockCondition: () => G.prestigePointGain.gte('1e2500000000000'), group: 'transcendPointGain'},
-  302: { pointValue: 40, unlockCondition: () => G.prestigePointGain.gte('1e100000'), group: 'reincarnationPointGain'},
-  303: { pointValue: 45, unlockCondition: () => G.prestigePointGain.gte('1e100000000'), group: 'reincarnationPointGain'},
-  304: { pointValue: 50, unlockCondition: () => G.prestigePointGain.gte('1e100000000000'), group: 'reincarnationPointGain'},
+  281: { pointValue: 40, unlockCondition: () => player.firstOwnedCoin >= 1e5, group: 'firstOwnedCoin' },
+  282: { pointValue: 45, unlockCondition: () => player.firstOwnedCoin >= 1e6, group: 'firstOwnedCoin' },
+  283: { pointValue: 50, unlockCondition: () => player.firstOwnedCoin >= 1e8, group: 'firstOwnedCoin' },
+  284: { pointValue: 40, unlockCondition: () => player.secondOwnedCoin >= 1e6, group: 'secondOwnedCoin' },
+  285: { pointValue: 45, unlockCondition: () => player.secondOwnedCoin >= 1e8, group: 'secondOwnedCoin' },
+  286: { pointValue: 50, unlockCondition: () => player.secondOwnedCoin >= 1e9, group: 'secondOwnedCoin' },
+  287: { pointValue: 40, unlockCondition: () => player.thirdOwnedCoin >= 1e7, group: 'thirdOwnedCoin' },
+  288: { pointValue: 45, unlockCondition: () => player.thirdOwnedCoin >= 1e8, group: 'thirdOwnedCoin' },
+  289: { pointValue: 50, unlockCondition: () => player.thirdOwnedCoin >= 5e9, group: 'thirdOwnedCoin' },
+  290: { pointValue: 40, unlockCondition: () => player.fourthOwnedCoin >= 1e8, group: 'fourthOwnedCoin' },
+  291: { pointValue: 45, unlockCondition: () => player.fourthOwnedCoin >= 1e9, group: 'fourthOwnedCoin' },
+  292: { pointValue: 50, unlockCondition: () => player.fourthOwnedCoin >= 2e10, group: 'fourthOwnedCoin' },
+  293: { pointValue: 40, unlockCondition: () => player.fifthOwnedCoin >= 1e9, group: 'fifthOwnedCoin' },
+  294: { pointValue: 45, unlockCondition: () => player.fifthOwnedCoin >= 2e10, group: 'fifthOwnedCoin' },
+  295: { pointValue: 50, unlockCondition: () => player.fifthOwnedCoin >= 1e12, group: 'fifthOwnedCoin' },
+  296: { pointValue: 40, unlockCondition: () => G.prestigePointGain.gte('1e10000000'), group: 'prestigePointGain' },
+  297: { pointValue: 45, unlockCondition: () => G.prestigePointGain.gte('1e10000000000'), group: 'prestigePointGain' },
+  298: {
+    pointValue: 50,
+    unlockCondition: () => G.prestigePointGain.gte('1e10000000000000'),
+    group: 'prestigePointGain'
+  },
+  299: { pointValue: 40, unlockCondition: () => G.prestigePointGain.gte('1e2500000'), group: 'transcendPointGain' },
+  300: { pointValue: 45, unlockCondition: () => G.prestigePointGain.gte('1e2500000000'), group: 'transcendPointGain' },
+  301: {
+    pointValue: 50,
+    unlockCondition: () => G.prestigePointGain.gte('1e2500000000000'),
+    group: 'transcendPointGain'
+  },
+  302: { pointValue: 40, unlockCondition: () => G.prestigePointGain.gte('1e100000'), group: 'reincarnationPointGain' },
+  303: {
+    pointValue: 45,
+    unlockCondition: () => G.prestigePointGain.gte('1e100000000'),
+    group: 'reincarnationPointGain'
+  },
+  304: {
+    pointValue: 50,
+    unlockCondition: () => G.prestigePointGain.gte('1e100000000000'),
+    group: 'reincarnationPointGain'
+  },
   305: { pointValue: 40, unlockCondition: () => player.challengecompletions[1] >= 1000, group: 'challenge1' },
   306: { pointValue: 45, unlockCondition: () => player.challengecompletions[1] >= 9000, group: 'challenge1' },
   307: { pointValue: 50, unlockCondition: () => player.challengecompletions[1] >= 9001, group: 'challenge1' },
@@ -897,9 +2011,21 @@ export const achievements: { [index: number]: Achievement } = {
   344: { pointValue: 40, unlockCondition: () => player.antPoints.gte('1e25000'), group: 'antCrumbs' },
   345: { pointValue: 45, unlockCondition: () => player.antPoints.gte('1e125000'), group: 'antCrumbs' },
   346: { pointValue: 50, unlockCondition: () => player.antPoints.gte('1e1000000'), group: 'antCrumbs' },
-  347: { pointValue: 40, unlockCondition: () => antSacrificePointsToMultiplier(player.antSacrificePoints) >= 9999999, group: 'sacMult' },
-  348: { pointValue: 45, unlockCondition: () => antSacrificePointsToMultiplier(player.antSacrificePoints) >= 1e15, group: 'sacMult' },
-  349: { pointValue: 50, unlockCondition: () => antSacrificePointsToMultiplier(player.antSacrificePoints) >= 1e100, group: 'sacMult' },
+  347: {
+    pointValue: 40,
+    unlockCondition: () => player.antSacrificePoints >= 1e12,
+    group: 'sacMult'
+  },
+  348: {
+    pointValue: 45,
+    unlockCondition: () => player.antSacrificePoints >= 1e50,
+    group: 'sacMult'
+  },
+  349: {
+    pointValue: 50,
+    unlockCondition: () => player.antSacrificePoints >= 1e150,
+    group: 'sacMult'
+  },
   350: { pointValue: 75, unlockCondition: () => player.ascensionCount >= 1e16, group: 'ascensionCount' },
   351: { pointValue: 80, unlockCondition: () => player.ascensionCount >= 1e20, group: 'ascensionCount' },
   352: { pointValue: 85, unlockCondition: () => player.ascensionCount >= 1e25, group: 'ascensionCount' },
@@ -932,20 +2058,20 @@ export const achievements: { [index: number]: Achievement } = {
   379: { pointValue: 100, unlockCondition: () => player.challengecompletions[14] >= 140, group: 'challenge14' },
   380: { pointValue: 110, unlockCondition: () => player.challengecompletions[14] >= 143, group: 'challenge14' },
   381: { pointValue: 120, unlockCondition: () => player.challengecompletions[14] >= 145, group: 'challenge14' },
-  382: { pointValue: 40, unlockCondition: () => getRuneBlessing('speed').level >= 1000, group: 'speedBlessing'},
-  383: { pointValue: 50, unlockCondition: () => getRuneBlessing('speed').level >= 2000, group: 'speedBlessing'},
-  384: { pointValue: 60, unlockCondition: () => getRuneBlessing('speed').level >= 4000, group: 'speedBlessing'},
-  385: { pointValue: 70, unlockCondition: () => getRuneBlessing('speed').level >= 6000, group: 'speedBlessing'},
-  386: { pointValue: 80, unlockCondition: () => getRuneBlessing('speed').level >= 8000, group: 'speedBlessing'},
-  387: { pointValue: 90, unlockCondition: () => getRuneBlessing('speed').level >= 10000, group: 'speedBlessing'},
-  388: { pointValue: 100, unlockCondition: () => getRuneBlessing('speed').level >= 12500, group: 'speedBlessing'},
-  389: { pointValue: 40, unlockCondition: () => getRuneSpirit('speed').level >= 1000, group: 'speedSpirit'},
-  390: { pointValue: 50, unlockCondition: () => getRuneSpirit('speed').level >= 2000, group: 'speedSpirit'},
-  391: { pointValue: 60, unlockCondition: () => getRuneSpirit('speed').level >= 4000, group: 'speedSpirit'},
-  392: { pointValue: 70, unlockCondition: () => getRuneSpirit('speed').level >= 6000, group: 'speedSpirit'},
-  393: { pointValue: 80, unlockCondition: () => getRuneSpirit('speed').level >= 8000, group: 'speedSpirit'},
-  394: { pointValue: 90, unlockCondition: () => getRuneSpirit('speed').level >= 10000, group: 'speedSpirit'},
-  395: { pointValue: 100, unlockCondition: () => getRuneSpirit('speed').level >= 12500, group: 'speedSpirit'},
+  382: { pointValue: 40, unlockCondition: () => getRuneBlessing('speed').level >= 1000, group: 'speedBlessing' },
+  383: { pointValue: 50, unlockCondition: () => getRuneBlessing('speed').level >= 2000, group: 'speedBlessing' },
+  384: { pointValue: 60, unlockCondition: () => getRuneBlessing('speed').level >= 4000, group: 'speedBlessing' },
+  385: { pointValue: 70, unlockCondition: () => getRuneBlessing('speed').level >= 6000, group: 'speedBlessing' },
+  386: { pointValue: 80, unlockCondition: () => getRuneBlessing('speed').level >= 8000, group: 'speedBlessing' },
+  387: { pointValue: 90, unlockCondition: () => getRuneBlessing('speed').level >= 10000, group: 'speedBlessing' },
+  388: { pointValue: 100, unlockCondition: () => getRuneBlessing('speed').level >= 12500, group: 'speedBlessing' },
+  389: { pointValue: 40, unlockCondition: () => getRuneSpirit('speed').level >= 1000, group: 'speedSpirit' },
+  390: { pointValue: 50, unlockCondition: () => getRuneSpirit('speed').level >= 2000, group: 'speedSpirit' },
+  391: { pointValue: 60, unlockCondition: () => getRuneSpirit('speed').level >= 4000, group: 'speedSpirit' },
+  392: { pointValue: 70, unlockCondition: () => getRuneSpirit('speed').level >= 6000, group: 'speedSpirit' },
+  393: { pointValue: 80, unlockCondition: () => getRuneSpirit('speed').level >= 8000, group: 'speedSpirit' },
+  394: { pointValue: 90, unlockCondition: () => getRuneSpirit('speed').level >= 10000, group: 'speedSpirit' },
+  395: { pointValue: 100, unlockCondition: () => getRuneSpirit('speed').level >= 12500, group: 'speedSpirit' },
   396: { pointValue: 5, unlockCondition: () => getRune('speed').level >= 100, group: 'runeLevel' },
   397: { pointValue: 10, unlockCondition: () => getRune('speed').level >= 250, group: 'runeLevel' },
   398: { pointValue: 15, unlockCondition: () => getRune('speed').level >= 500, group: 'runeLevel' },
@@ -975,7 +2101,7 @@ export const achievements: { [index: number]: Achievement } = {
   422: { pointValue: 60, unlockCondition: () => getRune('speed').freeLevels >= 200000, group: 'runeFreeLevel' },
   423: { pointValue: 65, unlockCondition: () => getRune('speed').freeLevels >= 300000, group: 'runeFreeLevel' },
   424: { pointValue: 70, unlockCondition: () => getRune('speed').freeLevels >= 500000, group: 'runeFreeLevel' },
-  425: { pointValue: 75, unlockCondition: () => getRune('speed').freeLevels >= 750000, group: 'runeFreeLevel' },
+  425: { pointValue: 75, unlockCondition: () => getRune('speed').freeLevels >= 750000, group: 'runeFreeLevel' }
 }
 
 export const ungroupedNameMap = {
@@ -1018,6 +2144,7 @@ export const ungroupedNameMap = {
 }
 
 export const numAchievements = Object.keys(achievements).length
+export const maxAchievementPoints = Object.values(achievements).reduce((sum, ach) => sum + ach.pointValue, 0)
 
 // From achievements, I want to create an object whose keys are AchievementGroups and whose values are arrays of achievement numbers
 // Corresponding to indices. I want to create it using `achievement` object.
@@ -1051,16 +2178,28 @@ export const achievementsByReward: Record<AchievementRewards, number[]> = Object
 
 export const getAchieveReward: Record<AchievementRewards, (ach: { [index: number]: boolean }) => number | boolean> = {
   acceleratorPower: (ach): number => {
-    return achievementsByReward.acceleratorPower.reduce((sum, index) => sum + (ach[index] ? achievements[index].reward!.acceleratorPower!() : 0), 0)
+    return achievementsByReward.acceleratorPower.reduce(
+      (sum, index) => sum + (ach[index] ? achievements[index].reward!.acceleratorPower!() : 0),
+      0
+    )
   },
   accelerators: (ach): number => {
-    return achievementsByReward.accelerators.reduce((sum, index) => sum + (ach[index] ? achievements[index].reward!.accelerators!() : 0), 0)
+    return achievementsByReward.accelerators.reduce(
+      (sum, index) => sum + (ach[index] ? achievements[index].reward!.accelerators!() : 0),
+      0
+    )
   },
   multipliers: (ach): number => {
-    return achievementsByReward.multipliers.reduce((sum, index) => sum + (ach[index] ? achievements[index].reward!.multipliers!() : 0), 0)
+    return achievementsByReward.multipliers.reduce(
+      (sum, index) => sum + (ach[index] ? achievements[index].reward!.multipliers!() : 0),
+      0
+    )
   },
   accelBoosts: (ach): number => {
-    return achievementsByReward.accelBoosts.reduce((sum, index) => sum + (ach[index] ? achievements[index].reward!.accelBoosts!() : 0), 0)
+    return achievementsByReward.accelBoosts.reduce(
+      (sum, index) => sum + (ach[index] ? achievements[index].reward!.accelBoosts!() : 0),
+      0
+    )
   },
   workerAutobuyer: (ach): boolean => {
     return ach[achievementsByReward.workerAutobuyer[0]]
@@ -1077,17 +2216,29 @@ export const getAchieveReward: Record<AchievementRewards, (ach: { [index: number
   alchemyAutobuyer: (ach): boolean => {
     return ach[achievementsByReward.alchemyAutobuyer[0]]
   },
+  multAutobuyer: (ach): boolean => {
+    return ach[achievementsByReward.multAutobuyer[0]]
+  },
+  accelAutobuyer: (ach): boolean => {
+    return ach[achievementsByReward.accelAutobuyer[0]]
+  },
   offeringPrestigeTimer: (ach): boolean => {
     return ach[achievementsByReward.offeringPrestigeTimer[0]]
   },
   crystalMultiplier: (ach): number => {
-    return achievementsByReward.crystalMultiplier.reduce((prod, index) => prod * (ach[index] ? achievements[index].reward!.crystalMultiplier!() : 1), 1)
+    return achievementsByReward.crystalMultiplier.reduce(
+      (prod, index) => prod * (ach[index] ? achievements[index].reward!.crystalMultiplier!() : 1),
+      1
+    )
   },
   duplicationRuneUnlock: (ach): boolean => {
     return ach[achievementsByReward.duplicationRuneUnlock[0]]
   },
   quarkGain: (ach): number => {
-    return achievementsByReward.quarkGain.reduce((prod, index) => prod * (ach[index] ? achievements[index].reward!.quarkGain!() : 1), 1)
+    return achievementsByReward.quarkGain.reduce(
+      (prod, index) => prod * (ach[index] ? achievements[index].reward!.quarkGain!() : 1),
+      1
+    )
   },
   autoPrestigeFeature: (ach): boolean => {
     return ach[achievementsByReward.autoPrestigeFeature[0]]
@@ -1096,16 +2247,28 @@ export const getAchieveReward: Record<AchievementRewards, (ach: { [index: number
     return ach[achievementsByReward.prismRuneUnlock[0]]
   },
   taxReduction: (ach): number => {
-    return achievementsByReward.taxReduction.reduce((prod, index) => prod * (ach[index] ? achievements[index].reward!.taxReduction!() : 1), 1)
+    return achievementsByReward.taxReduction.reduce(
+      (prod, index) => prod * (ach[index] ? achievements[index].reward!.taxReduction!() : 1),
+      1
+    )
   },
   particleGain: (ach): number => {
-    return achievementsByReward.particleGain.reduce((prod, index) => prod * (ach[index] ? achievements[index].reward!.particleGain!() : 1), 1)
+    return achievementsByReward.particleGain.reduce(
+      (prod, index) => prod * (ach[index] ? achievements[index].reward!.particleGain!() : 1),
+      1
+    )
   },
   multiplicativeObtainium: (ach): number => {
-    return achievementsByReward.multiplicativeObtainium.reduce((prod, index) => prod * (ach[index] ? achievements[index].reward!.multiplicativeObtainium!() : 1), 1)
+    return achievementsByReward.multiplicativeObtainium.reduce(
+      (prod, index) => prod * (ach[index] ? achievements[index].reward!.multiplicativeObtainium!() : 1),
+      1
+    )
   },
   multiplicativeOffering: (ach): number => {
-    return achievementsByReward.multiplicativeOffering.reduce((prod, index) => prod * (ach[index] ? achievements[index].reward!.multiplicativeOffering!() : 1), 1)
+    return achievementsByReward.multiplicativeOffering.reduce(
+      (prod, index) => prod * (ach[index] ? achievements[index].reward!.multiplicativeOffering!() : 1),
+      1
+    )
   },
   refineryAutobuy: (ach): boolean => {
     return ach[achievementsByReward.refineryAutobuy[0]]
@@ -1137,8 +2300,11 @@ export const getAchieveReward: Record<AchievementRewards, (ach: { [index: number
   crystalUpgrade5Autobuy: (ach): boolean => {
     return ach[achievementsByReward.crystalUpgrade5Autobuy[0]]
   },
-  recycleChance: (ach): number => {
-    return achievementsByReward.recycleChance.reduce((sum, index) => sum + (ach[index] ? achievements[index].reward!.recycleChance!() : 0), 0)
+  salvage: (ach): number => {
+    return achievementsByReward.salvage.reduce(
+      (sum, index) => sum + (ach[index] ? achievements[index].reward!.salvage!() : 0),
+      0
+    )
   },
   exemptionTalisman: (ach): boolean => {
     return ach[achievementsByReward.exemptionTalisman[0]]
@@ -1159,7 +2325,10 @@ export const getAchieveReward: Record<AchievementRewards, (ach: { [index: number
     return ach[achievementsByReward.wowSquareTalisman[0]]
   },
   conversionExponent: (ach): number => {
-    return achievementsByReward.conversionExponent.reduce((sum, index) => sum + (ach[index] ? achievements[index].reward!.conversionExponent!() : 0), 0)
+    return achievementsByReward.conversionExponent.reduce(
+      (sum, index) => sum + (ach[index] ? achievements[index].reward!.conversionExponent!() : 0),
+      0
+    )
   },
   chal7Researches: (ach): boolean => {
     return ach[achievementsByReward.chal7Researches[0]]
@@ -1171,74 +2340,213 @@ export const getAchieveReward: Record<AchievementRewards, (ach: { [index: number
     return ach[achievementsByReward.chal9Researches[0]]
   },
   talismanPower: (ach): number => {
-    return achievementsByReward.talismanPower.reduce((sum, index) => sum + (ach[index] ? achievements[index].reward!.talismanPower!() : 0), 0)
+    return achievementsByReward.talismanPower.reduce(
+      (sum, index) => sum + (ach[index] ? achievements[index].reward!.talismanPower!() : 0),
+      0
+    )
   },
   sacrificeMult: (ach): number => {
-    return achievementsByReward.sacrificeMult.reduce((prod, index) => prod * (ach[index] ? achievements[index].reward!.sacrificeMult!() : 1), 1)
+    return achievementsByReward.sacrificeMult.reduce(
+      (prod, index) => prod * (ach[index] ? achievements[index].reward!.sacrificeMult!() : 1),
+      1
+    )
   },
   ascensionUnlock: (ach): boolean => {
     return ach[achievementsByReward.ascensionUnlock[0]]
   },
   antSpeed: (ach): number => {
-    return achievementsByReward.antSpeed.reduce((prod, index) => prod * (ach[index] ? achievements[index].reward!.antSpeed!() : 1), 1)
+    return achievementsByReward.antSpeed.reduce(
+      (prod, index) => prod * (ach[index] ? achievements[index].reward!.antSpeed!() : 1),
+      1
+    )
   },
   antSacrificeUnlock: (ach): boolean => {
     return ach[achievementsByReward.antSacrificeUnlock[0]]
   },
   antAutobuyers: (ach): number => {
-    return achievementsByReward.antAutobuyers.reduce((sum, index) => sum + (ach[index] ? achievements[index].reward!.antAutobuyers!() : 0), 0)
+    return achievementsByReward.antAutobuyers.reduce(
+      (sum, index) => sum + (ach[index] ? achievements[index].reward!.antAutobuyers!() : 0),
+      0
+    )
   },
   antUpgradeAutobuyers: (ach): number => {
-    return achievementsByReward.antUpgradeAutobuyers.reduce((sum, index) => sum + (ach[index] ? achievements[index].reward!.antUpgradeAutobuyers!() : 0), 0)
+    return achievementsByReward.antUpgradeAutobuyers.reduce(
+      (sum, index) => sum + (ach[index] ? achievements[index].reward!.antUpgradeAutobuyers!() : 0),
+      0
+    )
   },
   antELOAdditive: (ach): number => {
-    return achievementsByReward.antELOAdditive.reduce((sum, index) => sum + (ach[index] ? achievements[index].reward!.antELOAdditive!() : 0), 0)
+    return achievementsByReward.antELOAdditive.reduce(
+      (sum, index) => sum + (ach[index] ? achievements[index].reward!.antELOAdditive!() : 0),
+      0
+    )
   },
   antELOMultiplicative: (ach): number => {
-    return achievementsByReward.antELOMultiplicative.reduce((prod, index) => prod * (ach[index] ? achievements[index].reward!.antELOMultiplicative!() : 1), 1)
+    return achievementsByReward.antELOMultiplicative.reduce(
+      (prod, index) => prod * (ach[index] ? achievements[index].reward!.antELOMultiplicative!() : 1),
+      1
+    )
   },
   ascensionCountMultiplier: (ach): number => {
-    return achievementsByReward.ascensionCountMultiplier.reduce((prod, index) => prod * (ach[index] ? achievements[index].reward!.ascensionCountMultiplier!() : 1), 1)
+    return achievementsByReward.ascensionCountMultiplier.reduce(
+      (prod, index) => prod * (ach[index] ? achievements[index].reward!.ascensionCountMultiplier!() : 1),
+      1
+    )
   },
   ascensionCountAdditive: (ach): number => {
-    return achievementsByReward.ascensionCountAdditive.reduce((sum, index) => sum + (ach[index] ? achievements[index].reward!.ascensionCountAdditive!() : 0), 0)
+    return achievementsByReward.ascensionCountAdditive.reduce(
+      (sum, index) => sum + (ach[index] ? achievements[index].reward!.ascensionCountAdditive!() : 0),
+      0
+    )
   },
   allCubeGain: (ach): number => {
-    return achievementsByReward.allCubeGain.reduce((prod, index) => prod * (ach[index] ? achievements[index].reward!.allCubeGain!() : 1), 1)
+    return achievementsByReward.allCubeGain.reduce(
+      (prod, index) => prod * (ach[index] ? achievements[index].reward!.allCubeGain!() : 1),
+      1
+    )
   },
   wowCubeGain: (ach): number => {
-    return achievementsByReward.wowCubeGain.reduce((prod, index) => prod * (ach[index] ? achievements[index].reward!.wowCubeGain!() : 1), 1)
+    return achievementsByReward.wowCubeGain.reduce(
+      (prod, index) => prod * (ach[index] ? achievements[index].reward!.wowCubeGain!() : 1),
+      1
+    )
   },
   wowTesseractGain: (ach): number => {
-    return achievementsByReward.wowTesseractGain.reduce((prod, index) => prod * (ach[index] ? achievements[index].reward!.wowTesseractGain!() : 1), 1)
+    return achievementsByReward.wowTesseractGain.reduce(
+      (prod, index) => prod * (ach[index] ? achievements[index].reward!.wowTesseractGain!() : 1),
+      1
+    )
   },
   wowHypercubeGain: (ach): number => {
-    return achievementsByReward.wowHypercubeGain.reduce((prod, index) => prod * (ach[index] ? achievements[index].reward!.wowHypercubeGain!() : 1), 1)
+    return achievementsByReward.wowHypercubeGain.reduce(
+      (prod, index) => prod * (ach[index] ? achievements[index].reward!.wowHypercubeGain!() : 1),
+      1
+    )
   },
   wowPlatonicGain: (ach): number => {
-    return achievementsByReward.wowPlatonicGain.reduce((prod, index) => prod * (ach[index] ? achievements[index].reward!.wowPlatonicGain!() : 1), 1)
+    return achievementsByReward.wowPlatonicGain.reduce(
+      (prod, index) => prod * (ach[index] ? achievements[index].reward!.wowPlatonicGain!() : 1),
+      1
+    )
   },
   wowHepteractGain: (ach): number => {
-    return achievementsByReward.wowHepteractGain.reduce((prod, index) => prod * (ach[index] ? achievements[index].reward!.wowHepteractGain!() : 1), 1)
+    return achievementsByReward.wowHepteractGain.reduce(
+      (prod, index) => prod * (ach[index] ? achievements[index].reward!.wowHepteractGain!() : 1),
+      1
+    )
   },
   ascensionScore: (ach): number => {
-    return achievementsByReward.ascensionScore.reduce((sum, index) => sum + (ach[index] ? achievements[index].reward!.ascensionScore!() : 0), 0)
+    return achievementsByReward.ascensionScore.reduce(
+      (sum, index) => sum + (ach[index] ? achievements[index].reward!.ascensionScore!() : 0),
+      0
+    )
   },
   ascensionRewardScaling: (ach): boolean => {
     return ach[achievementsByReward.ascensionRewardScaling[0]]
   },
   constUpgrade1Buff: (ach): number => {
-    return achievementsByReward.constUpgrade1Buff.reduce((sum, index) => sum + (ach[index] ? achievements[index].reward!.constUpgrade1Buff!() : 0), 0)
+    return achievementsByReward.constUpgrade1Buff.reduce(
+      (sum, index) => sum + (ach[index] ? achievements[index].reward!.constUpgrade1Buff!() : 0),
+      0
+    )
   },
   constUpgrade2Buff: (ach): number => {
-    return achievementsByReward.constUpgrade2Buff.reduce((sum, index) => sum + (ach[index] ? achievements[index].reward!.constUpgrade2Buff!() : 0), 0)
+    return achievementsByReward.constUpgrade2Buff.reduce(
+      (sum, index) => sum + (ach[index] ? achievements[index].reward!.constUpgrade2Buff!() : 0),
+      0
+    )
   },
   platonicToHypercubes: (ach): number => {
-    return achievementsByReward.platonicToHypercubes.reduce((sum, index) => sum + (ach[index] ? achievements[index].reward!.platonicToHypercubes!() : 0), 0)
+    return achievementsByReward.platonicToHypercubes.reduce(
+      (sum, index) => sum + (ach[index] ? achievements[index].reward!.platonicToHypercubes!() : 0),
+      0
+    )
   },
   statTracker: (ach): boolean => {
     return ach[achievementsByReward.statTracker[0]]
+  },
+  overfluxConversionRate: (ach): number => {
+    return achievementsByReward.overfluxConversionRate.reduce(
+      (prod, index) => prod * (ach[index] ? achievements[index].reward!.overfluxConversionRate!() : 1),
+      1
+    )
+  },
+  diamondUpgrade18: (ach): boolean => {
+    return ach[achievementsByReward.diamondUpgrade18[0]]
+  },
+  diamondUpgrade19: (ach): boolean => {
+    return ach[achievementsByReward.diamondUpgrade19[0]]
+  },
+  diamondUpgrade20: (ach): boolean => {
+    return ach[achievementsByReward.diamondUpgrade20[0]]
+  },
+  thriftRuneUnlock: (ach): boolean => {
+    return ach[achievementsByReward.thriftRuneUnlock[0]]
+  },
+  blessingUnlock: (ach): boolean => {
+    return ach[achievementsByReward.blessingUnlock[0]]
+  },
+  talismanUnlock: (ach): boolean => {
+    return ach[achievementsByReward.talismanUnlock[0]]
+  },
+  spiritUnlock: (ach): boolean => {
+    return ach[achievementsByReward.spiritUnlock[0]]
+  },
+  tesseractUnlock: (ach): boolean => {
+    return ach[achievementsByReward.tesseractUnlock[0]]
+  },
+  hypercubeUnlock: (ach): boolean => {
+    return ach[achievementsByReward.hypercubeUnlock[0]]
+  },
+  platonicUnlock: (ach): boolean => {
+    return ach[achievementsByReward.platonicUnlock[0]]
+  },
+  antHillUnlock: (ach): boolean => {
+    return ach[achievementsByReward.antHillUnlock[0]]
   }
 }
 
 export const achievementManager = new AchievementManager(Array(numAchievements).fill(0) as number[])
+
+export const generateAchievementRewardSummary = () => {
+  const intro = i18next.t('achievements.rewardTypes.title')
+  let numericalTexts = ''
+  let booleanTexts = ''
+
+  for (const [rewardType, rewardFunction] of Object.entries(getAchieveReward)) {
+    const typeKey = rewardType as AchievementRewards
+    const reward = rewardFunction(achievementManager.achievementMap)
+    if (typeof reward === 'number') {
+      if (typeKey === 'acceleratorPower') {
+        numericalTexts += `${
+          i18next.t(`achievements.rewardTypes.${rewardType}`, { val: formatAsPercentIncrease(1 + reward, 2) })
+        }\n`
+      } else if (typeKey === 'taxReduction') {
+        // Formatted such that it has negative displayed value
+        numericalTexts += `${
+          i18next.t(`achievements.rewardTypes.${rewardType}`, { val: formatAsPercentIncrease(reward, 2) })
+        }\n`
+      } else if (typeKey === 'talismanPower') {
+        numericalTexts += `${
+          i18next.t(`achievements.rewardTypes.${rewardType}`, { val: formatAsPercentIncrease(1 + reward, 2) })
+        }\n`
+      } else if (typeKey === 'conversionExponent') {
+        numericalTexts += `${
+          i18next.t(`achievements.rewardTypes.${rewardType}`, { val: formatAsPercentIncrease(1 + reward, 0) })
+        }\n`
+      } else {
+        numericalTexts += `${i18next.t(`achievements.rewardTypes.${rewardType}`, { val: format(reward, 2, false) })}\n`
+      }
+    } else if (typeof reward === 'boolean') {
+      if (reward) {
+        booleanTexts += `${
+          i18next.t(`achievements.rewardTypes.${rewardType}`, {
+            unlock: i18next.t('achievements.rewardTypes.unlocked')
+          })
+        }\n`
+      }
+    }
+  }
+
+  return Alert(`${intro}\n${numericalTexts}\n${booleanTexts}`)
+}

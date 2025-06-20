@@ -1,6 +1,6 @@
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
-import { achievementaward, totalachievementpoints } from './Achievements'
+import { achievementaward, achievementManager, maxAchievementPoints } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { CalcCorruptionStuff, calculateAscensionSpeedMult, calculateGlobalSpeedMult } from './Calculate'
 import { getMaxChallenges } from './Challenges'
@@ -90,23 +90,23 @@ export const revealStuff = () => {
 
   document.documentElement.dataset.chal6 = player.achievements[113] === 1 ? 'true' : 'false'
   document.documentElement.dataset.chal7 = player.achievements[120] === 1 ? 'true' : 'false'
-  document.documentElement.dataset.chal7x10 = player.achievements[124] === 1 ? 'true' : 'false'
+  document.documentElement.dataset.chal7x10 = achievementManager.getBonus('chal7Researches') ? 'true' : 'false'
 
   const example17 = document.getElementsByClassName('chal8') as HTMLCollectionOf<HTMLElement>
   for (let i = 0; i < example17.length; i++) {
     const parent = example17[i].parentElement!
     if (parent.classList.contains('offlineStats')) {
-      example17[i].style.display = player.achievements[127] === 1 ? 'flex' : 'none'
-      example17[i].setAttribute('aria-disabled', `${player.achievements[127] !== 1}`)
+      example17[i].style.display = achievementManager.getBonus('antHillUnlock') ? 'flex' : 'none'
+      example17[i].setAttribute('aria-disabled', `${!achievementManager.getBonus('antHillUnlock')}`)
     } else {
-      example17[i].style.display = player.achievements[127] === 1 ? 'block' : 'none'
-      example17[i].setAttribute('aria-disabled', `${player.achievements[127] !== 1}`)
+      example17[i].style.display = achievementManager.getBonus('antHillUnlock') ? 'block' : 'none'
+      example17[i].setAttribute('aria-disabled', `${!achievementManager.getBonus('antHillUnlock')}`)
     }
   }
 
-  document.documentElement.dataset.chal9 = player.achievements[134] === 1 ? 'true' : 'false'
+  document.documentElement.dataset.chal9 = achievementManager.getBonus('talismanUnlock') ? 'true' : 'false'
   document.documentElement.dataset.chal9x1 = player.highestchallengecompletions[9] > 0 ? 'true' : 'false'
-  document.documentElement.dataset.chal10 = player.achievements[141] === 1 ? 'true' : 'false'
+  document.documentElement.dataset.chal10 = achievementManager.getBonus('ascensionUnlock') ? 'true' : 'false'
 
   const example21 = document.getElementsByClassName('ascendunlock') as HTMLCollectionOf<HTMLElement>
   for (let i = 0; i < example21.length; i++) {
@@ -133,7 +133,7 @@ export const revealStuff = () => {
   document.documentElement.dataset.cubeUpgrade10 = player.cubeUpgrades[10] > 0 ? 'true' : 'false'
   document.documentElement.dataset.cubeUpgrade19 = player.cubeUpgrades[19] > 0 ? 'true' : 'false'
 
-  document.documentElement.dataset.sacrificeAnts = player.achievements[173] === 1 ? 'true' : 'false'
+  document.documentElement.dataset.sacrificeAnts = achievementManager.getBonus('antSacrificeUnlock') ? 'true' : 'false'
 
   document.documentElement.dataset.hepteracts = // Ability to use and gain hepteracts
     player.challenge15Exponent >= G.challenge15Rewards.hepteractsUnlocked.requirement ? 'true' : 'false'
@@ -144,7 +144,7 @@ export const revealStuff = () => {
   visualUpdateShop()
 
   const hepts = DOMCacheGetOrSet('corruptionHepteracts')
-  hepts.style.display = (player.achievements[255] > 0) ? 'block' : 'none'
+  hepts.style.display = 'block'
 
   document.documentElement.dataset.cookies1 = player.singularityUpgrades.cookies.getEffect().bonus ? 'true' : 'false'
   document.documentElement.dataset.cookies2 = player.singularityUpgrades.cookies2.getEffect().bonus ? 'true' : 'false'
@@ -183,7 +183,7 @@ export const revealStuff = () => {
     }
   }
 
-  if (player.achievements[43] === 1) { // Transcend Mythos Achievement 1
+  if (achievementManager.getBonus('autoPrestigeFeature')) { // Transcend Mythos Achievement 1
     DOMCacheGetOrSet('prestigeautotoggle').style.display = 'block'
     DOMCacheGetOrSet('prestigeamount').style.display = 'block'
     DOMCacheGetOrSet('autoprestige').style.display = 'block'
@@ -193,7 +193,7 @@ export const revealStuff = () => {
     DOMCacheGetOrSet('autoprestige').style.display = 'none'
   }
 
-  if (player.achievements[134] === 1) { // No Runes Challenge Achievement 1
+  if (achievementManager.getBonus('talismanUnlock')) { // No Runes Challenge Achievement 1
     DOMCacheGetOrSet('toggleRuneSubTab2').style.display = 'block'
     DOMCacheGetOrSet('toggleRuneSubTab3').style.display = 'block'
   } else {
@@ -201,7 +201,7 @@ export const revealStuff = () => {
     DOMCacheGetOrSet('toggleRuneSubTab3').style.display = 'none'
   }
 
-  player.achievements[173] === 1 // Galactic Crumb Achievement 5
+  achievementManager.getBonus('antSacrificeUnlock') // Galactic Crumb Achievement 5
     ? DOMCacheGetOrSet('sacrificeAnts').style.display = 'block'
     : DOMCacheGetOrSet('sacrificeAnts').style.display = 'none'
 
@@ -375,10 +375,10 @@ export const revealStuff = () => {
   DOMCacheGetOrSet('ascSingChallengeTimeTakenStats').style.display = player.insideSingularityChallenge ? '' : 'none'
 
   DOMCacheGetOrSet('ascensionStats').style.visibility =
-    (player.achievements[197] > 0 || player.highestSingularityCount > 0) ? 'visible' : 'hidden'
+    (Boolean(achievementManager.getBonus('statTracker')) || player.highestSingularityCount > 0) ? 'visible' : 'hidden'
   DOMCacheGetOrSet('ascHyperStats').style.display = player.challengecompletions[13] > 0 ? '' : 'none'
   DOMCacheGetOrSet('ascPlatonicStats').style.display = player.challengecompletions[14] > 0 ? '' : 'none'
-  DOMCacheGetOrSet('ascHepteractStats').style.display = player.achievements[255] > 0 ? '' : 'none'
+  DOMCacheGetOrSet('ascHepteractStats').style.display = G.challenge15Rewards.hepteractsUnlocked.value >= 1 ? '' : 'none'
 
   // I'll clean this up later. Note to 2019 Platonic: Fuck you
   // note to 2019 and 2020 Platonic, you're welcome
@@ -395,12 +395,12 @@ export const revealStuff = () => {
     toggle6: player.upgrades[86] === 1, // Autobuyer - Coin Buildings - Accelerator
     toggle7: player.upgrades[87] === 1, // Autobuyer - Coin Buildings - Multiplier
     toggle8: player.upgrades[88] === 1, // Autobuyer - Coin Buildings - Accelerator Boost
-    toggle10: player.achievements[78] === 1, // Autobuyer - Diamond Buildings - Tier 1 (Refineries)
-    toggle11: player.achievements[85] === 1, // Autobuyer - Diamond Buildings - Tier 2 (Coal Plants)
-    toggle12: player.achievements[92] === 1, // Autobuyer - Diamond Buildings - Tier 3 (Coal Rigs)
-    toggle13: player.achievements[99] === 1, // Autobuyer - Diamond Buildings - Tier 4 (Pickaxes)
-    toggle14: player.achievements[106] === 1, // Autobuyer - Diamond Buildings - Tier 5 (Pandora's Boxes)
-    toggle15: player.achievements[43] === 1, // Feature - Diamond Buildings - Auto Prestige
+    toggle10: Boolean(achievementManager.getBonus('refineryAutobuy')), // Autobuyer - Diamond Buildings - Tier 1 (Refineries)
+    toggle11: Boolean(achievementManager.getBonus('coalPlantAutobuy')), // Autobuyer - Diamond Buildings - Tier 2 (Coal Plants)
+    toggle12: Boolean(achievementManager.getBonus('coalRigAutobuy')), // Autobuyer - Diamond Buildings - Tier 3 (Coal Rigs)
+    toggle13: Boolean(achievementManager.getBonus('pickaxeAutobuy')), // Autobuyer - Diamond Buildings - Tier 4 (Pickaxes)
+    toggle14: Boolean(achievementManager.getBonus('pandorasBoxAutobuy')), // Autobuyer - Diamond Buildings - Tier 5 (Pandora's Boxes)
+    toggle15: Boolean(achievementManager.getBonus('autoPrestigeFeature')), // Feature - Diamond Buildings - Auto Prestige
     toggle16: player.upgrades[94] === 1, // Autobuyer - Mythos Buildings - Tier 1 (Augments)
     toggle17: player.upgrades[95] === 1, // Autobuyer - Mythos Buildings - Tier 2 (Enchantments)
     toggle18: player.upgrades[96] === 1, // Autobuyer - Mythos Buildings - Tier 3 (Wizards)
@@ -422,7 +422,7 @@ export const revealStuff = () => {
     toggle29: player.transcendCount > 0.5 || player.reincarnationCount > 0.5, // Settings - Confirmations - Transcension
     toggle30: player.reincarnationCount > 0.5, // Settings - Confirmations - Reincarnation
     toggle31: player.ascensionCount > 0, // Settings - Confirmations - Ascension and Asc. Challenge
-    toggle32: player.achievements[173] > 0, // Settings - Confirmations - Ant Sacrifice
+    toggle32: Boolean(achievementManager.getBonus('antSacrificeUnlock')), // Settings - Confirmations - Ant Sacrifice
     toggle33: player.highestSingularityCount > 0 && player.ascensionCount > 0, // Settings - Confirmations - Singularity
     toggle34: player.unlocks.coinfour, // Achievements - Notifications
     toggle35: player.challenge15Exponent >= G.challenge15Rewards.hepteractsUnlocked.requirement
@@ -507,12 +507,12 @@ export const hideStuff = () => {
     DOMCacheGetOrSet('achievementstab').style.backgroundColor = 'white'
     DOMCacheGetOrSet('achievementstab').style.color = 'black'
     DOMCacheGetOrSet('achievementprogress').textContent = i18next.t('achievements.totalPoints', {
-      x: format(player.achievementPoints),
-      y: format(totalachievementpoints),
-      z: (100 * player.achievementPoints / totalachievementpoints).toPrecision(4)
+      x: format(achievementManager.totalPoints),
+      y: format(maxAchievementPoints),
+      z: (100 * achievementManager.totalPoints / maxAchievementPoints).toPrecision(4)
     })
-    DOMCacheGetOrSet('achievementQuarkBonus').innerHTML = i18next.t('achievements.quarkBonus', {
-      multiplier: format(1 + player.achievementPoints / 50000, 3, true)
+    DOMCacheGetOrSet('achievementQuarkBonus').innerHTML = i18next.t('achievements.achievementLevel', {
+      level: format(achievementManager.level)
     })
   } else if (G.currentTab === Tabs.Runes) {
     DOMCacheGetOrSet('runes').style.display = 'block'
@@ -629,9 +629,10 @@ export const htmlInserts = () => {
 
 // TODO(not @KhafraDev): cache the elements and stop getting them every time?
 export const buttoncolorchange = () => {
-  DOMCacheGetOrSet('prestigebtn').style.backgroundColor = player.toggles[15] && player.achievements[43] === 1
-    ? 'green'
-    : ''
+  DOMCacheGetOrSet('prestigebtn').style.backgroundColor =
+    player.toggles[15] && Boolean(achievementManager.getBonus('autoPrestigeFeature'))
+      ? 'green'
+      : ''
 
   DOMCacheGetOrSet('transcendbtn').style.backgroundColor =
     player.toggles[21] && player.upgrades[89] > 0.5 && (player.currentChallenge.transcension === 0) ? 'green' : ''
@@ -730,19 +731,24 @@ export const buttoncolorchange = () => {
     const h = DOMCacheGetOrSet('buycrystalupgrade3')
     const i = DOMCacheGetOrSet('buycrystalupgrade4')
     const j = DOMCacheGetOrSet('buycrystalupgrade5')
-    ;((!player.toggles[10] || player.achievements[78] === 0) && player.prestigePoints.gte(player.firstCostDiamonds))
+    ;((!player.toggles[10] || Boolean(!achievementManager.getBonus('refineryAutobuy')))
+        && player.prestigePoints.gte(player.firstCostDiamonds))
       ? a.classList.add('buildingPurchaseBtnAvailable')
       : a.classList.remove('buildingPurchaseBtnAvailable')
-    ;((!player.toggles[11] || player.achievements[85] === 0) && player.prestigePoints.gte(player.secondCostDiamonds))
+    ;((!player.toggles[11] || Boolean(!achievementManager.getBonus('coalPlantAutobuy')))
+        && player.prestigePoints.gte(player.secondCostDiamonds))
       ? b.classList.add('buildingPurchaseBtnAvailable')
       : b.classList.remove('buildingPurchaseBtnAvailable')
-    ;((!player.toggles[12] || player.achievements[92] === 0) && player.prestigePoints.gte(player.thirdCostDiamonds))
+    ;((!player.toggles[12] || Boolean(!achievementManager.getBonus('coalRigAutobuy')))
+        && player.prestigePoints.gte(player.thirdCostDiamonds))
       ? c.classList.add('buildingPurchaseBtnAvailable')
       : c.classList.remove('buildingPurchaseBtnAvailable')
-    ;((!player.toggles[13] || player.achievements[99] === 0) && player.prestigePoints.gte(player.fourthCostDiamonds))
+    ;((!player.toggles[13] || Boolean(!achievementManager.getBonus('pickaxeAutobuy')))
+        && player.prestigePoints.gte(player.fourthCostDiamonds))
       ? d.classList.add('buildingPurchaseBtnAvailable')
       : d.classList.remove('buildingPurchaseBtnAvailable')
-    ;((!player.toggles[14] || player.achievements[106] === 0) && player.prestigePoints.gte(player.fifthCostDiamonds))
+    ;((!player.toggles[14] || Boolean(!achievementManager.getBonus('pandorasBoxAutobuy')))
+        && player.prestigePoints.gte(player.fifthCostDiamonds))
       ? e.classList.add('buildingPurchaseBtnAvailable')
       : e.classList.remove('buildingPurchaseBtnAvailable')
     let k = 0
@@ -750,7 +756,7 @@ export const buttoncolorchange = () => {
       k += 10
     }
 
-    player.achievements[79] < 1
+    !achievementManager.getBonus('crystalUpgrade1Autobuy')
       ? (player.prestigeShards.gte(
           Decimal.pow(
             10,
@@ -761,7 +767,7 @@ export const buttoncolorchange = () => {
         ? f.style.backgroundColor = 'purple'
         : f.style.backgroundColor = '')
       : f.style.backgroundColor = 'green'
-    player.achievements[86] < 1
+    !achievementManager.getBonus('crystalUpgrade2Autobuy')
       ? (player.prestigeShards.gte(
           Decimal.pow(
             10,
@@ -772,7 +778,7 @@ export const buttoncolorchange = () => {
         ? g.style.backgroundColor = 'purple'
         : g.style.backgroundColor = '')
       : g.style.backgroundColor = 'green'
-    player.achievements[93] < 1
+    !achievementManager.getBonus('crystalUpgrade3Autobuy')
       ? (player.prestigeShards.gte(
           Decimal.pow(
             10,
@@ -783,7 +789,7 @@ export const buttoncolorchange = () => {
         ? h.style.backgroundColor = 'purple'
         : h.style.backgroundColor = '')
       : h.style.backgroundColor = 'green'
-    player.achievements[100] < 1
+    !achievementManager.getBonus('crystalUpgrade4Autobuy')
       ? (player.prestigeShards.gte(
           Decimal.pow(
             10,
@@ -794,7 +800,7 @@ export const buttoncolorchange = () => {
         ? i.style.backgroundColor = 'purple'
         : i.style.backgroundColor = '')
       : i.style.backgroundColor = 'green'
-    player.achievements[107] < 1
+    !achievementManager.getBonus('crystalUpgrade5Autobuy')
       ? (player.prestigeShards.gte(
           Decimal.pow(
             10,

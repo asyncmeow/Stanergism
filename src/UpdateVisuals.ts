@@ -1,5 +1,6 @@
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
+import { achievementManager } from './Achievements'
 import { showSacrifice } from './Ants'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import {
@@ -16,7 +17,6 @@ import {
   calculateCubeQuarkMultiplier,
   calculateNumberOfThresholds,
   calculateOcteractMultiplier,
-  calculateRecycleMultiplier,
   calculateRedAmbrosiaCubes,
   calculateRedAmbrosiaGenerationSpeed,
   calculateRedAmbrosiaLuck,
@@ -25,13 +25,15 @@ import {
   calculateRequiredBlueberryTime,
   calculateRequiredRedAmbrosiaTime,
   calculateResearchAutomaticObtainium,
+  calculateSalvageRuneEXPMultiplier,
   calculateSigmoidExponential,
   calculateSummationNonLinear,
   calculateToNextThreshold,
   calculateTotalOcteractCubeBonus,
   calculateTotalOcteractObtainiumBonus,
   calculateTotalOcteractOfferingBonus,
-  calculateTotalOcteractQuarkBonus
+  calculateTotalOcteractQuarkBonus,
+  calculateTotalSalvage
 } from './Calculate'
 import { formatAsPercentIncrease } from './Campaign'
 import { CalcECC } from './Challenges'
@@ -40,6 +42,7 @@ import type { IMultiBuy } from './Cubes'
 import { BuffType, consumableEventBuff, eventBuffType, getEvent, getEventBuff } from './Event'
 import { getHepteract, hepteractData, type HepteractNames } from './Hepteracts'
 import { allDurableConsumables, type PseudoCoinConsumableNames } from './Login'
+import type { OcteractDataKeys } from './Octeracts'
 import { getQuarkBonus, quarkHandler } from './Quark'
 import {
   getRune,
@@ -58,7 +61,6 @@ import { getTalisman, type TalismanKeys } from './Talismans'
 import type { Player, ZeroToFour } from './types/Synergism'
 import { sumContents, timeReminingHours } from './Utility'
 import { Globals as G } from './Variables'
-import type { OcteractDataKeys } from './Octeracts'
 
 export const visualUpdateBuildings = () => {
   if (G.currentTab !== Tabs.Buildings) {
@@ -605,33 +607,13 @@ export const visualUpdateRunes = () => {
       getRune(runeKey).updateRuneEffectHTML()
     }
 
-    const calculateRecycle = calculateRecycleMultiplier()
-    const allRuneExpAdditiveMultiplier = (
-      // Base amount multiplied per offering
-      1 * calculateRecycle
-      // +1 if C1 completion
-      + Math.min(1, player.highestchallengecompletions[1])
-      // +0.10 per C1 completion
-      + (0.4 / 10) * player.highestchallengecompletions[1]
-      // Research 5x2
-      + 0.6 * player.researches[22]
-      // Research 5x3
-      + 0.3 * player.researches[23]
-      // Particle Upgrade 1x1
-      + 2 * player.upgrades[61]
-    )
-
-    DOMCacheGetOrSet('offeringExperienceValue').textContent = i18next.t(
-      'runes.gainExp',
-      {
-        amount: format(allRuneExpAdditiveMultiplier, 2, true)
-      }
-    )
+    const calculateSalvage = calculateTotalSalvage()
+    const calculateRecycle = calculateSalvageRuneEXPMultiplier()
 
     DOMCacheGetOrSet('offeringRecycleInfo').textContent = i18next.t(
       'runes.recycleChance',
       {
-        percent: format((1 - 1 / calculateRecycle) * 100, 2, true),
+        amount: format(calculateSalvage, 0, true),
         mult: format(calculateRecycle, 2, true)
       }
     )
@@ -726,7 +708,7 @@ export const visualUpdateAnts = () => {
     }
   )
 
-  if (player.achievements[173] === 1) {
+  if (achievementManager.getBonus('antSacrificeUnlock')) {
     DOMCacheGetOrSet('antSacrificeTimer').textContent = formatTimeShort(
       player.antSacrificeTimer
     )

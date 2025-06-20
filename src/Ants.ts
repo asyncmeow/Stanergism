@@ -11,7 +11,7 @@ import { Globals as G } from './Variables'
 import type { DecimalSource } from 'break_infinity.js'
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
-import { achievementaward } from './Achievements'
+import { achievementManager, ungroupedNameMap } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { resetHistoryAdd, type ResetHistoryEntryAntSacrifice } from './History'
 import { buyResearch } from './Research'
@@ -150,7 +150,6 @@ export const getAntUpgradeCost = (originalCost: Decimal, buyTo: number, index: n
 
 // Note to self: REWRITE THIS SHIT Kevin :3
 export const buyAntProducers = (pos: FirstToEighth, originalCost: DecimalSource, index: number) => {
-  const sacrificeMult = antSacrificePointsToMultiplier(player.antSacrificePoints)
   // This is a fucking cool function. This will buymax ants cus why not
 
   // Things we need: the position of producers, the costvalues, and input var i
@@ -199,16 +198,7 @@ export const buyAntProducers = (pos: FirstToEighth, originalCost: DecimalSource,
   }
   calculateAntSacrificeELO()
 
-  // Check if we award Achievement 176-182: Ant autobuy
-  const achRequirements = [2, 6, 20, 100, 500, 6666, 77777]
-  for (let j = 0; j < achRequirements.length; j++) {
-    if (
-      player.achievements[176 + j] === 0 && sacrificeMult > achRequirements[j]
-      && player[`${G.ordinals[j + 1 as ZeroToSeven]}OwnedAnts` as const] > 0
-    ) {
-      achievementaward(176 + j)
-    }
-  }
+  achievementManager.tryUnlockByGroup('sacMult')
 
   if (player.firstOwnedAnts > 6.9e7) {
     player.firstOwnedAnts = 6.9e7
@@ -291,9 +281,6 @@ export const antUpgradeDescription = (i: number) => {
 export const antSacrificePointsToMultiplier = (points: number) => {
   let multiplier = Math.pow(1 + points / 5000, 2)
   multiplier *= 1 + 0.2 * Math.log(1 + points) / Math.log(10)
-  if (player.achievements[174] > 0) {
-    multiplier *= 1 + 0.4 * Math.log(1 + points) / Math.log(10)
-  }
   return Math.min(1e300, multiplier)
 }
 
@@ -410,8 +397,8 @@ export const sacrificeAnts = async (auto = false) => {
     }
   }
 
-  if (player.mythicalFragments >= 1e11 && player.currentChallenge.ascension === 14 && player.achievements[248] < 1) {
-    achievementaward(248)
+  if (player.mythicalFragments >= 1e11 && player.currentChallenge.ascension === 14) {
+    achievementManager.tryUnlock(ungroupedNameMap.seeingRedNoBlue)
   }
 }
 
@@ -420,24 +407,23 @@ export const autoBuyAnts = () => {
     player.antPoints.gte(
       getAntUpgradeCost(new Decimal(G.antUpgradeBaseCost[x - 1]), player.antUpgrades[x - 1]! + 1, x).times(m)
     )
-  const ach = [176, 176, 177, 178, 178, 179, 180, 180, 181, 182, 182, 145]
+
   const cost = ['100', '100', '1000', '1000', '1e5', '1e6', '1e8', '1e11', '1e15', '1e20', '1e40', '1e100']
   if (player.currentChallenge.ascension !== 11) {
-    for (let i = 1; i <= ach.length; i++) {
-      const check = i === 12 ? player.researches[ach[i - 1]] : player.achievements[ach[i - 1]]
+    for (let i = 1; i <= 12; i++) {
+      const check = i === 12 ? player.researches[145] > 0 : +achievementManager.getBonus('antUpgradeAutobuyers') >= i
       if (check && canAffordUpgrade(i, 2)) {
         buyAntUpgrade(cost[i - 1], true, i)
       }
     }
   }
 
-  const _ach = [173, 176, 177, 178, 179, 180, 181, 182]
   const _cost = ['1e700', '3', '100', '10000', '1e12', '1e36', '1e100', '1e300']
-  for (let i = 1; i <= _ach.length; i++) {
+  for (let i = 1; i <= 8; i++) {
     const res = i === 1 ? player.reincarnationPoints : player.antPoints
     const m = i === 1 ? 1 : 2 // no multiplier on the first ant cost because it costs particles
     if (
-      player.achievements[_ach[i - 1]]
+      +achievementManager.getBonus('antAutobuyers') >= i
       && res.gte(player[`${G.ordinals[i - 1 as ZeroToSeven]}CostAnts` as const].times(m))
     ) {
       buyAntProducers(

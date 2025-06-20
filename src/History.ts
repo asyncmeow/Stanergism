@@ -214,7 +214,7 @@ const historyGains: Record<
     img: 'TinyWow7.png',
     formatter: conditionalFormatPerSecond,
     imgTitle: 'Hepteracts',
-    onlyif: () => player.achievements[255] > 0
+    onlyif: () => G.challenge15Rewards.hepteractsUnlocked.value >= 1
   },
   singularityCount: {
     img: 'TinyS.png',

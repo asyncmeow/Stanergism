@@ -1,6 +1,6 @@
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
-import { achievementaward } from './Achievements'
+import { achievementManager, ungroupedNameMap } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { isShopTalismanUnlocked } from './Calculate'
 import { formatAsPercentIncrease } from './Campaign'
@@ -722,7 +722,7 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
     },
     minimalResetTier: 'ascension',
     isUnlocked: () => {
-      return player.achievements[119] === 1
+      return Boolean(achievementManager.getBonus('exemptionTalisman'))
     }
   },
   chronos: {
@@ -756,7 +756,7 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
     },
     minimalResetTier: 'ascension',
     isUnlocked: () => {
-      return player.achievements[126] === 1
+      return Boolean(achievementManager.getBonus('chronosTalisman'))
     }
   },
   midas: {
@@ -790,7 +790,7 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
     },
     minimalResetTier: 'ascension',
     isUnlocked: () => {
-      return player.achievements[133] === 1
+      return Boolean(achievementManager.getBonus('midasTalisman'))
     }
   },
   metaphysics: {
@@ -826,7 +826,7 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
     },
     minimalResetTier: 'ascension',
     isUnlocked: () => {
-      return player.achievements[140] === 1
+      return Boolean(achievementManager.getBonus('metaphysicsTalisman'))
     }
   },
   polymath: {
@@ -860,7 +860,7 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
     },
     minimalResetTier: 'ascension',
     isUnlocked: () => {
-      return player.achievements[147] === 1
+      return Boolean(achievementManager.getBonus('polymathTalisman'))
     }
   },
   mortuus: {
@@ -1305,8 +1305,8 @@ export const buyTalismanResources = (
     } else {
       player[`${type}s` as const] += talismanResourcesData.buyAmount
     }
-    if (type === 'mythicalFragment' && player.mythicalFragments >= 1e25 && player.achievements[239] < 1) {
-      achievementaward(239)
+    if (type === 'mythicalFragment' && player.mythicalFragments >= 1e25) {
+      achievementManager.tryUnlock(ungroupedNameMap.seeingRed)
     }
 
     player.obtainium = player.obtainium.sub(talismanResourcesData.obtainiumCost)

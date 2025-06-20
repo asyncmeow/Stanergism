@@ -414,7 +414,8 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     rewards: (n: number) => {
       const val = 1 + n / 500
       return {
-        desc: () => i18next.t('redAmbrosia.data.blueberryGenerationSpeed.effect', { amount: formatAsPercentIncrease(val) }),
+        desc: () =>
+          i18next.t('redAmbrosia.data.blueberryGenerationSpeed.effect', { amount: formatAsPercentIncrease(val) }),
         blueberryGenerationSpeed: val
       }
     },
@@ -470,10 +471,11 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     rewards: (n: number) => {
       const exponent = 0.4 + getRedAmbrosiaUpgrade('redAmbrosiaCubeImprover').bonus.extraExponent
       return {
-        desc: () => i18next.t('redAmbrosia.data.redAmbrosiaCube.effect', {
-          amount: n > 0,
-          exponent: format(exponent, 2, true)
-        }),
+        desc: () =>
+          i18next.t('redAmbrosia.data.redAmbrosiaCube.effect', {
+            amount: n > 0,
+            exponent: format(exponent, 2, true)
+          }),
         unlockedRedAmbrosiaCube: n
       }
     },
@@ -513,7 +515,8 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     rewards: (n: number) => {
       const val = 0.01 * n
       return {
-        desc: () => i18next.t('redAmbrosia.data.redAmbrosiaCubeImprover.effect', { newExponent: format(0.4 + val, 2, true) }),
+        desc: () =>
+          i18next.t('redAmbrosia.data.redAmbrosiaCubeImprover.effect', { newExponent: format(0.4 + val, 2, true) }),
         extraExponent: val
       }
     },
@@ -584,7 +587,8 @@ export const redAmbrosiaUpgradeData: { [K in RedAmbrosiaKeys]: IRedAmbrosiaData<
     rewards: (n: number) => {
       const val = 1 + n / 1000
       return {
-        desc: () => i18next.t('redAmbrosia.data.blueberryGenerationSpeed2.effect', { amount: formatAsPercentIncrease(val) }),
+        desc: () =>
+          i18next.t('redAmbrosia.data.blueberryGenerationSpeed2.effect', { amount: formatAsPercentIncrease(val) }),
         blueberryGenerationSpeed: val
       }
     },

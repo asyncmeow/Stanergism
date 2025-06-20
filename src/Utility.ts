@@ -35,13 +35,20 @@ export const sumContents = (array: number[]): number => {
   assert(Array.isArray(array))
 
   switch (array.length) {
-    case 0: return 0
-    case 1: return array[0]
-    case 2: return array[0] + array[1]
-    case 3: return array[0] + array[1] + array[2]
-    case 4: return array[0] + array[1] + array[2] + array[3]
-    case 5: return array[0] + array[1] + array[2] + array[3] + array[4]
-    default: return array.reduce((a, b) => a + b, 0)
+    case 0:
+      return 0
+    case 1:
+      return array[0]
+    case 2:
+      return array[0] + array[1]
+    case 3:
+      return array[0] + array[1] + array[2]
+    case 4:
+      return array[0] + array[1] + array[2] + array[3]
+    case 5:
+      return array[0] + array[1] + array[2] + array[3] + array[4]
+    default:
+      return array.reduce((a, b) => a + b, 0)
   }
 }
 
@@ -52,13 +59,20 @@ export const sumContents = (array: number[]): number => {
 // TODO: Add a productContents for Decimal, but callable using productContents...
 export const productContents = (array: number[]) => {
   switch (array.length) {
-    case 0: return 0
-    case 1: return array[0]
-    case 2: return array[0] * array[1]
-    case 3: return array[0] * array[1] * array[2]
-    case 4: return array[0] * array[1] * array[2] * array[3]
-    case 5: return array[0] * array[1] * array[2] * array[3] * array[4]
-    default: return array.reduce((a, b) => a * b)
+    case 0:
+      return 0
+    case 1:
+      return array[0]
+    case 2:
+      return array[0] * array[1]
+    case 3:
+      return array[0] * array[1] * array[2]
+    case 4:
+      return array[0] * array[1] * array[2] * array[3]
+    case 5:
+      return array[0] * array[1] * array[2] * array[3] * array[4]
+    default:
+      return array.reduce((a, b) => a * b)
   }
 }
 

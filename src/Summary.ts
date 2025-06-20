@@ -3,6 +3,7 @@
 import ClipboardJS from 'clipboard'
 import i18next from 'i18next'
 import { totalachievementpoints } from './Achievements'
+import type { BlueberryUpgradeNames } from './BlueberryUpgrades'
 import {
   calculateAscensionSpeedMult,
   calculateBlueberryInventory,
@@ -16,18 +17,17 @@ import { getMaxChallenges } from './Challenges'
 import { version } from './Config'
 import { getHepteract, type HepteractNames } from './Hepteracts'
 import { saveFilename } from './ImportExport'
+import type { OcteractDataKeys } from './Octeracts'
 import { getRedAmbrosiaUpgrade } from './RedAmbrosiaUpgrades'
 import { getRune, type RuneKeys } from './Runes'
 import { friendlyShopName, isShopUpgradeUnlocked, shopData, shopUpgradeTypes } from './Shop'
 import { calculateEffectiveSingularities, type SingularityDataKeys } from './singularity'
+import type { SingularityChallengeDataKeys } from './SingularityChallenges'
 import { format, player } from './Synergism'
 import type { Player } from './types/Synergism'
 import { Alert } from './UpdateHTML'
 import { formatS, sumContents } from './Utility'
 import { Globals as G } from './Variables'
-import type { BlueberryUpgradeNames } from './BlueberryUpgrades'
-import type { OcteractDataKeys } from './Octeracts'
-import type { SingularityChallengeDataKeys } from './SingularityChallenges'
 
 export const generateExportSummary = async (): Promise<void> => {
   const titleText = '===== SUMMARY STATS ====='

@@ -1,6 +1,6 @@
 import type { DecimalSource } from 'break_infinity.js'
 import Decimal from 'break_infinity.js'
-import { achievementaward } from './Achievements'
+import { achievementManager } from './Achievements'
 import { CalcECC } from './Challenges'
 import { reset } from './Reset'
 import { getRune, getRuneBlessing } from './Runes'
@@ -143,27 +143,7 @@ export const buyAccelerator = (autobuyer?: boolean) => {
   player.transcendnoaccelerator = false
   player.reincarnatenoaccelerator = false
   updateAllTick()
-  if (player.acceleratorBought >= 5 && player.achievements[148] === 0) {
-    achievementaward(148)
-  }
-  if (player.acceleratorBought >= 25 && player.achievements[149] === 0) {
-    achievementaward(149)
-  }
-  if (player.acceleratorBought >= 100 && player.achievements[150] === 0) {
-    achievementaward(150)
-  }
-  if (player.acceleratorBought >= 666 && player.achievements[151] === 0) {
-    achievementaward(151)
-  }
-  if (player.acceleratorBought >= 2000 && player.achievements[152] === 0) {
-    achievementaward(152)
-  }
-  if (player.acceleratorBought >= 12500 && player.achievements[153] === 0) {
-    achievementaward(153)
-  }
-  if (player.acceleratorBought >= 100000 && player.achievements[154] === 0) {
-    achievementaward(154)
-  }
+  achievementManager.tryUnlockByGroup('accelerators')
 }
 
 const getCostMultiplier = (buyingTo: number): Decimal => {
@@ -286,27 +266,7 @@ export const buyMultiplier = (autobuyer?: boolean) => {
   player.transcendnomultiplier = false
   player.reincarnatenomultiplier = false
   updateAllMultiplier()
-  if (player.multiplierBought >= 2 && player.achievements[155] === 0) {
-    achievementaward(155)
-  }
-  if (player.multiplierBought >= 20 && player.achievements[156] === 0) {
-    achievementaward(156)
-  }
-  if (player.multiplierBought >= 100 && player.achievements[157] === 0) {
-    achievementaward(157)
-  }
-  if (player.multiplierBought >= 500 && player.achievements[158] === 0) {
-    achievementaward(158)
-  }
-  if (player.multiplierBought >= 2000 && player.achievements[159] === 0) {
-    achievementaward(159)
-  }
-  if (player.multiplierBought >= 12500 && player.achievements[160] === 0) {
-    achievementaward(160)
-  }
-  if (player.multiplierBought >= 100000 && player.achievements[161] === 0) {
-    achievementaward(161)
-  }
+  achievementManager.tryUnlockByGroup('multipliers')
 }
 
 /*
@@ -835,27 +795,7 @@ export const boostAccelerator = (automated?: boolean) => {
   }
 
   G.ticker = 0
-  if (player.acceleratorBoostBought >= 2 && player.achievements[162] === 0) {
-    achievementaward(162)
-  }
-  if (player.acceleratorBoostBought >= 10 && player.achievements[163] === 0) {
-    achievementaward(163)
-  }
-  if (player.acceleratorBoostBought >= 50 && player.achievements[164] === 0) {
-    achievementaward(164)
-  }
-  if (player.acceleratorBoostBought >= 200 && player.achievements[165] === 0) {
-    achievementaward(165)
-  }
-  if (player.acceleratorBoostBought >= 1000 && player.achievements[166] === 0) {
-    achievementaward(166)
-  }
-  if (player.acceleratorBoostBought >= 5000 && player.achievements[167] === 0) {
-    achievementaward(167)
-  }
-  if (player.acceleratorBoostBought >= 15000 && player.achievements[168] === 0) {
-    achievementaward(168)
-  }
+  achievementManager.tryUnlockByGroup('acceleratorBoosts')
 }
 
 const getAcceleratorBoostCost = (level = 1): Decimal => {
@@ -1220,84 +1160,3 @@ export const buyTesseractBuilding = (index: OneToFive, amount = player.tesseract
   player.wowTesseracts.sub(actualCost)
   player[ascendBuildingIndex].cost = intCost * Math.pow(1 + buyTo, 3)
 }
-
-/*
-export const updateRuneBlessing = (type: 'Blessings' | 'Spirits', index: number) => {
-  if (index === 1) {
-    const requirementArray = [0, 1e5, 1e8, 1e11]
-    for (let i = 1; i <= 3; i++) {
-      if (player.runeBlessingLevels[1] >= requirementArray[i] && player.achievements[231 + i] < 1) {
-        achievementaward(231 + i)
-      }
-      if (player.runeSpiritLevels[1] >= 10 * requirementArray[i] && player.achievements[234 + i] < 1) {
-        achievementaward(234 + i)
-      }
-    }
-    if (player.runeBlessingLevels[1] >= 1e22 && player.achievements[245] < 1) {
-      achievementaward(245)
-    }
-  }
-
-  calculateRuneBonuses()
-
-  if (type === 'Blessings') {
-    const blessingMultiplierArray = [0, 8, 10, 6.66, 2, 1]
-    const t = (index === 5) ? 1 : 0
-    DOMCacheGetOrSet(`runeBlessingPower${index}Value1`).innerHTML = i18next.t('runes.blessings.blessingPower', {
-      reward: i18next.t(`runes.blessings.rewards.${index - 1}`),
-      value: format(G.runeBlessings[index]),
-      speed: format(1 - t + blessingMultiplierArray[index] * G.effectiveRuneBlessingPower[index], 4, true)
-    })
-  } else if (type === 'Spirits') {
-    const spiritMultiplierArray = [0, 1, 1, 20, 1, 100]
-    spiritMultiplierArray[index] *= player.corruptions.used.totalCorruptionDifficultyScore / 400
-    const t = (index === 3) ? 1 : 0
-
-    DOMCacheGetOrSet(`runeSpiritPower${index}Value1`).innerHTML = i18next.t('runes.spirits.spiritPower', {
-      reward: i18next.t(`runes.spirits.rewards.${index - 1}`),
-      value: format(G.runeSpirits[index]),
-      speed: format(1 - t + spiritMultiplierArray[index] * G.effectiveRuneSpiritPower[index], 4, true)
-    })
-  }
-}
-
-// WHY
-export const buyAllBlessings = (type: 'Blessings' | 'Spirits', percentage = 100, auto = false) => {
-  const unlocked = type === 'Spirits' ? player.challengecompletions[12] > 0 : player.achievements[134] === 1
-  if (unlocked) {
-    const runeshards = Decimal.floor(player.offerings.div(500).times(percentage))
-    for (let index = 1; index < 6; index++) {
-      if (player.offerings.gte(1)) {
-        let baseCost: number
-        let baseLevels: number
-        let levelCap: number
-        if (type === 'Spirits') {
-          baseCost = G.spiritBaseCost
-          baseLevels = player.runeSpiritLevels[index]
-          levelCap = Math.max(0, 1e150 - player.runeSpiritLevels[index])
-        } else {
-          baseCost = G.blessingBaseCost
-          baseLevels = player.runeBlessingLevels[index]
-          levelCap = Math.max(0, 1e150 - player.runeBlessingLevels[index])
-        }
-
-        const [level, cost] = calculateSummationLinearDecimal(new Decimal(baseLevels), new Decimal(baseCost), runeshards, new Decimal(levelCap))
-        if (level.toNumber() > baseLevels && (!auto || (level.toNumber() - baseLevels) * 10000 > baseLevels)) {
-          if (type === 'Spirits') {
-            player.runeSpiritLevels[index] = level.toNumber()
-          } else {
-            player.runeBlessingLevels[index] = level.toNumber()
-          }
-
-          player.offerings = player.offerings.sub(cost)
-
-          if (player.offerings.lt(0)) {
-            player.offerings = new Decimal(0)
-          }
-
-          updateRuneBlessing(type, index)
-        }
-      }
-    }
-  }
-} */

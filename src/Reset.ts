@@ -1,6 +1,6 @@
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
-import { achievementaward, achievementManager, challengeachievementcheck } from './Achievements'
+import { achievementManager, challengeAchievementCheck } from './Achievements'
 import type { BlueberryLoadoutMode } from './BlueberryUpgrades'
 import { buyTesseractBuilding, calculateTessBuildingsInBudget } from './Buy'
 import type { TesseractBuildings } from './Buy'
@@ -447,38 +447,41 @@ export const reset = (input: resetNames, fast = false, from = 'unknown') => {
 
     G.transcendPointGain = new Decimal('0')
 
-    if (player.achievements[78] > 0.5) {
+    if (achievementManager.getBonus('refineryAutobuy')) {
       player.firstOwnedDiamonds += 1
     }
-    if (player.achievements[85] > 0.5) {
+    if (achievementManager.getBonus('coalPlantAutobuy')) {
       player.secondOwnedDiamonds += 1
     }
-    if (player.achievements[92] > 0.5) {
+    if (achievementManager.getBonus('coalRigAutobuy')) {
       player.thirdOwnedDiamonds += 1
     }
-    if (player.achievements[99] > 0.5) {
+    if (achievementManager.getBonus('pickaxeAutobuy')) {
       player.fourthOwnedDiamonds += 1
     }
-    if (player.achievements[106] > 0.5) {
+    if (achievementManager.getBonus('pandorasBoxAutobuy')) {
       player.fifthOwnedDiamonds += 1
     }
 
-    if (player.achievements[4] > 0.5) {
+    if (achievementManager.getBonus('workerAutobuyer')) {
       player.upgrades[81] = 1
     }
-    if (player.achievements[11] > 0.5) {
+    if (achievementManager.getBonus('investmentAutobuyer')) {
       player.upgrades[82] = 1
     }
-    if (player.achievements[18] > 0.5) {
+    if (achievementManager.getBonus('printerAutobuyer')) {
       player.upgrades[83] = 1
     }
-    if (player.achievements[25] > 0.5) {
+    if (achievementManager.getBonus('mintAutobuyer')) {
       player.upgrades[84] = 1
     }
-    if (player.achievements[32] > 0.5) {
+    if (achievementManager.getBonus('alchemyAutobuyer')) {
       player.upgrades[85] = 1
     }
-    if (player.achievements[80] > 0.5) {
+    if (achievementManager.getBonus('accelAutobuyer')) {
+      player.upgrades[86] = 1
+    }
+    if (achievementManager.getBonus('multAutobuyer')) {
       player.upgrades[87] = 1
     }
 
@@ -896,32 +899,12 @@ export const reset = (input: resetNames, fast = false, from = 'unknown') => {
  * Computes which achievements in 274-280 are achievable given current singularity number
  */
 export const updateSingularityAchievements = (): void => {
-  if (player.highestSingularityCount >= 1) {
-    achievementaward(274)
-  }
-  if (player.highestSingularityCount >= 2) {
-    achievementaward(275)
-  }
-  if (player.highestSingularityCount >= 3) {
-    achievementaward(276)
-  }
-  if (player.highestSingularityCount >= 4) {
-    achievementaward(277)
-  }
-  if (player.highestSingularityCount >= 5) {
-    achievementaward(278)
-  }
-  if (player.highestSingularityCount >= 7) {
-    achievementaward(279)
-  }
-  if (player.highestSingularityCount >= 10) {
-    achievementaward(280)
-  }
+  achievementManager.tryUnlockByGroup('singularityCount')
 }
 
 export const updateSingularityMilestoneAwards = (singularityReset = true): void => {
   // 1 transcension, 1001 mythos
-  if (player.achievements[275] > 0) { // Singularity 2
+  if (player.highestSingularityCount >= 2) { // Singularity 2
     if (singularityReset) {
       player.prestigeCount = 1
       player.transcendCount = 1
@@ -935,13 +918,8 @@ export const updateSingularityMilestoneAwards = (singularityReset = true): void 
     player.unlocks.prestige = true
     player.unlocks.generation = true
     player.unlocks.transcend = true
-    for (let i = 0; i < 5; i++) {
-      achievementaward(4 + 7 * i)
-    }
-    achievementaward(36) // 1 prestige
-    achievementaward(43) // 1 transcension
   }
-  if (player.achievements[276] > 0) { // Singularity 3
+  if (player.highestSingularityCount >= 3) { // Singularity 3
     if (player.currentChallenge.ascension !== 12) {
       if (singularityReset) {
         player.reincarnationCount = 1
@@ -951,27 +929,8 @@ export const updateSingularityMilestoneAwards = (singularityReset = true): void 
     player.unlocks.reincarnate = true
     player.unlocks.rrow1 = true
     player.researches[47] = 1
-
-    for (let i = 0; i < 2; i++) {
-      for (let j = 0; j < 5; j++) {
-        achievementaward(78 + i + 7 * j)
-      }
-    }
-
-    for (let i = 0; i < 7; i++) {
-      achievementaward(57 + i)
-      achievementaward(64 + i)
-      achievementaward(71 + i)
-    }
-
-    achievementaward(37)
-    achievementaward(38)
-    achievementaward(44)
-    achievementaward(50)
-    achievementaward(80)
-    achievementaward(87)
   }
-  if (player.achievements[277] > 0) { // Singularity 4
+  if (player.highestSingularityCount >= 4) { // Singularity 4
     if (player.currentChallenge.ascension !== 14) {
       player.obtainium = new Decimal(Math.floor(
         500 * calculateSingularityDebuff('Researches')
@@ -982,27 +941,23 @@ export const updateSingularityMilestoneAwards = (singularityReset = true): void 
     }
     player.challengecompletions[6] = 1
     player.highestchallengecompletions[6] = 1
-    achievementaward(113)
   }
   const shopItemPerk_5 = ['offeringAuto', 'offeringEX', 'obtainiumAuto', 'obtainiumEX', 'antSpeed', 'cashGrab'] as const
-  const perk_5 = player.achievements[278] > 0
+  const perk_5 = player.highestSingularityCount >= 5
   if (perk_5 && singularityReset) { // Singularity 5
     for (const key of shopItemPerk_5) {
       player.shopUpgrades[key] = 10
     }
     player.cubeUpgrades[7] = 1
   }
-  if (player.achievements[279] > 0) { // Singularity 7
+  if (player.highestSingularityCount >= 7) { // Singularity 7
     player.challengecompletions[7] = 1
     player.highestchallengecompletions[7] = 1
-    achievementaward(120)
     if (player.currentChallenge.ascension !== 12) {
       player.reincarnationPoints = new Decimal('1e100')
     }
   }
-  if (player.achievements[280] > 0) { // Singularity 10
-    achievementaward(124)
-    achievementaward(127)
+  if (player.highestSingularityCount >= 10) { // Singularity 10
     player.challengecompletions[8] = 1
     player.highestchallengecompletions[8] = 1
     player.cubeUpgrades[8] = 1
@@ -1010,9 +965,6 @@ export const updateSingularityMilestoneAwards = (singularityReset = true): void 
     player.cubeUpgrades[5] = 1 // so they wont reset
     player.cubeUpgrades[6] = 1 // on first Ascension
     player.firstOwnedAnts = 1
-    for (let i = 0; i < 7; i++) {
-      achievementaward(176 + i)
-    }
   }
   if (player.highestSingularityCount > 10) { // Must be the same as autoResearchEnabled()
     player.cubeUpgrades[9] = 1
@@ -1038,7 +990,6 @@ export const updateSingularityMilestoneAwards = (singularityReset = true): void 
     ] as const
     player.challengecompletions[9] = 1
     player.highestchallengecompletions[9] = 1
-    achievementaward(134)
     player.antPoints = new Decimal('1e100')
     player.antUpgrades[11] = 1
     for (const key of shopItemPerk_20) {
@@ -1070,7 +1021,7 @@ export const updateSingularityMilestoneAwards = (singularityReset = true): void 
 
   if (singularityReset) {
     for (let j = 1; j <= 15; j++) {
-      challengeachievementcheck(j)
+      challengeAchievementCheck(j)
     }
   }
   resetUpgrades(3)
@@ -1091,7 +1042,7 @@ export const updateSingularityMilestoneAwards = (singularityReset = true): void 
 // updates singularity perks that do not get saved to player object
 // so that we can call on save load to fix game state
 export const updateSingularityGlobalPerks = () => {
-  const perk_5 = player.achievements[278] > 0
+  const perk_5 = player.highestSingularityCount >= 5
   const shopItemPerk_5 = ['offeringAuto', 'offeringEX', 'obtainiumAuto', 'obtainiumEX', 'antSpeed', 'cashGrab'] as const
   for (const key of shopItemPerk_5) {
     shopData[key].refundMinimumLevel = perk_5 ? 10 : key.endsWith('Auto') ? 1 : 0
@@ -1162,6 +1113,7 @@ export const singularity = (setSingNumber = -1) => {
   resetRuneBlessings('singularity')
   resetRuneSpirits('singularity')
   resetTalismans('singularity')
+  achievementManager.resetAchievements()
 
   player.goldenQuarks += calculateGoldenQuarks()
 
@@ -1196,6 +1148,8 @@ export const singularity = (setSingNumber = -1) => {
   changeSubTab(Tabs.Corruption, { page: 0 }) // set 'corruption main'
   changeSubTab(Tabs.Singularity, { page: 0 }) // set 'singularity main'
   changeSubTab(Tabs.Settings, { page: 0 }) // set 'statistics main'
+
+  hold.achievements = [...player.achievements]
 
   hold.history.singularity = player.history.singularity
   hold.totalQuarksEver = player.totalQuarksEver
@@ -1400,22 +1354,19 @@ const resetUpgrades = (i: number) => {
       player.upgrades[46] = 0
     }
 
-    if (player.researches[41] < 0.5) {
+    if (player.researches[41] === 0) {
       player.upgrades[88] = 0
     }
-    if (player.achievements[50] === 0) {
-      player.upgrades[89] = 0
-    }
-    if (player.researches[42] < 0.5) {
+    if (player.researches[42] === 0) {
       player.upgrades[90] = 0
     }
-    if (player.researches[43] < 0.5) {
+    if (player.researches[43] === 0) {
       player.upgrades[91] = 0
     }
-    if (player.researches[44] < 0.5) {
+    if (player.researches[44] === 0) {
       player.upgrades[92] = 0
     }
-    if (player.researches[45] < 0.5) {
+    if (player.researches[45] === 0) {
       player.upgrades[93] = 0
     }
 
@@ -1437,28 +1388,27 @@ const resetUpgrades = (i: number) => {
   }
 
   if (i > 1.5) {
-    if (player.achievements[4] < 0.5) {
+    if (!achievementManager.getBonus('workerAutobuyer')) {
       player.upgrades[81] = 0
     }
-    if (player.achievements[11] < 0.5) {
+    if (!achievementManager.getBonus('investmentAutobuyer')) {
       player.upgrades[82] = 0
     }
-    if (player.achievements[18] < 0.5) {
+    if (!achievementManager.getBonus('printerAutobuyer')) {
       player.upgrades[83] = 0
     }
-    if (player.achievements[25] < 0.5) {
+    if (!achievementManager.getBonus('mintAutobuyer')) {
       player.upgrades[84] = 0
     }
-    if (player.achievements[32] < 0.5) {
+    if (!achievementManager.getBonus('alchemyAutobuyer')) {
       player.upgrades[85] = 0
     }
-    if (player.achievements[87] < 0.5) {
+    if (!achievementManager.getBonus('accelAutobuyer')) {
       player.upgrades[86] = 0
     }
-    if (player.achievements[80] < 0.5) {
+    if (!achievementManager.getBonus('multAutobuyer')) {
       player.upgrades[87] = 0
     }
-
     player.upgrades[101] = 0
     player.upgrades[102] = 0
     player.upgrades[103] = 0
@@ -1489,10 +1439,6 @@ const resetUpgrades = (i: number) => {
       m += 10
     }
     player.crystalUpgrades = [m, m, m, m, m, m, m, m]
-  }
-
-  if (player.achievements[87] > 0.5) {
-    player.upgrades[86] = 1
   }
 
   for (let x = 1; x <= 125; x++) {

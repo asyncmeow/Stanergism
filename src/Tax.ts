@@ -3,7 +3,7 @@ import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
 
 import Decimal from 'break_infinity.js'
-import { achievementaward } from './Achievements'
+import { achievementManager, ungroupedNameMap } from './Achievements'
 import { CalcECC } from './Challenges'
 import { getRune } from './Runes'
 import { getTalisman } from './Talismans'
@@ -81,21 +81,10 @@ export const calculatetax = () => {
   exponent *= exp
   exponent *= 1 - 1 / 20 * player.researches[51] - 1 / 40 * player.researches[52] - 1 / 80 * player.researches[53]
     - 1 / 160 * player.researches[54] - 1 / 320 * player.researches[55]
-  exponent *= 1
-    - 0.05 / 1800 * (player.achievements[45] + player.achievements[46] + 2 * player.achievements[47])
-      * Math.min(player.prestigecounter, 1800)
+  exponent *= +achievementManager.getBonus('taxReduction')
   exponent *= Math.pow(0.965, CalcECC('reincarnation', player.challengecompletions[6]))
   exponent *= getRune('duplication').bonus.taxReduction
   exponent *= getRune('thrift').bonus.taxReduction
-  exponent *= 1 - 0.04 * player.achievements[82] - 0.04 * player.achievements[89] - 0.04 * player.achievements[96]
-    - 0.04 * player.achievements[103] - 0.04 * player.achievements[110] - 0.0566 * player.achievements[117]
-    - 0.0566 * player.achievements[124] - 0.0566 * player.achievements[131]
-  exponent *= Math.pow(
-    0.9925,
-    player.achievements[118]
-      * (player.challengecompletions[6] + player.challengecompletions[7] + player.challengecompletions[8]
-        + player.challengecompletions[9] + player.challengecompletions[10])
-  )
   exponent *= 0.005 + 0.995 * Math.pow(0.99, player.antUpgrades[2]! + G.bonusant3)
   exponent *= 1
     / Math.pow(
@@ -129,12 +118,12 @@ export const calculatetax = () => {
   G.maxexponent = Math.floor(275 / (Decimal.log(1.01, 10) * exponent)) - 1
   const a2 = Math.min(G.maxexponent, Math.floor(Decimal.log(G.produceTotal.add(1), 10)))
 
-  if (player.currentChallenge.ascension === 13 && G.maxexponent <= 99999 && player.achievements[249] < 1) {
+  if (player.currentChallenge.ascension === 13 && G.maxexponent <= 99999) {
     // i don't think it makes sense to give the achievement as soon as the challenge is opened
     // as soon as the challenge is opened you don't have enough tax reducers to have max exponent above 100000
     // so for the achievement description to make sense i think it should require at least 1 challenge completion || Dorijanko
     if (c13effcompletions >= 1) {
-      achievementaward(249)
+      achievementManager.tryUnlock(ungroupedNameMap.overtaxed)
     }
   }
 

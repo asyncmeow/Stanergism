@@ -1,4 +1,5 @@
 import i18next from 'i18next'
+import { achievementManager } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { campaignTokenRewardHTMLUpdate, formatAsPercentIncrease } from './Campaign'
 import type { IUpgradeData } from './DynamicUpgrade'
@@ -1035,14 +1036,16 @@ export const singularityData: Record<
     effect: (n: number) => {
       const corruptions = player.corruptions.used
       const octMult = Object.values(corruptions.loadout).reduce(
-        (acc, curr) => acc * (curr === 16 ? 1.4 : (curr === 15 ? 1.3 : (curr === 14 ? 1.25 : 1))) , 1)
+        (acc, curr) => acc * (curr === 16 ? 1.4 : (curr === 15 ? 1.3 : (curr === 14 ? 1.25 : 1))),
+        1
+      )
       return {
         bonus: octMult,
         desc: () => {
           return i18next.t(
             `singularity.data.divinePack.effect${n > 0 ? 'Have' : 'HaveNot'}`,
             {
-              n: formatAsPercentIncrease(octMult, 0),
+              n: formatAsPercentIncrease(octMult, 0)
             }
           )
         }
@@ -2747,7 +2750,7 @@ export const getGoldenQuarkCost = (): {
 
   let costReduction = 10000 // We will construct our cost reduction by subtracting 10000 - this value.
 
-  costReduction *= 1 - 0.1 * Math.min(1, player.achievementPoints / 10000)
+  costReduction *= achievementManager.goldQuarkDiscountMultiplier
   costReduction *= 1 - (0.3 * player.cubeUpgrades[60]) / 10000
   costReduction *= +player.singularityUpgrades.goldenQuarks2.getEffect().bonus
   costReduction *= +player.octeractUpgrades.octeractGQCostReduce.getEffect().bonus

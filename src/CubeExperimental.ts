@@ -6,9 +6,8 @@ file without asking me first. You may edit this file as much as you
 want, though!
 Thank you! */
 
-import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
-import { achievementaward } from './Achievements'
+import { achievementManager, ungroupedNameMap } from './Achievements'
 import { calculateCubeBlessings } from './Calculate'
 import { CalcECC } from './Challenges'
 import { calculateHypercubeBlessings } from './Hypercubes'
@@ -178,8 +177,8 @@ export class WowCubes extends Cube {
   open (value: number, max = false, free = false) {
     let toSpend = max ? Number(this) : (free ? value : Math.min(Number(this), value))
 
-    if (value === 1 && player.cubeBlessings.accelerator >= 2e11 && player.achievements[246] < 1) {
-      achievementaward(246)
+    if (value === 1 && player.cubeBlessings.accelerator >= 2e11) {
+      achievementManager.tryUnlock(ungroupedNameMap.oneCubeOfMany)
     }
 
     if (!free) {
@@ -382,9 +381,11 @@ export class WowPlatonicCubes extends Cube {
       }
     }
     calculatePlatonicBlessings()
-    if (player.achievements[271] > 0) {
+
+    const hyperCubesPerPlatonic = +achievementManager.getBonus('platonicToHypercubes')
+    if (hyperCubesPerPlatonic > 0) {
       const extraHypercubes = Math.floor(
-        toSpend * Math.max(0, Math.min(1, (Decimal.log(player.ascendShards.add(1), 10) - 1e5) / 9e5))
+        toSpend * hyperCubesPerPlatonic
       )
       player.wowHypercubes.open(extraHypercubes, false, true)
     }

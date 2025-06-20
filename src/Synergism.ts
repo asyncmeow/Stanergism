@@ -18,14 +18,14 @@ import { btoa, cleanString, isDecimal, sortWithIndices, sumContents } from './Ut
 import { blankGlobals, Globals as G } from './Variables'
 
 import {
-  achievementaward,
   achievementManager,
   type AchievementRewards,
   buildingAchievementCheck,
-  challengeachievementcheck,
+  challengeAchievementCheck,
   getAchieveReward,
   numAchievements,
-  resetAchievementCheck
+  resetAchievementCheck,
+  ungroupedNameMap
 } from './Achievements'
 import { antSacrificePointsToMultiplier, autoBuyAnts, calculateCrumbToCoinExp } from './Ants'
 import { autoUpgrades } from './Automation'
@@ -190,7 +190,11 @@ import { initRedAmbrosiaUpgrades } from './RedAmbrosiaUpgrades'
 import { playerJsonSchema } from './saves/PlayerJsonSchema'
 import { playerUpdateVarSchema } from './saves/PlayerUpdateVarSchema'
 import { getFastForwardTotalMultiplier, singularityData, SingularityUpgrade } from './singularity'
-import { SingularityChallenge, singularityChallengeData, type SingularityChallengeDataKeys } from './SingularityChallenges'
+import {
+  SingularityChallenge,
+  singularityChallengeData,
+  type SingularityChallengeDataKeys
+} from './SingularityChallenges'
 import { changeSubTab, changeTab, getActiveSubTab, Tabs } from './Tabs'
 import { settingAnnotation, toggleIconSet, toggleTheme } from './Themes'
 import { clearTimeout, clearTimers, setInterval, setTimeout } from './Timers'
@@ -1937,29 +1941,6 @@ const loadSynergy = () => {
         0,
         0
       )
-      player.achievements.push(
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      )
       player.researches[50] = 0
     }
 
@@ -2072,7 +2053,6 @@ const loadSynergy = () => {
       player.eighthCostAnts = new Decimal('1e300')
       player.eighthProduceAnts = 0.00000001
 
-      player.achievements.push(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
       player.antPoints = new Decimal('1')
 
       player.upgrades[38] = 0
@@ -2276,9 +2256,6 @@ const loadSynergy = () => {
       )
     }
 
-    while (typeof player.achievements[252] === 'undefined') {
-      player.achievements.push(0)
-    }
     while (typeof player.researches[200] === 'undefined') {
       player.researches.push(0)
     }
@@ -3417,30 +3394,7 @@ export const updateAllTick = (): void => {
       Math.floor(Decimal.log(player.transcendShards.add(1), 10))
     )
   }
-  if (player.achievements[5] !== 0) {
-    a += Math.floor(player.firstOwnedCoin / 500)
-  }
-  if (player.achievements[12] !== 0) {
-    a += Math.floor(player.secondOwnedCoin / 500)
-  }
-  if (player.achievements[19] !== 0) {
-    a += Math.floor(player.thirdOwnedCoin / 500)
-  }
-  if (player.achievements[26] !== 0) {
-    a += Math.floor(player.fourthOwnedCoin / 500)
-  }
-  if (player.achievements[33] !== 0) {
-    a += Math.floor(player.fifthOwnedCoin / 500)
-  }
-  if (player.achievements[60] !== 0) {
-    a += 2
-  }
-  if (player.achievements[61] !== 0) {
-    a += 2
-  }
-  if (player.achievements[62] !== 0) {
-    a += 2
-  }
+  a += +achievementManager.getBonus('accelerators')
 
   a += 5 * CalcECC('transcend', player.challengecompletions[2])
   G.freeUpgradeAccelerator = a
@@ -3486,12 +3440,7 @@ export const updateAllTick = (): void => {
     G.tuSevenMulti = 1.05
   }
 
-  let achievementBonus = 0
-  for (let i = 1; i <= 5; i++) {
-    if (player.achievements[7 * i - 4] > 0) {
-      achievementBonus += 0.0005 * (i + 1)
-    }
-  }
+  const achievementBonus = +achievementManager.getBonus('acceleratorPower')
 
   G.acceleratorPower = Math.pow(
     1.1
@@ -3598,39 +3547,13 @@ export const updateAllMultiplier = (): void => {
   if (player.challengecompletions[1] > 0) {
     a += 1
   }
-  if (player.achievements[6] > 0.5) {
-    a += Math.floor(player.firstOwnedCoin / 1000)
-  }
-  if (player.achievements[13] > 0.5) {
-    a += Math.floor(player.secondOwnedCoin / 1000)
-  }
-  if (player.achievements[20] > 0.5) {
-    a += Math.floor(player.thirdOwnedCoin / 1000)
-  }
-  if (player.achievements[27] > 0.5) {
-    a += Math.floor(player.fourthOwnedCoin / 1000)
-  }
-  if (player.achievements[34] > 0.5) {
-    a += Math.floor(player.fifthOwnedCoin / 1000)
-  }
-  if (player.achievements[57] > 0.5) {
-    a += 1
-  }
-  if (player.achievements[58] > 0.5) {
-    a += 1
-  }
-  if (player.achievements[59] > 0.5) {
-    a += 1
-  }
+
+  a += +achievementManager.getBonus('multipliers')
   a += 20
     * player.researches[94]
     * Math.floor(sumOfRuneLevels() / 8)
 
   G.freeUpgradeMultiplier = Math.min(1e100, a)
-
-  a *= 1 + player.achievements[57] / 100
-  a *= 1 + player.achievements[58] / 100
-  a *= 1 + player.achievements[59] / 100
   a *= Math.pow(
     1.01,
     player.upgrades[21]
@@ -3953,19 +3876,12 @@ export const multipliers = (): void => {
   }
 
   G.globalCrystalMultiplier = new Decimal(1)
-  if (player.achievements[36] > 0.5) {
-    G.globalCrystalMultiplier = G.globalCrystalMultiplier.times(2)
-  }
-  if (player.achievements[37] > 0.5 && player.prestigePoints.gte(10)) {
-    G.globalCrystalMultiplier = G.globalCrystalMultiplier.times(
-      Decimal.log(player.prestigePoints.add(1), 10)
-    )
-  }
-  if (player.achievements[44] > 0.5) {
-    G.globalCrystalMultiplier = G.globalCrystalMultiplier.times(
-      Decimal.pow(10, getRune('prism').bonus.productionLog10)
-    )
-  }
+  G.globalCrystalMultiplier = G.globalCrystalMultiplier.times(
+    +achievementManager.getBonus('crystalMultiplier')
+  )
+  G.globalCrystalMultiplier = G.globalCrystalMultiplier.times(
+    Decimal.pow(10, getRune('prism').bonus.productionLog10)
+  )
   if (player.upgrades[36] > 0.5) {
     G.globalCrystalMultiplier = G.globalCrystalMultiplier.times(
       Decimal.min('1e5000', Decimal.pow(player.prestigePoints, 1 / 500))
@@ -4126,7 +4042,7 @@ export const multipliers = (): void => {
   G.globalConstantMult = G.globalConstantMult.times(
     Decimal.pow(
       1.05
-        + 0.01 * player.achievements[270]
+        + +achievementManager.getBonus('constUpgrade1Buff')
         + 0.001 * player.platonicUpgrades[18],
       player.constantUpgrades[1]
     )
@@ -4137,7 +4053,7 @@ export const multipliers = (): void => {
         + 0.001
           * Math.min(
             100
-              + 10 * player.achievements[270]
+              + 1000 * +achievementManager.getBonus('constUpgrade2Buff')
               + 10 * player.shopUpgrades.constantEX
               + 1000 * (G.challenge15Rewards.exponent.value - 1)
               + 3 * player.platonicUpgrades[18],
@@ -4410,7 +4326,7 @@ export const resourceGain = (dt: number): void => {
     )
   ) {
     player.challengecompletions[1] += 1
-    challengeachievementcheck(1, true)
+    challengeAchievementCheck(1)
     updateChallengeLevel(1)
   }
   if (
@@ -4430,7 +4346,7 @@ export const resourceGain = (dt: number): void => {
     )
   ) {
     player.challengecompletions[2] += 1
-    challengeachievementcheck(2, true)
+    challengeAchievementCheck(2)
     updateChallengeLevel(2)
   }
   if (
@@ -4450,7 +4366,7 @@ export const resourceGain = (dt: number): void => {
     )
   ) {
     player.challengecompletions[3] += 1
-    challengeachievementcheck(3, true)
+    challengeAchievementCheck(3)
     updateChallengeLevel(3)
   }
   if (
@@ -4470,7 +4386,7 @@ export const resourceGain = (dt: number): void => {
     )
   ) {
     player.challengecompletions[4] += 1
-    challengeachievementcheck(4, true)
+    challengeAchievementCheck(4)
     updateChallengeLevel(4)
   }
   if (
@@ -4490,7 +4406,7 @@ export const resourceGain = (dt: number): void => {
     )
   ) {
     player.challengecompletions[5] += 1
-    challengeachievementcheck(5, true)
+    challengeAchievementCheck(5)
     updateChallengeLevel(5)
   }
 
@@ -4545,7 +4461,7 @@ export const resourceGain = (dt: number): void => {
         ) as number)
     ) {
       void resetCheck('ascensionChallenge', false)
-      challengeachievementcheck(ascendchal, true)
+      challengeAchievementCheck(ascendchal)
     }
   }
   if (ascendchal === 15) {
@@ -4559,6 +4475,7 @@ export const resourceGain = (dt: number): void => {
       )
     ) {
       void resetCheck('ascensionChallenge', false)
+      challengeAchievementCheck(15)
     }
   }
 }
@@ -4616,20 +4533,9 @@ export const updateAntMultipliers = (): void => {
     Decimal.pow(1.1, CalcECC('reincarnation', player.challengecompletions[9]))
   )
   G.globalAntMult = G.globalAntMult.times(G.cubeBonusMultiplier[6])
-  if (player.achievements[169] === 1) {
-    G.globalAntMult = G.globalAntMult.times(
-      Decimal.log(player.antPoints.add(10), 10)
-    )
-  }
-  if (player.achievements[171] === 1) {
-    G.globalAntMult = G.globalAntMult.times(1.16666)
-  }
-  if (player.achievements[172] === 1) {
-    G.globalAntMult = G.globalAntMult.times(
-      1
-        + 2 * (1 - Math.pow(2, -Math.min(1, player.reincarnationcounter / 7200)))
-    )
-  }
+  G.globalAntMult = G.globalAntMult.times(
+    +achievementManager.getBonus('antSpeed')
+  )
   if (player.upgrades[39] === 1) {
     G.globalAntMult = G.globalAntMult.times(1.6)
   }
@@ -4700,7 +4606,8 @@ export const updateAntMultipliers = (): void => {
   ) {
     G.globalAntMult = Decimal.pow(G.globalAntMult, 1.25)
   }
-  if (player.achievements[274] > 0) {
+
+  if (player.highestSingularityCount >= 1) {
     G.globalAntMult = G.globalAntMult.times(4.44)
   }
 
@@ -4731,7 +4638,9 @@ export const updateAntMultipliers = (): void => {
   }
 
   if (player.singularityChallenges.noOfferingPower.enabled) {
-    G.globalAntMult = G.globalAntMult.times(1e10 * Math.pow(2, -player.singularityChallenges.noOfferingPower.completions))
+    G.globalAntMult = G.globalAntMult.times(
+      1e10 * Math.pow(2, -player.singularityChallenges.noOfferingPower.completions)
+    )
   }
 }
 
@@ -4849,9 +4758,9 @@ export const resetCurrency = (): void => {
   if (player.currentChallenge.reincarnation !== 0) {
     G.reincarnationPointGain = Decimal.pow(G.reincarnationPointGain, 0.01)
   }
-  if (player.achievements[50] === 1) {
-    G.reincarnationPointGain = G.reincarnationPointGain.times(2)
-  }
+  G.reincarnationPointGain = G.reincarnationPointGain.times(
+    +achievementManager.getBonus('particleGain')
+  )
   if (player.upgrades[65] > 0.5) {
     G.reincarnationPointGain = G.reincarnationPointGain.times(5)
   }
@@ -4934,7 +4843,7 @@ export const resetCheck = async (
       }
       calculateCubeBlessings()
     }
-    challengeachievementcheck(q)
+    challengeAchievementCheck(q)
     if (
       !player.retrychallenges
       || manual
@@ -5019,7 +4928,7 @@ export const resetCheck = async (
       calculateTesseractBlessings()
       calculateCubeBlessings()
     }
-    challengeachievementcheck(q)
+    challengeAchievementCheck(q)
     if (
       !player.retrychallenges
       || manual
@@ -5044,7 +4953,7 @@ export const resetCheck = async (
 
   if (i === 'ascension') {
     if (
-      player.achievements[141] > 0
+      Boolean(achievementManager.getBonus('ascensionUnlock'))
       && (!player.toggles[31] || player.challengecompletions[10] > 0)
     ) {
       if (manual) {
@@ -5080,7 +4989,7 @@ export const resetCheck = async (
         updateChallengeLevel(a)
         challengeDisplay(a, false)
       }
-      challengeachievementcheck(a, true)
+      challengeAchievementCheck(a)
     }
     if (a === 15) {
       const c15SM = challenge15ScoreMultiplier()
@@ -5295,34 +5204,10 @@ export const updateAll = (): void => {
     player.unlocks.coinfour = true
     revealStuff()
   }
-  if (player.achievements[169] === 0 && player.antPoints.gte(3)) {
-    achievementaward(169)
-  }
-  if (player.achievements[170] === 0 && player.antPoints.gte(1e5)) {
-    achievementaward(170)
-  }
-  if (player.achievements[171] === 0 && player.antPoints.gte(666666666)) {
-    achievementaward(171)
-  }
-  if (player.achievements[172] === 0 && player.antPoints.gte(1e20)) {
-    achievementaward(172)
-  }
-  if (player.achievements[173] === 0 && player.antPoints.gte(1e40)) {
-    achievementaward(173)
-  }
-  if (player.achievements[174] === 0 && player.antPoints.gte('1e500')) {
-    achievementaward(174)
-  }
-  if (player.achievements[175] === 0 && player.antPoints.gte('1e2500')) {
-    achievementaward(175)
-  }
 
-  if (player.researches[200] >= 1e5 && player.achievements[250] < 1) {
-    achievementaward(250)
-  }
-  if (player.cubeUpgrades[50] >= 1e5 && player.achievements[251] < 1) {
-    achievementaward(251)
-  }
+  achievementManager.tryUnlockByGroup('antCrumbs')
+  achievementManager.tryUnlock(ungroupedNameMap.thousandSuns)
+  achievementManager.tryUnlock(ungroupedNameMap.thousandMoons)
 
   // Autobuy "Upgrades" Tab
   autoUpgrades()
@@ -5390,35 +5275,35 @@ export const updateAll = (): void => {
 
   if (
     player.toggles[10]
-    && player.achievements[78] === 1
+    && Boolean(achievementManager.getBonus('refineryAutobuy'))
     && player.prestigePoints.gte(player.firstCostDiamonds)
   ) {
     buyMax(1, 'Diamonds')
   }
   if (
     player.toggles[11]
-    && player.achievements[85] === 1
+    && Boolean(achievementManager.getBonus('coalPlantAutobuy'))
     && player.prestigePoints.gte(player.secondCostDiamonds)
   ) {
     buyMax(2, 'Diamonds')
   }
   if (
     player.toggles[12]
-    && player.achievements[92] === 1
+    && Boolean(achievementManager.getBonus('coalRigAutobuy'))
     && player.prestigePoints.gte(player.thirdCostDiamonds)
   ) {
     buyMax(3, 'Diamonds')
   }
   if (
     player.toggles[13]
-    && player.achievements[99] === 1
+    && Boolean(achievementManager.getBonus('pickaxeAutobuy'))
     && player.prestigePoints.gte(player.fourthCostDiamonds)
   ) {
     buyMax(4, 'Diamonds')
   }
   if (
     player.toggles[14]
-    && player.achievements[106] === 1
+    && Boolean(achievementManager.getBonus('pandorasBoxAutobuy'))
     && player.prestigePoints.gte(player.fifthCostDiamonds)
   ) {
     buyMax(5, 'Diamonds')
@@ -5434,7 +5319,7 @@ export const updateAll = (): void => {
     c += 10
   }
   if (
-    player.achievements[79] > 0.5
+    Boolean(achievementManager.getBonus('crystalUpgrade1Autobuy'))
     && player.prestigeShards.gte(
       Decimal.pow(
         10,
@@ -5447,7 +5332,7 @@ export const updateAll = (): void => {
     buyCrystalUpgrades(1, true)
   }
   if (
-    player.achievements[86] > 0.5
+    Boolean(achievementManager.getBonus('crystalUpgrade2Autobuy'))
     && player.prestigeShards.gte(
       Decimal.pow(
         10,
@@ -5460,7 +5345,7 @@ export const updateAll = (): void => {
     buyCrystalUpgrades(2, true)
   }
   if (
-    player.achievements[93] > 0.5
+    Boolean(achievementManager.getBonus('crystalUpgrade3Autobuy'))
     && player.prestigeShards.gte(
       Decimal.pow(
         10,
@@ -5473,7 +5358,7 @@ export const updateAll = (): void => {
     buyCrystalUpgrades(3, true)
   }
   if (
-    player.achievements[100] > 0.5
+    Boolean(achievementManager.getBonus('crystalUpgrade4Autobuy'))
     && player.prestigeShards.gte(
       Decimal.pow(
         10,
@@ -5486,7 +5371,7 @@ export const updateAll = (): void => {
     buyCrystalUpgrades(4, true)
   }
   if (
-    player.achievements[107] > 0.5
+    Boolean(achievementManager.getBonus('crystalUpgrade5Autobuy'))
     && player.prestigeShards.gte(
       Decimal.pow(
         10,
@@ -5657,14 +5542,7 @@ export const updateAll = (): void => {
     )
   }
   let p = 1
-  p += (1 / 100)
-    * (player.achievements[71]
-      + player.achievements[72]
-      + player.achievements[73]
-      + player.achievements[74]
-      + player.achievements[75]
-      + player.achievements[76]
-      + player.achievements[77])
+  p += +achievementManager.getBonus('conversionExponent')
 
   let a = 0
   if (player.upgrades[106] > 0.5) {
@@ -5962,7 +5840,7 @@ const tack = (dt: number) => {
     }
 
     // Triggers automatic ant sacrifice (adds milliseonds to payload timers)
-    if (player.achievements[173] === 1) {
+    if (achievementManager.getBonus('antSacrificeUnlock')) {
       automaticTools('antSacrifice', dt)
     }
 
@@ -6015,7 +5893,7 @@ const tack = (dt: number) => {
   if (player.resettoggle1 === 1 || player.resettoggle1 === 0) {
     if (
       player.toggles[15]
-      && player.achievements[43] === 1
+      && Boolean(achievementManager.getBonus('autoPrestigeFeature'))
       && G.prestigePointGain.gte(
         player.prestigePoints.times(Decimal.pow(10, player.prestigeamount))
       )
@@ -6030,7 +5908,7 @@ const tack = (dt: number) => {
     const time = Math.max(0.01, player.prestigeamount)
     if (
       player.toggles[15]
-      && player.achievements[43] === 1
+      && Boolean(achievementManager.getBonus('autoPrestigeFeature'))
       && G.autoResetTimers.prestige >= time
       && player.coinsThisPrestige.gte(1e16)
     ) {
@@ -6300,11 +6178,10 @@ export const reloadShit = (reset = false) => {
   initHepteracts(player.hepteracts)
 
   achievementManager.updateAchievements(player.achievements)
-  
+
   for (const k of Object.keys(getAchieveReward) as AchievementRewards[]) {
     console.log(`Applying reward ${k}: `, achievementManager.getBonus(k))
   }
-
 
   if (!reset) {
     calculateOffline()

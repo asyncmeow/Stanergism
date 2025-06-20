@@ -62,6 +62,7 @@ import {
   updateSaveString
 } from './ImportExport'
 import { exitFastForward, getTips, sendToWebsocket, setTips } from './Login'
+import type { OcteractDataKeys } from './Octeracts'
 import { buyPlatonicUpgrades, createPlatonicDescription } from './Platonic'
 import { displayRedAmbrosiaLevels, getRedAmbrosiaUpgrade, resetRedAmbrosiaDisplay } from './RedAmbrosiaUpgrades'
 import { buyResearch, researchDescriptions } from './Research'
@@ -80,6 +81,7 @@ import {
 } from './Runes'
 import { buyShopUpgrades, resetShopUpgrades, shopData, shopDescriptions, shopUpgradeTypes, useConsumable } from './Shop'
 import { buyGoldenQuarks, getLastUpgradeInfo, type SingularityDataKeys, singularityPerks } from './singularity'
+import type { SingularityChallengeDataKeys } from './SingularityChallenges'
 import { displayStats } from './Statistics'
 import { generateExportSummary } from './Summary'
 import { player, resetCheck, saveSynergy } from './Synergism'
@@ -137,8 +139,6 @@ import {
   upgradedescriptions
 } from './Upgrades'
 import { Globals as G } from './Variables'
-import type { OcteractDataKeys } from './Octeracts'
-import type { SingularityChallengeDataKeys } from './SingularityChallenges'
 
 /* STYLE GUIDE */
 /*
