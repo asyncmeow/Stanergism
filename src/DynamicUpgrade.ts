@@ -1,9 +1,9 @@
 import i18next from 'i18next'
 import { format } from './Synergism'
-import { Alert, Prompt } from './UpdateHTML'
 
-console.log('DynamicUpgrade.ts loaded')
-console.log('DynamicUpgrade.ts loaded', new Date().toLocaleTimeString())
+// This is lazily loaded to prevent circular imports.
+// https://github.com/evanw/esbuild/releases/tag/v0.19.0
+const UpdateHTML = import('./UpdateHTML')
 
 export interface IUpgradeData {
   name: string
@@ -38,6 +38,8 @@ export abstract class DynamicUpgrade {
   }
 
   public async changeToggle (): Promise<void> {
+    const { Alert, Prompt } = await UpdateHTML
+
     // Is null unless given an explicit number
     const newToggle = await Prompt(i18next.t('dynamicUpgrades.validation.setPurchaseAmount', { x: this.name }))
     const newToggleAmount = Number(newToggle)
