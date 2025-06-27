@@ -2846,7 +2846,9 @@ const associated = new Map<string, string>([
 ])
 
 export const displayStats = (btn: HTMLElement) => {
-  for (const e of Array.from(btn.parentElement!.children) as HTMLElement[]) {
+  const children = btn.parentElement ? Array.from(btn.parentElement.querySelectorAll('.statsNerds')) : []
+
+  for (const e of children as HTMLElement[]) {
     const statsEl = DOMCacheGetOrSet(associated.get(e.id)!)
     if (e.id !== btn.id) {
       e.style.backgroundColor = ''
