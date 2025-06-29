@@ -7,7 +7,7 @@ import { CalcECC } from './Challenges'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { getRune, resetTiers, type RuneKeys } from './Runes'
 import { allTalismanRuneBonusStats } from './Statistics'
-import { format, player, formatAsPercentIncrease } from './Synergism'
+import { format, formatAsPercentIncrease, player } from './Synergism'
 
 interface TalismanFragmentCost {
   obtainium: number

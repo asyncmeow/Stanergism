@@ -1,4 +1,5 @@
 import type Decimal from 'break_infinity.js'
+import type { ProgressiveAchievements } from '../Achievements'
 import type { BlueberryLoadoutMode, BlueberryOpt, BlueberryUpgrade, BlueberryUpgradeNames } from '../BlueberryUpgrades'
 import type { CampaignManager } from '../Campaign'
 import type { Challenge15RewardObject, Challenge15Rewards } from '../Challenges'
@@ -261,6 +262,7 @@ export interface Player {
     rrow4: boolean
   }
   achievements: number[]
+  progressiveAchievements: Record<ProgressiveAchievements, number>
 
   achievementPoints: number
 

@@ -1,7 +1,7 @@
 import i18next from 'i18next'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { DynamicUpgrade, type IUpgradeData } from './DynamicUpgrade'
-import { format, player, formatAsPercentIncrease } from './Synergism'
+import { format, formatAsPercentIncrease, player } from './Synergism'
 import { Alert, Prompt } from './UpdateHTML'
 import { visualUpdateAmbrosia } from './UpdateVisuals'
 

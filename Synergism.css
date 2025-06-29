@@ -1123,6 +1123,46 @@ p#promocodeinfo {
     justify-content: center;
 }
 
+#tieredAchievementsTable {
+    display: grid;
+    grid-template-columns: repeat(8, 48px);
+    grid-template-rows: repeat(5, 48px);
+    gap: 2px 2px;
+}
+
+#tieredAchievementsTable > img {
+    width: 48px;
+    height: 48px;
+}
+
+#ungroupedAchievementsTable {
+    display: grid;
+    grid-template-columns: repeat(12, 32px);
+    grid-template-rows: repeat(5, 32px);
+    gap: 2px 2px;
+}
+
+#ungroupedAchievementsTable > img {
+    width: 32px;
+    height: 32px;
+}
+
+#progressiveAchievementsTable {
+    display: grid;
+    grid-template-columns: repeat(8, 48px);
+    grid-template-rows: repeat(5, 48px);
+    gap: 2px 2px;
+}
+
+#progressiveAchievementsTable > img {
+    width: 48px;
+    height: 48px;
+}
+
+#achievementMultiline {
+    white-space: pre-line;
+}
+
 #achievementstable {
     font-size: 0;
     border-collapse: collapse;
@@ -1130,6 +1170,29 @@ p#promocodeinfo {
 
 #achievementstable [id^="ach"] > img {
     image-rendering: unset;
+}
+
+#achievementHeader {
+    display: flex;
+    justify-self: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 10px
+}
+
+#achievementHeader > p {
+    margin: 4px 0;
+    font-size: 1.2em;
+}
+
+#achievementTNLText {
+    margin: 0;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .NotificationToggle {
@@ -1140,7 +1203,7 @@ p#promocodeinfo {
 }
 
 .NotificationToggle > p {
-    margin: 15px 0;
+    margin: 2px 0;
 }
 
 .achNotification {

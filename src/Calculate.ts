@@ -489,14 +489,14 @@ export const calculateTotalSalvage = () => {
   return allSalvageStats.reduce((a, b) => a + b.stat(), 0)
 }
 
-export const calculateSalvageRuneEXPMultiplier = () => {
+export const calculateSalvageRuneEXPMultiplier = (): Decimal => {
   // Factors where Salvage comes from
   const salvage = calculateTotalSalvage()
 
   if (salvage < 90) {
-    return 1 / (1 - salvage / 100)
+    return new Decimal(1 / (1 - salvage / 100))
   } else {
-    return 10 * Math.exp(1 / 10 * Math.sqrt(salvage - 90))
+    return Decimal.exp(1 / 10 * (salvage - 90)).times(10)
   }
 }
 

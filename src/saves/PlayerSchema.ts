@@ -377,6 +377,17 @@ export const playerSchema = z.object({
 
   unlocks: z.record(z.string(), z.boolean()),
   achievements: z.number().array().transform((array) => arrayExtend(array, 'achievements')),
+  progressiveAchievements: z.record(z.string(), z.number()).transform(
+    (object) => {
+      return Object.fromEntries(
+        Object.keys(blankSave.progressiveAchievements).map((key) => {
+          const value = object[key]
+            ?? blankSave.progressiveAchievements[key as keyof typeof blankSave['progressiveAchievements']]
+          return value === null ? [key, 0] : [key, Number(value)]
+        })
+      )
+    }
+  ).default(() => ({ ...blankSave.progressiveAchievements })),
 
   achievementPoints: z.number(),
 
@@ -813,6 +824,7 @@ export const playerSchema = z.object({
               baseReq: singularityChallengeData[k].baseReq,
               completions,
               maxCompletions: singularityChallengeData[k].maxCompletions,
+              achievementPointValue: singularityChallengeData[k].achievementPointValue,
               unlockSingularity: singularityChallengeData[k].unlockSingularity,
               HTMLTag: singularityChallengeData[k].HTMLTag,
               highestSingularityCompleted,

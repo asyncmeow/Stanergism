@@ -15,6 +15,7 @@ export interface ISingularityChallengeData {
   HTMLTag: SingularityChallengeDataKeys
   singularityRequirement: (baseReq: number, completions: number) => number
   effect: (n: number) => Record<string, number | boolean>
+  achievementPointValue: (n: number) => number
   scalingrewardcount: number
   uniquerewardcount: number
   resetTime?: boolean
@@ -47,6 +48,7 @@ export class SingularityChallenge {
   public resetTime
   public singularityRequirement
   public effect
+  public achievementPointValue
   public scalingrewardcount
   public uniquerewardcount
   readonly cacheUpdates: (() => void)[] | undefined
@@ -69,6 +71,7 @@ export class SingularityChallenge {
     this.resetTime = data.resetTime ?? false
     this.singularityRequirement = data.singularityRequirement
     this.effect = data.effect
+    this.achievementPointValue = data.achievementPointValue
     this.scalingrewardcount = data.scalingrewardcount
     this.uniquerewardcount = data.uniquerewardcount
 
@@ -287,12 +290,17 @@ export class SingularityChallenge {
     return this.effect(this.completions)
   }
 
+  public get rewardAP () {
+    return this.achievementPointValue(this.completions)
+  }
+
   valueOf (): ISingularityChallengeData {
     return {
       baseReq: this.baseReq,
       effect: this.effect,
       HTMLTag: this.HTMLTag,
       maxCompletions: this.maxCompletions,
+      achievementPointValue: this.achievementPointValue,
       scalingrewardcount: this.scalingrewardcount,
       singularityRequirement: this.singularityRequirement,
       uniquerewardcount: this.uniquerewardcount,
@@ -322,6 +330,9 @@ export const singularityChallengeData: Record<
     singularityRequirement: (baseReq: number, completions: number) => {
       return baseReq + 8 * completions
     },
+    achievementPointValue: (n) => {
+      return 5 * n + 5 * Math.max(0, n - 15)
+    },
     scalingrewardcount: 1,
     uniquerewardcount: 5,
     effect: (n: number) => {
@@ -343,6 +354,9 @@ export const singularityChallengeData: Record<
     singularityRequirement: (baseReq: number, completions: number) => {
       return baseReq + 11 * completions
     },
+    achievementPointValue: (n) => {
+      return 5 * n + 5 * Math.max(0, n - 12)
+    },
     scalingrewardcount: 2,
     uniquerewardcount: 4,
     effect: (n: number) => {
@@ -361,6 +375,9 @@ export const singularityChallengeData: Record<
     baseReq: 75,
     maxCompletions: 15,
     unlockSingularity: 100,
+    achievementPointValue: (n) => {
+      return 10 * n + 5 * Math.max(0, n - 7)
+    },
     HTMLTag: 'noOcteracts',
     singularityRequirement: (baseReq: number, completions: number) => {
       if (completions < 10) {
@@ -384,6 +401,9 @@ export const singularityChallengeData: Record<
     baseReq: 10,
     maxCompletions: 25,
     unlockSingularity: 50,
+    achievementPointValue: (n) => {
+      return 5 * n + 5 * Math.max(0, n - 10)
+    },
     HTMLTag: 'limitedAscensions',
     singularityRequirement: (baseReq: number, completions: number) => {
       return baseReq + 10 * completions
@@ -403,6 +423,9 @@ export const singularityChallengeData: Record<
     baseReq: 150,
     maxCompletions: 20,
     unlockSingularity: 166,
+    achievementPointValue: (n) => {
+      return 10 * n + 5 * Math.max(n - 10)
+    },
     HTMLTag: 'noAmbrosiaUpgrades',
     singularityRequirement: (baseReq: number, completions: number) => {
       return baseReq + 6 * completions
@@ -427,6 +450,9 @@ export const singularityChallengeData: Record<
     baseReq: 203,
     maxCompletions: 25,
     unlockSingularity: 216,
+    achievementPointValue: (n) => {
+      return 10 * n + 5 * Math.max(0, n - 10) + 5 * Math.max(0, n - 20)
+    },
     HTMLTag: 'limitedTime',
     singularityRequirement: (baseReq: number, completions: number) => {
       return baseReq + 3 * completions
@@ -449,6 +475,9 @@ export const singularityChallengeData: Record<
     baseReq: 120,
     maxCompletions: 30,
     unlockSingularity: 256,
+    achievementPointValue: (n) => {
+      return 10 * n + 5 * Math.max(0, n - 10) + 5 * Math.max(0, n - 20) + 5 * Math.max(0, n - 25)
+    },
     HTMLTag: 'sadisticPrequel',
     singularityRequirement: (baseReq: number, completions: number) => {
       return baseReq + 4 * completions
@@ -470,6 +499,9 @@ export const singularityChallengeData: Record<
     baseReq: 250,
     maxCompletions: 30,
     unlockSingularity: 1,
+    achievementPointValue: (n) => {
+      return 10 * n + 5 * Math.max(0, n - 5) + 5 * Math.max(0, n - 15) + 5 * Math.max(0, n - 25)
+    },
     HTMLTag: 'noOfferingPower',
     singularityRequirement: (baseReq: number, completions: number) => {
       return baseReq + completions

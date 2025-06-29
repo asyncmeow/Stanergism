@@ -22,6 +22,7 @@ import {
   type AchievementRewards,
   buildingAchievementCheck,
   challengeAchievementCheck,
+  generateAchievementHTMLs,
   getAchieveReward,
   numAchievements,
   resetAchievementCheck,
@@ -140,7 +141,6 @@ import {
   Notification,
   revealStuff,
   showCorruptionStatsLoadouts,
-  updateAchievementBG,
   updateChallengeDisplay,
   updateChallengeLevel
 } from './UpdateHTML'
@@ -493,6 +493,14 @@ export const player: Player = {
     rrow4: false
   },
   achievements: Array(numAchievements).fill(0) as number[],
+  progressiveAchievements: {
+    runeLevel: 0,
+    freeRuneLevel: 0,
+    singularityCount: 0,
+    ambrosiaCount: 0,
+    redAmbrosiaCount: 0,
+    exalts: 0
+  },
 
   achievementPoints: 0,
 
@@ -2946,7 +2954,7 @@ const loadSynergy = () => {
     }
   }
 
-  updateAchievementBG()
+  // updateAchievementBG()
   if (player.currentChallenge.reincarnation) {
     resetrepeat('reincarnationChallenge')
   } else if (player.currentChallenge.transcension) {
@@ -5765,6 +5773,7 @@ export const fastUpdates = (): void => {
 export const slowUpdates = (): void => {
   buttoncolorchange()
   buildingAchievementCheck()
+  achievementManager.updateProgressiveAchievementCaches()
 }
 
 export const constantIntervals = (): void => {
@@ -6182,6 +6191,7 @@ export const reloadShit = (reset = false) => {
   initHepteracts(player.hepteracts)
 
   achievementManager.updateAchievements(player.achievements)
+  achievementManager.updateProgressiveAchievements(player.progressiveAchievements)
 
   for (const k of Object.keys(getAchieveReward) as AchievementRewards[]) {
     console.log(`Applying reward ${k}: `, achievementManager.getBonus(k))
@@ -6315,6 +6325,7 @@ window.addEventListener('load', async () => {
   corruptionButtonsAdd()
   corruptionLoadoutTableCreate()
   createCampaignIconHTMLS()
+  generateAchievementHTMLs()
 
   initRedAmbrosiaUpgrades(player.redAmbrosiaUpgrades)
   initRunes(player.runes)
@@ -6322,9 +6333,6 @@ window.addEventListener('load', async () => {
   initRuneSpirits(player.runeSpirits)
   initTalismans(player.talismans)
   initHepteracts(player.hepteracts)
-  Alert(
-    `If you have the time, please submit feedback for the recent update! Form closes May 11, 2025. \n <a href="https://forms.gle/SLVUakXBc9RvEfqz8" style="border: 2px solid gold" target="_blank">CLICK ME!</a>`
-  )
   reloadShit()
 }, { once: true })
 

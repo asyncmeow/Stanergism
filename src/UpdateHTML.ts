@@ -1,6 +1,6 @@
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
-import { achievementaward, achievementManager, maxAchievementPoints } from './Achievements'
+import { achievementaward, achievementManager } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { CalcCorruptionStuff, calculateAscensionSpeedMult, calculateGlobalSpeedMult } from './Calculate'
 import { getMaxChallenges } from './Challenges'
@@ -506,13 +506,15 @@ export const hideStuff = () => {
     DOMCacheGetOrSet('statistics').style.display = 'block'
     DOMCacheGetOrSet('achievementstab').style.backgroundColor = 'white'
     DOMCacheGetOrSet('achievementstab').style.color = 'black'
-    DOMCacheGetOrSet('achievementprogress').textContent = i18next.t('achievements.totalPoints', {
-      x: format(achievementManager.totalPoints),
-      y: format(maxAchievementPoints),
-      z: (100 * achievementManager.totalPoints / maxAchievementPoints).toPrecision(4)
+    DOMCacheGetOrSet('achievementprogress').textContent = i18next.t('achievements.achievementPoints', {
+      x: format(achievementManager.totalPoints)
     })
     DOMCacheGetOrSet('achievementQuarkBonus').innerHTML = i18next.t('achievements.achievementLevel', {
       level: format(achievementManager.level)
+    })
+    DOMCacheGetOrSet('achievementTNLText').innerHTML = i18next.t('achievements.achievementToNextLevel', {
+      level: format(achievementManager.level + 1),
+      AP: format(achievementManager.toNextLevel)
     })
   } else if (G.currentTab === Tabs.Runes) {
     DOMCacheGetOrSet('runes').style.display = 'block'

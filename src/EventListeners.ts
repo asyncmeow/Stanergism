@@ -1,5 +1,4 @@
 import i18next from 'i18next'
-import { achievementdescriptions, achievementpointvalues } from './Achievements'
 import {
   antRepeat,
   antUpgradeDescription,
@@ -403,12 +402,12 @@ export const generateEventHandlers = () => {
 
   // ACHIEVEMENTS TAB
   // TODO: Remove 1 indexing
-  for (let index = 1; index <= achievementpointvalues.length - 1; index++) {
+  /*for (let index = 1; index <= achievementpointvalues.length - 1; index++) {
     // Onmouseover events (Achievement descriptions)
     const achievement = DOMCacheGetOrSet(`ach${index}`)
     achievement.addEventListener('mouseover', () => achievementdescriptions(index))
     achievement.addEventListener('focus', () => achievementdescriptions(index))
-  }
+  }*/
 
   // RUNES TAB [And all corresponding subtabs]
   // Part 0: Upper UI portion

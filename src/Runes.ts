@@ -4,7 +4,7 @@ import {
   calculateSigmoidExponential,
   isIARuneUnlocked
 } from './Calculate'
-import { format, player, formatAsPercentIncrease } from './Synergism'
+import { format, formatAsPercentIncrease, player } from './Synergism'
 import { Globals as G } from './Variables'
 
 import Decimal from 'break_infinity.js'
@@ -983,6 +983,20 @@ export function getRune<K extends RuneKeys> (key: K): Rune<K> {
     throw new Error('Runes not initialized. Call initRunes first.')
   }
   return runes[key]
+}
+
+export function sumOfPurchasedRuneLevels () {
+  if (runes === null) {
+    throw new Error('Runes not initialized. Call initRunes first.')
+  }
+  return Object.values(runes).reduce((sum, rune) => sum + rune.level, 0)
+}
+
+export function sumOfFreeRuneLevels () {
+  if (runes === null) {
+    throw new Error('Runes not initialized. Call initRunes first.')
+  }
+  return Object.values(runes).reduce((sum, rune) => sum + rune.freeLevels, 0)
 }
 
 export function sumOfRuneLevels () {

@@ -1,4 +1,4 @@
-import { achievementManager } from './Achievements'
+import { achievementManager, ungroupedNameMap } from './Achievements'
 import { DOMCacheGetOrSet, DOMCacheHas } from './Cache/DOM'
 import { prod } from './Config'
 import { pressedKeys } from './Hotkeys'
@@ -685,6 +685,10 @@ export const changeTab = (tabs: Tabs, step?: number) => {
 
   G.currentTab = tabRow.getCurrentTab().getType()
   subtabInfo[tabRow.getCurrentTab().getType()].subtabIndex
+
+  if (G.currentTab === Tabs.Achievements) {
+    achievementManager.tryUnlock(ungroupedNameMap.participationTrophy)
+  }
 
   revealStuff()
   hideStuff()

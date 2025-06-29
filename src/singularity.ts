@@ -5,7 +5,7 @@ import { campaignTokenRewardHTMLUpdate } from './Campaign'
 import type { IUpgradeData } from './DynamicUpgrade'
 import { DynamicUpgrade } from './DynamicUpgrade'
 import { getRune } from './Runes'
-import { format, player, formatAsPercentIncrease } from './Synergism'
+import { format, formatAsPercentIncrease, player } from './Synergism'
 import { Alert, Prompt, revealStuff } from './UpdateHTML'
 import { sumContents, toOrdinal } from './Utility'
 

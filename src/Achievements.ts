@@ -3,8 +3,16 @@ import i18next from 'i18next'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { CalcCorruptionStuff, calculateAscensionScore, calculateGlobalSpeedMult } from './Calculate'
 import { getHepteract } from './Hepteracts'
-import { getRune, getRuneBlessing, getRuneSpirit, sumOfRuneLevels } from './Runes'
-import { format, player, formatAsPercentIncrease } from './Synergism'
+import {
+  getRune,
+  getRuneBlessing,
+  getRuneSpirit,
+  sumOfFreeRuneLevels,
+  sumOfPurchasedRuneLevels,
+  sumOfRuneLevels
+} from './Runes'
+import type { SingularityChallengeDataKeys } from './SingularityChallenges'
+import { format, formatAsPercentIncrease, player } from './Synergism'
 import type { resetNames } from './types/Synergism'
 import { Alert, Notification, revealStuff } from './UpdateHTML'
 import { sumContents } from './Utility'
@@ -269,10 +277,8 @@ export const achievementaward = (num: number) => {
     player.achievementPoints += achievementpointvalues[num]
     player.worlds.add(getAchievementQuarks(num), false)
 
-    DOMCacheGetOrSet('achievementprogress').textContent = i18next.t('achievements.totalPoints', {
-      x: format(player.achievementPoints),
-      y: format(totalachievementpoints),
-      z: (100 * player.achievementPoints / totalachievementpoints).toPrecision(4)
+    DOMCacheGetOrSet('achievementprogress').textContent = i18next.t('achievements.achievementPoints', {
+      x: format(player.achievementPoints)
     })
 
     DOMCacheGetOrSet('achievementQuarkBonus').innerHTML = i18next.t('achievements.quarkBonus', {
@@ -414,23 +420,64 @@ export interface Achievement {
   checkReset?: () => boolean
 }
 
+export interface ProgressiveAchievementsObject {
+  cached: number
+  rewardedAP: number
+}
+
 export class AchievementManager {
   achievementMap: { [index: number]: boolean } = {}
+
+  progressiveAchievements: Record<ProgressiveAchievements, ProgressiveAchievementsObject> = {
+    ...emptyProgressiveAchievements
+  }
+
   _totalPoints: number
 
-  constructor (achievements: number[]) {
+  constructor (achievements: number[], progAchCache: Record<ProgressiveAchievements, number>) {
     achievements.forEach((val, index) => {
       this.achievementMap[index] = val > 0
     })
 
+    for (const k of Object.keys(this.progressiveAchievements) as ProgressiveAchievements[]) {
+      this.progressiveAchievements[k].cached = progAchCache[k] || 0
+      if (progressiveAchievements[k].useCachedValue) {
+        this.updateProgressiveAchievementValue(k)
+      }
+    }
+
     this._totalPoints = 0
     this.updateTotalPoints()
+  }
+
+  updateProgressiveAchievementValue (key: ProgressiveAchievements) {
+    const cachedValue = this.progressiveAchievements[key].cached
+    const oldAP = this.progressiveAchievements[key].rewardedAP
+    this.progressiveAchievements[key].rewardedAP = progressiveAchievements[key].pointsAwarded(cachedValue)
+
+    this._totalPoints += this.progressiveAchievements[key].rewardedAP - oldAP
+  }
+
+  updateProgressiveAchievementCache (key: ProgressiveAchievements) {
+    // exalt progressive achievement does not use cache. More to be added later
+    const usesCache = progressiveAchievements[key].useCachedValue
+    if (!usesCache) {
+      this.updateProgressiveAchievementValue(key)
+      return
+    }
+
+    const oldCache = this.progressiveAchievements[key].cached
+    this.progressiveAchievements[key].cached = Math.max(oldCache, progressiveAchievements[key].updateValue())
+    if (this.progressiveAchievements[key].cached !== oldCache) {
+      this.updateProgressiveAchievementValue(key)
+    }
   }
 
   updateTotalPoints () {
     this._totalPoints = Object.entries(this.achievementMap)
       .filter(([, unlocked]) => unlocked)
       .reduce((sum, [index]) => sum + achievements[Number(index)].pointValue, 0)
+      + sumContents(Object.values(this.progressiveAchievements).map((v) => v.rewardedAP))
   }
 
   updateAchievements (achievements: number[]) {
@@ -438,6 +485,22 @@ export class AchievementManager {
       this.achievementMap[index] = val > 0
     })
     this.updateTotalPoints()
+  }
+
+  updateProgressiveAchievements (progAchCache: Record<ProgressiveAchievements, number>) {
+    for (const k of Object.keys(this.progressiveAchievements) as ProgressiveAchievements[]) {
+      this.progressiveAchievements[k].cached = progAchCache[k] || 0
+      this.updateProgressiveAchievementValue(k)
+    }
+    this.updateTotalPoints()
+  }
+
+  updateProgressiveAchievementCaches () {
+    for (const k of Object.keys(this.progressiveAchievements) as ProgressiveAchievements[]) {
+      if (progressiveAchievements[k].useCachedValue) {
+        this.updateProgressiveAchievementCache(k)
+      }
+    }
   }
 
   get totalPoints () {
@@ -514,6 +577,14 @@ export class AchievementManager {
     }
   }
 
+  get toNextLevel (): number {
+    if (this.totalPoints < 2500) {
+      return 50 - (this.totalPoints % 50)
+    } else {
+      return 100 - (this.totalPoints % 100)
+    }
+  }
+
   // Unlocks with level 0 (Default perk)
   get offeringBonus (): number {
     let percentage = 0
@@ -584,7 +655,7 @@ export class AchievementManager {
 // NOTE: Right now, if achievements share a group, the one with the higher 'id' is known to be the one that is meant to be
 // Unlocked last. This is a limitation I hope to eventually fix.
 export const achievements: { [index: number]: Achievement } = {
-  0: { pointValue: 0, unlockCondition: () => true, group: 'ungrouped' }, // Free Achievement Perhaps?
+  0: { pointValue: 5, unlockCondition: () => true, group: 'ungrouped' }, // Free Achievement Perhaps?
   1: { pointValue: 5, unlockCondition: () => player.firstOwnedCoin >= 1, group: 'firstOwnedCoin' },
   2: { pointValue: 10, unlockCondition: () => player.firstOwnedCoin >= 10, group: 'firstOwnedCoin' },
   3: {
@@ -689,32 +760,32 @@ export const achievements: { [index: number]: Achievement } = {
   24: {
     pointValue: 15,
     unlockCondition: () => player.thirdOwnedCoin >= 100,
-    group: 'thirdOwnedCoin',
+    group: 'fourthOwnedCoin',
     reward: { acceleratorPower: () => 0.002 }
   },
   25: {
     pointValue: 20,
     unlockCondition: () => player.thirdOwnedCoin >= 333,
-    group: 'thirdOwnedCoin',
+    group: 'fourthOwnedCoin',
     reward: { mintAutobuyer: () => 1 },
     checkReset: () => player.highestSingularityCount >= 2
   },
   26: {
     pointValue: 25,
     unlockCondition: () => player.thirdOwnedCoin >= 5000,
-    group: 'thirdOwnedCoin',
+    group: 'fourthOwnedCoin',
     reward: { accelerators: () => Math.floor(player.thirdOwnedCoin / 500) }
   },
   27: {
     pointValue: 30,
     unlockCondition: () => player.thirdOwnedCoin >= 10000,
-    group: 'thirdOwnedCoin',
+    group: 'fourthOwnedCoin',
     reward: { multipliers: () => Math.floor(player.thirdOwnedCoin / 1000) }
   },
   28: {
     pointValue: 35,
     unlockCondition: () => player.thirdOwnedCoin >= 20000,
-    group: 'thirdOwnedCoin',
+    group: 'fourthOwnedCoin',
     reward: { accelBoosts: () => Math.floor(player.thirdOwnedCoin / 2000) }
   },
   29: { pointValue: 5, unlockCondition: () => player.fifthOwnedCoin >= 1, group: 'fifthOwnedCoin' },
@@ -1743,11 +1814,26 @@ export const achievements: { [index: number]: Achievement } = {
   230: { pointValue: 30, unlockCondition: () => CalcCorruptionStuff()[3] >= 5e9, group: 'ascensionScore' },
   231: { pointValue: 35, unlockCondition: () => CalcCorruptionStuff()[3] >= 2.5e10, group: 'ascensionScore' },
   232: { pointValue: 10, unlockCondition: () => getRuneBlessing('speed').level >= 100, group: 'speedBlessing' },
-  233: { pointValue: 20, unlockCondition: () => getRuneBlessing('speed').level >= 250, group: 'speedBlessing' },
+  233: {
+    pointValue: 20,
+    unlockCondition: () => getRuneBlessing('speed').level >= 250,
+    group: 'speedBlessing',
+    reward: { salvage: () => 2 }
+  },
   234: { pointValue: 30, unlockCondition: () => getRuneBlessing('speed').level >= 500, group: 'speedBlessing' },
-  235: { pointValue: 10, unlockCondition: () => getRuneSpirit('speed').level >= 100, group: 'speedSpirit' },
+  235: {
+    pointValue: 10,
+    unlockCondition: () => getRuneSpirit('speed').level >= 100,
+    group: 'speedSpirit',
+    reward: { salvage: () => 2 }
+  },
   236: { pointValue: 20, unlockCondition: () => getRuneSpirit('speed').level >= 250, group: 'speedSpirit' },
-  237: { pointValue: 30, unlockCondition: () => getRuneSpirit('speed').level >= 500, group: 'speedSpirit' },
+  237: {
+    pointValue: 30,
+    unlockCondition: () => getRuneSpirit('speed').level >= 500,
+    group: 'speedSpirit',
+    reward: { salvage: () => 3 }
+  },
   238: {
     pointValue: 50,
     unlockCondition: () => {
@@ -1772,7 +1858,12 @@ export const achievements: { [index: number]: Achievement } = {
   // 244: :smith:
   244: { pointValue: 50, unlockCondition: () => true, group: 'ungrouped' },
   // 245: High Speed Blessing
-  245: { pointValue: 50, unlockCondition: () => getRuneBlessing('speed').level >= 2222, group: 'speedBlessing' },
+  245: {
+    pointValue: 50,
+    unlockCondition: () => getRuneBlessing('speed').level >= 2222,
+    group: 'ungrouped',
+    reward: { salvage: () => 3 }
+  },
   // 246: Open 1 cube with a ton of cube tributes already
   246: { pointValue: 50, unlockCondition: () => true, group: 'ungrouped' },
   // 247: Extra challenging
@@ -1950,22 +2041,26 @@ export const achievements: { [index: number]: Achievement } = {
     unlockCondition: () => G.prestigePointGain.gte('1e10000000000000'),
     group: 'prestigePointGain'
   },
-  299: { pointValue: 40, unlockCondition: () => G.prestigePointGain.gte('1e2500000'), group: 'transcendPointGain' },
-  300: { pointValue: 45, unlockCondition: () => G.prestigePointGain.gte('1e2500000000'), group: 'transcendPointGain' },
+  299: { pointValue: 40, unlockCondition: () => G.transcendPointGain.gte('1e2500000'), group: 'transcendPointGain' },
+  300: { pointValue: 45, unlockCondition: () => G.transcendPointGain.gte('1e2500000000'), group: 'transcendPointGain' },
   301: {
     pointValue: 50,
-    unlockCondition: () => G.prestigePointGain.gte('1e2500000000000'),
+    unlockCondition: () => G.transcendPointGain.gte('1e2500000000000'),
     group: 'transcendPointGain'
   },
-  302: { pointValue: 40, unlockCondition: () => G.prestigePointGain.gte('1e100000'), group: 'reincarnationPointGain' },
+  302: {
+    pointValue: 40,
+    unlockCondition: () => G.reincarnationPointGain.gte('1e100000'),
+    group: 'reincarnationPointGain'
+  },
   303: {
     pointValue: 45,
-    unlockCondition: () => G.prestigePointGain.gte('1e100000000'),
+    unlockCondition: () => G.reincarnationPointGain.gte('1e100000000'),
     group: 'reincarnationPointGain'
   },
   304: {
     pointValue: 50,
-    unlockCondition: () => G.prestigePointGain.gte('1e100000000000'),
+    unlockCondition: () => G.reincarnationPointGain.gte('1e100000000000'),
     group: 'reincarnationPointGain'
   },
   305: { pointValue: 40, unlockCondition: () => player.challengecompletions[1] >= 1000, group: 'challenge1' },
@@ -1985,16 +2080,16 @@ export const achievements: { [index: number]: Achievement } = {
   319: { pointValue: 50, unlockCondition: () => player.challengecompletions[5] >= 9001, group: 'challenge5' },
   320: { pointValue: 40, unlockCondition: () => player.challengecompletions[6] >= 40, group: 'challenge6' },
   321: { pointValue: 45, unlockCondition: () => player.challengecompletions[6] >= 80, group: 'challenge6' },
-  322: { pointValue: 50, unlockCondition: () => player.challengecompletions[6] >= 140, group: 'challenge6' },
+  322: { pointValue: 50, unlockCondition: () => player.challengecompletions[6] >= 120, group: 'challenge6' },
   323: { pointValue: 40, unlockCondition: () => player.challengecompletions[7] >= 40, group: 'challenge7' },
   324: { pointValue: 45, unlockCondition: () => player.challengecompletions[7] >= 80, group: 'challenge7' },
-  325: { pointValue: 50, unlockCondition: () => player.challengecompletions[7] >= 140, group: 'challenge7' },
+  325: { pointValue: 50, unlockCondition: () => player.challengecompletions[7] >= 125, group: 'challenge7' },
   326: { pointValue: 40, unlockCondition: () => player.challengecompletions[8] >= 40, group: 'challenge8' },
   327: { pointValue: 45, unlockCondition: () => player.challengecompletions[8] >= 80, group: 'challenge8' },
-  328: { pointValue: 50, unlockCondition: () => player.challengecompletions[8] >= 140, group: 'challenge8' },
+  328: { pointValue: 50, unlockCondition: () => player.challengecompletions[8] >= 130, group: 'challenge8' },
   329: { pointValue: 40, unlockCondition: () => player.challengecompletions[9] >= 40, group: 'challenge9' },
   330: { pointValue: 45, unlockCondition: () => player.challengecompletions[9] >= 80, group: 'challenge9' },
-  331: { pointValue: 50, unlockCondition: () => player.challengecompletions[9] >= 140, group: 'challenge9' },
+  331: { pointValue: 50, unlockCondition: () => player.challengecompletions[9] >= 135, group: 'challenge9' },
   332: { pointValue: 40, unlockCondition: () => player.challengecompletions[10] >= 40, group: 'challenge10' },
   333: { pointValue: 45, unlockCondition: () => player.challengecompletions[10] >= 80, group: 'challenge10' },
   334: { pointValue: 50, unlockCondition: () => player.challengecompletions[10] >= 140, group: 'challenge10' },
@@ -2037,70 +2132,195 @@ export const achievements: { [index: number]: Achievement } = {
   359: { pointValue: 90, unlockCondition: () => player.ascendShards.gte('1e25000000'), group: 'constant' },
   360: { pointValue: 95, unlockCondition: () => player.ascendShards.gte('1e50000000'), group: 'constant' },
   361: { pointValue: 100, unlockCondition: () => player.ascendShards.gte('1e100000000'), group: 'constant' },
-  362: { pointValue: 80, unlockCondition: () => player.challengecompletions[11] >= 50, group: 'challenge11' },
-  363: { pointValue: 90, unlockCondition: () => player.challengecompletions[11] >= 90, group: 'challenge11' },
-  364: { pointValue: 100, unlockCondition: () => player.challengecompletions[11] >= 140, group: 'challenge11' },
-  365: { pointValue: 110, unlockCondition: () => player.challengecompletions[11] >= 143, group: 'challenge11' },
-  366: { pointValue: 120, unlockCondition: () => player.challengecompletions[11] >= 145, group: 'challenge11' },
-  367: { pointValue: 80, unlockCondition: () => player.challengecompletions[12] >= 50, group: 'challenge12' },
-  368: { pointValue: 90, unlockCondition: () => player.challengecompletions[12] >= 90, group: 'challenge12' },
-  369: { pointValue: 100, unlockCondition: () => player.challengecompletions[12] >= 140, group: 'challenge12' },
-  370: { pointValue: 110, unlockCondition: () => player.challengecompletions[12] >= 143, group: 'challenge12' },
-  371: { pointValue: 120, unlockCondition: () => player.challengecompletions[12] >= 145, group: 'challenge12' },
-  372: { pointValue: 80, unlockCondition: () => player.challengecompletions[13] >= 50, group: 'challenge13' },
-  373: { pointValue: 90, unlockCondition: () => player.challengecompletions[13] >= 90, group: 'challenge13' },
-  374: { pointValue: 100, unlockCondition: () => player.challengecompletions[13] >= 140, group: 'challenge13' },
-  375: { pointValue: 110, unlockCondition: () => player.challengecompletions[13] >= 143, group: 'challenge13' },
-  376: { pointValue: 120, unlockCondition: () => player.challengecompletions[13] >= 145, group: 'challenge13' },
-  377: { pointValue: 80, unlockCondition: () => player.challengecompletions[14] >= 50, group: 'challenge14' },
-  378: { pointValue: 90, unlockCondition: () => player.challengecompletions[14] >= 90, group: 'challenge14' },
-  379: { pointValue: 100, unlockCondition: () => player.challengecompletions[14] >= 140, group: 'challenge14' },
-  380: { pointValue: 110, unlockCondition: () => player.challengecompletions[14] >= 143, group: 'challenge14' },
-  381: { pointValue: 120, unlockCondition: () => player.challengecompletions[14] >= 145, group: 'challenge14' },
-  382: { pointValue: 40, unlockCondition: () => getRuneBlessing('speed').level >= 1000, group: 'speedBlessing' },
+  362: { pointValue: 80, unlockCondition: () => player.challengecompletions[11] >= 40, group: 'challenge11' },
+  363: { pointValue: 90, unlockCondition: () => player.challengecompletions[11] >= 50, group: 'challenge11' },
+  364: { pointValue: 100, unlockCondition: () => player.challengecompletions[11] >= 60, group: 'challenge11' },
+  365: { pointValue: 110, unlockCondition: () => player.challengecompletions[11] >= 65, group: 'challenge11' },
+  366: { pointValue: 120, unlockCondition: () => player.challengecompletions[11] >= 70, group: 'challenge11' },
+  367: { pointValue: 80, unlockCondition: () => player.challengecompletions[12] >= 40, group: 'challenge12' },
+  368: { pointValue: 90, unlockCondition: () => player.challengecompletions[12] >= 50, group: 'challenge12' },
+  369: { pointValue: 100, unlockCondition: () => player.challengecompletions[12] >= 60, group: 'challenge12' },
+  370: { pointValue: 110, unlockCondition: () => player.challengecompletions[12] >= 65, group: 'challenge12' },
+  371: { pointValue: 120, unlockCondition: () => player.challengecompletions[12] >= 70, group: 'challenge12' },
+  372: { pointValue: 80, unlockCondition: () => player.challengecompletions[13] >= 40, group: 'challenge13' },
+  373: { pointValue: 90, unlockCondition: () => player.challengecompletions[13] >= 50, group: 'challenge13' },
+  374: { pointValue: 100, unlockCondition: () => player.challengecompletions[13] >= 60, group: 'challenge13' },
+  375: { pointValue: 110, unlockCondition: () => player.challengecompletions[13] >= 70, group: 'challenge13' },
+  376: { pointValue: 120, unlockCondition: () => player.challengecompletions[13] >= 72, group: 'challenge13' },
+  377: { pointValue: 80, unlockCondition: () => player.challengecompletions[14] >= 40, group: 'challenge14' },
+  378: { pointValue: 90, unlockCondition: () => player.challengecompletions[14] >= 50, group: 'challenge14' },
+  379: { pointValue: 100, unlockCondition: () => player.challengecompletions[14] >= 60, group: 'challenge14' },
+  380: { pointValue: 110, unlockCondition: () => player.challengecompletions[14] >= 70, group: 'challenge14' },
+  381: { pointValue: 120, unlockCondition: () => player.challengecompletions[14] >= 72, group: 'challenge14' },
+  382: {
+    pointValue: 40,
+    unlockCondition: () => getRuneBlessing('speed').level >= 1000,
+    group: 'speedBlessing',
+    reward: { salvage: () => 3 }
+  },
   383: { pointValue: 50, unlockCondition: () => getRuneBlessing('speed').level >= 2000, group: 'speedBlessing' },
-  384: { pointValue: 60, unlockCondition: () => getRuneBlessing('speed').level >= 4000, group: 'speedBlessing' },
+  384: {
+    pointValue: 60,
+    unlockCondition: () => getRuneBlessing('speed').level >= 4000,
+    group: 'speedBlessing',
+    reward: { salvage: () => 4 }
+  },
   385: { pointValue: 70, unlockCondition: () => getRuneBlessing('speed').level >= 6000, group: 'speedBlessing' },
-  386: { pointValue: 80, unlockCondition: () => getRuneBlessing('speed').level >= 8000, group: 'speedBlessing' },
+  386: {
+    pointValue: 80,
+    unlockCondition: () => getRuneBlessing('speed').level >= 8000,
+    group: 'speedBlessing',
+    reward: { salvage: () => 5 }
+  },
   387: { pointValue: 90, unlockCondition: () => getRuneBlessing('speed').level >= 10000, group: 'speedBlessing' },
-  388: { pointValue: 100, unlockCondition: () => getRuneBlessing('speed').level >= 12500, group: 'speedBlessing' },
+  388: {
+    pointValue: 100,
+    unlockCondition: () => getRuneBlessing('speed').level >= 12500,
+    group: 'speedBlessing',
+    reward: { salvage: () => 6 }
+  },
   389: { pointValue: 40, unlockCondition: () => getRuneSpirit('speed').level >= 1000, group: 'speedSpirit' },
-  390: { pointValue: 50, unlockCondition: () => getRuneSpirit('speed').level >= 2000, group: 'speedSpirit' },
+  390: {
+    pointValue: 50,
+    unlockCondition: () => getRuneSpirit('speed').level >= 2000,
+    group: 'speedSpirit',
+    reward: { salvage: () => 4 }
+  },
   391: { pointValue: 60, unlockCondition: () => getRuneSpirit('speed').level >= 4000, group: 'speedSpirit' },
-  392: { pointValue: 70, unlockCondition: () => getRuneSpirit('speed').level >= 6000, group: 'speedSpirit' },
+  392: {
+    pointValue: 70,
+    unlockCondition: () => getRuneSpirit('speed').level >= 6000,
+    group: 'speedSpirit',
+    reward: { salvage: () => 5 }
+  },
   393: { pointValue: 80, unlockCondition: () => getRuneSpirit('speed').level >= 8000, group: 'speedSpirit' },
-  394: { pointValue: 90, unlockCondition: () => getRuneSpirit('speed').level >= 10000, group: 'speedSpirit' },
+  394: {
+    pointValue: 90,
+    unlockCondition: () => getRuneSpirit('speed').level >= 10000,
+    group: 'speedSpirit',
+    reward: { salvage: () => 6 }
+  },
   395: { pointValue: 100, unlockCondition: () => getRuneSpirit('speed').level >= 12500, group: 'speedSpirit' },
-  396: { pointValue: 5, unlockCondition: () => getRune('speed').level >= 100, group: 'runeLevel' },
-  397: { pointValue: 10, unlockCondition: () => getRune('speed').level >= 250, group: 'runeLevel' },
-  398: { pointValue: 15, unlockCondition: () => getRune('speed').level >= 500, group: 'runeLevel' },
-  399: { pointValue: 20, unlockCondition: () => getRune('speed').level >= 1000, group: 'runeLevel' },
-  400: { pointValue: 25, unlockCondition: () => getRune('speed').level >= 2000, group: 'runeLevel' },
-  401: { pointValue: 30, unlockCondition: () => getRune('speed').level >= 5000, group: 'runeLevel' },
-  402: { pointValue: 35, unlockCondition: () => getRune('speed').level >= 10000, group: 'runeLevel' },
-  403: { pointValue: 40, unlockCondition: () => getRune('speed').level >= 20000, group: 'runeLevel' },
-  404: { pointValue: 45, unlockCondition: () => getRune('speed').level >= 50000, group: 'runeLevel' },
-  405: { pointValue: 50, unlockCondition: () => getRune('speed').level >= 100000, group: 'runeLevel' },
-  406: { pointValue: 55, unlockCondition: () => getRune('speed').level >= 200000, group: 'runeLevel' },
-  407: { pointValue: 60, unlockCondition: () => getRune('speed').level >= 300000, group: 'runeLevel' },
-  408: { pointValue: 65, unlockCondition: () => getRune('speed').level >= 500000, group: 'runeLevel' },
-  409: { pointValue: 70, unlockCondition: () => getRune('speed').level >= 750000, group: 'runeLevel' },
-  410: { pointValue: 75, unlockCondition: () => getRune('speed').level >= 1000000, group: 'runeLevel' },
-  411: { pointValue: 5, unlockCondition: () => getRune('speed').freeLevels >= 50, group: 'runeFreeLevel' },
-  412: { pointValue: 10, unlockCondition: () => getRune('speed').freeLevels >= 100, group: 'runeFreeLevel' },
-  413: { pointValue: 15, unlockCondition: () => getRune('speed').freeLevels >= 250, group: 'runeFreeLevel' },
-  414: { pointValue: 20, unlockCondition: () => getRune('speed').freeLevels >= 500, group: 'runeFreeLevel' },
-  415: { pointValue: 25, unlockCondition: () => getRune('speed').freeLevels >= 1000, group: 'runeFreeLevel' },
-  416: { pointValue: 30, unlockCondition: () => getRune('speed').freeLevels >= 2500, group: 'runeFreeLevel' },
-  417: { pointValue: 35, unlockCondition: () => getRune('speed').freeLevels >= 5000, group: 'runeFreeLevel' },
-  418: { pointValue: 40, unlockCondition: () => getRune('speed').freeLevels >= 10000, group: 'runeFreeLevel' },
-  419: { pointValue: 45, unlockCondition: () => getRune('speed').freeLevels >= 20000, group: 'runeFreeLevel' },
-  420: { pointValue: 50, unlockCondition: () => getRune('speed').freeLevels >= 50000, group: 'runeFreeLevel' },
-  421: { pointValue: 55, unlockCondition: () => getRune('speed').freeLevels >= 100000, group: 'runeFreeLevel' },
-  422: { pointValue: 60, unlockCondition: () => getRune('speed').freeLevels >= 200000, group: 'runeFreeLevel' },
-  423: { pointValue: 65, unlockCondition: () => getRune('speed').freeLevels >= 300000, group: 'runeFreeLevel' },
-  424: { pointValue: 70, unlockCondition: () => getRune('speed').freeLevels >= 500000, group: 'runeFreeLevel' },
-  425: { pointValue: 75, unlockCondition: () => getRune('speed').freeLevels >= 750000, group: 'runeFreeLevel' }
+  396: {
+    pointValue: 2,
+    unlockCondition: () => getRune('speed').level >= 100,
+    group: 'runeLevel',
+    reward: { salvage: () => 1 }
+  },
+  397: { pointValue: 4, unlockCondition: () => getRune('speed').level >= 250, group: 'runeLevel' },
+  398: {
+    pointValue: 6,
+    unlockCondition: () => getRune('speed').level >= 500,
+    group: 'runeLevel',
+    reward: { salvage: () => 2 }
+  },
+  399: { pointValue: 8, unlockCondition: () => getRune('speed').level >= 1000, group: 'runeLevel' },
+  400: {
+    pointValue: 10,
+    unlockCondition: () => getRune('speed').level >= 2000,
+    group: 'runeLevel',
+    reward: { salvage: () => 3 }
+  },
+  401: { pointValue: 12, unlockCondition: () => getRune('speed').level >= 5000, group: 'runeLevel' },
+  402: {
+    pointValue: 14,
+    unlockCondition: () => getRune('speed').level >= 10000,
+    group: 'runeLevel',
+    reward: { salvage: () => 4 }
+  },
+  403: { pointValue: 16, unlockCondition: () => getRune('speed').level >= 20000, group: 'runeLevel' },
+  404: {
+    pointValue: 18,
+    unlockCondition: () => getRune('speed').level >= 50000,
+    group: 'runeLevel',
+    reward: { salvage: () => 5 }
+  },
+  405: { pointValue: 20, unlockCondition: () => getRune('speed').level >= 100000, group: 'runeLevel' },
+  406: {
+    pointValue: 22,
+    unlockCondition: () => getRune('speed').level >= 200000,
+    group: 'runeLevel',
+    reward: { salvage: () => 6 }
+  },
+  407: {
+    pointValue: 24,
+    unlockCondition: () => getRune('speed').level >= 300000,
+    group: 'runeLevel',
+    reward: { salvage: () => 2 }
+  },
+  408: {
+    pointValue: 26,
+    unlockCondition: () => getRune('speed').level >= 500000,
+    group: 'runeLevel',
+    reward: { salvage: () => 7 }
+  },
+  409: {
+    pointValue: 28,
+    unlockCondition: () => getRune('speed').level >= 750000,
+    group: 'runeLevel',
+    reward: { salvage: () => 2 }
+  },
+  410: {
+    pointValue: 30,
+    unlockCondition: () => getRune('speed').level >= 1000000,
+    group: 'runeLevel',
+    reward: { salvage: () => 8 }
+  },
+  411: {
+    pointValue: 2,
+    unlockCondition: () => getRune('speed').freeLevels >= 50,
+    group: 'runeFreeLevel',
+    reward: { salvage: () => 1 }
+  },
+  412: { pointValue: 4, unlockCondition: () => getRune('speed').freeLevels >= 100, group: 'runeFreeLevel' },
+  413: {
+    pointValue: 6,
+    unlockCondition: () => getRune('speed').freeLevels >= 250,
+    group: 'runeFreeLevel',
+    reward: { salvage: () => 2 }
+  },
+  414: { pointValue: 8, unlockCondition: () => getRune('speed').freeLevels >= 500, group: 'runeFreeLevel' },
+  415: {
+    pointValue: 10,
+    unlockCondition: () => getRune('speed').freeLevels >= 1000,
+    group: 'runeFreeLevel',
+    reward: { salvage: () => 2 }
+  },
+  416: { pointValue: 12, unlockCondition: () => getRune('speed').freeLevels >= 2500, group: 'runeFreeLevel' },
+  417: {
+    pointValue: 14,
+    unlockCondition: () => getRune('speed').freeLevels >= 5000,
+    group: 'runeFreeLevel',
+    reward: { salvage: () => 3 }
+  },
+  418: { pointValue: 16, unlockCondition: () => getRune('speed').freeLevels >= 10000, group: 'runeFreeLevel' },
+  419: {
+    pointValue: 18,
+    unlockCondition: () => getRune('speed').freeLevels >= 20000,
+    group: 'runeFreeLevel',
+    reward: { salvage: () => 4 }
+  },
+  420: { pointValue: 20, unlockCondition: () => getRune('speed').freeLevels >= 50000, group: 'runeFreeLevel' },
+  421: {
+    pointValue: 22,
+    unlockCondition: () => getRune('speed').freeLevels >= 100000,
+    group: 'runeFreeLevel',
+    reward: { salvage: () => 5 }
+  },
+  422: { pointValue: 24, unlockCondition: () => getRune('speed').freeLevels >= 200000, group: 'runeFreeLevel' },
+  423: {
+    pointValue: 26,
+    unlockCondition: () => getRune('speed').freeLevels >= 300000,
+    group: 'runeFreeLevel',
+    reward: { salvage: () => 6 }
+  },
+  424: { pointValue: 28, unlockCondition: () => getRune('speed').freeLevels >= 500000, group: 'runeFreeLevel' },
+  425: {
+    pointValue: 30,
+    unlockCondition: () => getRune('speed').freeLevels >= 750000,
+    group: 'runeFreeLevel',
+    reward: { salvage: () => 7 }
+  }
 }
 
 export const ungroupedNameMap = {
@@ -2141,6 +2361,107 @@ export const ungroupedNameMap = {
   'thousandMoons': 251,
   'sadisticAch': 252
 }
+
+export interface ProgressiveAchievement {
+  maxPointValue: number
+  pointsAwarded: (cached: number) => number
+  updateValue: () => number // Number to compare to existing caches
+  useCachedValue: boolean
+}
+
+export type ProgressiveAchievements =
+  | 'runeLevel'
+  | 'freeRuneLevel'
+  | 'singularityCount'
+  | 'ambrosiaCount'
+  | 'redAmbrosiaCount'
+  | 'exalts'
+
+export const progressiveAchievements: Record<ProgressiveAchievements, ProgressiveAchievement> = {
+  runeLevel: {
+    maxPointValue: 1000,
+    pointsAwarded: (cached: number) => {
+      return Math.min(200, Math.floor(cached / 1000)) + Math.min(400, Math.floor(cached / 2500))
+        + Math.min(400, Math.floor(cached / 12500))
+    },
+    updateValue: () => {
+      return sumOfPurchasedRuneLevels()
+    },
+    useCachedValue: true
+  },
+  freeRuneLevel: {
+    maxPointValue: 1000,
+    pointsAwarded: (cached: number) => {
+      return Math.min(200, Math.floor(cached / 1000)) + Math.min(400, Math.floor(cached / 2500))
+        + Math.min(400, Math.floor(cached / 10000))
+    },
+    updateValue: () => {
+      return sumOfFreeRuneLevels()
+    },
+    useCachedValue: true
+  },
+  singularityCount: {
+    maxPointValue: 900,
+    pointsAwarded: (cached: number) => {
+      return 2 * cached
+        + Math.max(0, cached - 100)
+        + Math.max(0, cached - 200)
+    },
+    updateValue: () => {
+      return player.highestSingularityCount
+    },
+    useCachedValue: true
+  },
+  ambrosiaCount: {
+    maxPointValue: 800,
+    pointsAwarded: (cached: number) => {
+      return Math.min(200, Math.floor(cached / 100))
+        + Math.min(200, Math.floor(cached / 10000))
+        + Math.min(400, Math.floor(400 * Math.sqrt(cached / 1e8)))
+    },
+    updateValue: () => {
+      return player.lifetimeAmbrosia
+    },
+    useCachedValue: true
+  },
+  redAmbrosiaCount: {
+    maxPointValue: 800,
+    pointsAwarded: (cached: number) => {
+      return Math.min(200, Math.floor(cached / 25))
+        + Math.min(200, Math.floor(cached / 2500))
+        + Math.min(400, Math.floor(400 * Math.sqrt(cached / 5e6)))
+    },
+    updateValue: () => {
+      return player.lifetimeRedAmbrosia
+    },
+    useCachedValue: true
+  },
+  exalts: {
+    maxPointValue: -1,
+    pointsAwarded: (_cached: number) => {
+      let pointValue = 0
+      for (const chal of Object.keys(player.singularityChallenges) as SingularityChallengeDataKeys[]) {
+        pointValue += player.singularityChallenges[chal].rewardAP
+      }
+      return pointValue
+    },
+    updateValue: () => {
+      return 0
+    },
+    useCachedValue: false
+  }
+}
+
+export const emptyProgressiveAchievements: Record<ProgressiveAchievements, ProgressiveAchievementsObject> = Object
+  .fromEntries(
+    (Object.keys(progressiveAchievements)).map((key) => [key, { cached: 0, rewardedAP: 0 }])
+  ) as Record<ProgressiveAchievements, ProgressiveAchievementsObject>
+
+export const emptyProgressiveCaches: Record<ProgressiveAchievements, number> = Object.fromEntries(
+  (Object.keys(progressiveAchievements)).map((key) => [key, 0])
+) as Record<ProgressiveAchievements, number>
+
+export type ungroupedName = keyof typeof ungroupedNameMap
 
 export const numAchievements = Object.keys(achievements).length
 export const maxAchievementPoints = Object.values(achievements).reduce((sum, ach) => sum + ach.pointValue, 0)
@@ -2505,7 +2826,10 @@ export const getAchieveReward: Record<AchievementRewards, (ach: { [index: number
   }
 }
 
-export const achievementManager = new AchievementManager(Array(numAchievements).fill(0) as number[])
+export const achievementManager = new AchievementManager(
+  Array(numAchievements).fill(0) as number[],
+  emptyProgressiveCaches
+)
 
 export const generateAchievementRewardSummary = () => {
   const intro = i18next.t('achievements.rewardTypes.title')
@@ -2548,4 +2872,226 @@ export const generateAchievementRewardSummary = () => {
   }
 
   return Alert(`${intro}\n${numericalTexts}\n${booleanTexts}`)
+}
+
+export const createGroupedAchievementDescription = (group: AchievementGroups) => {
+  if (group === 'ungrouped') {
+    throw new Error('Cannot create description for ungrouped achievements')
+  }
+
+  let groupName = i18next.t(`achievements.groupNames.${group}`)
+  let achTier = 0
+  let currTier = 0
+  let extraBonuses = 'Here\'s some extra bonuses you can get from this achievement:<br>'
+  let earnedAP = 0
+  let possibleAP = 0
+  for (const index of achievementsByGroup[group]) {
+    const ach = achievements[index]
+    const hasAch = achievementManager.achievementMap[index]
+    const AP = ach.pointValue
+    possibleAP += AP
+    if (hasAch) {
+      achTier += 1
+      earnedAP += AP
+    }
+    if (ach.reward) {
+      for (const [rewardType, rewardFunction] of Object.entries(ach.reward)) {
+        const rewardGroup = rewardType as AchievementRewards
+        const rewardValue = getAchieveReward[rewardGroup](achievementManager.achievementMap)
+
+        if (typeof rewardValue === 'boolean') {
+          extraBonuses += `Tier ${currTier} <span style="color:${rewardValue ? 'green' : 'maroon'}">${
+            i18next.t(`achievements.rewardTypes.${rewardType}`, {
+              unlock: i18next.t('achievements.rewardTypes.unlocked')
+            })
+          }</span><br>`
+        } else if (typeof rewardValue === 'number') {
+          extraBonuses += `Tier ${currTier} <span style="color:${achTier - currTier === 1 ? 'green' : 'maroon'}">${
+            i18next.t(`achievements.rewardTypes.${rewardType}`, {
+              val: format(rewardFunction(), 2, false)
+            })
+          }</span><br>`
+        }
+      }
+    }
+    currTier += 1
+  }
+  if (achTier === currTier) {
+    groupName += ' - COMPLETE!'
+    groupName = `<span class='rainbowText'>${groupName}</span>`
+  } else {
+    groupName += ` - Tier ${achTier}`
+  }
+
+  const focusedIndex = achievementsByGroup[group][Math.min(achTier, currTier - 1)]
+  let tierText = i18next.t(`achievements.descriptions.${achievementsByGroup[group][Math.min(achTier, currTier - 1)]}`)
+  if (achTier < currTier) {
+    tierText += ` [+${achievements[focusedIndex].pointValue} AP]`
+  }
+
+  const finalText = `${groupName}<br>
+  ${earnedAP}/${possibleAP} AP<br>
+  ${tierText}<br>
+  ${extraBonuses}`
+  DOMCacheGetOrSet('achievementMultiLine').innerHTML = finalText
+}
+
+export const generateUngroupedDescription = (name: ungroupedName) => {
+  const ach = ungroupedNameMap[name]
+  const achText = i18next.t(`achievements.descriptions.${ach}`)
+
+  const colonIndex = achText.indexOf(':')
+  let achName = achText.substring(0, colonIndex)
+  const requirement = achText.substring(colonIndex + 1)
+  let trimmedRequirement = requirement?.trim() || ''
+
+  const value = achievements[ach].pointValue
+  let earnedValue = 0
+
+  const hasAch = achievementManager.achievementMap[ach]
+  if (hasAch) {
+    achName = `<span class='rainbowText'>${achName} - COMPLETE!</span>`
+    earnedValue = value
+  } else {
+    trimmedRequirement += ` [+${achievements[ach].pointValue} AP]`
+  }
+
+  let extraText = ''
+  if (achievements[ach].reward) {
+    extraText = 'This Achievement also gives the following bonus!<br>'
+    for (const [rewardType, rewardFunction] of Object.entries(achievements[ach].reward)) {
+      const rewardGroup = rewardType as AchievementRewards
+      const rewardValue = getAchieveReward[rewardGroup](achievementManager.achievementMap)
+
+      if (typeof rewardValue === 'boolean') {
+        extraText += `<span style="color:${hasAch ? 'green' : 'maroon'}">${
+          i18next.t(`achievements.rewardTypes.${rewardType}`, {
+            unlock: i18next.t('achievements.rewardTypes.unlocked')
+          })
+        }</span><br>`
+      } else if (typeof rewardValue === 'number') {
+        extraText += `<span style="color:${hasAch ? 'green' : 'maroon'}">${
+          i18next.t(`achievements.rewardTypes.${rewardType}`, {
+            val: format(rewardFunction(), 2, false)
+          })
+        }</span><br>`
+      }
+    }
+  }
+
+  const finalText = `${achName}<br>
+  ${earnedValue}/${value} AP<br>
+  ${trimmedRequirement}<br>
+  ${extraText}`
+  DOMCacheGetOrSet('achievementMultiLine').innerHTML = finalText
+}
+
+export const generateProgressiveAchievementDescription = (name: ProgressiveAchievements) => {
+  const ach = progressiveAchievements[name]
+  let achTitle = i18next.t(`achievements.progressiveAchievements.${name}.name`)
+  const achText = i18next.t(`achievements.progressiveAchievements.${name}.description`, {
+    x: format(achievementManager.progressiveAchievements[name].cached, 0, true)
+  })
+  const achAPSourceText = i18next.t(`achievements.progressiveAchievements.${name}.apSource`)
+
+  let APText = ''
+
+  if (ach.maxPointValue === -1) {
+    APText = `${achievementManager.progressiveAchievements[name].rewardedAP} AP`
+  } else {
+    APText = `${achievementManager.progressiveAchievements[name].rewardedAP}/${ach.maxPointValue} AP`
+  }
+
+  if (achievementManager.progressiveAchievements[name].rewardedAP === ach.maxPointValue) {
+    achTitle = `<span class='rainbowText'>${achTitle}</span>`
+  }
+
+  const finalText = `${achTitle}<br>
+  ${APText}<br>
+  ${achText}<br>
+  ${achAPSourceText}`
+
+  DOMCacheGetOrSet('achievementMultiLine').innerHTML = finalText
+}
+
+export const generateAchievementHTMLs = () => {
+  const alreadyGenerated = document.getElementsByClassName('tieredAchievementType').length > 0
+
+  if (alreadyGenerated) {
+    return
+  } else {
+    const table = DOMCacheGetOrSet('tieredAchievementsTable')
+    const ungroupedTable = DOMCacheGetOrSet('ungroupedAchievementsTable')
+    const progressiveTable = DOMCacheGetOrSet('progressiveAchievementsTable')
+
+    for (const k of Object.keys(achievementsByGroup) as AchievementGroups[]) {
+      if (k === 'ungrouped') {
+        continue
+      }
+
+      // create a new image element for each group that is not ungrouped
+      const img = document.createElement('img')
+      img.className = 'tieredAchievementType'
+      img.src = `Pictures/Achievements/${k}.png`
+      img.alt = i18next.t(`achievements.groupNames.${k}`)
+      img.style.cursor = 'pointer'
+
+      img.onclick = () => {
+        createGroupedAchievementDescription(k)
+      }
+      img.onmouseover = () => {
+        createGroupedAchievementDescription(k)
+      }
+      img.focus = () => {
+        createGroupedAchievementDescription(k)
+      }
+
+      // attach to the table
+      table.appendChild(img)
+    }
+
+    for (const k of Object.keys(ungroupedNameMap)) {
+      // create a new image element for each ungrouped achievement
+      const img = document.createElement('img')
+      img.className = 'ungroupedAchievementType'
+      img.src = `Pictures/Achievements/${k}.png`
+      img.alt = i18next.t(`achievements.ungroupedNames.${k}`)
+      img.style.cursor = 'pointer'
+
+      img.onclick = () => {
+        generateUngroupedDescription(k as ungroupedName)
+      }
+      img.onmouseover = () => {
+        generateUngroupedDescription(k as ungroupedName)
+      }
+      img.focus = () => {
+        generateUngroupedDescription(k as ungroupedName)
+      }
+
+      // attach to the table
+      ungroupedTable.appendChild(img)
+    }
+
+    for (const k of Object.keys(progressiveAchievements)) {
+      // create a new image element for each progressive achievement
+      const img = document.createElement('img')
+      img.className = 'progressiveAchievementType'
+      img.src = `Pictures/Achievements/${k}.png`
+      img.alt = i18next.t(`achievements.progressiveNames.${k}`)
+      img.style.cursor = 'pointer'
+
+      img.onclick = () => {
+        generateProgressiveAchievementDescription(k as ProgressiveAchievements)
+      }
+      img.onmouseover = () => {
+        generateProgressiveAchievementDescription(k as ProgressiveAchievements)
+      }
+      img.focus = () => {
+        generateProgressiveAchievementDescription(k as ProgressiveAchievements)
+      }
+
+      // attach to the table
+      progressiveTable.appendChild(img)
+    }
+  }
 }
