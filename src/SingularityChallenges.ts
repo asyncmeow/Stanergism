@@ -22,7 +22,6 @@ export interface ISingularityChallengeData {
   completions?: number
   enabled?: boolean
   highestSingularityCompleted?: number
-  cacheUpdates?: (() => void)[]
 }
 
 export type SingularityChallengeDataKeys =
@@ -51,7 +50,6 @@ export class SingularityChallenge {
   public achievementPointValue
   public scalingrewardcount
   public uniquerewardcount
-  readonly cacheUpdates: (() => void)[] | undefined
   #key: string
 
   public constructor (data: ISingularityChallengeData, key: string) {
@@ -77,7 +75,6 @@ export class SingularityChallenge {
 
     this.updateIconHTML()
     this.updateChallengeCompletions()
-    this.cacheUpdates = data.cacheUpdates ?? undefined
     this.#key = key
   }
 
@@ -187,7 +184,6 @@ export class SingularityChallenge {
       this.updateChallengeCompletions()
       singularity(highestSingularityHold)
       player.singularityCounter = holdSingTimer
-      this.updateCaches()
       return Alert(
         i18next.t('singularityChallenge.exitChallenge.acceptSuccess', {
           tier: toOrdinal(this.completions),
@@ -202,14 +198,6 @@ export class SingularityChallenge {
       return Alert(
         i18next.t('singularityChallenge.exitChallenge.acceptFailure')
       )
-    }
-  }
-
-  updateCaches (): void {
-    if (this.cacheUpdates !== undefined) {
-      for (const cache of this.cacheUpdates) {
-        cache()
-      }
     }
   }
 
@@ -309,7 +297,6 @@ export class SingularityChallenge {
       singularityRequirement: this.singularityRequirement,
       uniquerewardcount: this.uniquerewardcount,
       unlockSingularity: this.unlockSingularity,
-      cacheUpdates: this.cacheUpdates,
       completions: this.completions,
       enabled: this.enabled,
       highestSingularityCompleted: this.highestSingularityCompleted,
