@@ -27,12 +27,6 @@ export abstract class DynamicUpgrade {
     this.effect = data.effect ?? ((n: number) => ({ bonus: n, desc: () => 'WIP not implemented' }))
   }
 
-  public getEffect (): { bonus: number | boolean; desc: () => string } {
-    const effectiveLevel = this.level + Math.min(this.level, this.freeLevels)
-      + Math.sqrt(Math.max(0, this.freeLevels - this.level))
-    return this.effect(effectiveLevel)
-  }
-
   abstract toString (): string
   abstract updateUpgradeHTML (): void
   abstract getCostTNL (): number
