@@ -12,7 +12,7 @@ import {
   sumOfPurchasedRuneLevels,
   sumOfRuneLevels
 } from './Runes'
-import { maxAPFromChallenges, type SingularityChallengeDataKeys } from './SingularityChallenges'
+import { type SingularityChallengeDataKeys } from './SingularityChallenges'
 import { format, formatAsPercentIncrease, player } from './Synergism'
 import { sumOfTalismanRarities } from './Talismans'
 import type { resetNames } from './types/Synergism'
@@ -335,10 +335,144 @@ export interface ProgressiveAchievementsObject {
   rewardedAP: number
 }
 
+export const progressiveAchievements: Record<ProgressiveAchievements, ProgressiveAchievement> = {
+  runeLevel: {
+    maxPointValue: 1000,
+    pointsAwarded: (cached: number) => {
+      return Math.min(200, Math.floor(cached / 1000)) + Math.min(400, Math.floor(cached / 2500))
+        + Math.min(400, Math.floor(cached / 12500))
+    },
+    updateValue: () => {
+      return sumOfPurchasedRuneLevels()
+    },
+    useCachedValue: true
+  },
+  freeRuneLevel: {
+    maxPointValue: 1000,
+    pointsAwarded: (cached: number) => {
+      return Math.min(200, Math.floor(cached / 1000)) + Math.min(400, Math.floor(cached / 2500))
+        + Math.min(400, Math.floor(cached / 10000))
+    },
+    updateValue: () => {
+      return sumOfFreeRuneLevels()
+    },
+    useCachedValue: true
+  },
+  singularityCount: {
+    maxPointValue: 900,
+    pointsAwarded: (cached: number) => {
+      return 2 * cached
+        + Math.max(0, cached - 100)
+        + Math.max(0, cached - 200)
+    },
+    updateValue: () => {
+      return player.highestSingularityCount
+    },
+    useCachedValue: true
+  },
+  ambrosiaCount: {
+    maxPointValue: 800,
+    pointsAwarded: (cached: number) => {
+      return Math.min(200, Math.floor(cached / 100))
+        + Math.min(200, Math.floor(cached / 10000))
+        + Math.min(400, Math.floor(400 * Math.sqrt(cached / 1e8)))
+    },
+    updateValue: () => {
+      return player.lifetimeAmbrosia
+    },
+    useCachedValue: true
+  },
+  redAmbrosiaCount: {
+    maxPointValue: 800,
+    pointsAwarded: (cached: number) => {
+      return Math.min(200, Math.floor(cached / 25))
+        + Math.min(200, Math.floor(cached / 2500))
+        + Math.min(400, Math.floor(400 * Math.sqrt(cached / 5e6)))
+    },
+    updateValue: () => {
+      return player.lifetimeRedAmbrosia
+    },
+    useCachedValue: true
+  },
+  exalts: {
+    maxPointValue: -1,
+    pointsAwarded: (_cached: number) => {
+      let pointValue = 0
+      for (const chal of Object.keys(player.singularityChallenges) as SingularityChallengeDataKeys[]) {
+        pointValue += player.singularityChallenges[chal].rewardAP
+      }
+      return pointValue
+    },
+    updateValue: () => {
+      return 0
+    },
+    useCachedValue: false
+  },
+  singularityUpgrades: {
+    maxPointValue: -1,
+    pointsAwarded: (_cached: number) => {
+      let pointValue = 0
+      // Go through all sing upgrades. if the max level is NOT -1, add 5 points if the upgrade level equals max level
+      for (const upgrade of Object.values(player.singularityUpgrades)) {
+        if (upgrade.maxLevel !== -1 && upgrade.level >= upgrade.maxLevel) {
+          pointValue += 5
+        }
+      }
+      return pointValue
+    },
+    updateValue: () => {
+      return 0
+    },
+    useCachedValue: false
+  },
+  octeractUpgrades: {
+    maxPointValue: -1,
+    pointsAwarded: (_cached: number) => {
+      let pointValue = 0
+      // Go through all octeract upgrades. if the max level is NOT -1, add 5 points if the upgrade level equals max level
+      for (const upgrade of Object.values(player.octeractUpgrades)) {
+        if (upgrade.maxLevel !== -1 && upgrade.level >= upgrade.maxLevel) {
+          pointValue += 7
+        }
+      }
+      return pointValue
+    },
+    updateValue: () => {
+      return 0
+    },
+    useCachedValue: false
+  },
+  redAmbrosiaUpgrades: {
+    maxPointValue: -1,
+    pointsAwarded: (_cached: number) => {
+      return 10 * getMaxRedAmbrosiaUpgrades()
+    },
+    updateValue: () => {
+      return 0
+    },
+    useCachedValue: false
+  },
+  talismanRarities: {
+    maxPointValue: -1,
+    pointsAwarded: (cached: number) => {
+      return 5 * cached
+    },
+    updateValue: () => {
+      return sumOfTalismanRarities()
+    },
+    useCachedValue: true
+  }
+}
+
+export const emptyProgressiveAchievements = Object
+  .fromEntries(
+    (Object.keys(progressiveAchievements)).map((key) => [key, { cached: 0, rewardedAP: 0 }])
+  ) as Record<ProgressiveAchievements, ProgressiveAchievementsObject>
+
 export class AchievementManager {
   achievementMap: { [index: number]: boolean } = {}
 
-  progressiveAchievements: Record<ProgressiveAchievements, ProgressiveAchievementsObject> = {
+  progressiveAchievements = {
     ...emptyProgressiveAchievements
   }
 
@@ -2453,158 +2587,6 @@ export type ProgressiveAchievements =
   | 'octeractUpgrades'
   | 'redAmbrosiaUpgrades'
   | 'exalts'
-
-export const progressiveAchievements: Record<ProgressiveAchievements, ProgressiveAchievement> = {
-  runeLevel: {
-    maxPointValue: 1000,
-    pointsAwarded: (cached: number) => {
-      return Math.min(200, Math.floor(cached / 1000)) + Math.min(400, Math.floor(cached / 2500))
-        + Math.min(400, Math.floor(cached / 12500))
-    },
-    updateValue: () => {
-      return sumOfPurchasedRuneLevels()
-    },
-    useCachedValue: true
-  },
-  freeRuneLevel: {
-    maxPointValue: 1000,
-    pointsAwarded: (cached: number) => {
-      return Math.min(200, Math.floor(cached / 1000)) + Math.min(400, Math.floor(cached / 2500))
-        + Math.min(400, Math.floor(cached / 10000))
-    },
-    updateValue: () => {
-      return sumOfFreeRuneLevels()
-    },
-    useCachedValue: true
-  },
-  singularityCount: {
-    maxPointValue: 900,
-    pointsAwarded: (cached: number) => {
-      return 2 * cached
-        + Math.max(0, cached - 100)
-        + Math.max(0, cached - 200)
-    },
-    updateValue: () => {
-      return player.highestSingularityCount
-    },
-    useCachedValue: true
-  },
-  ambrosiaCount: {
-    maxPointValue: 800,
-    pointsAwarded: (cached: number) => {
-      return Math.min(200, Math.floor(cached / 100))
-        + Math.min(200, Math.floor(cached / 10000))
-        + Math.min(400, Math.floor(400 * Math.sqrt(cached / 1e8)))
-    },
-    updateValue: () => {
-      return player.lifetimeAmbrosia
-    },
-    useCachedValue: true
-  },
-  redAmbrosiaCount: {
-    maxPointValue: 800,
-    pointsAwarded: (cached: number) => {
-      return Math.min(200, Math.floor(cached / 25))
-        + Math.min(200, Math.floor(cached / 2500))
-        + Math.min(400, Math.floor(400 * Math.sqrt(cached / 5e6)))
-    },
-    updateValue: () => {
-      return player.lifetimeRedAmbrosia
-    },
-    useCachedValue: true
-  },
-  exalts: {
-    maxPointValue: maxAPFromChallenges,
-    pointsAwarded: (_cached: number) => {
-      let pointValue = 0
-      for (const chal of Object.keys(player.singularityChallenges) as SingularityChallengeDataKeys[]) {
-        pointValue += player.singularityChallenges[chal].rewardAP
-      }
-      return pointValue
-    },
-    updateValue: () => {
-      return 0
-    },
-    useCachedValue: false,
-    i18nParams: {
-      num1: () => player.singularityChallenges.noSingularityUpgrades.rewardAP,
-      num2: () => player.singularityChallenges.oneChallengeCap.rewardAP,
-      num3: () => player.singularityChallenges.limitedAscensions.rewardAP,
-      num4: () => player.singularityChallenges.noOcteracts.rewardAP,
-      num5: () => player.singularityChallenges.noAmbrosiaUpgrades.rewardAP,
-      num6: () => player.singularityChallenges.limitedTime.rewardAP,
-      num7: () => player.singularityChallenges.sadisticPrequel.rewardAP,
-      num8: () => player.singularityChallenges.noOfferingPower.rewardAP,
-      cap1: () => player.singularityChallenges.noSingularityUpgrades.maxAP,
-      cap2: () => player.singularityChallenges.oneChallengeCap.maxAP,
-      cap3: () => player.singularityChallenges.limitedAscensions.maxAP,
-      cap4: () => player.singularityChallenges.noOcteracts.maxAP,
-      cap5: () => player.singularityChallenges.noAmbrosiaUpgrades.maxAP,
-      cap6: () => player.singularityChallenges.limitedTime.maxAP,
-      cap7: () => player.singularityChallenges.sadisticPrequel.maxAP,
-      cap8: () => player.singularityChallenges.noOfferingPower.maxAP
-    }
-  },
-  singularityUpgrades: {
-    maxPointValue: -1,
-    pointsAwarded: (_cached: number) => {
-      let pointValue = 0
-      // Go through all sing upgrades. if the max level is NOT -1, add 5 points if the upgrade level equals max level
-      for (const upgrade of Object.values(player.singularityUpgrades)) {
-        if (upgrade.maxLevel !== -1 && upgrade.level >= upgrade.maxLevel) {
-          pointValue += 5
-        }
-      }
-      return pointValue
-    },
-    updateValue: () => {
-      return 0
-    },
-    useCachedValue: false
-  },
-  octeractUpgrades: {
-    maxPointValue: -1,
-    pointsAwarded: (_cached: number) => {
-      let pointValue = 0
-      // Go through all octeract upgrades. if the max level is NOT -1, add 5 points if the upgrade level equals max level
-      for (const upgrade of Object.values(player.octeractUpgrades)) {
-        if (upgrade.maxLevel !== -1 && upgrade.level >= upgrade.maxLevel) {
-          pointValue += 7
-        }
-      }
-      return pointValue
-    },
-    updateValue: () => {
-      return 0
-    },
-    useCachedValue: false
-  },
-  redAmbrosiaUpgrades: {
-    maxPointValue: -1,
-    pointsAwarded: (_cached: number) => {
-      return 10 * getMaxRedAmbrosiaUpgrades()
-    },
-    updateValue: () => {
-      return 0
-    },
-    useCachedValue: false
-  },
-  talismanRarities: {
-    maxPointValue: -1,
-    pointsAwarded: (cached: number) => {
-      return 5 * cached
-    },
-    updateValue: () => {
-      return sumOfTalismanRarities()
-    },
-    useCachedValue: true
-  }
-}
-
-export const emptyProgressiveAchievements: Record<ProgressiveAchievements, ProgressiveAchievementsObject> = Object
-  .fromEntries(
-    (Object.keys(progressiveAchievements)).map((key) => [key, { cached: 0, rewardedAP: 0 }])
-  ) as Record<ProgressiveAchievements, ProgressiveAchievementsObject>
 
 export const emptyProgressiveCaches: Record<ProgressiveAchievements, number> = Object.fromEntries(
   (Object.keys(progressiveAchievements)).map((key) => [key, 0])

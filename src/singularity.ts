@@ -2850,8 +2850,8 @@ export const calculateSingularityReductions = () => {
   const arr = [
     player.shopUpgrades.shopSingularityPenaltyDebuff,
     (player.insideSingularityChallenge)
-      ? +player.blueberryUpgrades.ambrosiaSingReduction2.bonus.singularityReduction
-      : +player.blueberryUpgrades.ambrosiaSingReduction1.bonus.singularityReduction
+      ? +player.blueberryUpgrades.ambrosiaSingReduction2.bonus.metadata.singularityReduction
+      : +player.blueberryUpgrades.ambrosiaSingReduction1.bonus.metadata.singularityReduction
   ]
 
   return sumContents(arr)
