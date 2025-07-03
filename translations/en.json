@@ -758,6 +758,660 @@
       "424": "Simulated Tithe XIV: Obtain 500,000 free levels of the Speed Rune.",
       "425": "God needs better names: Obtain 750,000 free levels of the Speed Rune."
     },
+    "achievementRewards": {
+      "3": {
+        "acceleratorPower": "+0.1% Accelerator Power"
+      },
+      "4": {
+        "workerAutobuyer": "Start with the Worker Autobuyer unlocked!"
+      },
+      "5": {
+        "accelerators": "+1 Free Accelerator per 500 Workers owned"
+      },
+      "6": {
+        "multipliers": "+1 Free Multiplier per 1,000 Workers owned"
+      },
+      "7": {
+        "accelBoosts": "+1 Free Accelerator Boost per 2,000 Workers owned"
+      },
+      "10": {
+        "acceleratorPower": "+0.15% Accelerator Power"
+      },
+      "11": {
+        "investmentAutobuyer": "Start with the Investment Autobuyer unlocked!"
+      },
+      "12": {
+        "accelerators": "+1 Free Accelerator per 500 Investments owned"
+      },
+      "13": {
+        "multipliers": "+1 Free Multiplier per 1,000 Investments owned"
+      },
+      "14": {
+        "accelBoosts": "+1 Free Accelerator Boost per 2,000 Investments owned"
+      },
+      "17": {
+        "acceleratorPower": "+0.2% Accelerator Power"
+      },
+      "18": {
+        "printerAutobuyer": "Start with the Printer Autobuyer unlocked!"
+      },
+      "19": {
+        "accelerators": "+1 Free Accelerator per 500 Printers owned"
+      },
+      "20": {
+        "multipliers": "+1 Free Multiplier per 1,000 Printers owned"
+      },
+      "21": {
+        "accelBoosts": "+1 Free Accelerator Boost per 2,000 Printers owned"
+      },
+      "24": {
+        "acceleratorPower": "+0.2% Accelerator Power"
+      },
+      "25": {
+        "mintAutobuyer": "Start with the Mint Autobuyer unlocked!"
+      },
+      "26": {
+        "accelerators": "+1 Free Accelerator per 500 Coin Mints owned"
+      },
+      "27": {
+        "multipliers": "+1 Free Multiplier per 1,000 Coin Mints owned"
+      },
+      "28": {
+        "accelBoosts": "+1 Free Accelerator Boost per 2,000 Coin Mints owned"
+      },
+      "31": {
+        "acceleratorPower": "+0.3% Accelerator Power"
+      },
+      "32": {
+        "alchemyAutobuyer": "Start with the Alchemy Autobuyer unlocked!"
+      },
+      "33": {
+        "accelerators": "+1 Free Accelerator per 500 Alchemies owned"
+      },
+      "34": {
+        "multipliers": "+1 Free Multiplier per 1,000 Alchemies owned"
+      },
+      "35": {
+        "accelBoosts": "+1 Free Accelerator Boost per 2,000 Alchemies owned"
+      },
+      "36": {
+        "offeringPrestigeTimer": "Prestige gives more Offerings based on time spent! (+100% per 10 seconds)"
+      },
+      "37": {
+        "crystalMultiplier": "Crystal production multiplier based on log(Prestige Points)"
+      },
+      "38": {
+        "duplicationRuneUnlock": "Permanently unlock the Duplication Rune!"
+      },
+      "43": {
+        "autoPrestigeFeature": "Unlock the Auto Prestige Feature!"
+      },
+      "44": {
+        "prismRuneUnlock": "Permanently unlock the Prism Rune!"
+      },
+      "45": {
+        "taxReduction": "Tax scaling is reduced by 5%"
+      },
+      "46": {
+        "taxReduction": "Tax scaling is reduced by 5%"
+      },
+      "47": {
+        "taxReduction": "Tax scaling is reduced by 10%"
+      },
+      "50": {
+        "particleGain": "Permanently double your Particle Gain!"
+      },
+      "53": {
+        "multiplicativeObtainium": "Obtainium gain is increased by +0.125% for each Rune level"
+      },
+      "57": {
+        "multipliers": "+1 free Multiplier"
+      },
+      "58": {
+        "multipliers": "Another +1 free Multiplier!"
+      },
+      "59": {
+        "multipliers": "ANOTHER +1 free Multiplier!"
+      },
+      "60": {
+        "accelerators": "+2 free Accelerators"
+      },
+      "61": {
+        "accelerators": "Another +2 free Accelerators"
+      },
+      "62": {
+        "accelerators": "ANOTHER +2 free Accelerators"
+      },
+      "71": {
+        "conversionExponent": "+1% Conversion Exponent on all generator upgrades!"
+      },
+      "72": {
+        "conversionExponent": "+1% Conversion Exponent on all generator upgrades!"
+      },
+      "73": {
+        "conversionExponent": "+1% Conversion Exponent on all generator upgrades!"
+      },
+      "74": {
+        "conversionExponent": "+1% Conversion Exponent on all generator upgrades!"
+      },
+      "75": {
+        "conversionExponent": "+1% Conversion Exponent on all generator upgrades!"
+      },
+      "76": {
+        "conversionExponent": "+1% Conversion Exponent on all generator upgrades!"
+      },
+      "77": {
+        "conversionExponent": "+1% Conversion Exponent on all generator upgrades!"
+      },
+      "78": {
+        "refineryAutobuy": "Unlock the Refinery Autobuyer!"
+      },
+      "79": {
+        "crystalUpgrade1Autobuy": "Unlock the Autobuyer for the first Crystal Upgrade!"
+      },
+      "80": {
+        "salvage": "♻ Salvage +3",
+        "multAutobuyer": "Start with the Multiplier Autobuyer unlocked!"
+      },
+      "82": {
+        "taxReduction": "Tax scaling reduced by 4%"
+      },
+      "84": {
+        "multiplicativeObtainium": "Obtainium x1.05"
+      },
+      "85": {
+        "coalPlantAutobuy": "Unlock the Coal Plant Autobuyer!"
+      },
+      "86": {
+        "crystalUpgrade2Autobuy": "Unlock the Autobuyer for the second Crystal Upgrade!"
+      },
+      "87": {
+        "salvage": "♻ Salvage +3",
+        "accelAutobuyer": "Start with the Accelerator Autobuyer unlocked!"
+      },
+      "89": {
+        "taxReduction": "Tax scaling reduced by 4%"
+      },
+      "91": {
+        "multiplicativeObtainium": "Obtainium gain x1.05"
+      },
+      "92": {
+        "coalRigAutobuy": "Unlock the Coal Rig Autobuyer!"
+      },
+      "93": {
+        "crystalUpgrade3Autobuy": "Unlock the Autobuyer for the third Crystal Upgrade!"
+      },
+      "94": {
+        "salvage": "♻ Salvage +4"
+      },
+      "96": {
+        "taxReduction": "Tax scaling reduced by 4%"
+      },
+      "98": {
+        "multiplicativeObtainium": "Obtainium gain x1.05"
+      },
+      "99": {
+        "pickaxeAutobuy": "Unlock the Pickaxe Autobuyer!"
+      },
+      "100": {
+        "crystalUpgrade4Autobuy": "Unlock the Autobuyer for the fourth Crystal Upgrade!"
+      },
+      "101": {
+        "salvage": "♻ Salvage +5"
+      },
+      "102": {
+        "thriftRuneUnlock": "Permanently unlock the Thrift Rune!"
+      },
+      "103": {
+        "taxReduction": "Tax scaling reduced by 4%"
+      },
+      "105": {
+        "multiplicativeObtainium": "Obtainium gain x1.05"
+      },
+      "106": {
+        "pandorasBoxAutobuy": "Unlock the Pandora's Box Autobuyer!"
+      },
+      "107": {
+        "crystalUpgrade5Autobuy": "Unlock the Autobuyer for the fifth Crystal Upgrade!"
+      },
+      "108": {
+        "salvage": "♻ Salvage +5"
+      },
+      "110": {
+        "taxReduction": "Tax scaling reduced by 4%"
+      },
+      "112": {
+        "multiplicativeObtainium": "Obtainium gain x1.05"
+      },
+      "115": {
+        "salvage": "♻ Salvage +5"
+      },
+      "117": {
+        "taxReduction": "Tax scaling reduced by 5%"
+      },
+      "118": {
+        "taxReduction": "Tax scaling reduced by 0.5% per Reincarnation Challenge clear (multiplicative)"
+      },
+      "119": {
+        "exemptionTalisman": "Unlock the Exemption Talisman!"
+      },
+      "120": {
+        "diamondUpgrade18": "Unlock the 18th Diamond Upgrade!"
+      },
+      "122": {
+        "salvage": "♻ Salvage +5"
+      },
+      "124": {
+        "taxReduction": "Tax scaling reduced by 5%",
+        "chal7Researches": "Unlock five new Researches!"
+      },
+      "125": {
+        "multiplicativeObtainium": "Obtainium gain x1.05"
+      },
+      "126": {
+        "chronosTalisman": "Unlock the Chronos Talisman!"
+      },
+      "127": {
+        "chal8Researches": "Unlock new Research!",
+        "diamondUpgrade19": "Unlock the 19th Diamond Upgrade!",
+        "antHillUnlock": "Unlock the <span class='rainbowText'>Anthill!</span>"
+      },
+      "129": {
+        "salvage": "♻ Salvage +6"
+      },
+      "131": {
+        "taxReduction": "Tax scaling reduced by 5%"
+      },
+      "132": {
+        "multiplicativeObtainium": "Obtainium gain x1.05"
+      },
+      "133": {
+        "midasTalisman": "Unlock the Midas Talisman!"
+      },
+      "134": {
+        "chal9Researches": "Unlock new Research!",
+        "diamondUpgrade20": "Unlock the 20th Diamond Upgrade!",
+        "blessingUnlock": "Unlock Rune Blessings!",
+        "talismanUnlock": "Also, unlock Talismans!"
+      },
+      "135": {
+        "talismanPower": "+2% Talisman Power"
+      },
+      "136": {
+        "talismanPower": "+2% Talisman Power",
+        "salvage": "♻ Salvage +7"
+      },
+      "137": {
+        "sacrificeMult": "Sacrifice multiplier x1.25"
+      },
+      "139": {
+        "multiplicativeObtainium": "Obtainium gain x1.05"
+      },
+      "140": {
+        "metaphysicsTalisman": "Unlock the Metaphysics Talisman!"
+      },
+      "141": {
+        "ascensionUnlock": "Unlock the Ascension reset tier! Requires at least 1 {[Sadistic I]} clear."
+      },
+      "143": {
+        "salvage": "♻ Salvage +7"
+      },
+      "144": {
+        "talismanPower": "+2.5% Talisman Power"
+      },
+      "145": {
+        "talismanPower": "+2.5% Talisman Power"
+      },
+      "146": {
+        "multiplicativeObtainium": "Obtainium gain x1.05"
+      },
+      "147": {
+        "polymathTalisman": "Unlock the Polymath Talisman!"
+      },
+      "149": {
+        "acceleratorPower": "+1% Accelerator Power"
+      },
+      "151": {
+        "accelerators": "Gain +5 free Accelerators"
+      },
+      "152": {
+        "accelerators": "Gain +12 free Accelerators"
+      },
+      "153": {
+        "accelerators": "Gain +25 free Accelerators"
+      },
+      "154": {
+        "accelerators": "Gain +50 free Accelerators. <span class='rainbowText'>Wow!</span>"
+      },
+      "156": {
+        "multipliers": "Gain +1 free Multiplier"
+      },
+      "158": {
+        "multipliers": "Gain +1 free Multiplier"
+      },
+      "159": {
+        "multipliers": "Gain +3 free Multipliers"
+      },
+      "160": {
+        "multipliers": "Gain +6 free Multipliers"
+      },
+      "161": {
+        "multipliers": "Gain +10 free Multipliers. <span class='rainbowText'>Wow!</span>"
+      },
+      "169": {
+        "antSpeed": "Ant Speed is multiplied by logarithm of Galactic Crumbs"
+      },
+      "171": {
+        "antSpeed": "Ant Speed x1.2"
+      },
+      "172": {
+        "antSpeed": "Ant Speed x1.25"
+      },
+      "173": {
+        "antSpeed": "Ant Speed x1.4",
+        "antSacrificeUnlock": "Unlock Ant Sacrifice!",
+        "antAutobuyers": "Unlock an Ant Autobuyer!"
+      },
+      "174": {
+        "antSpeed": "Ant Speed is multiplied by logarithm of Ant Sacrifice Points"
+      },
+      "176": {
+        "antAutobuyers": "Unlock the Breeder Ant Autobuyer!",
+        "antUpgradeAutobuyers": "Unlock the Inceptus and Fortunae Ant Autobuyers!"
+      },
+      "177": {
+        "antAutobuyers": "Unlock the Meta-Breeder Ant Autobuyer!",
+        "antUpgradeAutobuyers": "Unlock the Tributum Ant Autobuyer!"
+      },
+      "178": {
+        "antAutobuyers": "Unlock the Mega-Breeder Ant Autobuyer!",
+        "antUpgradeAutobuyers": "Unlock the Celeritas and Multa Ant Autobuyers!"
+      },
+      "179": {
+        "antAutobuyers": "Unlock the Queen Ant Autobuyer!",
+        "antUpgradeAutobuyers": "Unlock the Sacrificium Ant Autobuyer!"
+      },
+      "180": {
+        "antAutobuyers": "Unlock the Lord Royal Ant Autobuyer!",
+        "antUpgradeAutobuyers": "Unlock the Hic and Experientia Ant Autobuyers!"
+      },
+      "181": {
+        "antAutobuyers": "Unlock the ALMIGHTY ANT Autobuyer!",
+        "antUpgradeAutobuyers": "Unlock the Praemoenio Ant Autobuyer!"
+      },
+      "182": {
+        "antAutobuyers": "Unlock the DISCIPLE OF ANT GOD Autobuyer!",
+        "antUpgradeAutobuyers": "Unlock the Scientia and Phylacterium Ant Autobuyers!"
+      },
+      "186": {
+        "wowSquareTalisman": "Unlock the Wow Square Talisman!"
+      },
+      "187": {
+        "ascensionCountMultiplier": "Gain more Ascension Count based on Ascension Score [+100% per digit of Ascension Score, minus 1]",
+        "multiplicativeOffering": "Offerings multiplier based on Ascension Count"
+      },
+      "188": {
+        "ascensionCountAdditive": "If your Ascension is at least 10 seconds long, add +100 Base Ascension Count!",
+        "multiplicativeObtainium": "Gain more Obtainium based on Ascension Count [up to x2 at 5 million Ascension Count]"
+      },
+      "189": {
+        "ascensionCountAdditive": "Ascension Count multiplier based on excess time",
+        "wowCubeGain": "Cube gain multiplier based on Ascension Count"
+      },
+      "193": {
+        "wowCubeGain": "Gain more Cubes based on your Constant [+0.25% per digit of Constant]"
+      },
+      "195": {
+        "wowCubeGain": "Gain more Cubes based on your Constant [up to x250 at 1e100,000 Constant]",
+        "wowTesseractGain": "Gain more Tesseracts based on your Constant [up to x250 at 1e100,000 Constant]"
+      },
+      "196": {
+        "wowPlatonicGain": "Gain more Platonic Cubes based on your Constant [up to x20 at 1e100,000 Constant]"
+      },
+      "197": {
+        "statTracker": "Unlock a Stat Tracker at the top of your screen!",
+        "tesseractUnlock": "Unlock gaining Tesseracts from Ascending!"
+      },
+      "198": {
+        "wowCubeGain": "Cube gain x1.02"
+      },
+      "199": {
+        "wowCubeGain": "Cube gain x1.02"
+      },
+      "200": {
+        "wowCubeGain": "Cube gain x1.02"
+      },
+      "201": {
+        "wowCubeGain": "Cube gain x1.02"
+      },
+      "202": {
+        "ascensionCountAdditive": "Add +2 Base Ascension Count per second of Ascension time"
+      },
+      "203": {
+        "talismanPower": "+1% Talisman Power"
+      },
+      "204": {
+        "ascensionRewardScaling": "Ascensions give more cubes of all types based on your Ascension time [+10% per second]",
+        "spiritUnlock": "Unlock Spirits, in the Runes tab!"
+      },
+      "205": {
+        "wowTesseractGain": "Tesseract gain x1.02"
+      },
+      "206": {
+        "wowTesseractGain": "Tesseract gain x1.02"
+      },
+      "207": {
+        "wowTesseractGain": "Tesseract gain x1.02"
+      },
+      "208": {
+        "wowTesseractGain": "Tesseract gain x1.02"
+      },
+      "209": {
+        "ascensionCountAdditive": "Add +2 Base Ascension Count per second of Ascension time"
+      },
+      "210": {
+        "talismanPower": "+1% Talisman Power"
+      },
+      "211": {
+        "wowHypercubeGain": "Hypercube gain x1.05",
+        "hypercubeUnlock": "Unlock gaining Hypercubes from Ascending!"
+      },
+      "212": {
+        "wowHypercubeGain": "Hypercube gain x1.02"
+      },
+      "213": {
+        "wowHypercubeGain": "Hypercube gain x1.02"
+      },
+      "214": {
+        "wowHypercubeGain": "Hypercube gain x1.02"
+      },
+      "215": {
+        "wowHypercubeGain": "Hypercube gain x1.02"
+      },
+      "216": {
+        "ascensionCountAdditive": "Add +2 Base Ascension Count per second of Ascension time"
+      },
+      "217": {
+        "talismanPower": "+1% Talisman Power"
+      },
+      "218": {
+        "wowPlatonicGain": "Platonic Cubes x1.05",
+        "platonicUnlock": "Unlock gaining Platonic Cubes from Ascending!"
+      },
+      "219": {
+        "wowPlatonicGain": "Platonic Cube gain x1.02"
+      },
+      "220": {
+        "wowPlatonicGain": "Platonic Cubes gain x1.02"
+      },
+      "221": {
+        "wowPlatonicGain": "Platonic Cubes gain x1.02"
+      },
+      "222": {
+        "wowPlatonicGain": "Platonic Cubes gain x1.02"
+      },
+      "223": {
+        "ascensionCountAdditive": "Add +2 Base Ascension Count per second of Ascension time",
+        "wowPlatonicGain": "Gain more Platonic Cubes based on Ascension Count [up to x3 at 2.674e9 Ascension Count]"
+      },
+      "233": {
+        "salvage": "♻ Salvage +2"
+      },
+      "235": {
+        "salvage": "♻ Salvage +2"
+      },
+      "237": {
+        "salvage": "♻ Salvage +3"
+      },
+      "240": {
+        "allCubeGain": "All Cube Gain x1.2"
+      },
+      "245": {
+        "salvage": "♻ Salvage +3"
+      },
+      "250": {
+        "allCubeGain": "All Cube Gain x1.05",
+        "multiplicativeObtainium": "Obtainium x1.1",
+        "multiplicativeOffering": "Offerings x1.5",
+        "quarkGain": "Quark Gain x1.05"
+      },
+      "251": {
+        "allCubeGain": "All Cube Gain x1.05",
+        "multiplicativeObtainium": "Obtainium x1.5",
+        "multiplicativeOffering": "Offerings x1.1",
+        "quarkGain": "Quark Gain x1.05"
+      },
+      "253": {
+        "wowHypercubeGain": "Hypercube gain x1.1"
+      },
+      "254": {
+        "wowCubeGain": "Cube gain x1.1"
+      },
+      "255": {
+        "wowTesseractGain": "Tesseract gain x1.1"
+      },
+      "256": {
+        "wowPlatonicGain": "Platonic Cubes x1.1",
+        "overfluxConversionRate": "Overflux Powder conversion x1.05"
+      },
+      "257": {
+        "allCubeGain": "All Cube Gain x1.1",
+        "overfluxConversionRate": "Overflux Powder conversion x1.05"
+      },
+      "258": {
+        "wowHepteractGain": "Hepteract gain x1.1"
+      },
+      "259": {
+        "ascensionScore": "Ascension Score multiplier based on Abyss Hepteract expansions [x1.01 per expansion]"
+      },
+      "260": {
+        "ascensionCountMultiplier": "Ascension Count x1.1"
+      },
+      "261": {
+        "ascensionCountMultiplier": "Ascension Count x1.1"
+      },
+      "262": {
+        "allCubeGain": "All Cube Gain x1.1"
+      },
+      "263": {
+        "allCubeGain": "All Cube Gain x1.1"
+      },
+      "264": {
+        "allCubeGain": "All Cube Gain multiplier based on Ascension Count [up to x1.2 at 8e12 Ascension Count]"
+      },
+      "265": {
+        "allCubeGain": "All Cube Gain multiplier based on Ascension Count [up to x1.2 at 1.6e14 Ascension Count]"
+      },
+      "266": {
+        "quarkGain": "Quark gain multiplier based on Ascension Count [up to x1.1 at 1e15 Ascension Count]"
+      },
+      "267": {
+        "ascensionScore": "Ascension Score multiplier based on constants [up to x2 at 1e100,000 Constant]"
+      },
+      "270": {
+        "wowHepteractGain": "Hepteract gain multiplier based on constants [up to x2 at 1e1,000,000 Constant]",
+        "constUpgrade1Buff": "Constant Upgrade 1 boosted to 1.06",
+        "constUpgrade2Buff": "Constant Upgrade 2 boosted to 1.11"
+      },
+      "271": {
+        "platonicToHypercubes": "Platonic Cubes grant Hypercubes when opened [up to +1 at 1e1,000,000 Constant]"
+      },
+      "382": {
+        "salvage": "♻ Salvage +3"
+      },
+      "384": {
+        "salvage": "♻ Salvage +4"
+      },
+      "386": {
+        "salvage": "♻ Salvage +5"
+      },
+      "388": {
+        "salvage": "♻ Salvage +6"
+      },
+      "390": {
+        "salvage": "♻ Salvage +4"
+      },
+      "392": {
+        "salvage": "♻ Salvage +5"
+      },
+      "394": {
+        "salvage": "♻ Salvage +6"
+      },
+      "396": {
+        "salvage": "♻ Salvage +1"
+      },
+      "398": {
+        "salvage": "♻ Salvage +2"
+      },
+      "400": {
+        "salvage": "♻ Salvage +3"
+      },
+      "402": {
+        "salvage": "♻ Salvage +4"
+      },
+      "404": {
+        "salvage": "♻ Salvage +5"
+      },
+      "406": {
+        "salvage": "♻ Salvage +6"
+      },
+      "407": {
+        "salvage": "♻ Salvage +2"
+      },
+      "408": {
+        "salvage": "♻ Salvage +7"
+      },
+      "409": {
+        "salvage": "♻ Salvage +2"
+      },
+      "410": {
+        "salvage": "♻ Salvage +8"
+      },
+      "411": {
+        "salvage": "♻ Salvage +1"
+      },
+      "413": {
+        "salvage": "♻ Salvage +2"
+      },
+      "415": {
+        "salvage": "♻ Salvage +2"
+      },
+      "417": {
+        "salvage": "♻ Salvage +3"
+      },
+      "419": {
+        "salvage": "♻ Salvage +4"
+      },
+      "421": {
+        "salvage": "♻ Salvage +5"
+      },
+      "423": {
+        "salvage": "♻ Salvage +6"
+      },
+      "425": {
+        "salvage": "♻ Salvage +7"
+      }
+    },
     "rewards": {
       "3": "Gain +.10% to Accelerator Power.",
       "4": "Start Transcensions/Challenges with Worker Autobuyer unlocked.",
@@ -959,7 +1613,8 @@
     },
     "rewardTypes": {
       "title": "Achievement-specific bonuses grant you the following!",
-      "unlocked": "UNLOCKED!",
+      "unlocked": "✔",
+      "locked": "❌",
       "acceleratorPower": "• Accelerator Power +{{val}}",
       "accelerators": "• Free Accelerators +{{val}}",
       "multipliers": "• Free Multipliers +{{val}}",
@@ -1026,7 +1681,8 @@
       "antHillUnlock": "• Anthill Tab {{unlock}}",
       "diamondUpgrade18": "• Diamond Upgrade 4x3 {{unlock}}",
       "diamondUpgrade19": "• Diamond Upgrade 4x4 {{unlock}}",
-      "diamondUpgrade20": "• Diamond Upgrade 4x5 {{unlock}}"
+      "diamondUpgrade20": "• Diamond Upgrade 4x5 {{unlock}}",
+      "overfluxConversionRate": "• Overflux Powder Conversion Rate x{{val}}"
     },
     "progressiveAchievements": {
       "runeLevel": {
@@ -1057,7 +1713,27 @@
       "exalts": {
         "name": "Progressive Achievement - EXALT Completions",
         "description": "Gain AP for each EXALT you have completed!",
-        "apSource": "No Singularity Upgrades: +5 AP for tier 1-15, +10 AP for tier 16-30 <br> One Challenge Caps: +5 AP for tier 1-12, +10 AP for tier 13-25 <br> Twenty Ascensions: +5 AP for tier 1-10, +10 AP for tier 11-25 <br> No Octeract Effects: +10 AP for tier 1-7, +15 AP for tier 8-15 <br> No Ambrosia Upgrades: +10 AP for tier 1-10, +15 AP for tier 11-20 <br> Grand Singularity Speedrun: +10 AP for tier 1-10, +15 AP for tier 11-20, +20 AP for tier 21-25 <br> Sadistic III: +10 AP for tier 1-10, +15 AP for tier 11-20, +20 AP for tier 21-25, +25 AP for tier 25-30 <br> Rejected by the Gods: +10 AP for tier 1-5, +15 AP for tier 6-15, +20 AP for tier 16-25, +25 AP for tier 26-30"
+        "apSource": "No Singularity Upgrades: {{num1}}/{{cap1}} AP <br> One Challenge Caps: {{num2}}/{{cap2}} AP <br> Twenty Ascensions: {{num3}}/{{cap3}} AP <br> No Octeract Effects: {{num4}}/{{cap4}} AP <br> No Ambrosia Upgrades: {{num5}}/{{cap5}} AP <br> Grand Singularity Speedrun: {{num6}}/{{cap6}} AP <br> Sadistic III: {{num7}}/{{cap7}} AP <br> Rejected by the Gods: {{num8}}/{{cap8}} AP"
+      },
+      "singularityUpgrades": {
+        "name": "Progressive Achievement - Golden Quark Upgrades",
+        "description": "Gain AP for each Golden Quark upgrade you've maxxed!",
+        "apSource": "Capped upgrades: +5 AP If the upgraded level (excluding free upgrades) is at least the base maximum level."
+      },
+      "octeractUpgrades": {
+        "name": "Progressive Achievement - Octeract Upgrades",
+        "description": "Gain AP for each Octeract upgrade you've maxxed!",
+        "apSource": "Capped upgrades: +7 AP if the upgraded level (excluding free upgrades) is the maximum level."
+      },
+      "redAmbrosiaUpgrades": {
+        "name": "Progressive Achievement - Red Ambrosia Upgrades",
+        "description": "Gain AP for each Red Ambrosia upgrade you've maxxed!",
+        "apSource": "For each upgrade leveled to the max: +10 AP"
+      },
+      "talismanRarities": {
+        "name": "Talisman Rarity",
+        "description": "Your talismans grant AP based on their rarity! Best sum of rarities: {{x}}",
+        "apSource": "Gain +5 AP for each rarity. Unlocked Talismans have a rarity of at least 1."
       }
     },
     "alerts": {
@@ -1066,6 +1742,8 @@
       "255": "Wow! You gained 1e17 (100 Quadrillion) score in a single Ascension. For that, you can now generate Hepteracts if you get above 1.66e17 (166.6 Quadrillion) score in an Ascension. Good luck!"
     },
     "hover": "Hover over an achievement to view information.",
+    "tieredExtraRewards": "This Tiered Achievement has extra rewards!",
+    "ungroupedExtraRewards": "This Achievement has an additional reward!",
     "totalPoints": "Achievement Points: {{x}}/{{y}} [{{z}}%]",
     "achievementPoints": "You have {{x}} Achievement Points (AP)!",
     "rewardGainMessage": "Reward: {{x}} AP. {{y}} Quarks! {{z}}",

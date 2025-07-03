@@ -499,7 +499,11 @@ export const player: Player = {
     singularityCount: 0,
     ambrosiaCount: 0,
     redAmbrosiaCount: 0,
-    exalts: 0
+    exalts: 0,
+    talismanRarities: 0,
+    singularityUpgrades: 0,
+    octeractUpgrades: 0,
+    redAmbrosiaUpgrades: 0
   },
 
   achievementPoints: 0,
@@ -1798,6 +1802,7 @@ export const saveSynergy = (button?: boolean) => {
   player.loaded1009hotfix1 = true
 
   player.achievements = [...achievementManager.achArray]
+  player.progressiveAchievements = { ...achievementManager.progAchCache }
 
   const p = playerJsonSchema.parse(player)
   const save = btoa(JSON.stringify(p))

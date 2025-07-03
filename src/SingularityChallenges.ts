@@ -294,6 +294,10 @@ export class SingularityChallenge {
     return this.achievementPointValue(this.completions)
   }
 
+  public get maxAP () {
+    return this.achievementPointValue(this.maxCompletions)
+  }
+
   valueOf (): ISingularityChallengeData {
     return {
       baseReq: this.baseReq,
@@ -521,3 +525,8 @@ export const singularityChallengeData: Record<
     }
   }
 }
+
+export const maxAPFromChallenges = Object.values(singularityChallengeData).reduce(
+  (acc, challenge) => acc + challenge.achievementPointValue(challenge.maxCompletions),
+  0
+)

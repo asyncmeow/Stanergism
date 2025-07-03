@@ -585,7 +585,29 @@ export const visualUpdateBuildings = () => {
 
 export const visualUpdateUpgrades = () => {}
 
-export const visualUpdateAchievements = () => {}
+export const visualUpdateAchievements = () => {
+  DOMCacheGetOrSet('achievementprogress').textContent = i18next.t('achievements.achievementPoints', {
+    x: format(achievementManager.totalPoints, 0, true)
+  })
+  DOMCacheGetOrSet('achievementQuarkBonus').innerHTML = i18next.t('achievements.achievementLevel', {
+    level: format(achievementManager.level)
+  })
+  DOMCacheGetOrSet('achievementTNLText').innerHTML = i18next.t('achievements.achievementToNextLevel', {
+    level: format(achievementManager.level + 1),
+    AP: format(achievementManager.toNextLevel)
+  })
+
+  const totalAchPoints = achievementManager.totalPoints
+  if (totalAchPoints < 2500) {
+    DOMCacheGetOrSet('achievementProgressFill').style.width = `${
+      Math.floor(100 * (50 - achievementManager.toNextLevel) / 50)
+    }%`
+  } else {
+    DOMCacheGetOrSet('achievementProgressFill').style.width = `${
+      Math.floor(100 * (100 - achievementManager.toNextLevel) / 100)
+    }%`
+  }
+}
 
 export const visualUpdateRunes = () => {
   if (G.currentTab !== Tabs.Runes) {

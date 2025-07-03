@@ -2,7 +2,7 @@
 
 import ClipboardJS from 'clipboard'
 import i18next from 'i18next'
-import { totalachievementpoints } from './Achievements'
+import { maxAchievementPoints } from './Achievements'
 import type { BlueberryUpgradeNames } from './BlueberryUpgrades'
 import {
   calculateAscensionSpeedMult,
@@ -257,8 +257,8 @@ export const generateExportSummary = async (): Promise<void> => {
     prestige = `${
       prestige + i18next.t('achievements.totalPoints', {
         x: format(player.achievementPoints),
-        y: format(totalachievementpoints),
-        z: (100 * player.achievementPoints / totalachievementpoints).toPrecision(4)
+        y: format(maxAchievementPoints),
+        z: (100 * player.achievementPoints / maxAchievementPoints).toPrecision(4)
       })
     }\n`
 

@@ -1,8 +1,9 @@
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
 import { DOMCacheGetOrSet } from './Cache/DOM'
-import { CalcCorruptionStuff, calculateAscensionScore, calculateGlobalSpeedMult } from './Calculate'
+import { CalcCorruptionStuff, calculateAscensionScore } from './Calculate'
 import { getHepteract } from './Hepteracts'
+import { getMaxRedAmbrosiaUpgrades } from './RedAmbrosiaUpgrades'
 import {
   getRune,
   getRuneBlessing,
@@ -11,61 +12,15 @@ import {
   sumOfPurchasedRuneLevels,
   sumOfRuneLevels
 } from './Runes'
-import type { SingularityChallengeDataKeys } from './SingularityChallenges'
+import { maxAPFromChallenges, type SingularityChallengeDataKeys } from './SingularityChallenges'
 import { format, formatAsPercentIncrease, player } from './Synergism'
+import { sumOfTalismanRarities } from './Talismans'
 import type { resetNames } from './types/Synergism'
 import { Alert, Notification, revealStuff } from './UpdateHTML'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
 
-// dprint-ignore
-export const achievementpointvalues = [
-  0,
-  1, 2, 4, 6, 8, 9, 10, // 7
-  1, 2, 4, 6, 8, 9, 10,
-  1, 2, 4, 6, 8, 9, 10, // 21
-  1, 2, 4, 6, 8, 9, 10,
-  1, 2, 4, 6, 8, 9, 10, // 35
-  1, 2, 4, 6, 8, 9, 10,
-  1, 2, 4, 6, 8, 9, 10, // 49
-  1, 2, 4, 6, 8, 9, 10,
-  2, 8, 10, 2, 8, 10, 10, // 63
-  2, 8, 10, 10, 10, 10, 10,
-  2, 4, 6, 8, 10, 10, 10, // 77
-  1, 2, 4, 6, 8, 9, 10,
-  1, 2, 4, 6, 8, 9, 10, // 91
-  1, 2, 4, 6, 8, 9, 10,
-  1, 2, 4, 6, 8, 9, 10, // 105
-  1, 2, 4, 6, 8, 9, 10,
-  1, 2, 4, 6, 8, 9, 10, // 119
-  1, 2, 4, 6, 8, 9, 10,
-  1, 2, 4, 6, 8, 9, 10, // 133
-  1, 2, 4, 6, 8, 9, 10,
-  1, 2, 4, 6, 8, 9, 10, // 147
-  1, 2, 4, 6, 8, 9, 10,
-  1, 2, 4, 6, 8, 9, 10, // 161
-  1, 2, 4, 6, 8, 9, 10,
-  10, 10, 10, 10, 10, 10, 10, // 175
-  10, 10, 10, 10, 10, 10, 10, // 182
-  20, 20, 20, 40, 60, 60, 100, // 189
-  20, 20, 40, 40, 60, 60, 100, // 196
-  20, 20, 40, 40, 60, 60, 100, // 203
-  20, 40, 40, 40, 60, 60, 100, // 210
-  40, 40, 40, 60, 60, 100, 100, // 217
-  40, 40, 60, 60, 100, 100, 100, // 224
-  20, 40, 40, 60, 60, 100, 100, // 231
-  40, 60, 100, 60, 100, 100, 40, // 238
-  40, 40, 40, 40, 40, 40, 40, // 245
-  40, 40, 40, 40, 100, 100, 45, // 252
-  50, 75, 75, 75, 100, 100, 150, // 259
-  50, 75, 75, 75, 100, 100, 150, // 266
-  50, 75, 75, 75, 100, 100, 150, // 273
-  10, 10, 20, 20, 30, 40, 50 // 280
-]
-
-export const totalachievementpoints = achievementpointvalues.reduce((a, b) => a + b, 0)
-
-export const areward = (i: number): string => {
+/*export const areward = (i: number): string => {
   // May 22, 2021: Allow achievement bonus values display directly in the description
   // Using areward as const object did not allow ${player object}
 
@@ -135,15 +90,15 @@ export const areward = (i: number): string => {
   }
 
   return ''
-}
+} */
 
-export const achievementAlerts = async (num: number) => {
+/* export const achievementAlerts = async (num: number) => {
   if (player.highestSingularityCount === 0) {
     if (num === 36 || num === 38 || num === 255) {
       return Alert(i18next.t(`achievements.alerts.${num}`))
     }
   }
-}
+} */
 // ${format(Decimal.log(player.ascendShards.add(1), 10) / 1000, 2)} (log(constant)/1000)%!
 
 // TODO: clean this up
@@ -245,51 +200,6 @@ export const getAchievementQuarks = (i: number) => {
   }
 
   return Math.floor(achievements[i].pointValue * actualMultiplier)
-}
-
-export const achievementdescriptions = (i: number) => {
-  const y = i18next.t(`achievements.descriptions.${i}`)
-  const z = player.achievements[i] > 0.5 ? i18next.t('achievements.completed') : ''
-  const k = areward(i)
-
-  DOMCacheGetOrSet('achievementdescription').textContent = y + z
-  DOMCacheGetOrSet('achievementreward').textContent = i18next.t('achievements.rewardGainMessage', {
-    x: achievementpointvalues[i],
-    y: format(getAchievementQuarks(i), 0, true),
-    z: k
-  })
-
-  if (player.achievements[i] > 0.5) {
-    DOMCacheGetOrSet('achievementdescription').style.color = 'gold'
-  } else {
-    DOMCacheGetOrSet('achievementdescription').style.color = 'white'
-  }
-}
-
-export const achievementaward = (num: number) => {
-  if (player.achievements[num] < 1) {
-    if (player.toggles[34]) {
-      const description = i18next.t(`achievements.descriptions.${num}`)
-      void Notification(i18next.t('achievements.notification', { m: description }))
-    }
-
-    void achievementAlerts(num)
-    player.achievementPoints += achievementpointvalues[num]
-    player.worlds.add(getAchievementQuarks(num), false)
-
-    DOMCacheGetOrSet('achievementprogress').textContent = i18next.t('achievements.achievementPoints', {
-      x: format(player.achievementPoints)
-    })
-
-    DOMCacheGetOrSet('achievementQuarkBonus').innerHTML = i18next.t('achievements.quarkBonus', {
-      multiplier: format(1 + player.achievementPoints / 50000, 3, true)
-    })
-
-    player.achievements[num] = 1
-    revealStuff()
-  }
-
-  DOMCacheGetOrSet(`ach${num}`).classList.add('green-background')
 }
 
 /* June 9, 2025 Achievements System Rewrite */
@@ -485,6 +395,8 @@ export class AchievementManager {
       this.achievementMap[index] = val > 0
     })
     this.updateTotalPoints()
+    updateGroupedAchievementProgress()
+    updateUngroupedAchievementProgress()
   }
 
   updateProgressiveAchievements (progAchCache: Record<ProgressiveAchievements, number>) {
@@ -493,6 +405,7 @@ export class AchievementManager {
       this.updateProgressiveAchievementValue(k)
     }
     this.updateTotalPoints()
+    updateProgressiveAchievementProgress()
   }
 
   updateProgressiveAchievementCaches () {
@@ -567,6 +480,16 @@ export class AchievementManager {
   // Used when saving with the player schema
   get achArray (): number[] {
     return Object.values(this.achievementMap).map((val) => (val ? 1 : 0))
+  }
+
+  // Convert progressiveAchievements to an object with keys as the progressive achievement names
+  // and values as the cached values
+  get progAchCache (): Record<ProgressiveAchievements, number> {
+    const cache = emptyProgressiveCaches
+    for (const key of Object.keys(this.progressiveAchievements) as ProgressiveAchievements[]) {
+      cache[key] = this.progressiveAchievements[key].cached
+    }
+    return cache
   }
 
   get level (): number {
@@ -1534,49 +1457,49 @@ export const achievements: { [index: number]: Achievement } = {
     pointValue: 5,
     unlockCondition: () => player.antSacrificePoints >= 666 && player.secondOwnedAnts > 0,
     group: 'sacMult',
-    reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 2, antELOAdditive: () => 25 },
+    reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 2 },
     checkReset: () => player.highestSingularityCount >= 10
   },
   177: {
     pointValue: 10,
     unlockCondition: () => player.antSacrificePoints >= 5000 && player.thirdOwnedAnts > 0,
     group: 'sacMult',
-    reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 1, antELOAdditive: () => 50 },
+    reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 1 },
     checkReset: () => player.highestSingularityCount >= 10
   },
   178: {
     pointValue: 15,
     unlockCondition: () => player.antSacrificePoints >= 25000 && player.fourthOwnedAnts > 0,
     group: 'sacMult',
-    reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 2, antELOAdditive: () => 75 },
+    reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 2 },
     checkReset: () => player.highestSingularityCount >= 10
   },
   179: {
     pointValue: 20,
     unlockCondition: () => player.antSacrificePoints >= 1e5 && player.fifthOwnedAnts > 0,
     group: 'sacMult',
-    reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 1, antELOAdditive: () => 100 },
+    reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 1 },
     checkReset: () => player.highestSingularityCount >= 10
   },
   180: {
     pointValue: 25,
     unlockCondition: () => player.antSacrificePoints >= 1e6 && player.sixthOwnedAnts > 0,
     group: 'sacMult',
-    reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 2, antELOMultiplicative: () => 1.01 },
+    reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 2 },
     checkReset: () => player.highestSingularityCount >= 10
   },
   181: {
     pointValue: 30,
     unlockCondition: () => player.antSacrificePoints >= 1e7 && player.seventhOwnedAnts > 0,
     group: 'sacMult',
-    reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 1, antELOMultiplicative: () => 1.02 },
+    reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 1 },
     checkReset: () => player.highestSingularityCount >= 10
   },
   182: {
     pointValue: 35,
     unlockCondition: () => player.antSacrificePoints >= 1e8 && player.eighthOwnedAnts > 0,
     group: 'sacMult',
-    reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 2, antELOMultiplicative: () => 1.03 },
+    reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 2 },
     checkReset: () => player.highestSingularityCount >= 10
   },
   183: { pointValue: 5, unlockCondition: () => player.ascensionCount >= 1, group: 'ascensionCount' },
@@ -2323,6 +2246,154 @@ export const achievements: { [index: number]: Achievement } = {
   }
 }
 
+export interface GroupAchievementInfo {
+  order: number // Display achs in certain order
+  displayCondition: () => boolean
+}
+
+export const groupedAchievementData: Record<Exclude<AchievementGroups, 'ungrouped'>, GroupAchievementInfo> = {
+  firstOwnedCoin: {
+    order: 0,
+    displayCondition: () => player.prestigeCount > 0
+  },
+  secondOwnedCoin: {
+    order: 1,
+    displayCondition: () => player.prestigeCount > 0
+  },
+  thirdOwnedCoin: {
+    order: 2,
+    displayCondition: () => player.prestigeCount > 0
+  },
+  fourthOwnedCoin: {
+    order: 3,
+    displayCondition: () => player.prestigeCount > 0
+  },
+  fifthOwnedCoin: {
+    order: 4,
+    displayCondition: () => player.prestigeCount > 0
+  },
+  prestigePointGain: {
+    order: 5,
+    displayCondition: () => player.prestigeCount > 0
+  },
+  accelerators: {
+    order: 6,
+    displayCondition: () => player.prestigeCount > 0
+  },
+  multipliers: {
+    order: 7,
+    displayCondition: () => player.prestigeCount > 0
+  },
+  acceleratorBoosts: {
+    order: 8,
+    displayCondition: () => player.prestigeCount > 0
+  },
+  runeLevel: {
+    order: 9,
+    displayCondition: () => player.prestigeCount > 0
+  },
+  transcendPointGain: {
+    order: 10,
+    displayCondition: () => player.transcendCount > 0
+  },
+  challenge1: {
+    order: 11,
+    displayCondition: () => player.transcendCount > 0
+  },
+  challenge2: {
+    order: 12,
+    displayCondition: () => player.transcendCount > 0
+  },
+  challenge3: {
+    order: 13,
+    displayCondition: () => player.transcendCount > 0
+  },
+  challenge4: {
+    order: 14,
+    displayCondition: () => player.transcendCount > 0
+  },
+  challenge5: {
+    order: 15,
+    displayCondition: () => player.transcendCount > 0
+  },
+  reincarnationPointGain: {
+    order: 16,
+    displayCondition: () => player.reincarnationCount > 0
+  },
+  challenge6: {
+    order: 17,
+    displayCondition: () => player.reincarnationCount > 0
+  },
+  challenge7: {
+    order: 18,
+    displayCondition: () => player.highestchallengecompletions[6] > 0
+  },
+  challenge8: {
+    order: 19,
+    displayCondition: () => player.highestchallengecompletions[7] > 0
+  },
+  antCrumbs: {
+    order: 20,
+    displayCondition: () => player.highestchallengecompletions[8] > 0
+  },
+  sacMult: {
+    order: 21,
+    displayCondition: () => player.highestchallengecompletions[8] > 0
+  },
+  runeFreeLevel: {
+    order: 22,
+    displayCondition: () => player.highestchallengecompletions[8] > 0
+  },
+  challenge9: {
+    order: 23,
+    displayCondition: () => player.highestchallengecompletions[8] > 0
+  },
+  speedBlessing: {
+    order: 24,
+    displayCondition: () => player.highestchallengecompletions[9] > 0
+  },
+  challenge10: {
+    order: 25,
+    displayCondition: () => player.highestchallengecompletions[9] > 0
+  },
+  ascensionCount: {
+    order: 26,
+    displayCondition: () => player.ascensionCount > 0
+  },
+  constant: {
+    order: 27,
+    displayCondition: () => player.ascensionCount > 0
+  },
+  challenge11: {
+    order: 28,
+    displayCondition: () => player.ascensionCount > 0
+  },
+  ascensionScore: {
+    order: 29,
+    displayCondition: () => player.highestchallengecompletions[11] > 0
+  },
+  challenge12: {
+    order: 30,
+    displayCondition: () => player.highestchallengecompletions[11] > 0
+  },
+  speedSpirit: {
+    order: 31,
+    displayCondition: () => player.highestchallengecompletions[12] > 0
+  },
+  challenge13: {
+    order: 32,
+    displayCondition: () => player.highestchallengecompletions[12] > 0
+  },
+  challenge14: {
+    order: 33,
+    displayCondition: () => player.highestchallengecompletions[13] > 0
+  },
+  singularityCount: {
+    order: 34,
+    displayCondition: () => player.singularityCount > 0
+  }
+}
+
 export const ungroupedNameMap = {
   'participationTrophy': 0,
   'prestigeNoMult': 57,
@@ -2353,7 +2424,8 @@ export const ungroupedNameMap = {
   'veryFast': 242,
   'unsmith': 243,
   'smith': 244,
-  'oneCubeOfMany': 246, // Intentional skip
+  'highlyBlessed': 245,
+  'oneCubeOfMany': 246,
   'extraChallenging': 247,
   'seeingRedNoBlue': 248,
   'overtaxed': 249,
@@ -2367,14 +2439,19 @@ export interface ProgressiveAchievement {
   pointsAwarded: (cached: number) => number
   updateValue: () => number // Number to compare to existing caches
   useCachedValue: boolean
+  i18nParams?: Record<string, () => number>
 }
 
 export type ProgressiveAchievements =
   | 'runeLevel'
   | 'freeRuneLevel'
+  | 'talismanRarities'
   | 'singularityCount'
   | 'ambrosiaCount'
   | 'redAmbrosiaCount'
+  | 'singularityUpgrades'
+  | 'octeractUpgrades'
+  | 'redAmbrosiaUpgrades'
   | 'exalts'
 
 export const progressiveAchievements: Record<ProgressiveAchievements, ProgressiveAchievement> = {
@@ -2437,7 +2514,7 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
     useCachedValue: true
   },
   exalts: {
-    maxPointValue: -1,
+    maxPointValue: maxAPFromChallenges,
     pointsAwarded: (_cached: number) => {
       let pointValue = 0
       for (const chal of Object.keys(player.singularityChallenges) as SingularityChallengeDataKeys[]) {
@@ -2448,7 +2525,79 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
     updateValue: () => {
       return 0
     },
+    useCachedValue: false,
+    i18nParams: {
+      num1: () => player.singularityChallenges.noSingularityUpgrades.rewardAP,
+      num2: () => player.singularityChallenges.oneChallengeCap.rewardAP,
+      num3: () => player.singularityChallenges.limitedAscensions.rewardAP,
+      num4: () => player.singularityChallenges.noOcteracts.rewardAP,
+      num5: () => player.singularityChallenges.noAmbrosiaUpgrades.rewardAP,
+      num6: () => player.singularityChallenges.limitedTime.rewardAP,
+      num7: () => player.singularityChallenges.sadisticPrequel.rewardAP,
+      num8: () => player.singularityChallenges.noOfferingPower.rewardAP,
+      cap1: () => player.singularityChallenges.noSingularityUpgrades.maxAP,
+      cap2: () => player.singularityChallenges.oneChallengeCap.maxAP,
+      cap3: () => player.singularityChallenges.limitedAscensions.maxAP,
+      cap4: () => player.singularityChallenges.noOcteracts.maxAP,
+      cap5: () => player.singularityChallenges.noAmbrosiaUpgrades.maxAP,
+      cap6: () => player.singularityChallenges.limitedTime.maxAP,
+      cap7: () => player.singularityChallenges.sadisticPrequel.maxAP,
+      cap8: () => player.singularityChallenges.noOfferingPower.maxAP
+    }
+  },
+  singularityUpgrades: {
+    maxPointValue: -1,
+    pointsAwarded: (_cached: number) => {
+      let pointValue = 0
+      // Go through all sing upgrades. if the max level is NOT -1, add 5 points if the upgrade level equals max level
+      for (const upgrade of Object.values(player.singularityUpgrades)) {
+        if (upgrade.maxLevel !== -1 && upgrade.level >= upgrade.maxLevel) {
+          pointValue += 5
+        }
+      }
+      return pointValue
+    },
+    updateValue: () => {
+      return 0
+    },
     useCachedValue: false
+  },
+  octeractUpgrades: {
+    maxPointValue: -1,
+    pointsAwarded: (_cached: number) => {
+      let pointValue = 0
+      // Go through all octeract upgrades. if the max level is NOT -1, add 5 points if the upgrade level equals max level
+      for (const upgrade of Object.values(player.octeractUpgrades)) {
+        if (upgrade.maxLevel !== -1 && upgrade.level >= upgrade.maxLevel) {
+          pointValue += 7
+        }
+      }
+      return pointValue
+    },
+    updateValue: () => {
+      return 0
+    },
+    useCachedValue: false
+  },
+  redAmbrosiaUpgrades: {
+    maxPointValue: -1,
+    pointsAwarded: (_cached: number) => {
+      return 10 * getMaxRedAmbrosiaUpgrades()
+    },
+    updateValue: () => {
+      return 0
+    },
+    useCachedValue: false
+  },
+  talismanRarities: {
+    maxPointValue: -1,
+    pointsAwarded: (cached: number) => {
+      return 5 * cached
+    },
+    updateValue: () => {
+      return sumOfTalismanRarities()
+    },
+    useCachedValue: true
   }
 }
 
@@ -2465,6 +2614,8 @@ export type ungroupedName = keyof typeof ungroupedNameMap
 
 export const numAchievements = Object.keys(achievements).length
 export const maxAchievementPoints = Object.values(achievements).reduce((sum, ach) => sum + ach.pointValue, 0)
+  + Object.values(progressiveAchievements)
+    .reduce((sum, ach) => sum + (ach.maxPointValue !== -1 ? ach.maxPointValue : 0), 0)
 
 // From achievements, I want to create an object whose keys are AchievementGroups and whose values are arrays of achievement numbers
 // Corresponding to indices. I want to create it using `achievement` object.
@@ -2695,17 +2846,21 @@ export const getAchieveReward: Record<AchievementRewards, (ach: { [index: number
       0
     )
   },
-  antELOAdditive: (ach): number => {
+  antELOAdditive: (_ach): number => {
+    return 0
+    /*
     return achievementsByReward.antELOAdditive.reduce(
       (sum, index) => sum + (ach[index] ? achievements[index].reward!.antELOAdditive!() : 0),
       0
-    )
+    )*/
   },
-  antELOMultiplicative: (ach): number => {
+  antELOMultiplicative: (_ach): number => {
+    return 1
+    /*
     return achievementsByReward.antELOMultiplicative.reduce(
       (prod, index) => prod * (ach[index] ? achievements[index].reward!.antELOMultiplicative!() : 1),
       1
-    )
+    )*/
   },
   ascensionCountMultiplier: (ach): number => {
     return achievementsByReward.ascensionCountMultiplier.reduce(
@@ -2882,7 +3037,7 @@ export const createGroupedAchievementDescription = (group: AchievementGroups) =>
   let groupName = i18next.t(`achievements.groupNames.${group}`)
   let achTier = 0
   let currTier = 0
-  let extraBonuses = 'Here\'s some extra bonuses you can get from this achievement:<br>'
+  let extraBonuses = ''
   let earnedAP = 0
   let possibleAP = 0
   for (const index of achievementsByGroup[group]) {
@@ -2894,26 +3049,56 @@ export const createGroupedAchievementDescription = (group: AchievementGroups) =>
       achTier += 1
       earnedAP += AP
     }
+
     if (ach.reward) {
+      if (extraBonuses === '') {
+        extraBonuses += `${i18next.t('achievements.tieredExtraRewards')} <br>`
+      }
       for (const [rewardType, rewardFunction] of Object.entries(ach.reward)) {
         const rewardGroup = rewardType as AchievementRewards
         const rewardValue = getAchieveReward[rewardGroup](achievementManager.achievementMap)
 
         if (typeof rewardValue === 'boolean') {
-          extraBonuses += `Tier ${currTier} <span style="color:${rewardValue ? 'green' : 'maroon'}">${
-            i18next.t(`achievements.rewardTypes.${rewardType}`, {
-              unlock: i18next.t('achievements.rewardTypes.unlocked')
+          extraBonuses += `<span style="color:${hasAch ? 'green' : 'crimson'}">Tier ${currTier + 1} • ${
+            i18next.t(`achievements.achievementRewards.${index}.${rewardGroup}`, {
+              unlock: hasAch
+                ? i18next.t('achievements.rewardTypes.unlocked')
+                : i18next.t('achievements.rewardTypes.locked')
             })
           }</span><br>`
-        } else if (typeof rewardValue === 'number') {
-          extraBonuses += `Tier ${currTier} <span style="color:${achTier - currTier === 1 ? 'green' : 'maroon'}">${
-            i18next.t(`achievements.rewardTypes.${rewardType}`, {
+        }
+        if (typeof rewardValue === 'number') {
+          extraBonuses += `<span style="color:${achTier - currTier === 1 ? 'green' : 'crimson'}">Tier ${
+            currTier + 1
+          } • ${
+            i18next.t(`achievements.achievementRewards.${index}.${rewardGroup}`, {
               val: format(rewardFunction(), 2, false)
             })
           }</span><br>`
         }
       }
     }
+
+    /*if (ach.reward) {
+      for (const [rewardType, rewardFunction] of Object.entries(ach.reward)) {
+        const rewardGroup = rewardType as AchievementRewards
+        const rewardValue = getAchieveReward[rewardGroup](achievementManager.achievementMap)
+
+        if (typeof rewardValue === 'boolean') {
+          extraBonuses += `Tier ${currTier + 1} <span style="color:${rewardValue ? 'green' : 'maroon'}">${
+            i18next.t(`achievements.rewardTypes.${rewardType}`, {
+              unlock: rewardValue ? i18next.t('achievements.rewardTypes.unlocked') : i18next.t('achievements.rewardTypes.locked')
+            })
+          }</span><br>`
+        } else if (typeof rewardValue === 'number') {
+          extraBonuses += `Tier ${currTier + 1} <span style="color:${achTier - currTier === 1 ? 'green' : 'maroon'}">${
+            i18next.t(`achievements.rewardTypes.${rewardType}`, {
+              val: format(rewardFunction(), 2, false)
+            })
+          }</span><br>`
+        }
+      }
+    } */
     currTier += 1
   }
   if (achTier === currTier) {
@@ -2965,13 +3150,13 @@ export const generateUngroupedDescription = (name: ungroupedName) => {
 
       if (typeof rewardValue === 'boolean') {
         extraText += `<span style="color:${hasAch ? 'green' : 'maroon'}">${
-          i18next.t(`achievements.rewardTypes.${rewardType}`, {
+          i18next.t(`achievements.achievementRewards.${ach}.${rewardType}`, {
             unlock: i18next.t('achievements.rewardTypes.unlocked')
           })
         }</span><br>`
       } else if (typeof rewardValue === 'number') {
         extraText += `<span style="color:${hasAch ? 'green' : 'maroon'}">${
-          i18next.t(`achievements.rewardTypes.${rewardType}`, {
+          i18next.t(`achievements.achievementRewards.${ach}.${rewardType}`, {
             val: format(rewardFunction(), 2, false)
           })
         }</span><br>`
@@ -2992,7 +3177,14 @@ export const generateProgressiveAchievementDescription = (name: ProgressiveAchie
   const achText = i18next.t(`achievements.progressiveAchievements.${name}.description`, {
     x: format(achievementManager.progressiveAchievements[name].cached, 0, true)
   })
-  const achAPSourceText = i18next.t(`achievements.progressiveAchievements.${name}.apSource`)
+
+  const i18nParams = ach.i18nParams !== undefined
+    ? Object.fromEntries(
+      Object.entries(ach.i18nParams).map(([key, fn]) => [key, fn()])
+    )
+    : {}
+
+  const achAPSourceText = i18next.t(`achievements.progressiveAchievements.${name}.apSource`, i18nParams)
 
   let APText = ''
 
@@ -3024,15 +3216,24 @@ export const generateAchievementHTMLs = () => {
     const ungroupedTable = DOMCacheGetOrSet('ungroupedAchievementsTable')
     const progressiveTable = DOMCacheGetOrSet('progressiveAchievementsTable')
 
-    for (const k of Object.keys(achievementsByGroup) as AchievementGroups[]) {
-      if (k === 'ungrouped') {
-        continue
-      }
+    const sortedGroups = (Object.keys(achievementsByGroup) as AchievementGroups[])
+      .filter((k) => k !== 'ungrouped')
+      .sort((a, b) => {
+        const orderA = groupedAchievementData[a as Exclude<AchievementGroups, 'ungrouped'>]?.order ?? Number.POSITIVE_INFINITY
+        const orderB = groupedAchievementData[b as Exclude<AchievementGroups, 'ungrouped'>]?.order ?? Number.POSITIVE_INFINITY
+        return orderA - orderB
+      })
 
+    for (const k of sortedGroups) {
+      const capitalizedName = k.charAt(0).toUpperCase() + k.slice(1)
       // create a new image element for each group that is not ungrouped
+
+      const div = document.createElement('div')
+      div.className = 'tieredAchievementType'
+
       const img = document.createElement('img')
-      img.className = 'tieredAchievementType'
-      img.src = `Pictures/Achievements/${k}.png`
+      img.id = `achievementGroup${capitalizedName}`
+      img.src = `Pictures/Achievements/Grouped/${capitalizedName}.png`
       img.alt = i18next.t(`achievements.groupNames.${k}`)
       img.style.cursor = 'pointer'
 
@@ -3047,14 +3248,20 @@ export const generateAchievementHTMLs = () => {
       }
 
       // attach to the table
-      table.appendChild(img)
+      div.appendChild(img)
+      table.appendChild(div)
     }
 
     for (const k of Object.keys(ungroupedNameMap)) {
+      const capitalizedName = k.charAt(0).toUpperCase() + k.slice(1)
       // create a new image element for each ungrouped achievement
+
+      const div = document.createElement('div')
+      div.className = 'ungroupedAchievementType'
+
       const img = document.createElement('img')
-      img.className = 'ungroupedAchievementType'
-      img.src = `Pictures/Achievements/${k}.png`
+      img.id = `ungroupedAchievement${capitalizedName}`
+      img.src = `Pictures/Achievements/Ungrouped/${capitalizedName}.png`
       img.alt = i18next.t(`achievements.ungroupedNames.${k}`)
       img.style.cursor = 'pointer'
 
@@ -3069,14 +3276,20 @@ export const generateAchievementHTMLs = () => {
       }
 
       // attach to the table
-      ungroupedTable.appendChild(img)
+      div.appendChild(img)
+      ungroupedTable.appendChild(div)
     }
 
     for (const k of Object.keys(progressiveAchievements)) {
+      const capitalizedName = k.charAt(0).toUpperCase() + k.slice(1)
       // create a new image element for each progressive achievement
+
+      const div = document.createElement('div')
+      div.className = 'progressiveAchievementType'
+
       const img = document.createElement('img')
-      img.className = 'progressiveAchievementType'
-      img.src = `Pictures/Achievements/${k}.png`
+      img.id = `progressiveAchievement${capitalizedName}`
+      img.src = `Pictures/Achievements/Progressive/${capitalizedName}.png`
       img.alt = i18next.t(`achievements.progressiveNames.${k}`)
       img.style.cursor = 'pointer'
 
@@ -3091,7 +3304,252 @@ export const generateAchievementHTMLs = () => {
       }
 
       // attach to the table
-      progressiveTable.appendChild(img)
+      div.appendChild(img)
+      progressiveTable.appendChild(div)
     }
   }
+}
+
+export const updateGroupedAchievementProgress = () => {
+  for (const k of Object.keys(achievementsByGroup) as AchievementGroups[]) {
+    if (k === 'ungrouped') {
+      continue
+    }
+
+    const capitalizedName = k.charAt(0).toUpperCase() + k.slice(1)
+    const img = DOMCacheGetOrSet(`achievementGroup${capitalizedName}`) as HTMLElement
+
+    if (img) {
+      const totalAchievements = achievementsByGroup[k].length
+      const completedAchievements = achievementsByGroup[k].filter((id) => achievementManager.achievementMap[id]).length
+      img.classList.remove('green-background', 'purple-background')
+      img.style.setProperty('border', 'none')
+
+      // Optional: Add visual styling based on completion
+      img.classList.remove('green-background')
+      if (completedAchievements === totalAchievements) {
+        img.classList.add('green-background')
+      }
+
+      img.style.setProperty('--pct', `${completedAchievements}/${totalAchievements}`)
+    }
+  }
+}
+
+export const updateUngroupedAchievementProgress = () => {
+  for (const k of Object.keys(ungroupedNameMap)) {
+    const capitalizedName = k.charAt(0).toUpperCase() + k.slice(1)
+    const img = DOMCacheGetOrSet(`ungroupedAchievement${capitalizedName}`) as HTMLElement
+
+    if (img) {
+      const achievementId = ungroupedNameMap[k as ungroupedName]
+      const isCompleted = achievementManager.achievementMap[achievementId]
+
+      img.classList.remove('green-background')
+
+      if (isCompleted) {
+        img.classList.add('green-background')
+      }
+    }
+  }
+}
+
+export const updateProgressiveAchievementProgress = () => {
+  for (const k of Object.keys(progressiveAchievements) as ProgressiveAchievements[]) {
+    const capitalizedName = k.charAt(0).toUpperCase() + k.slice(1)
+    const img = DOMCacheGetOrSet(`progressiveAchievement${capitalizedName}`) as HTMLElement
+
+    if (img) {
+      const achData = progressiveAchievements[k]
+
+      // Infinite progression implies we cannot define a percentage
+      if (achData.maxPointValue === -1) {
+        continue
+      }
+
+      const currentAP = achievementManager.progressiveAchievements[k].rewardedAP
+      const maxAP = achData.maxPointValue
+      console.log(img)
+
+      img.classList.remove('green-background')
+
+      // Add green background if fully completed
+      if (currentAP >= maxAP) {
+        img.classList.add('green-background')
+      }
+
+      // Set progress percentage
+      img.style.setProperty('--pct', `${currentAP}/${maxAP}`)
+    }
+  }
+}
+
+export const displayAchievementProgress = () => {
+  // Display Grouped Achievements AP
+  for (const k of Object.keys(achievementsByGroup) as AchievementGroups[]) {
+    if (k === 'ungrouped') {
+      continue
+    }
+
+    const capitalizedName = k.charAt(0).toUpperCase() + k.slice(1)
+    const img = DOMCacheGetOrSet(`achievementGroup${capitalizedName}`) as HTMLElement
+    const parent = img.parentElement!
+
+    if (img) {
+      // Calculate earned and total AP for this group
+      let earnedAP = 0
+      let totalAP = 0
+
+      for (const achievementId of achievementsByGroup[k]) {
+        const pointValue = achievements[achievementId].pointValue
+        totalAP += pointValue
+        if (achievementManager.achievementMap[achievementId]) {
+          earnedAP += pointValue
+        }
+      }
+
+      img.classList.add('dimmed')
+
+      // Remove any existing overlay first
+      const existingOverlay = parent.querySelector('.achievement-ap-overlay')
+      if (existingOverlay) {
+        existingOverlay.remove()
+      }
+
+      // Create new AP overlay with fraction format
+      const apOverlay = document.createElement('div')
+      apOverlay.classList.add('achievement-ap-overlay')
+
+      // Add gold text if AP is maxed
+      if (earnedAP === totalAP) {
+        apOverlay.classList.add('gold-text')
+      }
+
+      const numerator = document.createElement('div')
+      numerator.classList.add('achievement-fraction-numerator')
+      numerator.textContent = earnedAP.toString()
+
+      const denominator = document.createElement('div')
+      denominator.classList.add('achievement-fraction-denominator')
+      denominator.textContent = totalAP.toString()
+
+      apOverlay.appendChild(numerator)
+      apOverlay.appendChild(denominator)
+
+      parent.classList.add('relative-container')
+      parent.appendChild(apOverlay)
+    }
+  }
+
+  // Display Ungrouped Achievements AP
+  for (const k of Object.keys(ungroupedNameMap)) {
+    const capitalizedName = k.charAt(0).toUpperCase() + k.slice(1)
+    const img = DOMCacheGetOrSet(`ungroupedAchievement${capitalizedName}`) as HTMLElement
+    const parent = img.parentElement!
+
+    if (img) {
+      const achievementId = ungroupedNameMap[k as ungroupedName]
+      const isCompleted = achievementManager.achievementMap[achievementId]
+      const pointValue = achievements[achievementId].pointValue
+      const earnedAP = isCompleted ? pointValue : 0
+
+      img.classList.add('dimmed')
+
+      // Remove any existing overlay first
+      const existingOverlay = parent.querySelector('.achievement-ap-overlay')
+      if (existingOverlay) {
+        existingOverlay.remove()
+      }
+
+      // Create new AP overlay with simple number
+      const apOverlay = document.createElement('div')
+      apOverlay.classList.add('achievement-ap-overlay')
+
+      // Add gold text if achievement is completed
+      if (isCompleted) {
+        apOverlay.classList.add('gold-text')
+      }
+
+      apOverlay.textContent = earnedAP.toString()
+
+      parent.classList.add('relative-container')
+      parent.appendChild(apOverlay)
+    }
+  }
+
+  // Display Progressive Achievements AP
+  for (const k of Object.keys(progressiveAchievements) as ProgressiveAchievements[]) {
+    const capitalizedName = k.charAt(0).toUpperCase() + k.slice(1)
+    const img = DOMCacheGetOrSet(`progressiveAchievement${capitalizedName}`) as HTMLElement
+    const parent = img.parentElement!
+
+    if (img) {
+      const achData = progressiveAchievements[k]
+      const currentAP = achievementManager.progressiveAchievements[k].rewardedAP
+      const maxAP = achData.maxPointValue
+
+      img.classList.add('dimmed')
+
+      // Remove any existing overlay first
+      const existingOverlay = parent.querySelector('.achievement-ap-overlay')
+      if (existingOverlay) {
+        existingOverlay.remove()
+      }
+
+      // Create new AP overlay
+      const apOverlay = document.createElement('div')
+      apOverlay.classList.add('achievement-ap-overlay')
+
+      if (maxAP === -1) {
+        // Simple number for infinite progression (no gold text possible)
+        apOverlay.textContent = currentAP.toString()
+      } else {
+        // Fraction format for finite progression
+        // Add gold text if AP is maxed
+        if (currentAP >= maxAP) {
+          apOverlay.classList.add('gold-text')
+        }
+
+        const numerator = document.createElement('div')
+        numerator.classList.add('achievement-fraction-numerator')
+        numerator.textContent = currentAP.toString()
+
+        const denominator = document.createElement('div')
+        denominator.classList.add('achievement-fraction-denominator')
+        denominator.textContent = maxAP.toString()
+
+        apOverlay.appendChild(numerator)
+        apOverlay.appendChild(denominator)
+      }
+
+      parent.classList.add('relative-container')
+      parent.appendChild(apOverlay)
+    }
+  }
+}
+
+export const resetAchievementProgressDisplay = () => {
+  // Reset all achievement types
+  const selectors = [
+    '.tieredAchievementType',
+    '.ungroupedAchievementType',
+    '.progressiveAchievementType'
+  ]
+
+  selectors.forEach((selector) => {
+    const elements = document.querySelectorAll(selector)
+    elements.forEach((element) => {
+      const img = element.querySelector('img')
+      if (img) {
+        img.classList.remove('dimmed')
+      }
+
+      // Remove the AP overlay if it exists
+      const apOverlay = element.querySelector('.achievement-ap-overlay')
+      if (apOverlay) {
+        apOverlay.remove()
+        element.classList.remove('relative-container')
+      }
+    })
+  })
 }

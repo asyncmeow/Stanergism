@@ -1,4 +1,5 @@
 import i18next from 'i18next'
+import { displayAchievementProgress, resetAchievementProgressDisplay } from './Achievements'
 import {
   antRepeat,
   antUpgradeDescription,
@@ -408,6 +409,9 @@ export const generateEventHandlers = () => {
     achievement.addEventListener('mouseover', () => achievementdescriptions(index))
     achievement.addEventListener('focus', () => achievementdescriptions(index))
   }*/
+  DOMCacheGetOrSet('showAchievementProgress').addEventListener('mouseover', () => displayAchievementProgress())
+  DOMCacheGetOrSet('showAchievementProgress').addEventListener('focus', () => displayAchievementProgress())
+  DOMCacheGetOrSet('showAchievementProgress').addEventListener('mouseout', () => resetAchievementProgressDisplay())
 
   // RUNES TAB [And all corresponding subtabs]
   // Part 0: Upper UI portion

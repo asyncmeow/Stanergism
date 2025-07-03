@@ -1,6 +1,6 @@
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
-import { achievementaward, achievementManager } from './Achievements'
+import { achievementManager } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { CalcCorruptionStuff, calculateAscensionSpeedMult, calculateGlobalSpeedMult } from './Calculate'
 import { getMaxChallenges } from './Challenges'
@@ -954,7 +954,7 @@ export const updateChallengeLevel = (k: number) => {
   }
 }
 
-export const updateAchievementBG = () => {
+/*export const updateAchievementBG = () => {
   // When loading/importing, the game needs to correctly update achievement backgrounds.
   for (let i = 1; i <= 280; i++) { // Initiates by setting all to default
     DOMCacheGetOrSet(`ach${i}`).classList.remove('green-background')
@@ -972,7 +972,7 @@ export const updateAchievementBG = () => {
       achievementaward(i) // This sets all completed ach to green
     }
   }
-}
+} */
 
 export const showCorruptionStatsLoadouts = () => {
   const statsButton = DOMCacheGetOrSet('corrStatsBtn')

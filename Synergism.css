@@ -1130,7 +1130,7 @@ p#promocodeinfo {
     gap: 2px 2px;
 }
 
-#tieredAchievementsTable > img {
+#tieredAchievementsTable > div {
     width: 48px;
     height: 48px;
 }
@@ -1142,7 +1142,7 @@ p#promocodeinfo {
     gap: 2px 2px;
 }
 
-#ungroupedAchievementsTable > img {
+#ungroupedAchievementsTable > div {
     width: 32px;
     height: 32px;
 }
@@ -1154,7 +1154,7 @@ p#promocodeinfo {
     gap: 2px 2px;
 }
 
-#progressiveAchievementsTable > img {
+#progressiveAchievementsTable > div {
     width: 48px;
     height: 48px;
 }
@@ -1226,6 +1226,75 @@ p#promocodeinfo {
 
 #achievementColorInfo {
     margin-top: 10px;
+}
+
+.tieredAchievementType > img,
+.progressiveAchievementType > img {
+    width: 48px;
+    height: 48px;
+}
+
+.ungroupedAchievementType > img {
+    width: 32px;
+    height: 32px;
+}
+
+.tieredAchievementType img.dimmed,
+.ungroupedAchievementType img.dimmed,
+.progressiveAchievementType img.dimmed {
+    opacity: 0.5;
+}
+
+.achievement-ap-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1em;
+    text-shadow: 2px 2px 4px #000;
+    z-index: 999;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 0.8;
+}
+
+.achievement-fraction-numerator {
+    border-bottom: 1px solid white;
+    padding-bottom: 1px;
+    min-width: 1em;
+    text-align: center;
+}
+
+.achievement-fraction-denominator {
+    padding-top: 1px;
+    min-width: 1em;
+    text-align: center;
+}
+
+.tieredAchievementType,
+.ungroupedAchievementType,
+.progressiveAchievementType {
+    position: relative;
+    display: inline-block;
+}
+
+.relative-container {
+    position: relative;
+    display: inline-block;
+}
+
+.achievement-ap-overlay.gold-text {
+    color: gold;
+}
+
+#showAchievementProgress {
+    width: 48px;
+    cursor: pointer;
+    text-align: center;
+    border: 2px solid orange;
 }
 
 #buyamountoffering {
@@ -3023,7 +3092,9 @@ p#ascendHotKeys {
 }
 
 /* Credit: gwabo_ */
-.campaignIcon:not(.green-background) {
+.campaignIcon:not(.green-background),
+.tieredAchievementType img:not(.green-background),
+.progressiveAchievementType img:not(.green-background) {
     --pct: 0;
 
     background-image:

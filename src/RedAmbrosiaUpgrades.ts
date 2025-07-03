@@ -630,6 +630,11 @@ export function getRedAmbrosiaUpgrade<K extends RedAmbrosiaKeys> (key: K): RedAm
   return redAmbrosiaUpgrades[key]
 }
 
+export function getMaxRedAmbrosiaUpgrades (): number {
+  // Return the number of upgrades from redAmbrosiaUpgrades that are of the max level
+  return Object.values(redAmbrosiaUpgrades).filter((upgrade) => upgrade.level === upgrade.maxLevel).length
+}
+
 export const displayRedAmbrosiaLevels = () => {
   for (const key of Object.keys(redAmbrosiaUpgradeData)) {
     const k = key as RedAmbrosiaKeys
