@@ -586,6 +586,10 @@ export const visualUpdateBuildings = () => {
 export const visualUpdateUpgrades = () => {}
 
 export const visualUpdateAchievements = () => {
+  if (G.currentTab !== Tabs.Achievements) {
+    return
+  }
+
   DOMCacheGetOrSet('achievementprogress').textContent = i18next.t('achievements.achievementPoints', {
     x: format(achievementManager.totalPoints, 0, true)
   })
