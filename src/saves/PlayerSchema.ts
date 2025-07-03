@@ -869,7 +869,6 @@ export const playerSchema = z.object({
               extraLevelCalc: blueberryUpgradeData[k].extraLevelCalc,
               freeLevels: freeLevels as number,
               prerequisites: blueberryUpgradeData[k].prerequisites,
-              cacheUpdates: blueberryUpgradeData[k].cacheUpdates,
               ignoreEXALT: blueberryUpgradeData[k].ignoreEXALT
             }, k)
           ]

@@ -61,7 +61,6 @@ export interface IBlueberryData extends Omit<IUpgradeData, 'name' | 'description
   ambrosiaInvested?: number
   blueberriesInvested?: number
   prerequisites?: BlueberryOpt
-  cacheUpdates?: (() => void)[] // TODO: Improve this type signature -Plat
   ignoreEXALT?: boolean
 }
 
@@ -72,7 +71,6 @@ export class BlueberryUpgrade extends DynamicUpgrade {
   public blueberriesInvested = 0
   public blueberryCost: number
   readonly preRequisites: BlueberryOpt | undefined
-  readonly cacheUpdates: (() => void)[] | undefined
   readonly extraLevelCalc: () => number
   readonly ignoreEXALT: boolean
   #key: string
@@ -89,7 +87,6 @@ export class BlueberryUpgrade extends DynamicUpgrade {
     this.ambrosiaInvested = data.ambrosiaInvested ?? 0
     this.blueberriesInvested = data.blueberriesInvested ?? 0
     this.preRequisites = data.prerequisites ?? undefined
-    this.cacheUpdates = data.cacheUpdates ?? undefined
     this.ignoreEXALT = data.ignoreEXALT ?? false
     this.#key = key
   }
@@ -181,7 +178,6 @@ export class BlueberryUpgrade extends DynamicUpgrade {
     }
 
     this.updateUpgradeHTML()
-    this.updateCaches()
   }
 
   toString (): string {
@@ -292,14 +288,6 @@ export class BlueberryUpgrade extends DynamicUpgrade {
     return true
   }
 
-  updateCaches (): void {
-    if (this.cacheUpdates !== undefined) {
-      for (const cache of this.cacheUpdates) {
-        cache()
-      }
-    }
-  }
-
   refund (): void {
     player.ambrosia += this.ambrosiaInvested
     this.ambrosiaInvested = 0
@@ -342,7 +330,6 @@ export class BlueberryUpgrade extends DynamicUpgrade {
       extraLevelCalc: this.extraLevelCalc,
       ambrosiaInvested: this.ambrosiaInvested,
       blueberriesInvested: this.blueberriesInvested,
-      cacheUpdates: this.cacheUpdates,
       freeLevels: this.freeLevels,
       level: this.level,
       prerequisites: this.preRequisites
@@ -1206,7 +1193,6 @@ export const resetBlueberryTree = async (giveAlert = true) => {
   for (const upgrade of Object.keys(player.blueberryUpgrades)) {
     const k = upgrade as BlueberryUpgradeNames
     player.blueberryUpgrades[k].refund()
-    player.blueberryUpgrades[k].updateCaches()
   }
   if (giveAlert) return Alert(i18next.t('ambrosia.refund'))
 }
@@ -1336,7 +1322,6 @@ export const createBlueberryTree = async (modules: BlueberryOpt) => {
       player.ambrosia -= tempCost
       player.blueberryUpgrades[k].ambrosiaInvested = tempCost
       player.blueberryUpgrades[k].level = val
-      player.blueberryUpgrades[k].updateCaches()
     }
   }
   void Alert(i18next.t('ambrosia.importTree.success'))
