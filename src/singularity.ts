@@ -535,8 +535,7 @@ export class SingularityUpgrade extends DynamicUpgrade {
       level: this.level,
       minimumSingularity: this.minimumSingularity,
       qualityOfLife: this.qualityOfLife,
-      specialCostForm: this.specialCostForm,
-      toggleBuy: this.toggleBuy
+      specialCostForm: this.specialCostForm
     }
   }
 

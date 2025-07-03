@@ -48,9 +48,8 @@ const ascendBuildingSchema = z.object({
 })
 
 const singularityUpgradeSchema = (...keys: string[]) => {
-  return z.object<Record<'level' | 'toggleBuy' | 'freeLevels' | typeof keys[number], ZodNumber>>({
+  return z.object<Record<'level' | 'freeLevels' | typeof keys[number], ZodNumber>>({
     level: z.number(),
-    toggleBuy: z.number(),
     freeLevels: z.number(),
     ...keys.reduce((accum, value) => {
       accum[value] = z.number()
@@ -746,7 +745,7 @@ export const playerSchema = z.object({
       Object.fromEntries(
         Object.keys(singularityData).filter((k) => k in upgrades || k in blankSave.singularityUpgrades).map((key) => {
           const k = key as SingularityDataKeys
-          const { level, goldenQuarksInvested, toggleBuy, freeLevels } = upgrades[k]
+          const { level, goldenQuarksInvested, freeLevels } = upgrades[k]
             ?? blankSave.singularityUpgrades[k]
 
           return [
@@ -757,7 +756,6 @@ export const playerSchema = z.object({
 
               level: level as number,
               goldenQuarksInvested,
-              toggleBuy: toggleBuy as number,
               freeLevels: freeLevels as number,
               minimumSingularity: singularityData[k].minimumSingularity,
               effect: singularityData[k].effect,
@@ -776,7 +774,7 @@ export const playerSchema = z.object({
       Object.fromEntries(
         Object.keys(octeractData).map((key) => {
           const k = key as OcteractDataKeys
-          const { level, octeractsInvested, toggleBuy, freeLevels } = upgrades[k] ?? blankSave.octeractUpgrades[k]
+          const { level, octeractsInvested, freeLevels } = upgrades[k] ?? blankSave.octeractUpgrades[k]
 
           return [
             k,
@@ -785,7 +783,6 @@ export const playerSchema = z.object({
               costPerLevel: octeractData[k].costPerLevel,
               level: level as number,
               octeractsInvested,
-              toggleBuy: toggleBuy as number,
               effect: octeractData[k].effect,
               costFormula: octeractData[k].costFormula,
               freeLevels: freeLevels as number,
@@ -855,7 +852,7 @@ export const playerSchema = z.object({
       Object.fromEntries(
         Object.keys(blankSave.blueberryUpgrades).map((key) => {
           const k = key as BlueberryUpgradeNames
-          const { level, ambrosiaInvested, blueberriesInvested, toggleBuy, freeLevels } = upgrades[k]
+          const { level, ambrosiaInvested, blueberriesInvested, freeLevels } = upgrades[k]
             ?? blankSave.blueberryUpgrades[k]
 
           return [
@@ -866,7 +863,6 @@ export const playerSchema = z.object({
               level: level as number,
               ambrosiaInvested,
               blueberriesInvested,
-              toggleBuy: toggleBuy as number,
               blueberryCost: blueberryUpgradeData[k].blueberryCost,
               rewards: blueberryUpgradeData[k].rewards,
               costFormula: blueberryUpgradeData[k].costFormula,

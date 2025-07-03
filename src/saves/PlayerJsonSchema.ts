@@ -53,7 +53,6 @@ export const playerJsonSchema = playerSchema.extend({
           {
             level: value.level,
             goldenQuarksInvested: value.goldenQuarksInvested,
-            toggleBuy: value.toggleBuy,
             freeLevels: value.freeLevels
           }
         ]
@@ -68,7 +67,6 @@ export const playerJsonSchema = playerSchema.extend({
           {
             level: value.level,
             octeractsInvested: value.octeractsInvested,
-            toggleBuy: value.toggleBuy,
             freeLevels: value.freeLevels
           }
         ]
@@ -98,7 +96,6 @@ export const playerJsonSchema = playerSchema.extend({
             level: value.level,
             ambrosiaInvested: value.ambrosiaInvested,
             blueberriesInvested: value.blueberriesInvested,
-            toggleBuy: value.toggleBuy,
             freeLevels: value.freeLevels
           }
         ]

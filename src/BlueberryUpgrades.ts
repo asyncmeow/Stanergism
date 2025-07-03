@@ -345,8 +345,7 @@ export class BlueberryUpgrade extends DynamicUpgrade {
       cacheUpdates: this.cacheUpdates,
       freeLevels: this.freeLevels,
       level: this.level,
-      prerequisites: this.preRequisites,
-      toggleBuy: this.toggleBuy
+      prerequisites: this.preRequisites
     }
   }
 

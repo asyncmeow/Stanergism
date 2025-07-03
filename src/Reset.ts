@@ -1171,7 +1171,6 @@ export const singularity = (setSingNumber = -1) => {
       return [key, {
         level: value.level,
         goldenQuarksInvested: value.goldenQuarksInvested,
-        toggleBuy: value.toggleBuy,
         freeLevels: value.freeLevels
       }]
     })
@@ -1181,7 +1180,6 @@ export const singularity = (setSingNumber = -1) => {
       return [key, {
         level: value.level,
         octeractsInvested: value.octeractsInvested,
-        toggleBuy: value.toggleBuy,
         freeLevels: value.freeLevels
       }]
     })
@@ -1192,7 +1190,6 @@ export const singularity = (setSingNumber = -1) => {
         level: value.level,
         ambrosiaInvested: value.ambrosiaInvested,
         blueberriesInvested: value.blueberriesInvested,
-        toggleBuy: value.toggleBuy,
         freeLevels: value.freeLevels
       }]
     })

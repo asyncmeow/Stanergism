@@ -4,7 +4,6 @@ export interface IUpgradeData {
   level?: number
   maxLevel: number
   costPerLevel: number
-  toggleBuy?: number
   effect?(this: void, n: number): { bonus: number | boolean; desc: () => string }
   freeLevels?: number
 }
@@ -16,7 +15,6 @@ export abstract class DynamicUpgrade {
   public freeLevels = 0
   readonly maxLevel: number // -1 = infinitely levelable
   readonly costPerLevel: number
-  public toggleBuy = 1 // -1 = buy MAX (or 1000 in case of infinity levels!)
   readonly effect: (n: number) => { bonus: number | boolean; desc: () => string }
 
   constructor (data: IUpgradeData) {
@@ -26,7 +24,6 @@ export abstract class DynamicUpgrade {
     this.freeLevels = data.freeLevels ?? 0
     this.maxLevel = data.maxLevel
     this.costPerLevel = data.costPerLevel
-    this.toggleBuy = data.toggleBuy ?? 1
     this.effect = data.effect ?? ((n: number) => ({ bonus: n, desc: () => 'WIP not implemented' }))
   }
 

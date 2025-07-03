@@ -90,7 +90,7 @@ export class OcteractUpgrade extends DynamicUpgrade {
   }
 
   /**
-   * Buy levels up until togglebuy or maxed.
+   * Buy levels up until maxed.
    * @returns An alert indicating cannot afford, already maxed or purchased with how many
    *          levels purchased
    */
@@ -256,8 +256,7 @@ export class OcteractUpgrade extends DynamicUpgrade {
       freeLevels: this.freeLevels,
       level: this.level,
       octeractsInvested: this.octeractsInvested,
-      qualityOfLife: this.qualityOfLife,
-      toggleBuy: this.toggleBuy
+      qualityOfLife: this.qualityOfLife
     }
   }
 
