@@ -112,7 +112,6 @@ import {
   noTalismanFragments,
   type TalismanKeys,
   toggleTalismanBuy,
-  updateAllTalismanHTML,
   updateTalismanInventory
 } from './Talismans'
 import { calculatetax } from './Tax'
@@ -2449,8 +2448,6 @@ const loadSynergy = () => {
     calculateHypercubeBlessings()
     calculateTesseractBlessings()
     calculateCubeBlessings()
-
-    updateAllTalismanHTML()
 
     for (const id in player.ascStatToggles) {
       toggleAscStatPerSecond(+id) // toggle each stat twice to make sure the displays are correct and match what they used to be

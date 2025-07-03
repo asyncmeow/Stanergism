@@ -8,6 +8,9 @@ import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { getRune, resetTiers, type RuneKeys } from './Runes'
 import { allTalismanRuneBonusStats } from './Statistics'
 import { format, formatAsPercentIncrease, player } from './Synergism'
+import { Globals as G } from './Variables'
+import { assert } from './Utility'
+import { Tabs } from './Tabs'
 
 interface TalismanFragmentCost {
   obtainium: number
@@ -294,7 +297,6 @@ export class Talisman<K extends TalismanKeys> {
     }
 
     this.level = level
-    this.updateTalismanDisplay()
   }
 
   updateResourcePredefinedLevel (level: number): void {
@@ -350,7 +352,6 @@ export class Talisman<K extends TalismanKeys> {
 
     if (!multiBuy) {
       this.updateCostHTML()
-      this.updateTalismanDisplay()
       this.updatePlayerData()
       updateTalismanInventory()
     }
@@ -371,7 +372,6 @@ export class Talisman<K extends TalismanKeys> {
     if (!auto) {
       this.updateCostHTML()
     }
-    this.updateTalismanDisplay()
     this.updatePlayerData()
     updateTalismanInventory()
   }
@@ -389,7 +389,6 @@ export class Talisman<K extends TalismanKeys> {
     }
 
     this.updateCostHTML()
-    this.updateTalismanDisplay()
     this.updatePlayerData()
     updateTalismanInventory()
   }
@@ -429,6 +428,7 @@ export class Talisman<K extends TalismanKeys> {
   }
 
   updateRewardHTML () {
+    assert(G.currentTab === Tabs.Runes, 'Talisman updateRewardHTML called outside of Runes tab')
     DOMCacheGetOrSet('talismanlevelup').style.display = 'none'
     DOMCacheGetOrSet('talismanEffect').style.display = 'block'
 
@@ -541,6 +541,7 @@ export class Talisman<K extends TalismanKeys> {
   }
 
   updateCostHTML () {
+    assert(G.currentTab === Tabs.Runes, 'Talisman updateCostHTML called outside of Runes tab')
     DOMCacheGetOrSet('talismanEffect').style.display = 'none'
     DOMCacheGetOrSet('talismanlevelup').style.display = 'block'
     const a = DOMCacheGetOrSet('talismanShardCost')
@@ -565,6 +566,7 @@ export class Talisman<K extends TalismanKeys> {
   }
 
   updateTalismanDisplay () {
+    assert(G.currentTab === Tabs.Runes, 'Talisman updateTalismanDisplay called outside of Runes tab')
     const el = DOMCacheGetOrSet(`${this.#key}TalismanIconWrapper`)
     const la = DOMCacheGetOrSet(`${this.#key}TalismanLevel`)
     const ti = DOMCacheGetOrSet(`${this.#key}Talisman`)
