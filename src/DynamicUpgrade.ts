@@ -1,10 +1,3 @@
-import i18next from 'i18next'
-import { format } from './Synergism'
-
-// This is lazily loaded to prevent circular imports.
-// https://github.com/evanw/esbuild/releases/tag/v0.19.0
-const UpdateHTML = import('./UpdateHTML')
-
 export interface IUpgradeData {
   name: string
   description: string
@@ -35,35 +28,6 @@ export abstract class DynamicUpgrade {
     this.costPerLevel = data.costPerLevel
     this.toggleBuy = data.toggleBuy ?? 1
     this.effect = data.effect ?? ((n: number) => ({ bonus: n, desc: () => 'WIP not implemented' }))
-  }
-
-  public async changeToggle (): Promise<void> {
-    const { Alert, Prompt } = await UpdateHTML
-
-    // Is null unless given an explicit number
-    const newToggle = await Prompt(i18next.t('dynamicUpgrades.validation.setPurchaseAmount', { x: this.name }))
-    const newToggleAmount = Number(newToggle)
-
-    if (newToggle === null) {
-      return Alert(i18next.t('dynamicUpgrades.validation.toggleKept', { x: format(this.toggleBuy) }))
-    }
-
-    if (!Number.isInteger(newToggle)) {
-      return Alert(i18next.t('general.validation.fraction'))
-    }
-    if (newToggleAmount < -1) {
-      return Alert(i18next.t('dynamicUpgrades.validation.onlyNegativeOne'))
-    }
-    if (newToggleAmount === 0) {
-      return Alert(i18next.t('dynamicUpgrades.validation.notZero'))
-    }
-
-    this.toggleBuy = newToggleAmount
-    const m = newToggleAmount === -1
-      ? i18next.t('dynamicUpgrades.toggleMax')
-      : i18next.t('dynamicUpgrades.toggle', { x: format(this.toggleBuy) })
-
-    return Alert(m)
   }
 
   public getEffect (): { bonus: number | boolean; desc: () => string } {
