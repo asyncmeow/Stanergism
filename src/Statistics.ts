@@ -103,7 +103,7 @@ import {
   sumOfRuneLevels
 } from './Runes'
 import { shopData } from './Shop'
-import { calculateSingularityDebuff, getFastForwardTotalMultiplier, singularityData } from './singularity'
+import { calculateSingularityDebuff, getFastForwardTotalMultiplier, getGQUpgradeEffect, goldenQuarkUpgrades } from './singularity'
 import { format, formatAsPercentIncrease, player } from './Synergism'
 import { getTalisman, sumOfTalismanRarities, universalTalismanBonusMult } from './Talismans'
 import type { GlobalVariables } from './types/Synergism'
@@ -201,7 +201,7 @@ export const allCubeStats: StatLine[] = [
   {
     i18n: 'PassZ',
     stat: () => 1 + (player.shopUpgrades.seasonPassZ * player.singularityCount) / 100,
-    displayCriterion: () => Boolean(player.singularityUpgrades.wowPass2.getEffect().bonus)
+    displayCriterion: () => Boolean(getGQUpgradeEffect('wowPass2'))
   },
   {
     i18n: 'PassINF',
@@ -217,32 +217,32 @@ export const allCubeStats: StatLine[] = [
   },
   {
     i18n: 'StarterPack',
-    stat: () => 1 + 4 * (player.singularityUpgrades.starterPack.getEffect().bonus ? 1 : 0)
+    stat: () => 1 + 4 * (getGQUpgradeEffect('starterPack') ? 1 : 0)
   },
   {
     i18n: 'SingCubes1',
-    stat: () => +player.singularityUpgrades.singCubes1.getEffect().bonus
+    stat: () => getGQUpgradeEffect('singCubes1')
   },
   {
     i18n: 'SingCubes2',
-    stat: () => +player.singularityUpgrades.singCubes2.getEffect().bonus
+    stat: () => getGQUpgradeEffect('singCubes2')
   },
   {
     i18n: 'SingCubes3',
-    stat: () => +player.singularityUpgrades.singCubes3.getEffect().bonus
+    stat: () => getGQUpgradeEffect('singCubes3')
   },
   {
     i18n: 'SingCitadel',
-    stat: () => +player.singularityUpgrades.singCitadel.getEffect().bonus
+    stat: () => getGQUpgradeEffect('singCitadel')
   },
   {
     i18n: 'SingCitadel2',
-    stat: () => +player.singularityUpgrades.singCitadel2.getEffect().bonus
+    stat: () => getGQUpgradeEffect('singCitadel')
   },
   {
     i18n: 'Delta',
     stat: () =>
-      1 + +player.singularityUpgrades.platonicDelta.getEffect().bonus
+      1 + getGQUpgradeEffect('platonicDelta')
         * Math.min(
           9,
           (player.shopUpgrades.shopSingularitySpeedup > 0)
@@ -582,43 +582,43 @@ export const allOcteractCubeStats: StatLine[] = [
   },
   {
     i18n: 'DivinePack',
-    stat: () => +player.singularityUpgrades.divinePack.getEffect().bonus
+    stat: () => getGQUpgradeEffect('divinePack')
   },
   {
     i18n: 'SingCubes1',
-    stat: () => +player.singularityUpgrades.singCubes1.getEffect().bonus
+    stat: () => getGQUpgradeEffect('singCubes1')
   },
   {
     i18n: 'SingCubes2',
-    stat: () => +player.singularityUpgrades.singCubes2.getEffect().bonus
+    stat: () => getGQUpgradeEffect('singCubes2')
   },
   {
     i18n: 'SingCubes3',
-    stat: () => +player.singularityUpgrades.singCubes3.getEffect().bonus
+    stat: () => getGQUpgradeEffect('singCubes3')
   },
   {
     i18n: 'SingOcteractGain',
-    stat: () => +player.singularityUpgrades.singOcteractGain.getEffect().bonus
+    stat: () => getGQUpgradeEffect('singOcteractGain')
   },
   {
     i18n: 'SingOcteractGain2',
-    stat: () => +player.singularityUpgrades.singOcteractGain2.getEffect().bonus
+    stat: () => getGQUpgradeEffect('singOcteractGain2')
   },
   {
     i18n: 'SingOcteractGain3',
-    stat: () => +player.singularityUpgrades.singOcteractGain3.getEffect().bonus
+    stat: () => getGQUpgradeEffect('singOcteractGain3')
   },
   {
     i18n: 'SingOcteractGain4',
-    stat: () => +player.singularityUpgrades.singOcteractGain4.getEffect().bonus
+    stat: () => getGQUpgradeEffect('singOcteractGain4')
   },
   {
     i18n: 'SingOcteractGain5',
-    stat: () => +player.singularityUpgrades.singOcteractGain5.getEffect().bonus
+    stat: () => getGQUpgradeEffect('singOcteractGain5')
   },
   {
     i18n: 'PatreonBonus',
-    stat: () => 1 + (getQuarkBonus() / 100) * +player.singularityUpgrades.singOcteractPatreonBonus.getEffect().bonus
+    stat: () => 1 + (getQuarkBonus() / 100) * getGQUpgradeEffect('singOcteractPatreonBonus')
   },
   {
     i18n: 'OcteractStarter',
@@ -651,7 +651,7 @@ export const allOcteractCubeStats: StatLine[] = [
   {
     i18n: 'PlatonicDelta',
     stat: () =>
-      1 + +player.singularityUpgrades.platonicDelta.getEffect().bonus
+      1 + getGQUpgradeEffect('platonicDelta')
         * Math.min(
           9,
           (player.shopUpgrades.shopSingularitySpeedup > 0)
@@ -714,7 +714,7 @@ export const allOcteractCubeStats: StatLine[] = [
   {
     i18n: 'AscensionSpeed',
     stat: () => {
-      const ascensionSpeed = player.singularityUpgrades.oneMind.getEffect().bonus
+      const ascensionSpeed = getGQUpgradeEffect('oneMind')
         ? Math.pow(10, 1 / 2) * Math.pow(
           calculateAscensionSpeedMult() / 10,
           +player.octeractUpgrades.octeractOneMindImprover.getEffect().bonus
@@ -913,27 +913,27 @@ export const allOfferingStats = [
   },
   {
     i18n: 'StarterPack',
-    stat: () => 1 + 5 * (player.singularityUpgrades.starterPack.getEffect().bonus ? 1 : 0) // Starter Pack Upgrade
+    stat: () => 1 + 5 * getGQUpgradeEffect('starterPack') // Starter Pack Upgrade
   },
   {
     i18n: 'OfferingCharge',
-    stat: () => +player.singularityUpgrades.singOfferings1.getEffect().bonus // Offering Charge GQ Upgrade
+    stat: () => getGQUpgradeEffect('singOfferings1') // Offering Charge GQ Upgrade
   },
   {
     i18n: 'OfferingStorm',
-    stat: () => +player.singularityUpgrades.singOfferings2.getEffect().bonus // Offering Storm GQ Upgrade
+    stat: () => getGQUpgradeEffect('singOfferings2') // Offering Storm GQ Upgrade
   },
   {
     i18n: 'OfferingTempest',
-    stat: () => +player.singularityUpgrades.singOfferings3.getEffect().bonus // Offering Tempest GQ Upgrade
+    stat: () => getGQUpgradeEffect('singOfferings3') // Offering Tempest GQ Upgrade
   },
   {
     i18n: 'Citadel',
-    stat: () => +player.singularityUpgrades.singCitadel.getEffect().bonus // Citadel GQ Upgrade
+    stat: () => getGQUpgradeEffect('singCitadel') // Citadel GQ Upgrade
   },
   {
     i18n: 'Citadel2',
-    stat: () => +player.singularityUpgrades.singCitadel2.getEffect().bonus // Citadel 2 GQ Upgrade
+    stat: () => getGQUpgradeEffect('singCitadel2') // Citadel 2 GQ Upgrade
   },
   {
     i18n: 'CubeUpgradeCx4',
@@ -1202,13 +1202,13 @@ export const allQuarkStats: StatLine[] = [
   {
     i18n: 'SingularityPacks',
     stat: () =>
-      1 + 0.02 * player.singularityUpgrades.intermediatePack.level
-      + 0.04 * player.singularityUpgrades.advancedPack.level + 0.06 * player.singularityUpgrades.expertPack.level
-      + 0.08 * player.singularityUpgrades.masterPack.level + 0.1 * player.singularityUpgrades.divinePack.level
+      1 + 0.02 * getGQUpgradeEffect('intermediatePack')
+      + 0.04 * getGQUpgradeEffect('advancedPack') + 0.06 * getGQUpgradeEffect('expertPack')
+      + 0.08 * getGQUpgradeEffect('expertPack') + 0.1 * goldenQuarkUpgrades.divinePack.level
   },
   {
     i18n: 'SingQuarkImprover1',
-    stat: () => +player.singularityUpgrades.singQuarkImprover1.getEffect().bonus
+    stat: () => getGQUpgradeEffect('singQuarkImprover1')
   },
   {
     i18n: 'AmbrosiaQuarkMult',
@@ -1497,27 +1497,27 @@ export const allObtainiumStats: StatLine[] = [
   },
   {
     i18n: 'StarterPack',
-    stat: () => 1 + 5 * (player.singularityUpgrades.starterPack.getEffect().bonus ? 1 : 0) // Starter Pack
+    stat: () => 1 + 5 * getGQUpgradeEffect('starterPack') // Starter Pack
   },
   {
     i18n: 'SingObtainium1',
-    stat: () => +player.singularityUpgrades.singObtainium1.getEffect().bonus // Obtainium GQ Upgrade 1
+    stat: () => getGQUpgradeEffect('singObtainium1') // Obtainium GQ Upgrade 1
   },
   {
     i18n: 'SingObtainium2',
-    stat: () => +player.singularityUpgrades.singObtainium2.getEffect().bonus // Obtainium GQ Upgrade 2
+    stat: () => getGQUpgradeEffect('singObtainium2') // Obtainium GQ Upgrade 2
   },
   {
     i18n: 'SingObtainium3',
-    stat: () => +player.singularityUpgrades.singObtainium3.getEffect().bonus // Obtainium GQ Upgrade 3
+    stat: () => getGQUpgradeEffect('singObtainium3') // Obtainium GQ Upgrade 3
   },
   {
     i18n: 'SingCitadel',
-    stat: () => +player.singularityUpgrades.singCitadel.getEffect().bonus // Singularity Citadel 1
+    stat: () => getGQUpgradeEffect('singCitadel') // Singularity Citadel 1
   },
   {
     i18n: 'SingCitadel2',
-    stat: () => +player.singularityUpgrades.singCitadel2.getEffect().bonus // Singularity Citadel 2
+    stat: () => getGQUpgradeEffect('singCitadel2') // Singularity Citadel 2
   },
   {
     i18n: 'ShopCashGrab2',
@@ -1586,7 +1586,7 @@ export const offeringObtainiumTimeModifiers = (time: number, timeMultCheck: bool
     },
     {
       i18n: 'HalfMind',
-      stat: () => (player.singularityUpgrades.halfMind.getEffect().bonus) ? calculateGlobalSpeedMult() / 10 : 1
+      stat: () => getGQUpgradeEffect('halfMind') ? calculateGlobalSpeedMult() / 10 : 1
     }
   ]
 }
@@ -1664,7 +1664,7 @@ export const antSacrificeTimeStats = (time: number, timeMultCheck: boolean): Sta
     },
     {
       i18n: 'HalfMind',
-      stat: () => (player.singularityUpgrades.halfMind.getEffect().bonus) ? calculateGlobalSpeedMult() / 10 : 1
+      stat: () => getGQUpgradeEffect('halfMind') ? calculateGlobalSpeedMult() / 10 : 1
     }
   ]
 }
@@ -1682,7 +1682,7 @@ export const allGlobalSpeedIgnoreDRStats: StatLine[] = [
   },
   {
     i18n: 'IntermediatePack',
-    stat: () => 1 + (player.singularityUpgrades.intermediatePack.getEffect().bonus ? 1 : 0) // Intermediate Pack
+    stat: () => 1 + getGQUpgradeEffect('intermediatePack') // Intermediate Pack
   },
   {
     i18n: 'OcteractGlobalSpeed',
@@ -1827,7 +1827,7 @@ export const allAscensionSpeedStats: StatLine[] = [
   },
   {
     i18n: 'IntermediatePack',
-    stat: () => 1 + 0.5 * (player.singularityUpgrades.intermediatePack.getEffect().bonus ? 1 : 0) // Intermediate Pack, Sing Shop
+    stat: () => 1 + 0.5 * getGQUpgradeEffect('intermediatePack') // Intermediate Pack, Sing Shop
   },
   {
     i18n: 'ChronometerZ',
@@ -2044,7 +2044,7 @@ export const allAmbrosiaBlueberryStats: StatLine[] = [
   },
   {
     i18n: 'SingBlueberries',
-    stat: () => +player.singularityUpgrades.blueberries.getEffect().bonus // Singularity Blueberry Upgrade
+    stat: () => getGQUpgradeEffect('blueberries') // Singularity Blueberry Upgrade
   },
   {
     i18n: 'OcteractBlueberries',
@@ -2178,7 +2178,7 @@ export const allGoldenQuarkMultiplierStats: StatLine[] = [
   },
   {
     i18n: 'GoldenQuarks1',
-    stat: () => +player.singularityUpgrades.goldenQuarks1.getEffect().bonus // Golden Quarks I
+    stat: () => getGQUpgradeEffect('goldenQuarks1') // Golden Quarks I
   },
   {
     i18n: 'CookieUpgrade19',
@@ -2246,7 +2246,7 @@ export const allGoldenQuarkPurchaseCostStats: StatLine[] = [
   },
   {
     i18n: 'GoldenQuarks2',
-    stat: () => +player.singularityUpgrades.goldenQuarks2.getEffect().bonus
+    stat: () => getGQUpgradeEffect('goldenQuarks2')
   },
   {
     i18n: 'OcteractCostReduce',
@@ -2558,7 +2558,7 @@ export const allShopTablets: StatLine[] = [
   },
   {
     i18n: 'Yellow',
-    stat: () => +player.singularityUpgrades.singInfiniteShopUpgrades.getEffect().bonus, // Singularity Upgrade
+    stat: () => getGQUpgradeEffect('singInfiniteShopUpgrades'), // Singularity Upgrade
     acc: 0,
     color: 'yellow'
   },
@@ -2671,37 +2671,37 @@ export const allTalismanRuneBonusStats: StatLine[] = [
   },
   {
     i18n: 'SingularityUpgrade1',
-    stat: () => +player.singularityUpgrades.singTalismanBonusRunes1.getEffect().bonus,
+    stat: () => getGQUpgradeEffect('singTalismanBonusRunes1'), // Singularity Upgrade 1
     displayCriterion: () => {
       const singStuff =
-        player.highestSingularityCount >= (singularityData.singTalismanBonusRunes1.minimumSingularity ?? 0)
+        player.highestSingularityCount >= goldenQuarkUpgrades.singTalismanBonusRunes1.minimumSingularity
       return singStuff
     }
   },
   {
     i18n: 'SingularityUpgrade2',
-    stat: () => +player.singularityUpgrades.singTalismanBonusRunes2.getEffect().bonus,
+    stat: () => getGQUpgradeEffect('singTalismanBonusRunes2'),
     displayCriterion: () => {
       const singStuff =
-        player.highestSingularityCount >= (singularityData.singTalismanBonusRunes2.minimumSingularity ?? 0)
+        player.highestSingularityCount >= goldenQuarkUpgrades.singTalismanBonusRunes2.minimumSingularity
       return singStuff
     }
   },
   {
     i18n: 'SingularityUpgrade3',
-    stat: () => +player.singularityUpgrades.singTalismanBonusRunes3.getEffect().bonus,
+    stat: () => getGQUpgradeEffect('singTalismanBonusRunes3'),
     displayCriterion: () => {
       const singStuff =
-        player.highestSingularityCount >= (singularityData.singTalismanBonusRunes3.minimumSingularity ?? 0)
+        player.highestSingularityCount >= goldenQuarkUpgrades.singTalismanBonusRunes3.minimumSingularity
       return singStuff
     }
   },
   {
     i18n: 'SingularityUpgrade4',
-    stat: () => +player.singularityUpgrades.singTalismanBonusRunes4.getEffect().bonus,
+    stat: () => getGQUpgradeEffect('singTalismanBonusRunes4'),
     displayCriterion: () => {
       const singStuff =
-        player.highestSingularityCount >= (singularityData.singTalismanBonusRunes4.minimumSingularity ?? 0)
+        player.highestSingularityCount >= goldenQuarkUpgrades.singTalismanBonusRunes4.minimumSingularity
       return singStuff
     }
   },
@@ -3628,21 +3628,21 @@ export const gameStages = (): Stage[] => {
       stage: 21,
       tier: 6,
       name: 'exalt1x1-onemind',
-      unlocked: player.singularityUpgrades.oneMind.level > 0,
+      unlocked: Boolean(goldenQuarkUpgrades.oneMind.level),
       reset: player.highestSingularityCount > 0
     },
     {
       stage: 22,
       tier: 6,
       name: 'onemind-end',
-      unlocked: player.singularityUpgrades.offeringAutomatic.level > 0,
+      unlocked: Boolean(goldenQuarkUpgrades.offeringAutomatic.level),
       reset: player.highestSingularityCount > 0
     },
     {
       stage: 23,
       tier: 6,
       name: 'end-pen',
-      unlocked: player.singularityUpgrades.ultimatePen.level > 0,
+      unlocked: Boolean(goldenQuarkUpgrades.ultimatePen.level),
       reset: player.highestSingularityCount > 0
     },
     {

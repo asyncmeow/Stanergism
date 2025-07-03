@@ -45,20 +45,6 @@ export const playerJsonSchema = playerSchema.extend({
     }
   }),
 
-  singularityUpgrades: z.any().transform((upgrades: Player['singularityUpgrades']) =>
-    Object.fromEntries(
-      Object.entries(upgrades).map(([key, value]) => {
-        return [
-          key,
-          {
-            level: value.level,
-            goldenQuarksInvested: value.goldenQuarksInvested,
-            freeLevels: value.freeLevels
-          }
-        ]
-      })
-    )
-  ),
   octeractUpgrades: z.any().transform((upgrades: Player['octeractUpgrades']) =>
     Object.fromEntries(
       Object.entries(upgrades).map(([key, value]) => {

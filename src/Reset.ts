@@ -44,7 +44,7 @@ import { buyResearch, updateResearchBG } from './Research'
 import { getRune, resetOfferings, resetRuneBlessings, resetRunes, resetRuneSpirits } from './Runes'
 import { playerJsonSchema } from './saves/PlayerJsonSchema'
 import { forceResetShopUpgrades, shopData } from './Shop'
-import { calculateSingularityDebuff, getFastForwardTotalMultiplier } from './singularity'
+import { calculateSingularityDebuff, getFastForwardTotalMultiplier, getGQUpgradeEffect, goldenQuarkUpgrades } from './singularity'
 import { blankSave, deepClone, format, player, saveSynergy, updateAll, updateEffectiveLevelMult } from './Synergism'
 import { changeSubTab, changeTab, Tabs } from './Tabs'
 import { resetTalismans, updateTalismanInventory } from './Talismans'
@@ -1013,7 +1013,7 @@ export const updateSingularityMilestoneAwards = (singularityReset = true): void 
     player.cubeUpgrades[72] = 1
   }
 
-  if (player.singularityUpgrades.platonicAlpha.getEffect().bonus && player.platonicUpgrades[5] === 0) {
+  if (getGQUpgradeEffect('platonicAlpha') && player.platonicUpgrades[5] === 0) {
     player.platonicUpgrades[5] = 1
     updatePlatonicUpgradeBG(5)
   }
@@ -1123,10 +1123,10 @@ export const singularity = (setSingNumber = -1) => {
       player.highestSingularityCount = player.singularityCount
 
       if (player.highestSingularityCount === 5) {
-        player.singularityUpgrades.goldenQuarks3.freeLevels += 1
+        goldenQuarkUpgrades.goldenQuarks3.freeLevel += 1
       }
       if (player.highestSingularityCount === 10) {
-        player.singularityUpgrades.goldenQuarks3.freeLevels += 2
+        goldenQuarkUpgrades.goldenQuarks3.freeLevel += 2
       }
     }
   } else {
@@ -1165,16 +1165,8 @@ export const singularity = (setSingNumber = -1) => {
     hold.worlds = Number(player.worlds)
   }
 
-  // Exclude potentially non-latin1 characters from the save
-  hold.singularityUpgrades = Object.fromEntries(
-    Object.entries(player.singularityUpgrades).map(([key, value]) => {
-      return [key, {
-        level: value.level,
-        goldenQuarksInvested: value.goldenQuarksInvested,
-        freeLevels: value.freeLevels
-      }]
-    })
-  ) as Player['singularityUpgrades']
+  hold.goldenQuarkUpgrades = { ...player.goldenQuarkUpgrades }
+  
   hold.octeractUpgrades = Object.fromEntries(
     Object.entries(player.octeractUpgrades).map(([key, value]) => {
       return [key, {

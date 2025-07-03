@@ -13,6 +13,7 @@ import { reset } from './Reset'
 import { format, formatAsPercentIncrease, player } from './Synergism'
 import { IconSets } from './Themes'
 import { Alert, Confirm, Notification } from './UpdateHTML'
+import { getGQUpgradeEffect } from './singularity'
 
 export type CampaignKeys =
   | 'first'
@@ -277,7 +278,7 @@ export class CampaignManager {
     }
 
     sum += inheritanceTokens()
-    sum += +player.singularityUpgrades.singBonusTokens4.getEffect().bonus
+    sum += getGQUpgradeEffect('singBonusTokens4')
     sum += +player.octeractUpgrades.octeractBonusTokens4.getEffect().bonus
     return sum
   }
@@ -290,7 +291,7 @@ export class CampaignManager {
     }
 
     sum += inheritanceTokens()
-    sum += +player.singularityUpgrades.singBonusTokens4.getEffect().bonus
+    sum += getGQUpgradeEffect('singBonusTokens4')
     sum += +player.octeractUpgrades.octeractBonusTokens4.getEffect().bonus
 
     return sum
@@ -557,7 +558,7 @@ export class Campaign {
       if (player.highestSingularityCount >= 16) {
         additiveTotal += 5
       }
-      additiveTotal += +player.singularityUpgrades.singBonusTokens1.getEffect().bonus
+      additiveTotal += getGQUpgradeEffect('singBonusTokens1')
       additiveTotal += +player.octeractUpgrades.octeractBonusTokens3.getEffect().bonus
     }
 
@@ -565,7 +566,7 @@ export class Campaign {
       if (player.highestSingularityCount >= 69) {
         additiveTotal += 10
       }
-      additiveTotal += +player.singularityUpgrades.singBonusTokens3.getEffect().bonus
+      additiveTotal += getGQUpgradeEffect('singBonusTokens3')
       additiveTotal += +player.octeractUpgrades.octeractBonusTokens1.getEffect().bonus
     }
 
@@ -573,7 +574,7 @@ export class Campaign {
 
     multiplier *= this.#isMeta ? 2 : 1
     multiplier *= singularityBonusTokenMult()
-    multiplier *= +player.singularityUpgrades.singBonusTokens2.getEffect().bonus
+    multiplier *= getGQUpgradeEffect('singBonusTokens2')
     multiplier *= +player.octeractUpgrades.octeractBonusTokens2.getEffect().bonus
     return Math.floor(additiveTotal * multiplier)
   }

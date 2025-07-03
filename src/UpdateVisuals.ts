@@ -52,7 +52,7 @@ import {
   type RuneSpiritKeys
 } from './Runes'
 import { getShopCosts, isShopUpgradeUnlocked, shopData, shopUpgradeTypes } from './Shop'
-import { getGoldenQuarkCost, type SingularityDataKeys } from './singularity'
+import { computeGQUpgradeFreeLevelSoftcap, computeGQUpgradeMaxLevel, getGoldenQuarkCost, getGQUpgradeCostTNL, getGQUpgradeEffect, goldenQuarkUpgrades, type SingularityDataKeys } from './singularity'
 import { loadStatisticsUpdate } from './Statistics'
 import { format, formatAsPercentIncrease, formatTimeShort, player } from './Synergism'
 import { getActiveSubTab, Tabs } from './Tabs'
@@ -1326,13 +1326,13 @@ export const visualUpdateSettings = () => {
           3600
               / Math.max(
                 1,
-                +player.singularityUpgrades.goldenQuarks3.getEffect().bonus
+                getGQUpgradeEffect('goldenQuarks3')
               )
             - (player.goldenQuarksTimer
               % (3600.00001
                 / Math.max(
                   1,
-                  +player.singularityUpgrades.goldenQuarks3.getEffect().bonus
+                  getGQUpgradeEffect('goldenQuarks3')
                 )))
         ),
         y: format(goldenQuarkMultiplier, 2, true)
@@ -1345,7 +1345,7 @@ export const visualUpdateSettings = () => {
         x: format(
           Math.floor(
             (player.goldenQuarksTimer
-              * +player.singularityUpgrades.goldenQuarks3.getEffect().bonus)
+              * getGQUpgradeEffect('goldenQuarks3'))
               / 3600
           ) * goldenQuarkMultiplier,
           2
@@ -1353,7 +1353,7 @@ export const visualUpdateSettings = () => {
         y: format(
           Math.floor(
             168
-              * +player.singularityUpgrades.goldenQuarks3.getEffect().bonus
+              * getGQUpgradeEffect('goldenQuarks3')
               * goldenQuarkMultiplier
           )
         )
@@ -1376,30 +1376,30 @@ export const visualUpdateSingularity = () => {
       }
     )
 
-    const keys = Object.keys(player.singularityUpgrades) as SingularityDataKeys[]
+    const keys = Object.keys(goldenQuarkUpgrades) as SingularityDataKeys[]
     const val = G.shopEnhanceVision
 
     for (const key of keys) {
       if (key === 'offeringAutomatic') {
         continue
       }
-      const singItem = player.singularityUpgrades[key]
+      const singItem = goldenQuarkUpgrades[key]
       const el = DOMCacheGetOrSet(key)
       if (
         singItem.maxLevel !== -1
-        && singItem.level >= singItem.computeMaxLevel()
+        && singItem.level >= computeGQUpgradeMaxLevel(key)
       ) {
         el.style.filter = val ? 'brightness(.9)' : 'none'
       } else if (
-        singItem.getCostTNL() > player.goldenQuarks
+        getGQUpgradeCostTNL(key) > player.goldenQuarks
         || player.singularityCount < singItem.minimumSingularity
       ) {
         el.style.filter = val ? 'grayscale(.9) brightness(.8)' : 'none'
       } else if (
         singItem.maxLevel === -1
-        || singItem.level < singItem.computeMaxLevel()
+        || singItem.level < computeGQUpgradeMaxLevel(key)
       ) {
-        if (singItem.freeLevels > singItem.level) {
+        if (computeGQUpgradeFreeLevelSoftcap(key) > singItem.level) {
           el.style.filter = val ? 'blur(1px) invert(.9) saturate(200)' : 'none'
         } else {
           el.style.filter = val ? 'invert(.9) brightness(1.1)' : 'none'

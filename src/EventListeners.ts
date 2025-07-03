@@ -80,7 +80,7 @@ import {
   sacrificeOfferings
 } from './Runes'
 import { buyShopUpgrades, resetShopUpgrades, shopData, shopDescriptions, shopUpgradeTypes, useConsumable } from './Shop'
-import { buyGoldenQuarks, getLastUpgradeInfo, type SingularityDataKeys, singularityPerks } from './singularity'
+import { buyGoldenQuarks, buyGQUpgradeLevel, getLastUpgradeInfo, goldenQuarkUpgrades, type SingularityDataKeys, singularityPerks, updateGQUpgradeHTML } from './singularity'
 import type { SingularityChallengeDataKeys } from './SingularityChallenges'
 import { displayStats } from './Statistics'
 import { generateExportSummary } from './Summary'
@@ -901,18 +901,18 @@ TODO: Fix this entire tab it's utter shit
   }
   DOMCacheGetOrSet('buySingularityQuarksButton').addEventListener('click', () => buyGoldenQuarks())
   // SINGULARITY TAB
-  const singularityUpgrades = Object.keys(player.singularityUpgrades) as SingularityDataKeys[]
-  for (const key of singularityUpgrades) {
+  const GQUpgrades = Object.keys(goldenQuarkUpgrades) as SingularityDataKeys[]
+  for (const key of GQUpgrades) {
     if (key === 'offeringAutomatic') {
       continue
     }
     DOMCacheGetOrSet(key).addEventListener(
       'mouseover',
-      () => player.singularityUpgrades[key].updateUpgradeHTML()
+      () => updateGQUpgradeHTML(key)
     )
     DOMCacheGetOrSet(key).addEventListener(
       'click',
-      (event) => player.singularityUpgrades[key].buyLevel(event)
+      (event) => buyGQUpgradeLevel(key, event)
     )
   }
   DOMCacheGetOrSet('actualSingularityUpgradeContainer').addEventListener(

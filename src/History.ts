@@ -8,6 +8,7 @@ import { format, formatTimeShort, player } from './Synergism'
 import { IconSets } from './Themes'
 import { Notification } from './UpdateHTML'
 import { Globals as G } from './Variables'
+import { getGQUpgradeEffect } from './singularity'
 
 // The categories are the different tables & storages for each type.
 export type Category = 'ants' | 'reset' | 'ascend' | 'singularity'
@@ -262,7 +263,7 @@ const historyGains: Record<
     img: 'TinyWow8.png',
     formatter: formatDecimalSource,
     imgTitle: 'Octeracts',
-    onlyif: () => (player.singularityUpgrades.octeractUnlock.getEffect().bonus as number) > 0
+    onlyif: () => getGQUpgradeEffect('octeractUnlock') > 0
   },
   c15Score: {
     img: 'TinyChallenge15.png',

@@ -23,6 +23,7 @@ import { format, player } from './Synergism'
 import type { Player } from './types/Synergism'
 import { Alert, Confirm, Prompt, revealStuff } from './UpdateHTML'
 import { Globals as G } from './Variables'
+import { getGQUpgradeEffect } from './singularity'
 
 /**
  * Standardization of metadata contained for each shop upgrade.
@@ -1942,11 +1943,11 @@ export const isShopUpgradeUnlocked = (upgrade: ShopUpgradeNames): boolean => {
         || player.highestSingularityCount > 0
       )
     case 'calculator4':
-      return Boolean(player.singularityUpgrades.wowPass.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass'))
     case 'calculator5':
-      return Boolean(player.singularityUpgrades.wowPass2.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass2'))
     case 'calculator6':
-      return Boolean(player.singularityUpgrades.wowPass3.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass3'))
     case 'calculator7':
       return Boolean(
         player.singularityChallenges.limitedAscensions.rewards.shopUpgrade
@@ -1967,70 +1968,70 @@ export const isShopUpgradeUnlocked = (upgrade: ShopUpgradeNames): boolean => {
         || player.highestSingularityCount > 0
       )
     case 'chronometer3':
-      return Boolean(player.singularityUpgrades.wowPass.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass'))
     case 'seasonPassY':
       return (
         player.challenge15Exponent >= G.challenge15Rewards.hepteractsUnlocked.requirement
         || player.highestSingularityCount > 0
       )
     case 'seasonPassZ':
-      return Boolean(player.singularityUpgrades.wowPass.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass'))
     case 'challengeTome2':
-      return Boolean(player.singularityUpgrades.wowPass.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass'))
     case 'instantChallenge2':
-      return Boolean(player.singularityUpgrades.wowPass.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass'))
     case 'cashGrab2':
-      return Boolean(player.singularityUpgrades.wowPass2.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass2'))
     case 'cubeToQuarkAll':
-      return Boolean(player.singularityUpgrades.wowPass2.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass2'))
     case 'chronometerZ':
-      return Boolean(player.singularityUpgrades.wowPass2.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass2'))
     case 'offeringEX2':
-      return Boolean(player.singularityUpgrades.wowPass2.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass2'))
     case 'obtainiumEX2':
-      return Boolean(player.singularityUpgrades.wowPass2.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass2'))
     case 'powderAuto':
-      return Boolean(player.singularityUpgrades.wowPass2.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass2'))
     case 'seasonPassLost':
-      return Boolean(player.singularityUpgrades.wowPass2.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass2'))
     case 'challenge15Auto':
-      return Boolean(player.singularityUpgrades.wowPass3.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass3'))
     case 'extraWarp':
-      return Boolean(player.singularityUpgrades.wowPass3.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass3'))
     case 'autoWarp':
-      return Boolean(player.singularityUpgrades.wowPass3.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass3'))
     case 'improveQuarkHept':
       return (
         player.challenge15Exponent >= G.challenge15Rewards.hepteractsUnlocked.requirement
         || player.highestSingularityCount > 0
       )
     case 'improveQuarkHept2':
-      return Boolean(player.singularityUpgrades.wowPass.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass'))
     case 'improveQuarkHept3':
-      return Boolean(player.singularityUpgrades.wowPass2.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass2'))
     case 'improveQuarkHept4':
-      return Boolean(player.singularityUpgrades.wowPass3.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass3'))
     case 'shopImprovedDaily':
       return (
         player.highestchallengecompletions[14] > 0
         || player.highestSingularityCount > 0
       )
     case 'shopImprovedDaily2':
-      return Boolean(player.singularityUpgrades.wowPass.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass'))
     case 'shopImprovedDaily3':
-      return Boolean(player.singularityUpgrades.wowPass2.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass2'))
     case 'shopImprovedDaily4':
-      return Boolean(player.singularityUpgrades.wowPass3.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass3'))
     case 'offeringEX3':
-      return Boolean(player.singularityUpgrades.wowPass4.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass4'))
     case 'obtainiumEX3':
-      return Boolean(player.singularityUpgrades.wowPass4.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass4'))
     case 'improveQuarkHept5':
-      return Boolean(player.singularityUpgrades.wowPass4.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass4'))
     case 'chronometerInfinity':
-      return Boolean(player.singularityUpgrades.wowPass4.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass4'))
     case 'seasonPassInfinity':
-      return Boolean(player.singularityUpgrades.wowPass4.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass4'))
     case 'shopSingularityPenaltyDebuff':
       return Boolean(
         player.singularityChallenges.noSingularityUpgrades.rewards.shopUpgrade
@@ -2044,27 +2045,27 @@ export const isShopUpgradeUnlocked = (upgrade: ShopUpgradeNames): boolean => {
         player.singularityChallenges.noOcteracts.rewards.shopUpgrade
       )
     case 'shopAmbrosiaGeneration1':
-      return Boolean(player.singularityUpgrades.wowPass2.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass2'))
     case 'shopAmbrosiaGeneration2':
-      return Boolean(player.singularityUpgrades.wowPass3.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass3'))
     case 'shopAmbrosiaGeneration3':
-      return Boolean(player.singularityUpgrades.wowPass4.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass4'))
     case 'shopAmbrosiaGeneration4':
-      return Boolean(player.singularityUpgrades.wowPass4.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass4'))
     case 'shopAmbrosiaLuck1':
-      return Boolean(player.singularityUpgrades.wowPass2.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass2'))
     case 'shopAmbrosiaLuck2':
-      return Boolean(player.singularityUpgrades.wowPass3.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass3'))
     case 'shopAmbrosiaLuck3':
-      return Boolean(player.singularityUpgrades.wowPass4.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass4'))
     case 'shopAmbrosiaLuck4':
-      return Boolean(player.singularityUpgrades.wowPass4.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass4'))
     case 'shopRedLuck1':
-      return Boolean(player.singularityUpgrades.wowPass4.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass4'))
     case 'shopRedLuck2':
-      return Boolean(player.singularityUpgrades.wowPass4.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass4'))
     case 'shopRedLuck3':
-      return Boolean(player.singularityUpgrades.wowPass4.getEffect().bonus)
+      return Boolean(getGQUpgradeEffect('wowPass4'))
     case 'shopCashGrabUltra':
       return Boolean(player.singularityChallenges.noSingularityUpgrades.rewards.shopUpgrade2)
     case 'shopAmbrosiaAccelerator':

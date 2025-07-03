@@ -629,7 +629,11 @@ export interface Player {
   iconSet: number
   notation: string
 
-  singularityUpgrades: Record<SingularityDataKeys, SingularityUpgrade>
+  goldenQuarkUpgrades: Record<SingularityDataKeys, {
+    level: number
+    freeLevel: number
+  }>
+  
   octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade>
   dailyCodeUsed: boolean
   hepteractAutoCraftPercentage: number

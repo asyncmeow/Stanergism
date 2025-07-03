@@ -1,9 +1,7 @@
 import i18next from 'i18next'
 import { achievementManager } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
-import { campaignTokenRewardHTMLUpdate } from './Campaign'
 import type { IUpgradeData } from './DynamicUpgrade'
-import { DynamicUpgrade } from './DynamicUpgrade'
 import { getRune } from './Runes'
 import { format, formatAsPercentIncrease, player } from './Synergism'
 import { Alert, Prompt, revealStuff } from './UpdateHTML'
@@ -204,7 +202,6 @@ function getSingularityOridnalText (singularityCount: number): string {
   })
 }
 
-// Need a better way of handling the ones without a special formulae than 'Default' variant
 type SingularitySpecialCostFormulae =
   | 'Default'
   | 'Quadratic'
@@ -220,1611 +217,1833 @@ export interface ISingularityData extends Omit<IUpgradeData, 'name' | 'descripti
   cacheUpdates?: (() => void)[] // TODO: Improve this type signature -Plat
 }
 
-/**
- * Singularity Upgrades are bought in the Shop of the singularity tab, and all have their own
- * name, description, level and maxlevel, plus a feature to toggle buy on each.
- */
-export class SingularityUpgrade extends DynamicUpgrade {
-  // Field Initialization
-  public goldenQuarksInvested = 0
-  public minimumSingularity: number
-  public canExceedCap: boolean
-  public specialCostForm: SingularitySpecialCostFormulae
-  public qualityOfLife: boolean
-  readonly cacheUpdates: (() => void)[] | undefined
-  #key: string
-
-  public constructor (data: ISingularityData, key: string) {
-    const name = i18next.t(`singularity.data.${key}.name`)
-    const description = i18next.t(`singularity.data.${key}.description`)
-
-    super({ ...data, name, description })
-    this.goldenQuarksInvested = data.goldenQuarksInvested ?? 0
-    this.minimumSingularity = data.minimumSingularity ?? 0
-    this.canExceedCap = data.canExceedCap ?? false
-    this.specialCostForm = data.specialCostForm ?? 'Default'
-    this.qualityOfLife = data.qualityOfLife ?? false
-    this.cacheUpdates = data.cacheUpdates ?? undefined
-    this.#key = key
-  }
-
-  /**
-   * Given an upgrade, give a concise information regarding its data.
-   * @returns A string that details the name, description, level statistic, and next level cost.
-   */
-  toString (): string {
-    const costNextLevel = this.getCostTNL()
-    const maxLevel = this.maxLevel === -1 ? '' : `/${format(this.computeMaxLevel(), 0, true)}`
-    const color = this.computeMaxLevel() === this.level ? 'plum' : 'white'
-    const minReqColor = player.highestSingularityCount < this.minimumSingularity
-      ? 'var(--crimson-text-color)'
-      : 'var(--green-text-color)'
-    const minimumSingularity = this.minimumSingularity > 0
-      ? `${i18next.t('general.minimum')} Singularity: ${this.minimumSingularity}`
-      : i18next.t('singularity.toString.noMinimum')
-
-    let freeLevelInfo = this.freeLevels > 0
-      ? `<span style="color: orange"> [+${
-        format(
-          this.freeLevels,
-          2,
-          true
-        )
-      }]</span>`
-      : ''
-
-    if (this.freeLevels > this.level) {
-      freeLevelInfo = `${freeLevelInfo}<span style="color: var(--maroon-text-color)"> ${
-        i18next.t(
-          'general.softCapped'
-        )
-      }</span>`
-    }
-
-    return `<span style="color: gold">${this.name}</span>
-                <span style="color: lightblue">${this.description}</span>
-                <span style="color: ${minReqColor}">${minimumSingularity}</span>
-                <span style="color: ${color}"> ${
-      i18next.t(
-        'general.level'
-      )
-    } ${format(this.level, 0, true)}${maxLevel}${freeLevelInfo}</span>
-                <span style="color: gold">${this.getEffect().desc()}</span>
-                ${i18next.t('singularity.toString.costNextLevel')}: ${
-      format(
-        costNextLevel,
-        0,
-        true
-      )
-    } Golden Quarks.
-                ${i18next.t('general.spent')} Quarks: ${
-      format(
-        this.goldenQuarksInvested,
-        0,
-        true
-      )
-    }`
-  }
-
-  public updateUpgradeHTML (): void {
-    DOMCacheGetOrSet('testingMultiline').innerHTML = this.toString()
-  }
-
-  /**
-   * Retrieves the cost for upgrading the singularity upgrade once. Return 0 if maxed.
-   * @returns A number representing how many Golden Quarks a player must have to upgrade once.
-   */
-  getCostTNL (): number {
-    let costMultiplier = 1
-    if (this.computeMaxLevel() === this.level) {
-      return 0
-    }
-
-    // Overcap
-    if (this.computeMaxLevel() > this.maxLevel && this.level >= this.maxLevel) {
-      costMultiplier *= Math.pow(4, this.level - this.maxLevel + 1)
-    }
-
-    if (this.specialCostForm === 'Exponential2') {
-      return (
-        this.costPerLevel * Math.sqrt(costMultiplier) * Math.pow(2, this.level)
-      )
-    }
-
-    if (this.specialCostForm === 'Cubic') {
-      return (
-        this.costPerLevel
-        * costMultiplier
-        * (Math.pow(this.level + 1, 3) - Math.pow(this.level, 3))
-      )
-    }
-
-    if (this.specialCostForm === 'Quadratic') {
-      return (
-        this.costPerLevel
-        * costMultiplier
-        * (Math.pow(this.level + 1, 2) - Math.pow(this.level, 2))
-      )
-    }
-
-    costMultiplier *= this.maxLevel === -1 && this.level >= 100 ? this.level / 50 : 1
-    costMultiplier *= this.maxLevel === -1 && this.level >= 400 ? this.level / 100 : 1
-
-    return this.computeMaxLevel() === this.level
-      ? 0
-      : Math.ceil(this.costPerLevel * (1 + this.level) * costMultiplier)
-  }
-
-  /**
-   * Buy levels up until togglebuy or maxed.
-   * @returns An alert indicating cannot afford, already maxed or purchased with how many
-   *          levels purchased
-   */
-  public async buyLevel (event: MouseEvent): Promise<void> {
-    let purchased = 0
-    let maxPurchasable = 1
-    let GQBudget = player.goldenQuarks
-
-    if (event.shiftKey) {
-      maxPurchasable = 100000
-      const buy = Number(
-        await Prompt(
-          i18next.t('singularity.goldenQuarks.spendPrompt', {
-            gq: format(player.goldenQuarks, 0, true)
-          })
-        )
-      )
-
-      if (isNaN(buy) || !isFinite(buy) || !Number.isInteger(buy)) {
-        // nan + Infinity checks
-        return Alert(i18next.t('general.validation.finite'))
-      }
-
-      if (buy === -1) {
-        GQBudget = player.goldenQuarks
-      } else if (buy <= 0) {
-        return Alert(i18next.t('general.validation.zeroOrLess'))
-      } else {
-        GQBudget = buy
-      }
-      GQBudget = Math.min(player.goldenQuarks, GQBudget)
-    }
-
-    if (this.maxLevel > 0) {
-      maxPurchasable = Math.min(
-        maxPurchasable,
-        this.computeMaxLevel() - this.level
-      )
-    }
-
-    if (maxPurchasable === 0) {
-      return Alert(i18next.t('singularity.goldenQuarks.hasUpgrade'))
-    }
-
-    if (player.highestSingularityCount < this.minimumSingularity) {
-      return Alert(i18next.t('singularity.goldenQuarks.notHighEnoughLevel'))
-    }
-    while (maxPurchasable > 0) {
-      const cost = this.getCostTNL()
-      if (player.goldenQuarks < cost || GQBudget < cost) {
-        break
-      } else {
-        player.goldenQuarks -= cost
-        GQBudget -= cost
-        this.goldenQuarksInvested += cost
-        this.level += 1
-        purchased += 1
-        maxPurchasable -= 1
-      }
-      if (this.name === player.singularityUpgrades.oneMind.name) {
-        player.ascensionCounter = 0
-        player.ascensionCounterReal = 0
-        player.ascensionCounterRealReal = 0
-        void Alert(i18next.t('singularity.goldenQuarks.ascensionReset'))
-      }
-
-      if (this.name === player.singularityUpgrades.singCitadel2.name) {
-        player.singularityUpgrades.singCitadel.freeLevels = player.singularityUpgrades.singCitadel2.level
-      }
-    }
-
-    if (purchased === 0) {
-      return Alert(i18next.t('general.validation.moreThanPlayerHas'))
-    }
-    if (purchased > 1) {
-      void Alert(
-        i18next.t('singularity.goldenQuarks.multiBuyPurchased', {
-          levels: format(purchased)
-        })
-      )
-    }
-
-    this.updateUpgradeHTML()
-    this.updateCaches()
-    updateSingularityPenalties()
-    updateSingularityPerks()
-    revealStuff()
-  }
-
-  public computeFreeLevelSoftcap (): number {
-    let freeLevelMult = (player.shopUpgrades.shopSingularityPotency > 0) ? 3.66 : 1
-    freeLevelMult += 0.3 / 100 * player.cubeUpgrades[75]
-    const baseRealFreeLevels = freeLevelMult * this.freeLevels
-    return (
-      Math.min(this.level, baseRealFreeLevels)
-      + Math.sqrt(Math.max(0, baseRealFreeLevels - this.level))
-    )
-  }
-
-  public computeMaxLevel (): number {
-    if (!this.canExceedCap) {
-      return this.maxLevel
-    } else {
-      let cap = this.maxLevel
-      const overclockPerks = [50, 60, 75, 100, 125, 150, 175, 200, 225, 250]
-      for (const perk of overclockPerks) {
-        if (player.highestSingularityCount >= perk) {
-          cap += 1
-        } else {
-          break
-        }
-      }
-      cap += +player.octeractUpgrades.octeractSingUpgradeCap.getEffect().bonus
-      return cap
-    }
-  }
-
-  public actualTotalLevels (): number {
-    if (
-      (player.singularityChallenges.noSingularityUpgrades.enabled
-        || player.singularityChallenges.sadisticPrequel.enabled)
-      && !this.qualityOfLife
-    ) {
-      return 0
-    }
-
-    if (
-      (player.singularityChallenges.limitedAscensions.enabled || player.singularityChallenges.limitedTime.enabled
-        || player.singularityChallenges.sadisticPrequel.enabled)
-      && this.name === player.singularityUpgrades.platonicDelta.name
-    ) {
-      return 0
-    }
-
-    const actualFreeLevels = this.computeFreeLevelSoftcap()
-    const linearLevels = this.level + actualFreeLevels
-    let polynomialLevels = 0
-    if (player.octeractUpgrades.octeractImprovedFree.getEffect().bonus) {
-      let exponent = 0.6
-      exponent += +player.octeractUpgrades.octeractImprovedFree2.getEffect().bonus
-      exponent += +player.octeractUpgrades.octeractImprovedFree3.getEffect().bonus
-      exponent += +player.octeractUpgrades.octeractImprovedFree4.getEffect().bonus
-      polynomialLevels = Math.pow(this.level * actualFreeLevels, exponent)
-    }
-
-    return Math.max(linearLevels, polynomialLevels)
-  }
-
-  public getEffect (): { bonus: number | boolean; desc: () => string } {
-    return this.effect(this.actualTotalLevels())
-  }
-
-  updateCaches (): void {
-    if (this.cacheUpdates !== undefined) {
-      for (const cache of this.cacheUpdates) {
-        cache()
-      }
-    }
-  }
-
-  public refund (): void {
-    player.goldenQuarks += this.goldenQuarksInvested
-    this.level = 0
-    this.goldenQuarksInvested = 0
-  }
-
-  valueOf (): ISingularityData {
-    return {
-      costPerLevel: this.costPerLevel,
-      maxLevel: this.maxLevel,
-      cacheUpdates: this.cacheUpdates,
-      canExceedCap: this.canExceedCap,
-      effect: this.effect,
-      freeLevels: this.freeLevels,
-      goldenQuarksInvested: this.goldenQuarksInvested,
-      level: this.level,
-      minimumSingularity: this.minimumSingularity,
-      qualityOfLife: this.qualityOfLife,
-      specialCostForm: this.specialCostForm
-    }
-  }
-
-  key () {
-    return this.#key
-  }
+export interface GoldenQuarkUpgrade {
+  level: number
+  freeLevel: number
+  maxLevel: number
+  canExceedCap: boolean
+  qualityOfLife: boolean
+  costPerLevel: number
+  minimumSingularity: number
+  specialCostForm: SingularitySpecialCostFormulae
+  effect (n: number): number
+  effectDescription (n: number): string
+  name (): string
+  description (): string
 }
 
-export const singularityData: Record<
-  SingularityDataKeys,
-  ISingularityData
-> = {
+export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade> = {
   goldenQuarks1: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 15,
-    costPerLevel: 12,
     canExceedCap: true,
+    qualityOfLife: true,
+    costPerLevel: 12,
+    minimumSingularity: 0,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: 1 + 0.1 * n,
-        desc: () => {
-          return i18next.t('singularity.data.goldenQuarks1.effect', {
-            n: format(10 * n, 0, true)
-          })
-        }
-      }
+      return 1 + 0.1 * n
     },
-    qualityOfLife: true
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.goldenQuarks1.effect', {
+        n: formatAsPercentIncrease(this.effect(n), 2)
+      })
+    },
+    name: () => { return i18next.t('singularity.data.goldenQuarks1.name') },
+    description: () => { return i18next.t('singularity.data.goldenQuarks1.description') }
   },
   goldenQuarks2: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 75,
-    costPerLevel: 60,
     canExceedCap: true,
+    qualityOfLife: true,
+    costPerLevel: 60,
+    minimumSingularity: 0,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 250 ? 1 / Math.log2(n / 62.5) : 1 - Math.min(0.5, n / 500),
-        desc: () => {
-          return i18next.t('singularity.data.goldenQuarks2.effect', {
-            n: n > 250
-              ? format(100 - 100 / Math.log2(n / 62.5), 2, true)
-              : format(Math.min(50, n / 5), 2, true)
-          })
-        }
-      }
+      return n > 250 ? 1 / Math.log2(n / 62.5) : 1 - Math.min(0.5, n / 500)
     },
-    qualityOfLife: true
+    effectDescription: function(n: number) {
+      const effectValue = this.effect(n)
+      // Convert the effect to percentage format like the original
+      const percentageValue = n > 250 
+        ? 100 - 100 * effectValue  // Since effectValue = 1/Math.log2(n/62.5), this gives us the reduction %
+        : (1 - effectValue) * 100  // Since effectValue = 1 - reduction, this gives us the reduction %
+      
+      return i18next.t('singularity.data.goldenQuarks2.effect', {
+        n: format(percentageValue, 2, true)
+      })
+    },
+    name: () => { return i18next.t('singularity.data.goldenQuarks2.name') },
+    description: () => { return i18next.t('singularity.data.goldenQuarks2.description') }
   },
   goldenQuarks3: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1000,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 1000,
+    minimumSingularity: 0,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: (n * (n + 1)) / 2,
-        desc: () => {
-          return i18next.t('singularity.data.goldenQuarks3.effect', {
-            n: format((n * (n + 1)) / 2)
-          })
-        }
-      }
-    }
+      return (n * (n + 1)) / 2
+    },
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.goldenQuarks3.effect', {
+        n: format(this.effect(n))
+      })
+    },
+    name: () => { return i18next.t('singularity.data.goldenQuarks3.name') },
+    description: () => { return i18next.t('singularity.data.goldenQuarks3.description') }
   },
   starterPack: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 10,
+    minimumSingularity: 0,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.starterPack.effect${n > 0 ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
-    }
+      return n
+    },
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.starterPack.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => { return i18next.t('singularity.data.starterPack.name') },
+    description: () => i18next.t('singularity.data.starterPack.description')
   },
   wowPass: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 350,
+    minimumSingularity: 0,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.wowPass.effect${n > 0 ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
+      return n
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.wowPass.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => i18next.t('singularity.data.wowPass.name'),
+    description: () => i18next.t('singularity.data.wowPass.description')
   },
   cookies: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 100,
+    minimumSingularity: 0,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.cookies.effect${n > 0 ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
+      return n
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.cookies.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => i18next.t('singularity.data.cookies.name'),
+    description: () => i18next.t('singularity.data.cookies.description')
   },
   cookies2: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 500,
+    minimumSingularity: 0,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.cookies2.effect${n > 0 ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
+      return n
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.cookies2.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => i18next.t('singularity.data.cookies2.name'),
+    description: () => i18next.t('singularity.data.cookies2.description')
   },
   cookies3: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 24999,
+    minimumSingularity: 0,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.cookies3.effect${n > 0 ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
+      return n
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.cookies3.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => i18next.t('singularity.data.cookies3.name'),
+    description: () => i18next.t('singularity.data.cookies3.description')
   },
   cookies4: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 499999,
+    minimumSingularity: 0,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.cookies4.effect${n > 0 ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
+      return n
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.cookies4.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => i18next.t('singularity.data.cookies4.name'),
+    description: () => i18next.t('singularity.data.cookies4.description')
   },
   cookies5: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 1.66e15,
     minimumSingularity: 209,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.cookies5.effect${n > 0 ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
+      return n
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.cookies5.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => i18next.t('singularity.data.cookies5.name'),
+    description: () => i18next.t('singularity.data.cookies5.description')
   },
   ascensions: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: -1,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 5,
+    minimumSingularity: 0,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: (1 + (2 * n) / 100) * (1 + Math.floor(n / 10) / 100),
-        desc: () => {
-          return i18next.t('singularity.data.ascensions.effect', {
-            n: format(
-              (100 + 2 * n) * (1 + Math.floor(n / 10) / 100) - 100,
-              1,
-              true
-            )
-          })
-        }
-      }
-    }
+      return (1 + (2 * n) / 100) * (1 + Math.floor(n / 10) / 100)
+    },
+    effectDescription: function(n: number) {
+      const effectValue = this.effect(n)
+      return i18next.t('singularity.data.ascensions.effect', {
+        n: formatAsPercentIncrease(effectValue, 1)
+      })
+    },
+    name: () => i18next.t('singularity.data.ascensions.name'),
+    description: () => i18next.t('singularity.data.ascensions.description')
   },
   corruptionFourteen: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 1000,
+    minimumSingularity: 0,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.corruptionFourteen.effect${n > 0 ? 'Have' : 'HaveNot'}`,
-            {
-              m: n > 0 ? ':)' : ':('
-            }
-          )
+      return n
+    },
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.corruptionFourteen.effect${n > 0 ? 'Have' : 'HaveNot'}`,
+        {
+          m: n > 0 ? ':)' : ':('
         }
-      }
-    }
+      ),
+    name: () => i18next.t('singularity.data.corruptionFourteen.name'),
+    description: () => i18next.t('singularity.data.corruptionFourteen.description')
   },
   corruptionFifteen: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 40000,
+    minimumSingularity: 0,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.corruptionFifteen.effect${n > 0 ? 'Have' : 'HaveNot'}`,
-            {
-              m: n > 0 ? ':)' : ':('
-            }
-          )
+      return n
+    },
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.corruptionFifteen.effect${n > 0 ? 'Have' : 'HaveNot'}`,
+        {
+          m: n > 0 ? ':)' : ':('
         }
-      }
-    }
+      ),
+    name: () => i18next.t('singularity.data.corruptionFifteen.name'),
+    description: () => i18next.t('singularity.data.corruptionFifteen.description')
   },
   singOfferings1: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: -1,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 1,
+    minimumSingularity: 0,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: 1 + 0.02 * n,
-        desc: () => {
-          return i18next.t('singularity.data.singOfferings1.effect', {
-            n: format(2 * n, 0, true)
-          })
-        }
-      }
-    }
+      return 1 + 0.02 * n
+    },
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singOfferings1.effect', {
+        n: formatAsPercentIncrease(this.effect(n), 2)
+      })
+    },
+    name: () => i18next.t('singularity.data.singOfferings1.name'),
+    description: () => i18next.t('singularity.data.singOfferings1.description')
   },
   singOfferings2: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 25,
-    costPerLevel: 25,
     canExceedCap: true,
+    qualityOfLife: false,
+    costPerLevel: 25,
+    minimumSingularity: 0,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: 1 + 0.08 * n,
-        desc: () => {
-          return i18next.t('singularity.data.singOfferings2.effect', {
-            n: format(8 * n, 0, true)
-          })
-        }
-      }
-    }
+      return 1 + 0.08 * n
+    },
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singOfferings2.effect', {
+        n: formatAsPercentIncrease(this.effect(n), 0)
+      })
+    },
+    name: () => i18next.t('singularity.data.singOfferings2.name'),
+    description: () => i18next.t('singularity.data.singOfferings2.description')
   },
   singOfferings3: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 40,
-    costPerLevel: 500,
     canExceedCap: true,
+    qualityOfLife: false,
+    costPerLevel: 500,
+    minimumSingularity: 0,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: 1 + 0.04 * n,
-        desc: () => {
-          return i18next.t('singularity.data.singOfferings3.effect', {
-            n: format(4 * n, 0, true)
-          })
-        }
-      }
-    }
+      return 1 + 0.04 * n
+    },
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singOfferings3.effect', {
+        n: formatAsPercentIncrease(this.effect(n), 0)
+      })
+    },
+    name: () => i18next.t('singularity.data.singOfferings3.name'),
+    description: () => i18next.t('singularity.data.singOfferings3.description')
   },
   singObtainium1: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: -1,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 1,
+    minimumSingularity: 0,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: 1 + 0.02 * n,
-        desc: () => {
-          return i18next.t('singularity.data.singObtainium1.effect', {
-            n: format(2 * n, 0, true)
-          })
-        }
-      }
-    }
+      return 1 + 0.02 * n
+    },
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singObtainium1.effect', {
+        n: formatAsPercentIncrease(this.effect(n), 2)
+      })
+    },
+    name: () => i18next.t('singularity.data.singObtainium1.name'),
+    description: () => i18next.t('singularity.data.singObtainium1.description')
   },
   singObtainium2: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 25,
-    costPerLevel: 25,
     canExceedCap: true,
+    qualityOfLife: false,
+    costPerLevel: 25,
+    minimumSingularity: 0,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: 1 + 0.08 * n,
-        desc: () => {
-          return i18next.t('singularity.data.singObtainium2.effect', {
-            n: format(8 * n, 0, true)
-          })
-        }
-      }
-    }
+      return 1 + 0.08 * n
+    },
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singObtainium2.effect', {
+        n: formatAsPercentIncrease(this.effect(n), 0)
+      })
+    },
+    name: () => i18next.t('singularity.data.singObtainium2.name'),
+    description: () => i18next.t('singularity.data.singObtainium2.description')
   },
   singObtainium3: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 40,
-    costPerLevel: 500,
     canExceedCap: true,
+    qualityOfLife: false,
+    costPerLevel: 500,
+    minimumSingularity: 0,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: 1 + 0.04 * n,
-        desc: () => {
-          return i18next.t('singularity.data.singObtainium3.effect', {
-            n: format(4 * n, 0, true)
-          })
-        }
-      }
-    }
-  },
-  singCubes1: {
+      return 1 + 0.04 * n
+    },
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singObtainium3.effect', {
+        n: formatAsPercentIncrease(this.effect(n), 0)
+      })
+    },
+    name: () => i18next.t('singularity.data.singObtainium3.name'),
+    description: () => i18next.t('singularity.data.singObtainium3.description')
+    },
+    singCubes1: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: -1,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 1,
+    minimumSingularity: 0,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: 1 + 0.006 * n,
-        desc: () => {
-          return i18next.t('singularity.data.singCubes1.effect', {
-            n: format(0.6 * n, 1, true)
-          })
-        }
-      }
-    }
+      return 1 + 0.006 * n
+    },
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singCubes1.effect', {
+        n: formatAsPercentIncrease(this.effect(n), 3)
+      })
+    },
+    name: () => i18next.t('singularity.data.singCubes1.name'),
+    description: () => i18next.t('singularity.data.singCubes1.description')
   },
   singCubes2: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 25,
-    costPerLevel: 25,
     canExceedCap: true,
+    qualityOfLife: false,
+    costPerLevel: 25,
+    minimumSingularity: 0,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: 1 + 0.08 * n,
-        desc: () => {
-          return i18next.t('singularity.data.singCubes2.effect', {
-            n: format(8 * n, 0, true)
-          })
-        }
-      }
-    }
+      return 1 + 0.08 * n
+    },
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singCubes2.effect', {
+        n: formatAsPercentIncrease(this.effect(n), 0)
+      })
+    },
+    name: () => i18next.t('singularity.data.singCubes2.name'),
+    description: () => i18next.t('singularity.data.singCubes2.description')
   },
   singCubes3: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 40,
-    costPerLevel: 500,
     canExceedCap: true,
+    qualityOfLife: false,
+    costPerLevel: 500,
+    minimumSingularity: 0,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: 1 + 0.04 * n,
-        desc: () => {
-          return i18next.t('singularity.data.singCubes3.effect', {
-            n: format(4 * n, 0, true)
-          })
-        }
-      }
-    }
+      return 1 + 0.04 * n
+    },
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singCubes3.effect', {
+        n: formatAsPercentIncrease(this.effect(n), 0)
+      })
+    },
+    name: () => i18next.t('singularity.data.singCubes3.name'),
+    description: () => i18next.t('singularity.data.singCubes3.description')
   },
   singCitadel: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: -1,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 500000,
     minimumSingularity: 100,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: (1 + 0.02 * n) * (1 + Math.floor(n / 10) / 100),
-        desc: () => {
-          return i18next.t('singularity.data.singCubes2.effect', {
-            n: format(
-              100 * ((1 + 0.02 * n) * (1 + Math.floor(n / 10) / 100) - 1),
-              2,
-              true
-            )
-          })
-        }
-      }
-    }
+      return (1 + 0.02 * n) * (1 + Math.floor(n / 10) / 100)
+    },
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singCitadel.effect', {
+        n: formatAsPercentIncrease(this.effect(n), 2)
+      })
+    },
+    name: () => i18next.t('singularity.data.singCitadel.name'),
+    description: () => i18next.t('singularity.data.singCitadel.description')
   },
   singCitadel2: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 100,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 1e14,
     minimumSingularity: 204,
     specialCostForm: 'Quadratic',
     effect: (n: number) => {
-      return {
-        bonus: (1 + 0.02 * n) * (1 + Math.floor(n / 10) / 100),
-        desc: () => {
-          return i18next.t('singularity.data.singCubes3.effect', {
-            n: format(
-              100 * ((1 + 0.02 * n) * (1 + Math.floor(n / 10) / 100) - 1),
-              2,
-              true
-            )
-          })
-        }
-      }
-    }
+      return (1 + 0.02 * n) * (1 + Math.floor(n / 10) / 100)
+    },
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singCitadel2.effect', {
+        n: formatAsPercentIncrease(this.effect(n), 2)
+      })
+    },
+    name: () => i18next.t('singularity.data.singCitadel2.name'),
+    description: () => i18next.t('singularity.data.singCitadel2.description')
   },
   octeractUnlock: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 8888,
     minimumSingularity: 8,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.octeractUnlock.effect${n > 0 ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
+      return n
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.octeractUnlock.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => i18next.t('singularity.data.octeractUnlock.name'),
+    description: () => i18next.t('singularity.data.octeractUnlock.description')
   },
   singOcteractPatreonBonus: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 9999,
     minimumSingularity: 12,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t('singularity.data.singOcteractPatreonBonus.effect', {
-            n
-          })
-        }
-      }
-    }
+      return n
+    },
+    effectDescription: (n: number) => i18next.t('singularity.data.singOcteractPatreonBonus.effect', {
+        n
+      }),
+    name: () => i18next.t('singularity.data.singOcteractPatreonBonus.name'),
+    description: () => i18next.t('singularity.data.singOcteractPatreonBonus.description')
   },
   offeringAutomatic: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: -1,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 1e14,
     minimumSingularity: 222,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n,
-        desc: () => {
-          return i18next.t('singularity.data.offeringAutomatic.effect', { n })
-        }
-      }
-    }
+      return n
+    },
+    effectDescription: (n: number) => i18next.t('singularity.data.offeringAutomatic.effect', { n }),
+    name: () => i18next.t('singularity.data.offeringAutomatic.name'),
+    description: () => i18next.t('singularity.data.offeringAutomatic.description')
   },
   intermediatePack: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 1,
     minimumSingularity: 4,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.intermediatePack.effect${n > 0 ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
-    }
+      return n
+    },
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.intermediatePack.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => i18next.t('singularity.data.intermediatePack.name'),
+    description: () => i18next.t('singularity.data.intermediatePack.description')
   },
   advancedPack: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 200,
     minimumSingularity: 9,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.advancedPack.effect${n > 0 ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
-    }
+      return n
+    },
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.advancedPack.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => i18next.t('singularity.data.advancedPack.name'),
+    description: () => i18next.t('singularity.data.advancedPack.description')
   },
   expertPack: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 800,
     minimumSingularity: 16,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.expertPack.effect${n > 0 ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
-    }
+      return n
+    },
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.expertPack.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => i18next.t('singularity.data.expertPack.name'),
+    description: () => i18next.t('singularity.data.expertPack.description')
   },
   masterPack: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 3200,
     minimumSingularity: 25,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.masterPack.effect${n > 0 ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
-    }
+      return n
+    },
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.masterPack.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => i18next.t('singularity.data.masterPack.name'),
+    description: () => i18next.t('singularity.data.masterPack.description')
   },
   divinePack: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 12800,
     minimumSingularity: 36,
+    specialCostForm: 'Default',
     effect: (n: number) => {
+      if (n === 0) {
+        return 1
+      }
       const corruptions = player.corruptions.used
       const octMult = Object.values(corruptions.loadout).reduce(
         (acc, curr) => acc * (curr === 16 ? 1.4 : (curr === 15 ? 1.3 : (curr === 14 ? 1.25 : 1))),
         1
       )
-      return {
-        bonus: octMult,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.divinePack.effect${n > 0 ? 'Have' : 'HaveNot'}`,
-            {
-              n: formatAsPercentIncrease(octMult, 0)
-            }
-          )
+      return octMult
+    },
+    effectDescription: function(n: number) {
+      return i18next.t(
+        `singularity.data.divinePack.effect${n > 0 ? 'Have' : 'HaveNot'}`,
+        {
+          n: formatAsPercentIncrease(this.effect(n), 0)
         }
-      }
-    }
+      )
+    },
+    name: () => i18next.t('singularity.data.divinePack.name'),
+    description: () => i18next.t('singularity.data.divinePack.description')
   },
   wowPass2: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 12500,
     minimumSingularity: 9,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.wowPass2.effect${n > 0 ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
+      return n
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.wowPass2.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => i18next.t('singularity.data.wowPass2.name'),
+    description: () => i18next.t('singularity.data.wowPass2.description')
   },
   wowPass3: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 3e7 - 1,
     minimumSingularity: 83,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.wowPass3.effect${n > 0 ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
+      return n
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.wowPass3.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => i18next.t('singularity.data.wowPass3.name'),
+    description: () => i18next.t('singularity.data.wowPass3.description')
   },
   potionBuff: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 10,
+    canExceedCap: true,
+    qualityOfLife: false,
     costPerLevel: 999,
     minimumSingularity: 4,
-    canExceedCap: true,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: Math.max(1, 10 * Math.pow(n, 2)),
-        desc: () => {
-          return i18next.t('singularity.data.potionBuff.effect', {
-            n: format(Math.max(1, 10 * Math.pow(n, 2)), 0, true)
-          })
-        }
-      }
-    }
+      return Math.max(1, 10 * Math.pow(n, 2))
+    },
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.potionBuff.effect', {
+        n: format(this.effect(n), 0, true)
+      })
+    },
+    name: () => i18next.t('singularity.data.potionBuff.name'),
+    description: () => i18next.t('singularity.data.potionBuff.description')
   },
   potionBuff2: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 10,
+    canExceedCap: true,
+    qualityOfLife: false,
     costPerLevel: 1e8,
     minimumSingularity: 119,
-    canExceedCap: true,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: Math.max(1, 2 * n),
-        desc: () => {
-          return i18next.t('singularity.data.potionBuff2.effect', {
-            n: format(Math.max(1, 2 * n), 0, true)
-          })
-        }
-      }
-    }
+      return Math.max(1, 2 * n)
+    },
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.potionBuff2.effect', {
+        n: format(this.effect(n), 0, true)
+      })
+    },
+    name: () => i18next.t('singularity.data.potionBuff2.name'),
+    description: () => i18next.t('singularity.data.potionBuff2.description')
   },
   potionBuff3: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 10,
+    canExceedCap: true,
+    qualityOfLife: false,
     costPerLevel: 1e12,
     minimumSingularity: 191,
-    canExceedCap: true,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: Math.max(1, 1 + 0.5 * n),
-        desc: () => {
-          return i18next.t('singularity.data.potionBuff3.effect', {
-            n: format(Math.max(1, 1 + 0.5 * n), 2, true)
-          })
-        }
-      }
-    }
+      return Math.max(1, 1 + 0.5 * n)
+    },
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.potionBuff3.effect', {
+        n: format(this.effect(n), 2, true)
+      })
+    },
+    name: () => i18next.t('singularity.data.potionBuff3.name'),
+    description: () => i18next.t('singularity.data.potionBuff3.description')
   },
   singChallengeExtension: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 4,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 999,
     minimumSingularity: 11,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n,
-        desc: () => {
-          return i18next.t('singularity.data.singChallengeExtension.effect', {
-            n: 2 * n,
-            m: n
-          })
-        }
-      }
-    }
+      return n
+    },
+    effectDescription: (n: number) => i18next.t('singularity.data.singChallengeExtension.effect', {
+        n: 2 * n,
+        m: n
+      }),
+    name: () => i18next.t('singularity.data.singChallengeExtension.name'),
+    description: () => i18next.t('singularity.data.singChallengeExtension.description')
   },
   singChallengeExtension2: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 3,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 29999,
     minimumSingularity: 26,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n,
-        desc: () => {
-          return i18next.t('singularity.data.singChallengeExtension2.effect', {
-            n: 2 * n,
-            m: n
-          })
-        }
-      }
-    }
+      return n
+    },
+    effectDescription: (n: number) => i18next.t('singularity.data.singChallengeExtension2.effect', {
+        n: 2 * n,
+        m: n
+      }),
+    name: () => i18next.t('singularity.data.singChallengeExtension2.name'),
+    description: () => i18next.t('singularity.data.singChallengeExtension2.description')
   },
   singChallengeExtension3: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 3,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 749999,
     minimumSingularity: 51,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n,
-        desc: () => {
-          return i18next.t('singularity.data.singChallengeExtension3.effect', {
-            n: 2 * n,
-            m: n
-          })
-        }
-      }
-    }
+      return n
+    },
+    effectDescription: (n: number) => i18next.t('singularity.data.singChallengeExtension3.effect', {
+        n: 2 * n,
+        m: n
+      }),
+    name: () => i18next.t('singularity.data.singChallengeExtension3.name'),
+    description: () => i18next.t('singularity.data.singChallengeExtension3.description')
   },
   singQuarkImprover1: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 30,
+    canExceedCap: true,
+    qualityOfLife: true,
     costPerLevel: 1,
     minimumSingularity: 173,
-    canExceedCap: true,
     specialCostForm: 'Exponential2',
     effect: (n: number) => {
-      return {
-        bonus: 1 + n / 200,
-        desc: () => {
-          return i18next.t('singularity.data.singQuarkImprover1.effect', {
-            n: format(n / 2, 2, true)
-          })
-        }
-      }
+      return 1 + n / 200
     },
-    qualityOfLife: true
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singQuarkImprover1.effect', {
+        n: formatAsPercentIncrease(this.effect(n), 2)
+      })
+    },
+    name: () => i18next.t('singularity.data.singQuarkImprover1.name'),
+    description: () => i18next.t('singularity.data.singQuarkImprover1.description')
   },
   singQuarkHepteract: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 14999,
     minimumSingularity: 5,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n / 100,
-        desc: () => {
-          return i18next.t('singularity.data.singQuarkHepteract.effect', {
-            n: format(2 * n, 2, true)
-          })
-        }
-      }
+      return n / 100
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t('singularity.data.singQuarkHepteract.effect', {
+        n: format(2 * n, 2, true)
+      }),
+    name: () => i18next.t('singularity.data.singQuarkHepteract.name'),
+    description: () => i18next.t('singularity.data.singQuarkHepteract.description')
   },
   singQuarkHepteract2: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 449999,
     minimumSingularity: 30,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n / 100,
-        desc: () => {
-          return i18next.t('singularity.data.singQuarkHepteract2.effect', {
-            n: format(2 * n, 2, true)
-          })
-        }
-      }
+      return n / 100
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t('singularity.data.singQuarkHepteract2.effect', {
+        n: format(2 * n, 2, true)
+      }),
+    name: () => i18next.t('singularity.data.singQuarkHepteract2.name'),
+    description: () => i18next.t('singularity.data.singQuarkHepteract2.description')
   },
   singQuarkHepteract3: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 13370000,
     minimumSingularity: 61,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n / 100,
-        desc: () => {
-          return i18next.t('singularity.data.singQuarkHepteract3.effect', {
-            n: format(2 * n, 2, true)
-          })
-        }
-      }
+      return n / 100
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t('singularity.data.singQuarkHepteract3.effect', {
+        n: format(2 * n, 2, true)
+      }),
+    name: () => i18next.t('singularity.data.singQuarkHepteract3.name'),
+    description: () => i18next.t('singularity.data.singQuarkHepteract3.description')
   },
   singOcteractGain: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: -1,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 20000,
     minimumSingularity: 36,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: 1 + 0.0125 * n,
-        desc: () => {
-          return i18next.t('singularity.data.singOcteractGain.effect', {
-            n: format(1.25 * n, 2, true)
-          })
-        }
-      }
-    }
+      return 1 + 0.0125 * n
+    },
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singOcteractGain.effect', {
+        n: formatAsPercentIncrease(this.effect(n), 2)
+      })
+    },
+    name: () => i18next.t('singularity.data.singOcteractGain.name'),
+    description: () => i18next.t('singularity.data.singOcteractGain.description')
   },
   singOcteractGain2: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 25,
+    canExceedCap: true,
+    qualityOfLife: false,
     costPerLevel: 40000,
     minimumSingularity: 36,
-    canExceedCap: true,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: 1 + 0.05 * n,
-        desc: () => {
-          return i18next.t('singularity.data.singOcteractGain2.effect', {
-            n: format(5 * n, 0, true)
-          })
-        }
-      }
-    }
+      return 1 + 0.05 * n
+    },
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singOcteractGain2.effect', {
+        n: formatAsPercentIncrease(this.effect(n), 0)
+      })
+    },
+    name: () => i18next.t('singularity.data.singOcteractGain2.name'),
+    description: () => i18next.t('singularity.data.singOcteractGain2.description')
   },
   singOcteractGain3: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 50,
+    canExceedCap: true,
+    qualityOfLife: false,
     costPerLevel: 250000,
     minimumSingularity: 55,
-    canExceedCap: true,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: 1 + 0.025 * n,
-        desc: () => {
-          return i18next.t('singularity.data.singOcteractGain3.effect', {
-            n: format(2.5 * n, 0, true)
-          })
-        }
-      }
-    }
+      return 1 + 0.025 * n
+    },
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singOcteractGain3.effect', {
+        n: formatAsPercentIncrease(this.effect(n), 1)
+      })
+    },
+    name: () => i18next.t('singularity.data.singOcteractGain3.name'),
+    description: () => i18next.t('singularity.data.singOcteractGain3.description')
   },
   singOcteractGain4: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 100,
+    canExceedCap: true,
+    qualityOfLife: false,
     costPerLevel: 750000,
     minimumSingularity: 77,
-    canExceedCap: true,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: 1 + 0.02 * n,
-        desc: () => {
-          return i18next.t('singularity.data.singOcteractGain4.effect', {
-            n: format(2 * n, 0, true)
-          })
-        }
-      }
-    }
+      return 1 + 0.02 * n
+    },
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singOcteractGain4.effect', {
+        n: formatAsPercentIncrease(this.effect(n), 0)
+      })
+    },
+    name: () => i18next.t('singularity.data.singOcteractGain4.name'),
+    description: () => i18next.t('singularity.data.singOcteractGain4.description')
   },
   singOcteractGain5: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 200,
+    canExceedCap: true,
+    qualityOfLife: false,
     costPerLevel: 7777777,
     minimumSingularity: 100,
-    canExceedCap: true,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: 1 + 0.01 * n,
-        desc: () => {
-          return i18next.t('singularity.data.singOcteractGain5.effect', {
-            n: format(n, 0, true)
-          })
-        }
-      }
-    }
+      return 1 + 0.01 * n
+    },
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singOcteractGain5.effect', {
+        n: formatAsPercentIncrease(this.effect(n), 0)
+      })
+    },
+    name: () => i18next.t('singularity.data.singOcteractGain5.name'),
+    description: () => i18next.t('singularity.data.singOcteractGain5.description')
   },
   platonicTau: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 100000,
     minimumSingularity: 29,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.platonicTau.effect${n ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
+      return n
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.platonicTau.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => i18next.t('singularity.data.platonicTau.name'),
+    description: () => i18next.t('singularity.data.platonicTau.description')
   },
   platonicAlpha: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 2e7,
     minimumSingularity: 70,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.platonicAlpha.effect${n ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
+      return n
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.platonicAlpha.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => i18next.t('singularity.data.platonicAlpha.name'),
+    description: () => i18next.t('singularity.data.platonicAlpha.description')
   },
   platonicDelta: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 5e9,
     minimumSingularity: 110,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.platonicDelta.effect${n ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
-    }
+      return n
+    },
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.platonicDelta.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => i18next.t('singularity.data.platonicDelta.name'),
+    description: () => i18next.t('singularity.data.platonicDelta.description')
   },
   platonicPhi: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 2e11,
     minimumSingularity: 149,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.platonicPhi.effect${n ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
+      return n
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.platonicPhi.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => i18next.t('singularity.data.platonicPhi.name'),
+    description: () => i18next.t('singularity.data.platonicPhi.description')
   },
   singFastForward: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 7e6 - 1,
     minimumSingularity: 50,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.singFastForward.effect${n ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
+      return n
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.singFastForward.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => i18next.t('singularity.data.singFastForward.name'),
+    description: () => i18next.t('singularity.data.singFastForward.description')
   },
   singFastForward2: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 1e11 - 1,
     minimumSingularity: 147,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.singFastForward2.effect${n ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
+      return n
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.singFastForward2.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => i18next.t('singularity.data.singFastForward2.name'),
+    description: () => i18next.t('singularity.data.singFastForward2.description')
   },
   singAscensionSpeed: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 1e10,
     minimumSingularity: 128,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t('singularity.data.singAscensionSpeed.effect', {
-            n: format(1 + 0.03 * n, 2, true),
-            m: format(1 - 0.03 * n, 2, true)
-          })
-        }
-      }
-    }
+      return 0.03 * n
+    },
+    effectDescription: (n: number) => i18next.t('singularity.data.singAscensionSpeed.effect', {
+        n: format(1 + 0.03 * n, 2, true),
+        m: format(1 - 0.03 * n, 2, true)
+      }),
+    name: () => i18next.t('singularity.data.singAscensionSpeed.name'),
+    description: () => i18next.t('singularity.data.singAscensionSpeed.description')
   },
   singAscensionSpeed2: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 30,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 1e12,
-    specialCostForm: 'Exponential2',
     minimumSingularity: 147,
+    specialCostForm: 'Exponential2',
     effect: (n: number) => {
-      return {
-        bonus: 0.001 * n,
-        desc: () => {
-          return i18next.t('singularity.data.singAscensionSpeed2.effect', {
-            n: format(0.001 * n, 3, true)
-          })
-        }
-      }
-    }
+      return 0.001 * n
+    },
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singAscensionSpeed2.effect', {
+        n: format(this.effect(n), 3, true)
+      })
+    },
+    name: () => i18next.t('singularity.data.singAscensionSpeed2.name'),
+    description: () => i18next.t('singularity.data.singAscensionSpeed2.description')
   },
   ultimatePen: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
-    costPerLevel: 2.22e22,
+    canExceedCap: false,
+    qualityOfLife: false,
+    costPerLevel: 2.22e26,
     minimumSingularity: 300,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t('singularity.data.ultimatePen.effect', {
-            n: n ? '' : 'NOT',
-            m: n > 0
-              ? ' However, the pen just ran out of ink. How will you get more?'
-              : ''
-          })
-        }
-      }
-    }
+      return n
+    },
+    effectDescription: (n: number) => i18next.t('singularity.data.ultimatePen.effect', {
+        n: n > 0 ? '' : 'NOT',
+        m: n > 0
+          ? ' However, the pen just ran out of ink. How will you get more?'
+          : ''
+      }),
+    name: () => i18next.t('singularity.data.ultimatePen.name'),
+    description: () => i18next.t('singularity.data.ultimatePen.description')
   },
   halfMind: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 1.66e12,
     minimumSingularity: 150,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.halfMind.effect${n ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
+      return n
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.halfMind.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => i18next.t('singularity.data.halfMind.name'),
+    description: () => i18next.t('singularity.data.halfMind.description')
   },
   oneMind: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 1.66e13,
     minimumSingularity: 162,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.oneMind.effect${n ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
+      return n
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.oneMind.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => i18next.t('singularity.data.oneMind.name'),
+    description: () => i18next.t('singularity.data.oneMind.description')
   },
   wowPass4: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 1,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 66666666666,
     minimumSingularity: 147,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n > 0,
-        desc: () => {
-          return i18next.t(
-            `singularity.data.wowPass4.effect${n ? 'Have' : 'HaveNot'}`
-          )
-        }
-      }
+      return n
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t(
+        `singularity.data.wowPass4.effect${n > 0 ? 'Have' : 'HaveNot'}`
+      ),
+    name: () => i18next.t('singularity.data.wowPass4.name'),
+    description: () => i18next.t('singularity.data.wowPass4.description')
   },
   blueberries: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 10,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 1e16,
     minimumSingularity: 215,
-    effect: (n: number) => {
-      return {
-        bonus: n,
-        desc: () => {
-          return i18next.t('singularity.data.blueberries.effect', { n })
-        }
-      }
-    },
     specialCostForm: 'Exponential2',
-    qualityOfLife: true
+    effect: (n: number) => {
+      return n
+    },
+    effectDescription: (n: number) => i18next.t('singularity.data.blueberries.effect', { n }),
+    name: () => i18next.t('singularity.data.blueberries.name'),
+    description: () => i18next.t('singularity.data.blueberries.description')
   },
   singAmbrosiaLuck: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: -1,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 1e9,
     minimumSingularity: 187,
-    effect: (n: number) => {
-      return {
-        bonus: 4 * n,
-        desc: () => {
-          return i18next.t('singularity.data.singAmbrosiaLuck.effect', {
-            n: format(4 * n)
-          })
-        }
-      }
-    },
     specialCostForm: 'Exponential2',
-    qualityOfLife: true
+    effect: (n: number) => {
+      return 4 * n
+    },
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singAmbrosiaLuck.effect', {
+        n: format(this.effect(n))
+      })
+    },
+    name: () => i18next.t('singularity.data.singAmbrosiaLuck.name'),
+    description: () => i18next.t('singularity.data.singAmbrosiaLuck.description')
   },
   singAmbrosiaLuck2: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 30,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 4e5,
     minimumSingularity: 50,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: 2 * n,
-        desc: () => {
-          return i18next.t('singularity.data.singAmbrosiaLuck2.effect', {
-            n: format(2 * n)
-          })
-        }
-      }
+      return 2 * n
     },
-    qualityOfLife: true
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singAmbrosiaLuck2.effect', {
+        n: format(this.effect(n))
+      })
+    },
+    name: () => i18next.t('singularity.data.singAmbrosiaLuck2.name'),
+    description: () => i18next.t('singularity.data.singAmbrosiaLuck2.description')
   },
   singAmbrosiaLuck3: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 30,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 2e8,
     minimumSingularity: 119,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: 3 * n,
-        desc: () => {
-          return i18next.t('singularity.data.singAmbrosiaLuck3.effect', {
-            n: format(3 * n)
-          })
-        }
-      }
+      return 3 * n
     },
-    qualityOfLife: true
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singAmbrosiaLuck3.effect', {
+        n: format(this.effect(n))
+      })
+    },
+    name: () => i18next.t('singularity.data.singAmbrosiaLuck3.name'),
+    description: () => i18next.t('singularity.data.singAmbrosiaLuck3.description')
   },
   singAmbrosiaLuck4: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 50,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 1e19,
     minimumSingularity: 256,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: 5 * n,
-        desc: () => {
-          return i18next.t('singularity.data.singAmbrosiaLuck4.effect', {
-            n: format(5 * n)
-          })
-        }
-      }
+      return 5 * n
     },
-    qualityOfLife: true
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singAmbrosiaLuck4.effect', {
+        n: format(this.effect(n))
+      })
+    },
+    name: () => i18next.t('singularity.data.singAmbrosiaLuck4.name'),
+    description: () => i18next.t('singularity.data.singAmbrosiaLuck4.description')
   },
   singAmbrosiaGeneration: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: -1,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 1e9,
     minimumSingularity: 187,
-    effect: (n: number) => {
-      return {
-        bonus: 1 + n / 100,
-        desc: () => {
-          return i18next.t('singularity.data.singAmbrosiaGeneration.effect', {
-            n: format(n)
-          })
-        }
-      }
-    },
     specialCostForm: 'Exponential2',
-    qualityOfLife: true
+    effect: (n: number) => {
+      return 1 + n / 100
+    },
+    effectDescription: (n: number) => i18next.t('singularity.data.singAmbrosiaGeneration.effect', {
+        n: format(n)
+      }),
+    name: () => i18next.t('singularity.data.singAmbrosiaGeneration.name'),
+    description: () => i18next.t('singularity.data.singAmbrosiaGeneration.description')
   },
   singAmbrosiaGeneration2: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 20,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 8e5,
     minimumSingularity: 50,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: 1 + n / 100,
-        desc: () => {
-          return i18next.t('singularity.data.singAmbrosiaGeneration2.effect', {
-            n: format(n)
-          })
-        }
-      }
+      return 1 + n / 100
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t('singularity.data.singAmbrosiaGeneration2.effect', {
+        n: format(n)
+      }),
+    name: () => i18next.t('singularity.data.singAmbrosiaGeneration2.name'),
+    description: () => i18next.t('singularity.data.singAmbrosiaGeneration2.description')
   },
   singAmbrosiaGeneration3: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 35,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 3e8,
     minimumSingularity: 119,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: 1 + n / 100,
-        desc: () => {
-          return i18next.t('singularity.data.singAmbrosiaGeneration3.effect', {
-            n: format(n)
-          })
-        }
-      }
+      return 1 + n / 100
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t('singularity.data.singAmbrosiaGeneration3.effect', {
+        n: format(n)
+      }),
+    name: () => i18next.t('singularity.data.singAmbrosiaGeneration3.name'),
+    description: () => i18next.t('singularity.data.singAmbrosiaGeneration3.description')
   },
   singAmbrosiaGeneration4: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 50,
+    canExceedCap: false,
+    qualityOfLife: true,
     costPerLevel: 1e19,
     minimumSingularity: 256,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: 1 + (2 * n) / 100,
-        desc: () => {
-          return i18next.t('singularity.data.singAmbrosiaGeneration4.effect', {
-            n: format(2 * n)
-          })
-        }
-      }
+      return 1 + (2 * n) / 100
     },
-    qualityOfLife: true
+    effectDescription: (n: number) => i18next.t('singularity.data.singAmbrosiaGeneration4.effect', {
+        n: format(2 * n)
+      }),
+    name: () => i18next.t('singularity.data.singAmbrosiaGeneration4.name'),
+    description: () => i18next.t('singularity.data.singAmbrosiaGeneration4.description')
   },
   singBonusTokens1: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 5,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 25,
     minimumSingularity: 1,
     specialCostForm: 'Exponential2',
     effect: (n: number) => {
-      return {
-        bonus: n,
-        desc: () => {
-          return i18next.t('singularity.data.singBonusTokens1.effect', {
-            n: format(n)
-          })
-        }
-      }
+      return n
     },
-    cacheUpdates: [
-      () => {
-        player.campaigns.updateCurrentTokens()
-        campaignTokenRewardHTMLUpdate()
-      }
-    ]
+    effectDescription: (n: number) => i18next.t('singularity.data.singBonusTokens1.effect', {
+        n: format(n)
+      }),
+    name: () => i18next.t('singularity.data.singBonusTokens1.name'),
+    description: () => i18next.t('singularity.data.singBonusTokens1.description')
   },
   singBonusTokens2: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 5,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 10000,
     minimumSingularity: 25,
     specialCostForm: 'Exponential2',
     effect: (n: number) => {
-      return {
-        bonus: 1 + n / 100,
-        desc: () => {
-          return i18next.t('singularity.data.singBonusTokens2.effect', {
-            n: format(n)
-          })
-        }
-      }
+      return 1 + n / 100
     },
-    cacheUpdates: [
-      () => {
-        player.campaigns.updateCurrentTokens()
-        campaignTokenRewardHTMLUpdate()
-      }
-    ]
+    effectDescription: (n: number) => i18next.t('singularity.data.singBonusTokens2.effect', {
+        n: format(n)
+      }),
+    name: () => i18next.t('singularity.data.singBonusTokens2.name'),
+    description: () => i18next.t('singularity.data.singBonusTokens2.description')
   },
   singBonusTokens3: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 5,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 1e8,
     minimumSingularity: 100,
     specialCostForm: 'Exponential2',
     effect: (n: number) => {
-      return {
-        bonus: 2 * n,
-        desc: () => {
-          return i18next.t('singularity.data.singBonusTokens3.effect', {
-            n: format(2 * n)
-          })
-        }
-      }
+      return 2 * n
     },
-    cacheUpdates: [
-      () => {
-        player.campaigns.updateCurrentTokens()
-        campaignTokenRewardHTMLUpdate()
-      }
-    ]
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singBonusTokens3.effect', {
+        n: format(this.effect(n))
+      })
+    },
+    name: () => i18next.t('singularity.data.singBonusTokens3.name'),
+    description: () => i18next.t('singularity.data.singBonusTokens3.description')
   },
   singBonusTokens4: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 30,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 1e13,
     minimumSingularity: 166,
     specialCostForm: 'Exponential2',
     effect: (n: number) => {
-      return {
-        bonus: 5 * n,
-        desc: () => {
-          return i18next.t('singularity.data.singBonusTokens4.effect', {
-            n: format(5 * n)
-          })
-        }
-      }
+      return 5 * n
     },
-    cacheUpdates: [
-      () => {
-        player.campaigns.updateCurrentTokens()
-        campaignTokenRewardHTMLUpdate()
-      }
-    ]
+    effectDescription: function(n: number) {
+      return i18next.t('singularity.data.singBonusTokens4.effect', {
+        n: format(this.effect(n))
+      })
+    },
+    name: () => i18next.t('singularity.data.singBonusTokens4.name'),
+    description: () => i18next.t('singularity.data.singBonusTokens4.description')
   },
   singInfiniteShopUpgrades: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 80,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 1e18,
     minimumSingularity: 233,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n,
-        desc: () => {
-          return i18next.t('singularity.data.singInfiniteShopUpgrades.effect', {
-            n: format(n)
-          })
-        }
-      }
-    }
+      return n
+    },
+    effectDescription: (n: number) => i18next.t('singularity.data.singInfiniteShopUpgrades.effect', {
+        n: format(n)
+      }),
+    name: () => i18next.t('singularity.data.singInfiniteShopUpgrades.name'),
+    description: () => i18next.t('singularity.data.singInfiniteShopUpgrades.description')
   },
   singTalismanBonusRunes1: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 5,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 25,
     minimumSingularity: 1,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n / 100,
-        desc: () => {
-          return i18next.t('singularity.data.singTalismanBonusRunes.effect', {
-            n: format(n, 0, true)
-          })
-        }
-      }
-    }
+      return n / 100
+    },
+    effectDescription: (n: number) => i18next.t('singularity.data.singTalismanBonusRunes1.effect', {
+        n: format(n, 0, true)
+      }),
+    name: () => i18next.t('singularity.data.singTalismanBonusRunes1.name'),
+    description: () => i18next.t('singularity.data.singTalismanBonusRunes1.description')
   },
   singTalismanBonusRunes2: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 5,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 10000,
     minimumSingularity: 27,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n / 100,
-        desc: () => {
-          return i18next.t('singularity.data.singTalismanBonusRunes2.effect', {
-            n: format(n, 0, true)
-          })
-        }
-      }
-    }
+      return n / 100
+    },
+    effectDescription: (n: number) => i18next.t('singularity.data.singTalismanBonusRunes2.effect', {
+        n: format(n, 0, true)
+      }),
+    name: () => i18next.t('singularity.data.singTalismanBonusRunes2.name'),
+    description: () => i18next.t('singularity.data.singTalismanBonusRunes2.description')
   },
   singTalismanBonusRunes3: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 5,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 1e8,
     minimumSingularity: 99,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n / 100,
-        desc: () => {
-          return i18next.t('singularity.data.singTalismanBonusRunes3.effect', {
-            n: format(n, 0, true)
-          })
-        }
-      }
-    }
+      return n / 100
+    },
+    effectDescription: (n: number) => i18next.t('singularity.data.singTalismanBonusRunes3.effect', {
+        n: format(n, 0, true)
+      }),
+    name: () => i18next.t('singularity.data.singTalismanBonusRunes3.name'),
+    description: () => i18next.t('singularity.data.singTalismanBonusRunes3.description')
   },
   singTalismanBonusRunes4: {
+    level: 0,
+    freeLevel: 0,
     maxLevel: 10,
+    canExceedCap: false,
+    qualityOfLife: false,
     costPerLevel: 3e15,
     minimumSingularity: 211,
+    specialCostForm: 'Default',
     effect: (n: number) => {
-      return {
-        bonus: n / 100,
-        desc: () => {
-          return i18next.t('singularity.data.singTalismanBonusRunes4.effect', {
-            n: format(n, 0, true)
-          })
-        }
-      }
+      return n / 100
+    },
+    effectDescription: (n: number) => i18next.t('singularity.data.singTalismanBonusRunes4.effect', {
+        n: format(n, 0, true)
+      }),
+    name: () => i18next.t('singularity.data.singTalismanBonusRunes4.name'),
+    description: () => i18next.t('singularity.data.singTalismanBonusRunes4.description')
+  },
+}
+
+export const blankGQLevelObject: Record<SingularityDataKeys, { level: number; freeLevel: number }> = Object.fromEntries(
+  Object.keys(goldenQuarkUpgrades).map((key) => [
+    key as SingularityDataKeys,
+    {
+      level: 0,
+      freeLevel: 0
+    }
+  ])
+) as Record<SingularityDataKeys, { level: number; freeLevel: number }>
+
+/**
+ * Get the upgrade's string representation with all relevant information
+ */
+export function upgradeGQToString(upgradeKey: SingularityDataKeys): string {
+  const upgrade = goldenQuarkUpgrades[upgradeKey]
+  const name = upgrade.name()
+  const description = upgrade.description()
+  const costNextLevel = getGQUpgradeCostTNL(upgradeKey)
+  const maxLevel = upgrade.maxLevel === -1 ? '' : `/${format(computeGQUpgradeMaxLevel(upgradeKey), 0, true)}`
+  const effectDesc = getGQUpgradeDescription(upgradeKey)
+  const freeLevelMult = computeFreeLevelMultiplier()
+  const freeLevelsWithMult = upgrade.freeLevel * freeLevelMult
+  const color = computeGQUpgradeMaxLevel(upgradeKey) === upgrade.level ? 'plum' : 'white'
+
+  // Upgrade Name Text
+  const nameHTML = `<span style="color: gold">${name}</span>`
+
+  // Upgrade Description Text
+  const descriptionHTML = `<span style="color: lightblue">${description}</span>`
+
+  // 'Minimum Singularity' Text
+  const minReqColor = player.highestSingularityCount < upgrade.minimumSingularity
+    ? 'var(--crimson-text-color)'
+    : 'var(--green-text-color)'
+  const minimumSingularity = upgrade.minimumSingularity > 0
+    ? i18next.t('singularity.toString.minimum', {
+        minSingularity: upgrade.minimumSingularity
+      }) 
+    : i18next.t('singularity.toString.noMinimum')
+
+  const minSingularityHTML = `<span style="color: ${minReqColor}">${minimumSingularity}</span>`
+
+  // Level Text
+  const freeMultText = freeLevelMult > 1 ?
+      `<span style="color: crimson"> (x${format(freeLevelMult, 2, true)})</span>` : ''
+
+  let freeLevelText = freeLevelsWithMult > 0 ?
+      `<span style="color: orange"> [+${format(upgrade.freeLevel, 2, true)}${freeMultText}]</span>` : ''
+
+  if (freeLevelsWithMult > upgrade.level) {
+    freeLevelText = `${freeLevelText}<span style="color: lightgray"> ${
+      i18next.t(
+        'general.softCapped'
+      )
+    }</span>`
+  }
+
+  const levelText = `<span style="color: ${color}">${i18next.t('general.level')} ${format(upgrade.level, 0, true)}${maxLevel}${freeLevelText}</span>`
+
+  // Upgrade Effect Text
+  const upgradeEffectHTML = `<span style="color: gold">${effectDesc}</span>`
+
+  // TNL Cost Text
+  const costHTML = i18next.t('singularity.toString.costNextLevel', { amount: format(costNextLevel, 0, true) })
+
+  return `${nameHTML}<br>${descriptionHTML}<br>${minSingularityHTML}<br>${levelText}<br>${upgradeEffectHTML}<br>${costHTML}`
+}
+
+/**
+ * Update the upgrade HTML display
+ */
+export function updateGQUpgradeHTML(upgradeKey: SingularityDataKeys): void {
+  DOMCacheGetOrSet('testingMultiline').innerHTML = upgradeGQToString(upgradeKey)
+}
+
+/**
+ * Get the cost for upgrading once. Returns 0 if maxed.
+ */
+export function getGQUpgradeCostTNL(upgradeKey: SingularityDataKeys): number {
+  const upgrade = goldenQuarkUpgrades[upgradeKey]
+  let costMultiplier = 1
+  
+  if (computeGQUpgradeMaxLevel(upgradeKey) === upgrade.level) {
+    return 0
+  }
+
+  // Overcap
+  if (computeGQUpgradeMaxLevel(upgradeKey) > upgrade.maxLevel && upgrade.level >= upgrade.maxLevel) {
+    costMultiplier *= Math.pow(4, upgrade.level - upgrade.maxLevel + 1)
+  }
+
+  if (upgrade.specialCostForm === 'Exponential2') {
+    return (
+      upgrade.costPerLevel * Math.sqrt(costMultiplier) * Math.pow(2, upgrade.level)
+    )
+  }
+
+  if (upgrade.specialCostForm === 'Cubic') {
+    return (
+      upgrade.costPerLevel
+      * costMultiplier
+      * (Math.pow(upgrade.level + 1, 3) - Math.pow(upgrade.level, 3))
+    )
+  }
+
+  if (upgrade.specialCostForm === 'Quadratic') {
+    return (
+      upgrade.costPerLevel
+      * costMultiplier
+      * (Math.pow(upgrade.level + 1, 2) - Math.pow(upgrade.level, 2))
+    )
+  }
+
+  costMultiplier *= upgrade.maxLevel === -1 && upgrade.level >= 100 ? upgrade.level / 50 : 1
+  costMultiplier *= upgrade.maxLevel === -1 && upgrade.level >= 400 ? upgrade.level / 100 : 1
+
+  return computeGQUpgradeMaxLevel(upgradeKey) === upgrade.level
+    ? 0
+    : Math.ceil(upgrade.costPerLevel * (1 + upgrade.level) * costMultiplier)
+}
+
+/**
+ * Buy levels for an upgrade
+ */
+export async function buyGQUpgradeLevel(upgradeKey: SingularityDataKeys, event: MouseEvent): Promise<void> {
+  const upgrade = goldenQuarkUpgrades[upgradeKey]
+  let purchased = 0
+  let maxPurchasable = 1
+  let GQBudget = player.goldenQuarks
+
+  if (event.shiftKey) {
+    maxPurchasable = 100000
+    const buy = Number(
+      await Prompt(
+        i18next.t('singularity.goldenQuarks.spendPrompt', {
+          gq: format(player.goldenQuarks, 0, true)
+        })
+      )
+    )
+
+    if (isNaN(buy) || !isFinite(buy) || !Number.isInteger(buy)) {
+      return Alert(i18next.t('general.validation.finite'))
+    }
+
+    if (buy === -1) {
+      GQBudget = player.goldenQuarks
+    } else if (buy <= 0) {
+      return Alert(i18next.t('general.validation.zeroOrLess'))
+    } else {
+      GQBudget = buy
+    }
+    GQBudget = Math.min(player.goldenQuarks, GQBudget)
+  }
+
+  if (upgrade.maxLevel > 0) {
+    maxPurchasable = Math.min(
+      maxPurchasable,
+      computeGQUpgradeMaxLevel(upgradeKey) - upgrade.level
+    )
+  }
+
+  if (maxPurchasable === 0) {
+    return Alert(i18next.t('singularity.goldenQuarks.hasUpgrade'))
+  }
+
+  if (player.highestSingularityCount < upgrade.minimumSingularity) {
+    return Alert(i18next.t('singularity.goldenQuarks.notHighEnoughLevel'))
+  }
+
+  while (maxPurchasable > 0) {
+    const cost = getGQUpgradeCostTNL(upgradeKey)
+    if (player.goldenQuarks < cost || GQBudget < cost) {
+      break
+    } else {
+      player.goldenQuarks -= cost
+      GQBudget -= cost
+      upgrade.level += 1
+      purchased += 1
+      maxPurchasable -= 1
+    }
+
+    // Special upgrade effects
+    if (upgradeKey === 'oneMind') {
+      player.ascensionCounter = 0
+      player.ascensionCounterReal = 0
+      player.ascensionCounterRealReal = 0
+      void Alert(i18next.t('singularity.goldenQuarks.ascensionReset'))
+    }
+
+    if (upgradeKey === 'singCitadel2') {
+      goldenQuarkUpgrades.singCitadel.freeLevel = upgrade.level
     }
   }
+
+  if (purchased === 0) {
+    return Alert(i18next.t('general.validation.moreThanPlayerHas'))
+  }
+  if (purchased > 1) {
+    void Alert(
+      i18next.t('singularity.goldenQuarks.multiBuyPurchased', {
+        levels: format(purchased)
+      })
+    )
+  }
+
+  updateGQUpgradeHTML(upgradeKey)
+  updateSingularityPenalties()
+  updateSingularityPerks()
+  revealStuff()
+}
+
+export function computeFreeLevelMultiplier (): number {
+  return (player.shopUpgrades.shopSingularityPotency > 0 ? 3.66 : 1) + 0.3 / 100 * player.cubeUpgrades[75]
+}
+
+export function computeGQUpgradeFreeLevelSoftcap(upgradeKey: SingularityDataKeys): number {
+  const upgrade = goldenQuarkUpgrades[upgradeKey]
+  const freeLevelMult = computeFreeLevelMultiplier()
+  const baseRealFreeLevels = freeLevelMult * upgrade.freeLevel
+  return (
+    Math.min(upgrade.level, baseRealFreeLevels)
+    + Math.sqrt(Math.max(0, baseRealFreeLevels - upgrade.level))
+  )
+}
+
+export function computeGQUpgradeMaxLevel(upgradeKey: SingularityDataKeys): number {
+  const upgrade = goldenQuarkUpgrades[upgradeKey]
+  if (!upgrade.canExceedCap) {
+    return upgrade.maxLevel
+  } else {
+    let cap = upgrade.maxLevel
+    const overclockPerks = [50, 60, 75, 100, 125, 150, 175, 200, 225, 250]
+    for (const perk of overclockPerks) {
+      if (player.highestSingularityCount >= perk) {
+        cap += 1
+      } else {
+        break
+      }
+    }
+    cap += +player.octeractUpgrades.octeractSingUpgradeCap.getEffect().bonus
+    return cap
+  }
+}
+
+export function actualGQUpgradeTotalLevels(upgradeKey: SingularityDataKeys): number {
+  const upgrade = goldenQuarkUpgrades[upgradeKey]
+  
+  if (
+    (player.singularityChallenges.noSingularityUpgrades.enabled
+      || player.singularityChallenges.sadisticPrequel.enabled)
+    && !upgrade.qualityOfLife
+  ) {
+    return 0
+  }
+
+  if (
+    (player.singularityChallenges.limitedAscensions.enabled || player.singularityChallenges.limitedTime.enabled
+      || player.singularityChallenges.sadisticPrequel.enabled)
+    && upgradeKey === 'platonicDelta'
+  ) {
+    return 0
+  }
+
+  const actualFreeLevels = computeGQUpgradeFreeLevelSoftcap(upgradeKey)
+  const linearLevels = upgrade.level + actualFreeLevels
+  let polynomialLevels = 0
+  
+  if (player.octeractUpgrades.octeractImprovedFree.getEffect().bonus) {
+    let exponent = 0.6
+    exponent += +player.octeractUpgrades.octeractImprovedFree2.getEffect().bonus
+    exponent += +player.octeractUpgrades.octeractImprovedFree3.getEffect().bonus
+    exponent += +player.octeractUpgrades.octeractImprovedFree4.getEffect().bonus
+    polynomialLevels = Math.pow(upgrade.level * actualFreeLevels, exponent)
+  }
+
+  return Math.max(linearLevels, polynomialLevels)
+}
+
+/**
+ * Gets effect of a Golden Quark upgrade, using actualTotalLevels
+ */
+export function getGQUpgradeEffect(upgradeKey: SingularityDataKeys): number {
+  const upgrade = goldenQuarkUpgrades[upgradeKey]
+  const totalLevels = actualGQUpgradeTotalLevels(upgradeKey)
+  return upgrade.effect(totalLevels)
+}
+
+export function getGQUpgradeDescription(upgradeKey: SingularityDataKeys): string {
+  const upgrade = goldenQuarkUpgrades[upgradeKey]
+  const totalLevels = actualGQUpgradeTotalLevels(upgradeKey)
+  return upgrade.effectDescription(totalLevels)
+}
+
+export function resetGQUpgrade(upgradeKey: SingularityDataKeys): void {
+  const upgrade = goldenQuarkUpgrades[upgradeKey]
+  upgrade.level = 0
 }
 
 /**
@@ -2709,8 +2928,8 @@ const handlePerks = (singularityCount: number) => {
 // Indicates the number of extra Singularity count gained on Singularity reset
 export const getFastForwardTotalMultiplier = (): number => {
   let fastForward = 0
-  fastForward += +player.singularityUpgrades.singFastForward.getEffect().bonus
-  fastForward += +player.singularityUpgrades.singFastForward2.getEffect().bonus
+  fastForward += getGQUpgradeEffect('singFastForward')
+  fastForward += getGQUpgradeEffect('singFastForward2')
   fastForward += +player.octeractUpgrades.octeractFastForward.getEffect().bonus
 
   // Stop at sing 200 even if you include fast forward
@@ -2751,7 +2970,7 @@ export const getGoldenQuarkCost = (): {
 
   costReduction *= achievementManager.goldQuarkDiscountMultiplier
   costReduction *= 1 - (0.3 * player.cubeUpgrades[60]) / 10000
-  costReduction *= +player.singularityUpgrades.goldenQuarks2.getEffect().bonus
+  costReduction *= getGQUpgradeEffect('goldenQuarks2')
   costReduction *= +player.octeractUpgrades.octeractGQCostReduce.getEffect().bonus
   costReduction *= player.highestSingularityCount >= 100
     ? 1 - (0.5 * player.highestSingularityCount) / 250

@@ -7,6 +7,7 @@ import { format, player, resetCheck } from './Synergism'
 import { toggleAutoChallengeModeText, toggleChallenges } from './Toggles'
 import { productContents } from './Utility'
 import { Globals as G } from './Variables'
+import { getGQUpgradeEffect } from './singularity'
 
 export type Challenge15Rewards =
   | 'cube1'
@@ -96,9 +97,9 @@ export const getMaxChallenges = (i: number) => {
       maxChallenge += 30
     }
 
-    maxChallenge += 2 * +player.singularityUpgrades.singChallengeExtension.getEffect().bonus
-    maxChallenge += 2 * +player.singularityUpgrades.singChallengeExtension2.getEffect().bonus
-    maxChallenge += 2 * +player.singularityUpgrades.singChallengeExtension3.getEffect().bonus
+    maxChallenge += 2 * getGQUpgradeEffect('singChallengeExtension')
+    maxChallenge += 2 * getGQUpgradeEffect('singChallengeExtension2')
+    maxChallenge += 2 * getGQUpgradeEffect('singChallengeExtension3')
 
     maxChallenge += +player.singularityChallenges.oneChallengeCap.rewards.capIncrease
     maxChallenge += +player.singularityChallenges.oneChallengeCap.rewards.reinCapIncrease2
@@ -128,9 +129,9 @@ export const getMaxChallenges = (i: number) => {
       maxChallenge += 20
     }
 
-    maxChallenge += +player.singularityUpgrades.singChallengeExtension.getEffect().bonus
-    maxChallenge += +player.singularityUpgrades.singChallengeExtension2.getEffect().bonus
-    maxChallenge += +player.singularityUpgrades.singChallengeExtension3.getEffect().bonus
+    maxChallenge += getGQUpgradeEffect('singChallengeExtension')
+    maxChallenge += getGQUpgradeEffect('singChallengeExtension2')
+    maxChallenge += getGQUpgradeEffect('singChallengeExtension3')
     maxChallenge += +player.singularityChallenges.oneChallengeCap.rewards.ascCapIncrease2
     return maxChallenge
   }

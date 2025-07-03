@@ -7,7 +7,6 @@ import { WowCubes, WowHypercubes, WowPlatonicCubes, WowTesseracts } from '../Cub
 import { hepteractData, type HepteractNames } from '../Hepteracts'
 import { octeractData, type OcteractDataKeys, OcteractUpgrade } from '../Octeracts'
 import { QuarkHandler } from '../Quark'
-import { singularityData, type SingularityDataKeys, SingularityUpgrade } from '../singularity'
 import {
   SingularityChallenge,
   singularityChallengeData,
@@ -116,6 +115,11 @@ const talismanFragmentSchema = z.object({
   epicFragment: z.number().default(0),
   legendaryFragment: z.number().default(0),
   mythicalFragment: z.number().default(0)
+})
+
+const goldenQuarkUpgradeSchema = z.object({
+  level: z.number().default(0),
+  freeLevel: z.number().default(0),
 })
 
 export const playerCorruptionSchema = z.object({
@@ -739,36 +743,17 @@ export const playerSchema = z.object({
   iconSet: z.number().default(() => blankSave.iconSet),
   notation: z.string().default(() => blankSave.notation),
 
-  // TODO: why is this on player?
-  singularityUpgrades: z.record(z.string(), singularityUpgradeSchema('goldenQuarksInvested'))
-    .transform((upgrades) =>
-      Object.fromEntries(
-        Object.keys(singularityData).filter((k) => k in upgrades || k in blankSave.singularityUpgrades).map((key) => {
-          const k = key as SingularityDataKeys
-          const { level, goldenQuarksInvested, freeLevels } = upgrades[k]
-            ?? blankSave.singularityUpgrades[k]
-
-          return [
-            k,
-            new SingularityUpgrade({
-              maxLevel: singularityData[k].maxLevel,
-              costPerLevel: singularityData[k].costPerLevel,
-
-              level: level as number,
-              goldenQuarksInvested,
-              freeLevels: freeLevels as number,
-              minimumSingularity: singularityData[k].minimumSingularity,
-              effect: singularityData[k].effect,
-              canExceedCap: singularityData[k].canExceedCap,
-              specialCostForm: singularityData[k].specialCostForm,
-              qualityOfLife: singularityData[k].qualityOfLife,
-              cacheUpdates: singularityData[k].cacheUpdates
-            }, k)
-          ]
-        })
-      )
+  goldenQuarkUpgrades: z.record(z.string(), goldenQuarkUpgradeSchema).transform((object) => {
+    return Object.fromEntries(
+      Object.keys(blankSave.goldenQuarkUpgrades).map((key) => {
+        const value = object[key] ?? { level: 0, freeLevel: 0 }
+        return value === null ? [key, { level: 0, freeLevel: 0 }] : [key, value]
+      })
     )
-    .default(() => JSON.parse(JSON.stringify(blankSave.singularityUpgrades))),
+  })
+  .default(() => ({ ...blankSave.goldenQuarkUpgrades })),
+  singularityUpgrades: z.record(z.string(), singularityUpgradeSchema('goldenQuarksInvested')).optional(),
+  // TODO: why is this on player?
   octeractUpgrades: z.record(z.string(), singularityUpgradeSchema('octeractsInvested'))
     .transform((upgrades) =>
       Object.fromEntries(

@@ -8,7 +8,7 @@ import { revealCorruptions } from './Corruptions'
 import { initializeCart } from './purchases/CartTab'
 import { autoResearchEnabled } from './Research'
 import { getRune, type RuneKeys } from './Runes'
-import { updateSingularityPenalties, updateSingularityPerks } from './singularity'
+import { getGQUpgradeEffect, updateSingularityPenalties, updateSingularityPerks } from './singularity'
 import { format, formatTimeShort, /*formatTimeShort*/ player } from './Synergism'
 import { getActiveSubTab, Tabs } from './Tabs'
 import { getTalisman, type TalismanKeys } from './Talismans'
@@ -146,14 +146,14 @@ export const revealStuff = () => {
   const hepts = DOMCacheGetOrSet('corruptionHepteracts')
   hepts.style.display = 'block'
 
-  document.documentElement.dataset.cookies1 = player.singularityUpgrades.cookies.getEffect().bonus ? 'true' : 'false'
-  document.documentElement.dataset.cookies2 = player.singularityUpgrades.cookies2.getEffect().bonus ? 'true' : 'false'
-  document.documentElement.dataset.cookies3 = player.singularityUpgrades.cookies3.getEffect().bonus ? 'true' : 'false'
-  document.documentElement.dataset.cookies4 = player.singularityUpgrades.cookies4.getEffect().bonus ? 'true' : 'false'
-  document.documentElement.dataset.cookies5 = player.singularityUpgrades.cookies5.getEffect().bonus ? 'true' : 'false'
+  document.documentElement.dataset.cookies1 = getGQUpgradeEffect('cookies') ? 'true' : 'false'
+  document.documentElement.dataset.cookies2 = getGQUpgradeEffect('cookies2') ? 'true' : 'false'
+  document.documentElement.dataset.cookies3 = getGQUpgradeEffect('cookies3') ? 'true' : 'false'
+  document.documentElement.dataset.cookies4 = getGQUpgradeEffect('cookies4') ? 'true' : 'false'
+  document.documentElement.dataset.cookies5 = getGQUpgradeEffect('cookies5') ? 'true' : 'false'
 
   document.documentElement.dataset.goldenQuark3Upg =
-    (player.singularityUpgrades.goldenQuarks3.getEffect().bonus as number) > 0 ? 'true' : 'false'
+    getGQUpgradeEffect('goldenQuarks3') > 0 ? 'true' : 'false'
 
   if (player.upgrades[89] === 1) {
     DOMCacheGetOrSet('transcendautotoggle').style.display = 'block'
@@ -323,11 +323,11 @@ export const revealStuff = () => {
   for (const item of Array.from(octeractUnlocks)) { // Stuff that you need octeracts to access
     const parent = item.parentElement!
     if (parent.classList.contains('offlineStats')) {
-      item.style.display = player.singularityUpgrades.octeractUnlock.getEffect().bonus ? 'flex' : 'none'
-      item.setAttribute('aria-disabled', `${!player.singularityUpgrades.octeractUnlock.getEffect().bonus}`)
+      item.style.display = getGQUpgradeEffect('octeractUnlock') ? 'flex' : 'none'
+      item.setAttribute('aria-disabled', `${!getGQUpgradeEffect('octeractUnlock')}`)
     } else {
-      item.style.display = player.singularityUpgrades.octeractUnlock.getEffect().bonus ? 'block' : 'none'
-      item.setAttribute('aria-disabled', `${!player.singularityUpgrades.octeractUnlock.getEffect().bonus}`)
+      item.style.display = getGQUpgradeEffect('octeractUnlock') ? 'block' : 'none'
+      item.setAttribute('aria-disabled', `${!getGQUpgradeEffect('octeractUnlock')}`)
     }
   }
 
@@ -998,7 +998,7 @@ const updateAscensionStats = () => {
     t = 1
   }
   const [cubes, tess, hyper, platonic, hepteract] = CalcCorruptionStuff().slice(4)
-  const addedAsterisk = player.singularityUpgrades.oneMind.getEffect().bonus
+  const addedAsterisk = getGQUpgradeEffect('oneMind')
   const fillers: Record<string, string> = {
     ascLen: formatTimeShort(player.ascStatToggles[6] ? player.ascensionCounter : player.ascensionCounterReal, 0),
     ascCubes: format(cubes * (player.ascStatToggles[1] ? 1 : 1 / t), 2),

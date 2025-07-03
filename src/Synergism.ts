@@ -188,7 +188,7 @@ import { getQuarkBonus, QuarkHandler } from './Quark'
 import { initRedAmbrosiaUpgrades } from './RedAmbrosiaUpgrades'
 import { playerJsonSchema } from './saves/PlayerJsonSchema'
 import { playerUpdateVarSchema } from './saves/PlayerUpdateVarSchema'
-import { getFastForwardTotalMultiplier, singularityData, SingularityUpgrade } from './singularity'
+import { blankGQLevelObject, getFastForwardTotalMultiplier, goldenQuarkUpgrades, SingularityDataKeys } from './singularity'
 import {
   SingularityChallenge,
   singularityChallengeData,
@@ -1061,291 +1061,7 @@ export const player: Player = {
   iconSet: 1,
   notation: 'Default',
 
-  singularityUpgrades: {
-    goldenQuarks1: new SingularityUpgrade(
-      singularityData.goldenQuarks1,
-      'goldenQuarks1'
-    ),
-    goldenQuarks2: new SingularityUpgrade(
-      singularityData.goldenQuarks2,
-      'goldenQuarks2'
-    ),
-    goldenQuarks3: new SingularityUpgrade(
-      singularityData.goldenQuarks3,
-      'goldenQuarks3'
-    ),
-    starterPack: new SingularityUpgrade(
-      singularityData.starterPack,
-      'starterPack'
-    ),
-    wowPass: new SingularityUpgrade(singularityData.wowPass, 'wowPass'),
-    cookies: new SingularityUpgrade(singularityData.cookies, 'cookies'),
-    cookies2: new SingularityUpgrade(singularityData.cookies2, 'cookies2'),
-    cookies3: new SingularityUpgrade(singularityData.cookies3, 'cookies3'),
-    cookies4: new SingularityUpgrade(singularityData.cookies4, 'cookies4'),
-    cookies5: new SingularityUpgrade(singularityData.cookies5, 'cookies5'),
-    ascensions: new SingularityUpgrade(
-      singularityData.ascensions,
-      'ascensions'
-    ),
-    corruptionFourteen: new SingularityUpgrade(
-      singularityData.corruptionFourteen,
-      'corruptionFourteen'
-    ),
-    corruptionFifteen: new SingularityUpgrade(
-      singularityData.corruptionFifteen,
-      'corruptionFifteen'
-    ),
-    singOfferings1: new SingularityUpgrade(
-      singularityData.singOfferings1,
-      'singOfferings1'
-    ),
-    singOfferings2: new SingularityUpgrade(
-      singularityData.singOfferings2,
-      'singOfferings2'
-    ),
-    singOfferings3: new SingularityUpgrade(
-      singularityData.singOfferings3,
-      'singOfferings3'
-    ),
-    singObtainium1: new SingularityUpgrade(
-      singularityData.singObtainium1,
-      'singObtainium1'
-    ),
-    singObtainium2: new SingularityUpgrade(
-      singularityData.singObtainium2,
-      'singObtainium2'
-    ),
-    singObtainium3: new SingularityUpgrade(
-      singularityData.singObtainium3,
-      'singObtainium3'
-    ),
-    singCubes1: new SingularityUpgrade(
-      singularityData.singCubes1,
-      'singCubes1'
-    ),
-    singCubes2: new SingularityUpgrade(
-      singularityData.singCubes2,
-      'singCubes2'
-    ),
-    singCubes3: new SingularityUpgrade(
-      singularityData.singCubes3,
-      'singCubes3'
-    ),
-    singBonusTokens1: new SingularityUpgrade(
-      singularityData.singBonusTokens1,
-      'singBonusTokens1'
-    ),
-    singBonusTokens2: new SingularityUpgrade(
-      singularityData.singBonusTokens2,
-      'singBonusTokens2'
-    ),
-    singBonusTokens3: new SingularityUpgrade(
-      singularityData.singBonusTokens3,
-      'singBonusTokens3'
-    ),
-    singBonusTokens4: new SingularityUpgrade(
-      singularityData.singBonusTokens4,
-      'singBonusTokens4'
-    ),
-    singCitadel: new SingularityUpgrade(
-      singularityData.singCitadel,
-      'singCitadel'
-    ),
-    singCitadel2: new SingularityUpgrade(
-      singularityData.singCitadel2,
-      'singCitadel2'
-    ),
-    octeractUnlock: new SingularityUpgrade(
-      singularityData.octeractUnlock,
-      'octeractUnlock'
-    ),
-    singOcteractPatreonBonus: new SingularityUpgrade(
-      singularityData.singOcteractPatreonBonus,
-      'singOcteractPatreonBonus'
-    ),
-    intermediatePack: new SingularityUpgrade(
-      singularityData.intermediatePack,
-      'intermediatePack'
-    ),
-    advancedPack: new SingularityUpgrade(
-      singularityData.advancedPack,
-      'advancedPack'
-    ),
-    expertPack: new SingularityUpgrade(
-      singularityData.expertPack,
-      'expertPack'
-    ),
-    masterPack: new SingularityUpgrade(
-      singularityData.masterPack,
-      'masterPack'
-    ),
-    divinePack: new SingularityUpgrade(
-      singularityData.divinePack,
-      'divinePack'
-    ),
-    wowPass2: new SingularityUpgrade(singularityData.wowPass2, 'wowPass2'),
-    potionBuff: new SingularityUpgrade(
-      singularityData.potionBuff,
-      'potionBuff'
-    ),
-    potionBuff2: new SingularityUpgrade(
-      singularityData.potionBuff2,
-      'potionBuff2'
-    ),
-    potionBuff3: new SingularityUpgrade(
-      singularityData.potionBuff3,
-      'potionBuff3'
-    ),
-    singChallengeExtension: new SingularityUpgrade(
-      singularityData.singChallengeExtension,
-      'singChallengeExtension'
-    ),
-    singChallengeExtension2: new SingularityUpgrade(
-      singularityData.singChallengeExtension2,
-      'singChallengeExtension2'
-    ),
-    singChallengeExtension3: new SingularityUpgrade(
-      singularityData.singChallengeExtension3,
-      'singChallengeExtension3'
-    ),
-    singQuarkImprover1: new SingularityUpgrade(
-      singularityData.singQuarkImprover1,
-      'singQuarkImprover1'
-    ),
-    singQuarkHepteract: new SingularityUpgrade(
-      singularityData.singQuarkHepteract,
-      'singQuarkHepteract'
-    ),
-    singQuarkHepteract2: new SingularityUpgrade(
-      singularityData.singQuarkHepteract2,
-      'singQuarkHepteract2'
-    ),
-    singQuarkHepteract3: new SingularityUpgrade(
-      singularityData.singQuarkHepteract3,
-      'singQuarkHepteract3'
-    ),
-    singOcteractGain: new SingularityUpgrade(
-      singularityData.singOcteractGain,
-      'singOcteractGain'
-    ),
-    singOcteractGain2: new SingularityUpgrade(
-      singularityData.singOcteractGain2,
-      'singOcteractGain2'
-    ),
-    singOcteractGain3: new SingularityUpgrade(
-      singularityData.singOcteractGain3,
-      'singOcteractGain3'
-    ),
-    singOcteractGain4: new SingularityUpgrade(
-      singularityData.singOcteractGain4,
-      'singOcteractGain4'
-    ),
-    singOcteractGain5: new SingularityUpgrade(
-      singularityData.singOcteractGain5,
-      'singOcteractGain5'
-    ),
-    wowPass3: new SingularityUpgrade(singularityData.wowPass3, 'wowPass3'),
-    ultimatePen: new SingularityUpgrade(
-      singularityData.ultimatePen,
-      'ultimatePen'
-    ),
-    platonicTau: new SingularityUpgrade(
-      singularityData.platonicTau,
-      'platonicTau'
-    ),
-    platonicAlpha: new SingularityUpgrade(
-      singularityData.platonicAlpha,
-      'platonicAlpha'
-    ),
-    platonicDelta: new SingularityUpgrade(
-      singularityData.platonicDelta,
-      'platonicDelta'
-    ),
-    platonicPhi: new SingularityUpgrade(
-      singularityData.platonicPhi,
-      'platonicPhi'
-    ),
-    singFastForward: new SingularityUpgrade(
-      singularityData.singFastForward,
-      'singFastForward'
-    ),
-    singFastForward2: new SingularityUpgrade(
-      singularityData.singFastForward2,
-      'singFastForward2'
-    ),
-    singAscensionSpeed: new SingularityUpgrade(
-      singularityData.singAscensionSpeed,
-      'singAscensionSpeed'
-    ),
-    singAscensionSpeed2: new SingularityUpgrade(
-      singularityData.singAscensionSpeed2,
-      'singAscensionSpeed2'
-    ),
-    halfMind: new SingularityUpgrade(singularityData.halfMind, 'halfMind'),
-    oneMind: new SingularityUpgrade(singularityData.oneMind, 'oneMind'),
-    wowPass4: new SingularityUpgrade(singularityData.wowPass4, 'wowPass4'),
-    offeringAutomatic: new SingularityUpgrade(
-      singularityData.offeringAutomatic,
-      'offeringAutomatic'
-    ),
-    blueberries: new SingularityUpgrade(
-      singularityData.blueberries,
-      'blueberries'
-    ),
-    singAmbrosiaLuck: new SingularityUpgrade(
-      singularityData.singAmbrosiaLuck,
-      'singAmbrosiaLuck'
-    ),
-    singAmbrosiaLuck2: new SingularityUpgrade(
-      singularityData.singAmbrosiaLuck2,
-      'singAmbrosiaLuck2'
-    ),
-    singAmbrosiaLuck3: new SingularityUpgrade(
-      singularityData.singAmbrosiaLuck3,
-      'singAmbrosiaLuck3'
-    ),
-    singAmbrosiaLuck4: new SingularityUpgrade(
-      singularityData.singAmbrosiaLuck4,
-      'singAmbrosiaLuck4'
-    ),
-    singAmbrosiaGeneration: new SingularityUpgrade(
-      singularityData.singAmbrosiaGeneration,
-      'singAmbrosiaGeneration'
-    ),
-    singAmbrosiaGeneration2: new SingularityUpgrade(
-      singularityData.singAmbrosiaGeneration2,
-      'singAmbrosiaGeneration2'
-    ),
-    singAmbrosiaGeneration3: new SingularityUpgrade(
-      singularityData.singAmbrosiaGeneration3,
-      'singAmbrosiaGeneration3'
-    ),
-    singAmbrosiaGeneration4: new SingularityUpgrade(
-      singularityData.singAmbrosiaGeneration4,
-      'singAmbrosiaGeneration4'
-    ),
-    singInfiniteShopUpgrades: new SingularityUpgrade(
-      singularityData.singInfiniteShopUpgrades,
-      'singInfiniteShopUpgrades'
-    ),
-    singTalismanBonusRunes1: new SingularityUpgrade(
-      singularityData.singTalismanBonusRunes1,
-      'singTalismanBonusRunes1'
-    ),
-    singTalismanBonusRunes2: new SingularityUpgrade(
-      singularityData.singTalismanBonusRunes2,
-      'singTalismanBonusRunes2'
-    ),
-    singTalismanBonusRunes3: new SingularityUpgrade(
-      singularityData.singTalismanBonusRunes3,
-      'singTalismanBonusRunes3'
-    ),
-    singTalismanBonusRunes4: new SingularityUpgrade(
-      singularityData.singTalismanBonusRunes4,
-      'singTalismanBonusRunes4'
-    )
-  },
+  goldenQuarkUpgrades: blankGQLevelObject,
 
   octeractUpgrades: {
     octeractStarter: new OcteractUpgrade(
@@ -1786,7 +1502,6 @@ export const deepClone = () =>
         new CorruptionLoadout(o.loadout)],
       [CorruptionSaves, (o: CorruptionSaves) => new CorruptionSaves(o.corrSaveData)],
       [CampaignManager, (o: CampaignManager) => new CampaignManager(o.campaignManagerData)],
-      [SingularityUpgrade, (o: SingularityUpgrade) => new SingularityUpgrade(o.valueOf(), o.key())],
       [OcteractUpgrade, (o: OcteractUpgrade) => new OcteractUpgrade(o.valueOf(), o.key())],
       [SingularityChallenge, (o: SingularityChallenge) => new SingularityChallenge(o.valueOf(), o.key())],
       [BlueberryUpgrade, (o: BlueberryUpgrade) => new BlueberryUpgrade(o.valueOf(), o.key())]
@@ -1802,6 +1517,15 @@ export const saveSynergy = (button?: boolean) => {
 
   player.achievements = [...achievementManager.achArray]
   player.progressiveAchievements = { ...achievementManager.progAchCache }
+
+  // save to player.goldenQuarkUpgrades, taking the level and freeLevel from corresponding goldenQuarkUpgrades from singularity.ts
+  player.goldenQuarkUpgrades = Object.fromEntries(
+    Object.entries(player.goldenQuarkUpgrades).map(([key]) => {
+      const k = key as SingularityDataKeys
+      const gqu = goldenQuarkUpgrades[k]
+      return [key, { level: gqu.level, freeLevel: gqu.freeLevel }]
+    })
+  ) as Record<SingularityDataKeys, { level: number; freeLevel: number }>
 
   const p = playerJsonSchema.parse(player)
   const save = btoa(JSON.stringify(p))
@@ -6184,7 +5908,14 @@ export const reloadShit = (reset = false) => {
     loadSynergy()
   }
 
-  console.log(player.runes)
+    // Recover Sing Upgrade (now GQ upgrade) level from Player Obj
+  if (player.goldenQuarkUpgrades !== undefined) {
+    for (const [key, value] of Object.entries(player.goldenQuarkUpgrades)) {
+      const k = key as SingularityDataKeys
+      goldenQuarkUpgrades[k].level = value.level
+      goldenQuarkUpgrades[k].freeLevel = value.freeLevel
+    }
+  }
   initRedAmbrosiaUpgrades(player.redAmbrosiaUpgrades)
   initRunes(player.runes)
   initRuneBlessings(player.runeBlessings)

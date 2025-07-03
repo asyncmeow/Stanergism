@@ -12,7 +12,6 @@ import { getQuarkBonus, quarkHandler } from './Quark'
 import { Seed, seededBetween, seededRandom } from './RNG'
 import { playerJsonSchema } from './saves/PlayerJsonSchema'
 import { shopData } from './Shop'
-import { singularityData } from './singularity'
 import {
   allAddCodeCapacityMultiplierStats,
   allAddCodeCapacityStats,
@@ -26,6 +25,7 @@ import { Alert, Confirm, Prompt } from './UpdateHTML'
 import { cleanString, getElementById } from './Utility'
 import { btoa } from './Utility'
 import { Globals as G } from './Variables'
+import { getGQUpgradeEffect, goldenQuarkUpgrades } from './singularity'
 
 const format24 = new Intl.DateTimeFormat('EN-GB', {
   year: 'numeric',
@@ -248,12 +248,12 @@ export const exportSynergism = async (
     bonusGQMultiplier *= player.highestSingularityCount >= 100
       ? 1 + player.highestSingularityCount / 50
       : 1
-    if (+player.singularityUpgrades.goldenQuarks3.getEffect().bonus > 0) {
+    if (getGQUpgradeEffect('goldenQuarks3')) {
       player.goldenQuarks += Math.floor(
-        player.goldenQuarksTimer / (3600 / +player.singularityUpgrades.goldenQuarks3.getEffect().bonus)
+        player.goldenQuarksTimer / (3600 / getGQUpgradeEffect('goldenQuarks3'))
       ) * bonusGQMultiplier
       player.goldenQuarksTimer = player.goldenQuarksTimer
-        % (3600 / +player.singularityUpgrades.goldenQuarks3.getEffect().bonus)
+        % (3600 / getGQUpgradeEffect('goldenQuarks3'))
     }
     if (quarkData.gain >= 1) {
       player.worlds.add(quarkData.gain)
@@ -508,7 +508,7 @@ export const promocodes = async (input: string | null, amount?: number) => {
       rolls += player.shopUpgrades.shopImprovedDaily2
       rolls += player.shopUpgrades.shopImprovedDaily3
       rolls += player.shopUpgrades.shopImprovedDaily4
-      rolls += +player.singularityUpgrades.platonicPhi.getEffect().bonus
+      rolls += getGQUpgradeEffect('platonicPhi')
         * Math.min(
           50,
           (player.shopUpgrades.shopSingularitySpeedup)
@@ -529,7 +529,7 @@ export const promocodes = async (input: string | null, amount?: number) => {
 
       rolls = Math.floor(rolls)
 
-      const keys = Object.keys(player.singularityUpgrades).filter(
+      const keys = Object.keys(goldenQuarkUpgrades).filter(
         (key) => key in upgradeDistribution
       ) as (keyof typeof upgradeDistribution)[]
 
@@ -540,7 +540,7 @@ export const promocodes = async (input: string | null, amount?: number) => {
         const num = 1000 * seededRandom(Seed.PromoCodes)
         for (const key of keys) {
           if (upgradeDistribution[key].pdf(num)) {
-            player.singularityUpgrades[key].freeLevels += upgradeDistribution[key].value
+            goldenQuarkUpgrades[key].freeLevel += upgradeDistribution[key].value
             freeLevels[key]
               ? (freeLevels[key] += upgradeDistribution[key].value)
               : (freeLevels[key] = upgradeDistribution[key].value)
@@ -549,15 +549,15 @@ export const promocodes = async (input: string | null, amount?: number) => {
       }
 
       if (player.highestSingularityCount >= 20) {
-        player.singularityUpgrades.goldenQuarks1.freeLevels += 0.2
+        goldenQuarkUpgrades.goldenQuarks1.freeLevel += 0.2
         freeLevels.goldenQuarks1
           ? (freeLevels.goldenQuarks1 += 0.2)
           : (freeLevels.goldenQuarks1 = 0.2)
-        player.singularityUpgrades.goldenQuarks2.freeLevels += 0.2
+        goldenQuarkUpgrades.goldenQuarks2.freeLevel += 0.2
         freeLevels.goldenQuarks2
           ? (freeLevels.goldenQuarks2 += 0.2)
           : (freeLevels.goldenQuarks2 = 0.2)
-        player.singularityUpgrades.goldenQuarks3.freeLevels += 1
+        goldenQuarkUpgrades.goldenQuarks3.freeLevel += 1
         freeLevels.goldenQuarks3
           ? (freeLevels.goldenQuarks3 += 1)
           : (freeLevels.goldenQuarks3 = 1)
@@ -703,8 +703,8 @@ export const promocodes = async (input: string | null, amount?: number) => {
       addTimers('ambrosia', blueberryTime)
 
       if (player.highestSingularityCount >= 150) {
-        player.singularityUpgrades.goldenQuarks1.freeLevels += 0.01 * realAttemptsUsed
-        player.singularityUpgrades.goldenQuarks3.freeLevels += 0.05 * realAttemptsUsed
+        goldenQuarkUpgrades.goldenQuarks1.freeLevel += 0.01 * realAttemptsUsed
+        goldenQuarkUpgrades.goldenQuarks3.freeLevel += 0.05 * realAttemptsUsed
       }
 
       player.rngCode = v
@@ -1005,7 +1005,7 @@ export const addCodeBonuses = () => {
   const quarkBase = commonQuarkMult * quarkHandler().perHour
 
   // Calculator 3: Adds ascension timer.  Also includes Expert Pack multiplier.
-  const ascMult = player.singularityUpgrades.expertPack.level > 0 ? 1.2 : 1
+  const ascMult = getGQUpgradeEffect('expertPack') ? 1.2 : 1
   const ascensionTimer = (60 * player.shopUpgrades.calculator3 * ascMult) / perkRewardDivisor
 
   // Calculator 5: Adds GQ export timer.
@@ -1047,7 +1047,7 @@ const dailyCodeFormatFreeLevelMessage = (
   upgradeKey: string,
   freeLevelAmount: number
 ): string => {
-  const upgradeNiceName = upgradeKey in singularityData
+  const upgradeNiceName = upgradeKey in goldenQuarkUpgrades
     ? i18next.t(`singularity.data.${upgradeKey}.name`)
     : i18next.t(`octeract.data.${upgradeKey}.name`)
   return `\n+${format(freeLevelAmount, 0, true)} extra levels of '${upgradeNiceName}'`

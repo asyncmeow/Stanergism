@@ -31,6 +31,7 @@ import { Tabs } from './Tabs'
 import { buyAllTalismanResources } from './Talismans'
 import { visualUpdateAmbrosia, visualUpdateOcteracts, visualUpdateResearch } from './UpdateVisuals'
 import { Globals as G } from './Variables'
+import { getGQUpgradeEffect } from './singularity'
 
 type TimerInput =
   | 'prestige'
@@ -51,7 +52,7 @@ type TimerInput =
  * @param time
  */
 export const addTimers = (input: TimerInput, time = 0) => {
-  const globalTimeMultiplier = player.singularityUpgrades.halfMind.getEffect().bonus
+  const globalTimeMultiplier = getGQUpgradeEffect('halfMind')
     ? 10
     : calculateGlobalSpeedMult()
 
@@ -81,8 +82,7 @@ export const addTimers = (input: TimerInput, time = 0) => {
     }
     case 'ascension': {
       // Anything in here is affected by add code
-      const ascensionSpeedMulti = player.singularityUpgrades.oneMind.getEffect()
-          .bonus
+      const ascensionSpeedMulti = getGQUpgradeEffect('oneMind')
         ? 10
         : calculateAscensionSpeedMult()
       player.ascensionCounter += time * timeMultiplier * ascensionSpeedMulti
@@ -111,7 +111,7 @@ export const addTimers = (input: TimerInput, time = 0) => {
       break
     }
     case 'goldenQuarks': {
-      if (+player.singularityUpgrades.goldenQuarks3.getEffect().bonus === 0) {
+      if (getGQUpgradeEffect('goldenQuarks3') === 0) {
         return
       } else {
         player.goldenQuarksTimer += time * timeMultiplier
@@ -122,7 +122,7 @@ export const addTimers = (input: TimerInput, time = 0) => {
       break
     }
     case 'octeracts': {
-      if (!player.singularityUpgrades.octeractUnlock.getEffect().bonus) {
+      if (!getGQUpgradeEffect('octeractUnlock')) {
         return
       } else {
         player.octeractTimer += time * timeMultiplier
@@ -387,7 +387,7 @@ export const automaticTools = (input: AutoToolInput, time: number) => {
       }
       break
     case 'antSacrifice': {
-      const globalDelta = player.singularityUpgrades.halfMind.getEffect().bonus ? 10 : calculateGlobalSpeedMult()
+      const globalDelta = getGQUpgradeEffect('halfMind') ? 10 : calculateGlobalSpeedMult()
 
       player.antSacrificeTimer += time * globalDelta
       player.antSacrificeTimerReal += time

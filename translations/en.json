@@ -2981,19 +2981,20 @@
       }
     },
     "toString": {
+      "minimum": "Minimum Singularity: {{minSingularity}}",
       "noMinimum": "No minimal Singularity to purchase required",
-      "costNextLevel": "Cost for next level"
+      "costNextLevel": "Cost for next level: {{amount}} Golden Quarks"
     },
     "data": {
       "goldenQuarks1": {
         "name": "Golden Quarks I",
         "description": "In the future, you will gain 10% more Golden Quarks on Singularities per level!",
-        "effect": "Permanently gain {{n}}% more Golden Quarks on Singularities."
+        "effect": "Permanently gain {{n}} more Golden Quarks on Singularities."
       },
       "goldenQuarks2": {
         "name": "Golden Quarks II",
         "description": "Buying GQ is 0.2% cheaper per level! [After 50%, effect grows much slower]",
-        "effect": "Purchasing Golden Quarks in the shop is {{n}}% cheaper."
+        "effect": "Purchasing Golden Quarks in the shop is {{n}} cheaper."
       },
       "goldenQuarks3": {
         "name": "Golden Quarks III",
@@ -3045,7 +3046,7 @@
       "ascensions": {
         "name": "Improved Ascension Gain",
         "description": "Buying this, you will gain +2% Ascension Count forever, per level! Every 10 levels grants an additional, multiplicative +1% Ascension Count.",
-        "effect": "Ascension Count increases {{n}}% faster."
+        "effect": "Ascension Count increases {{n}} faster."
       },
       "corruptionFourteen": {
         "name": "Level Fourteen Corruptions",
@@ -3062,57 +3063,57 @@
       "singOfferings1": {
         "name": "Offering Charge",
         "description": "Upgrade this to get +2% Offerings per level, forever!",
-        "effect": "Permanently gain {{n}}% more Offerings."
+        "effect": "Permanently gain {{n}} more Offerings."
       },
       "singOfferings2": {
         "name": "Offering Storm",
         "description": "Apparently, you can use this bar to attract more Offerings. +8% per level, to be precise.",
-        "effect": "Permanently gain {{n}}% more Offerings."
+        "effect": "Permanently gain {{n}} more Offerings."
       },
       "singOfferings3": {
         "name": "Offering Tempest",
         "description": "This bar is so prestine, it'll make anyone submit their Offerings. +4% per level, to be precise.",
-        "effect": "Permanently gain {{n}}% more Offerings."
+        "effect": "Permanently gain {{n}} more Offerings."
       },
       "singObtainium1": {
         "name": "Obtainium Wave",
         "description": "Upgrade this to get +2% Obtainium per level, forever!",
-        "effect": "Permanently gain {{n}}% more Obtainium."
+        "effect": "Permanently gain {{n}} more Obtainium."
       },
       "singObtainium2": {
         "name": "Obtainium Flood",
         "description": "Holy crap, water bending! +8% gained Obtainium per level.",
-        "effect": "Permanently gain {{n}}% more Obtainium."
+        "effect": "Permanently gain {{n}} more Obtainium."
       },
       "singObtainium3": {
         "name": "Obtainium Tsunami",
         "description": "A rising tide lifts all boats. +4% gained Obtainium per level.",
-        "effect": "Permanently gain {{n}}% more Obtainium."
+        "effect": "Permanently gain {{n}} more Obtainium."
       },
       "singCubes1": {
         "name": "Cube Flame",
         "description": "Upgrade this to get +0.6% Cubes per level, forever!",
-        "effect": "Permanently gain {{n}}% more Cubes."
+        "effect": "Permanently gain {{n}} more Cubes."
       },
       "singCubes2": {
         "name": "Cube Blaze",
         "description": "Burn some more Golden Quarks! +8% gained Cubes per level.",
-        "effect": "Permanently gain {{n}}% more Cubes."
+        "effect": "Permanently gain {{n}} more Cubes."
       },
       "singCubes3": {
         "name": "Cube Inferno",
         "description": "Even Dante is impressed. +4% gained Cubes per level.",
-        "effect": "Permanently gain {{n}}% more Cubes."
+        "effect": "Permanently gain {{n}} more Cubes."
       },
       "singCitadel": {
         "name": "Citadel of Singularity",
         "description": "What a unique structual phenomenon... but it gives +2% Obtainium, Offerings, and 3-7D cubes per level! +1% Additional for every 10 levels!",
-        "effect": "Obtainium, Offerings, and 3-7D Cubes +{{n}}%, forever!"
+        "effect": "Obtainium, Offerings, and 3-7D Cubes +{{n}}, forever!"
       },
       "singCitadel2": {
         "name": "Citadel of 'Singularity': The Real Edition",
         "description": "This actual Citadel gives +2% Obtainium, Offerings, and 3-7D cubes per level! +1% Additional for every 10 levels! Also sets the free level of the fake citadel to whatever level this is.",
-        "effect": "Obtainium, Offerings, and 3-7D Cubes +{{n}}%, forever!"
+        "effect": "Obtainium, Offerings, and 3-7D Cubes +{{n}}, forever!"
       },
       "octeractUnlock": {
         "name": "Octeracts",
@@ -3123,7 +3124,7 @@
       "singOcteractPatreonBonus": {
         "name": "Platonic $ells out!!!",
         "description": "You know that Patreon bonus? Yeah, that's cool and all, but what if it also boosted Octeract production by the same amount?",
-        "effect": "Octeract production is {{n}}% faster for every $10 per month on the Patreon! Same as the Quark bonus which already exists."
+        "effect": "Octeract production is {{n}} faster for every $10 per month on the Patreon! Same as the Quark bonus which already exists."
       },
       "offeringAutomatic": {
         "name": "Blueberry Shards!",
@@ -3225,27 +3226,27 @@
       "singOcteractGain": {
         "name": "Octeract Absinthe",
         "description": "You would have never known this tonic can boost your Octeracts! [+1.25% per level, in fact!]",
-        "effect": "Octeract Gain +{{n}}%"
+        "effect": "Octeract Gain +{{n}}"
       },
       "singOcteractGain2": {
         "name": "Pieces of Eight",
         "description": "There is indeed eight of them, but each only gives +0.625% bonus, so each level gives +5% Octeract per level.",
-        "effect": "Octeract Gain +{{n}}%"
+        "effect": "Octeract Gain +{{n}}"
       },
       "singOcteractGain3": {
         "name": "The Obelisk Shaped like an Octagon.",
         "description": "Platonic had to reach pretty far here. +2.5% Octeracts yeah!",
-        "effect": "Octeract Gain +{{n}}%"
+        "effect": "Octeract Gain +{{n}}"
       },
       "singOcteractGain4": {
         "name": "Octahedral Synthesis",
         "description": "How does this even work!?? +2% Octeracts, you bet!",
-        "effect": "Octeract Gain +{{n}}%"
+        "effect": "Octeract Gain +{{n}}"
       },
       "singOcteractGain5": {
         "name": "The Eighth Wonder of the World",
         "description": "is the wonder of the world we live in. [+1% Octeracts. Platonic, this is so stingy! but, he does not care one bit.]",
-        "effect": "Octeract Gain +{{n}}%"
+        "effect": "Octeract Gain +{{n}}"
       },
       "platonicTau": {
         "name": "Platonic TAU",

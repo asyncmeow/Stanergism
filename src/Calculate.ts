@@ -51,6 +51,7 @@ import { clearInterval, setInterval } from './Timers'
 import { Alert, Prompt } from './UpdateHTML'
 import { findInsertionIndex, productContents, sumContents } from './Utility'
 import { Globals as G } from './Variables'
+import { getGQUpgradeEffect } from './singularity'
 
 const CASH_GRAB_ULTRA_QUARK = 0.08
 const CASH_GRAB_ULTRA_CUBE = 1.2
@@ -182,7 +183,7 @@ export const calculateFastForwardResourcesGlobal = (
   let timeMultiplier: Decimal = new Decimal('1')
 
   const deltaTime = fastForwardAmount.times(
-    player.singularityUpgrades.halfMind.getEffect().bonus ? 10 : calculateGlobalSpeedMult()
+    getGQUpgradeEffect('halfMind') ? 10 : calculateGlobalSpeedMult()
   )
 
   // Build approximations through direct computation of the derivative of time multiplier
@@ -199,7 +200,7 @@ export const calculateFastForwardResourcesGlobal = (
   )
 
   // Correct multiplier if half mind is purchased
-  timeMultiplier.times(player.singularityUpgrades.halfMind.getEffect().bonus ? calculateGlobalSpeedMult() / 10 : 1)
+  timeMultiplier.times(getGQUpgradeEffect('halfMind') ? calculateGlobalSpeedMult() / 10 : 1)
 
   return Decimal.max(fastForwardAmount.times(baseResource), resourceMult.times(timeMultiplier))
 }
@@ -207,9 +208,9 @@ export const calculateFastForwardResourcesGlobal = (
 export const calculatePotionValue = (resetTime: number, resourceMult: Decimal, baseResource: number) => {
   const potionTimeValue = new Decimal(7200)
   const fastForwardMult = calculateFastForwardResourcesGlobal(resetTime, potionTimeValue, resourceMult, baseResource)
-  const potionMultipliers = +player.singularityUpgrades.potionBuff.getEffect().bonus
-    * +player.singularityUpgrades.potionBuff2.getEffect().bonus
-    * +player.singularityUpgrades.potionBuff3.getEffect().bonus
+  const potionMultipliers = getGQUpgradeEffect('potionBuff')
+    * getGQUpgradeEffect('potionBuff2')
+    * getGQUpgradeEffect('potionBuff3')
     * +player.octeractUpgrades.octeractAutoPotionEfficiency.getEffect().bonus
 
   return fastForwardMult.times(potionMultipliers)
@@ -664,7 +665,7 @@ export const calculateAntSacrificeMultipliers = () => {
   G.timeMultiplier = Math.min(1, Math.pow(player.antSacrificeTimer / 10, 2))
   G.timeMultiplier *= Math.max(1, player.antSacrificeTimer / 10)
 
-  G.timeMultiplier *= player.singularityUpgrades.halfMind.getEffect().bonus ? calculateGlobalSpeedMult() / 10 : 1
+  G.timeMultiplier *= getGQUpgradeEffect('halfMind') ? calculateGlobalSpeedMult() / 10 : 1
 
   G.upgradeMultiplier = 1
   G.upgradeMultiplier *= 1
@@ -702,7 +703,7 @@ export const calculateAntSacrificeRewards = (): IAntSacRewards => {
   calculateAntSacrificeELO()
   calculateAntSacrificeMultipliers()
 
-  const halfMindModifier = player.singularityUpgrades.halfMind.getEffect().bonus
+  const halfMindModifier = getGQUpgradeEffect('halfMind')
     ? calculateGlobalSpeedMult() / 10
     : 1
 
@@ -1423,10 +1424,7 @@ export const calculateAscensionScore = () => {
   const corruptionMultiplier = player.corruptions.used.totalCorruptionAscensionMultiplier
   let effectiveScore = 0
 
-  let bonusLevel = player.singularityUpgrades.corruptionFifteen.getEffect()
-      .bonus
-    ? 1
-    : 0
+  let bonusLevel = getGQUpgradeEffect('corruptionFifteen')
   bonusLevel += +player.singularityChallenges.oneChallengeCap.rewards.freeCorruptionLevel
 
   // Init Arrays with challenge values :)
@@ -1501,7 +1499,7 @@ export const calculateAscensionScore = () => {
     player.highestchallengecompletions[10]
   )
   // Corruption Multiplier is the product of all Corruption Score multipliers based on used corruptions
-  let bonusVal = player.singularityUpgrades.advancedPack.getEffect().bonus
+  let bonusVal = getGQUpgradeEffect('advancedPack')
     ? 0.33
     : 0
   bonusVal += +player.singularityChallenges.oneChallengeCap.rewards.corrScoreIncrease
@@ -1514,7 +1512,7 @@ export const calculateAscensionScore = () => {
     effectiveScore = Math.pow(effectiveScore, 0.5) * Math.pow(1e23, 0.5)
   }
 
-  player.singularityUpgrades.expertPack.getEffect().bonus
+  getGQUpgradeEffect('expertPack')
     ? (effectiveScore *= 1.5)
     : (effectiveScore *= 1)
 
@@ -1541,7 +1539,7 @@ export const CalcCorruptionStuff = () => {
     cubeBank += challengeModifier * player.highestchallengecompletions[i]
   }
 
-  const oneMindModifier = player.singularityUpgrades.oneMind.getEffect().bonus
+  const oneMindModifier = getGQUpgradeEffect('oneMind')
     ? calculateAscensionSpeedMult() / 10
     : 1
 
@@ -1550,8 +1548,7 @@ export const CalcCorruptionStuff = () => {
   cubeGain *= calculateCubeMultiplier()
   cubeGain *= oneMindModifier
 
-  const bonusCubeExponent = player.singularityUpgrades.platonicTau.getEffect()
-      .bonus
+  const bonusCubeExponent = getGQUpgradeEffect('platonicTau')
     ? 1.01
     : 1
   cubeGain = Math.pow(cubeGain, bonusCubeExponent)
@@ -1620,10 +1617,10 @@ export const calcAscensionCount = () => {
       * player.platonicUpgrades[16]
       * Math.min(1, player.overfluxPowder / 100000)
   ascCount *= 1 + player.singularityCount / 10
-  ascCount *= +player.singularityUpgrades.ascensions.getEffect().bonus
+  ascCount *= getGQUpgradeEffect('ascensions')
   ascCount *= +player.octeractUpgrades.octeractAscensions.getEffect().bonus
   ascCount *= +player.octeractUpgrades.octeractAscensions2.getEffect().bonus
-  ascCount *= player.singularityUpgrades.oneMind.getEffect().bonus
+  ascCount *= getGQUpgradeEffect('oneMind')
     ? calculateAscensionSpeedMult() / 10
     : 1
 
@@ -1750,25 +1747,18 @@ export const calculateAmbrosiaLuckShopUpgrade = () => {
 }
 
 export const calculateAmbrosiaGenerationSingularityUpgrade = () => {
-  const vals = [
-    +player.singularityUpgrades.singAmbrosiaGeneration.getEffect().bonus,
-    +player.singularityUpgrades.singAmbrosiaGeneration2.getEffect().bonus,
-    +player.singularityUpgrades.singAmbrosiaGeneration3.getEffect().bonus,
-    +player.singularityUpgrades.singAmbrosiaGeneration4.getEffect().bonus
-  ]
+  return getGQUpgradeEffect('singAmbrosiaGeneration') *
+    getGQUpgradeEffect('singAmbrosiaGeneration2') *
+    getGQUpgradeEffect('singAmbrosiaGeneration3') *
+    getGQUpgradeEffect('singAmbrosiaGeneration4')
 
-  return productContents(vals)
 }
 
 export const calculateAmbrosiaLuckSingularityUpgrade = () => {
-  const vals = [
-    +player.singularityUpgrades.singAmbrosiaLuck.getEffect().bonus,
-    +player.singularityUpgrades.singAmbrosiaLuck2.getEffect().bonus,
-    +player.singularityUpgrades.singAmbrosiaLuck3.getEffect().bonus,
-    +player.singularityUpgrades.singAmbrosiaLuck4.getEffect().bonus
-  ]
-
-  return sumContents(vals)
+  return getGQUpgradeEffect('singAmbrosiaLuck') +
+    getGQUpgradeEffect('singAmbrosiaLuck2') +
+    getGQUpgradeEffect('singAmbrosiaLuck3') +
+    getGQUpgradeEffect('singAmbrosiaLuck4')
 }
 
 export const calculateAmbrosiaGenerationOcteractUpgrade = () => {
@@ -2131,13 +2121,11 @@ export const calculateObtainiumPotionBaseObtainium = () => {
 }
 
 export const calculateAscensionSpeedExponentSpread = () => {
-  const vals = [
-    player.singularityUpgrades.singAscensionSpeed.getEffect().bonus ? 0.03 : 0,
-    +player.singularityUpgrades.singAscensionSpeed2.getEffect().bonus,
-    0.001 * Math.floor((player.shopUpgrades.chronometerInfinity + calculateFreeShopInfinityUpgrades()) / 40)
-  ]
 
-  return sumContents(vals)
+  return getGQUpgradeEffect('singAscensionSpeed') +
+    getGQUpgradeEffect('singAscensionSpeed2') +
+    0.001 * Math.floor((player.shopUpgrades.chronometerInfinity + calculateFreeShopInfinityUpgrades()) / 40)
+
 }
 
 export const calculateCookieUpgrade29Luck = () => {

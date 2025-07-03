@@ -2,7 +2,7 @@ import i18next from 'i18next'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { calculateCubeBlessings, calculateCubicSumData, calculateSummationNonLinear } from './Calculate'
 import { updateResearchBG } from './Research'
-import { calculateSingularityDebuff } from './singularity'
+import { calculateSingularityDebuff, getGQUpgradeEffect } from './singularity'
 import { format, player } from './Synergism'
 import { revealStuff } from './UpdateHTML'
 import { upgradeupdate } from './Upgrades'
@@ -162,11 +162,11 @@ export const awardAutosCookieUpgrade = () => {
 export const buyCubeUpgrades = (i: number, buyMax = player.cubeUpgradesBuyMaxToggle, auto = false) => {
   // Actually lock for HTML exploit
   if (
-    (i > 50 && i <= 55 && !player.singularityUpgrades.cookies.getEffect().bonus)
-    || (i > 55 && i <= 60 && !player.singularityUpgrades.cookies2.getEffect().bonus)
-    || (i > 60 && i <= 65 && !player.singularityUpgrades.cookies3.getEffect().bonus)
-    || (i > 65 && i <= 70 && !player.singularityUpgrades.cookies4.getEffect().bonus)
-    || (i > 70 && !player.singularityUpgrades.cookies5.getEffect().bonus)
+    (i > 50 && i <= 55 && !getGQUpgradeEffect('cookies'))
+    || (i > 55 && i <= 60 && !getGQUpgradeEffect('cookies2'))
+    || (i > 60 && i <= 65 && !getGQUpgradeEffect('cookies3'))
+    || (i > 65 && i <= 70 && !getGQUpgradeEffect('cookies4'))
+    || (i > 70 && !getGQUpgradeEffect('cookies5'))
   ) {
     return
   }

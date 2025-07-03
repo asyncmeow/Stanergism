@@ -12,13 +12,14 @@ import {
   sumOfPurchasedRuneLevels,
   sumOfRuneLevels
 } from './Runes'
-import { type SingularityChallengeDataKeys } from './SingularityChallenges'
+import type { SingularityChallengeDataKeys } from './SingularityChallenges'
 import { format, formatAsPercentIncrease, player } from './Synergism'
 import { sumOfTalismanRarities } from './Talismans'
 import type { resetNames } from './types/Synergism'
 import { Alert, Notification, revealStuff } from './UpdateHTML'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
+import { goldenQuarkUpgrades } from './singularity'
 
 export const resetAchievementCheck = (reset: resetNames) => {
   if (reset === 'prestige') {
@@ -331,7 +332,7 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
     pointsAwarded: (_cached: number) => {
       let pointValue = 0
       // Go through all sing upgrades. if the max level is NOT -1, add 5 points if the upgrade level equals max level
-      for (const upgrade of Object.values(player.singularityUpgrades)) {
+      for (const upgrade of Object.values(goldenQuarkUpgrades)) {
         if (upgrade.maxLevel !== -1 && upgrade.level >= upgrade.maxLevel) {
           pointValue += 5
         }

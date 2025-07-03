@@ -10,6 +10,7 @@ import { toggleCorruptionLevel } from './Toggles'
 import { Alert, Notification, Prompt } from './UpdateHTML'
 import { getElementById, productContents, sumContents, validateNonnegativeInteger } from './Utility'
 import { Globals as G } from './Variables'
+import { getGQUpgradeEffect } from './singularity'
 
 export enum CorruptionIndices {
   'viscosity' = 0,
@@ -100,7 +101,7 @@ export class CorruptionLoadout {
       const corrKey = corr as keyof Corruptions
       if (
         player.challengecompletions[corrChallengeMinimum(corrKey)] === 0
-        && !player.singularityUpgrades.platonicTau.getEffect().bonus
+        && !Boolean(getGQUpgradeEffect('platonicTau'))
       ) {
         this.setLevel(corrKey, 0)
       }
@@ -127,14 +128,14 @@ export class CorruptionLoadout {
   }
 
   public calculateIndividualRawMultiplier (corr: keyof Corruptions) {
-    let bonusVal = player.singularityUpgrades.advancedPack.getEffect().bonus
+    let bonusVal = getGQUpgradeEffect('advancedPack')
       ? 0.33
       : 0
     bonusVal += +player.singularityChallenges.oneChallengeCap.rewards.corrScoreIncrease
     bonusVal += 0.3 * player.cubeUpgrades[74]
 
     let bonusMult = 1
-    if (this.#levels[corr] >= 14 && player.singularityUpgrades.masterPack.getEffect().bonus) {
+    if (this.#levels[corr] >= 14 && getGQUpgradeEffect('masterPack')) {
       bonusMult *= 1.1
     }
 
@@ -238,7 +239,7 @@ export class CorruptionLoadout {
   }
 
   get bonusLevels () {
-    let bonusLevel = player.singularityUpgrades.corruptionFifteen.getEffect().bonus ? 1 : 0
+    let bonusLevel = getGQUpgradeEffect('corruptionFifteen')
     bonusLevel += +player.singularityChallenges.oneChallengeCap.rewards.freeCorruptionLevel
     bonusLevel += getTalisman('cookieGrandma').bonus.freeCorruptionLevel
     return bonusLevel
@@ -411,11 +412,11 @@ export const maxCorruptionLevel = () => {
   }
 
   // Overrides everything above.
-  if (player.singularityUpgrades.platonicTau.getEffect().bonus) {
+  if (getGQUpgradeEffect('platonicTau')) {
     max = Math.max(13, max)
   }
 
-  if (player.singularityUpgrades.corruptionFourteen.getEffect().bonus) {
+  if (getGQUpgradeEffect('corruptionFourteen')) {
     max += 1
   }
   max += +player.octeractUpgrades.octeractCorruption.getEffect().bonus
@@ -782,22 +783,22 @@ export const revealCorruptions = () => {
   const c13Unlocks = document.getElementsByClassName('chal13Corruption') as HTMLCollectionOf<HTMLElement>
   const c14Unlocks = document.getElementsByClassName('chal14Corruption') as HTMLCollectionOf<HTMLElement>
 
-  if (player.challengecompletions[11] > 0 || player.singularityUpgrades.platonicTau.getEffect().bonus) {
+  if (player.challengecompletions[11] > 0 || getGQUpgradeEffect('platonicTau')) {
     for (let i = 0; i < c11Unlocks.length; i++) {
       c11Unlocks[i].style.display = 'flex'
     }
   }
-  if (player.challengecompletions[12] > 0 || player.singularityUpgrades.platonicTau.getEffect().bonus) {
+  if (player.challengecompletions[12] > 0 || getGQUpgradeEffect('platonicTau')) {
     for (let i = 0; i < c12Unlocks.length; i++) {
       c12Unlocks[i].style.display = 'flex'
     }
   }
-  if (player.challengecompletions[13] > 0 || player.singularityUpgrades.platonicTau.getEffect().bonus) {
+  if (player.challengecompletions[13] > 0 || getGQUpgradeEffect('platonicTau')) {
     for (let i = 0; i < c13Unlocks.length; i++) {
       c13Unlocks[i].style.display = 'flex'
     }
   }
-  if (player.challengecompletions[14] > 0 || player.singularityUpgrades.platonicTau.getEffect().bonus) {
+  if (player.challengecompletions[14] > 0 || getGQUpgradeEffect('platonicTau')) {
     for (let i = 0; i < c14Unlocks.length; i++) {
       c14Unlocks[i].style.display = 'flex'
     }

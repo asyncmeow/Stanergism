@@ -21,7 +21,7 @@ import type { OcteractDataKeys } from './Octeracts'
 import { getRedAmbrosiaUpgrade } from './RedAmbrosiaUpgrades'
 import { getRune, type RuneKeys } from './Runes'
 import { friendlyShopName, isShopUpgradeUnlocked, shopData, shopUpgradeTypes } from './Shop'
-import { calculateEffectiveSingularities, type SingularityDataKeys } from './singularity'
+import { actualGQUpgradeTotalLevels, calculateEffectiveSingularities, getGQUpgradeEffect, goldenQuarkUpgrades, type SingularityDataKeys } from './singularity'
 import type { SingularityChallengeDataKeys } from './SingularityChallenges'
 import { format, player } from './Synergism'
 import type { Player } from './types/Synergism'
@@ -128,14 +128,14 @@ export const generateExportSummary = async (): Promise<void> => {
       format(Number(player.wowPlatonicCubes), 0, true)
     } -+- Total Plats Opened: ${platonicSum}\n`
     resources = `${resources}Wow! Hepteracts: ${format(player.wowAbyssals, 0, true)}\n`
-    if (player.singularityUpgrades.octeractUnlock.getEffect().bonus) {
+    if (getGQUpgradeEffect('octeractUnlock')) {
       resources = `${resources}Wow! Octeracts: ${format(player.wowOcteracts, 0, true)}\n`
     }
   }
 
   // Octeract Subportion!
   let octeract = ''
-  if (player.singularityUpgrades.octeractUnlock.getEffect().bonus) {
+  if (getGQUpgradeEffect('octeractUnlock')) {
     octeract = '===== OCTERACTS =====\n'
     octeract = `${octeract}Current Octeracts: ${format(player.wowOcteracts, 2, true)}\n`
     octeract = `${octeract}Current Per Second: ${format(calculateOcteractMultiplier(), 2, true)}\n`
@@ -326,15 +326,15 @@ export const generateExportSummary = async (): Promise<void> => {
   if (player.highestSingularityCount > 0) {
     singularityUpgradeStats =
       '===== SINGULARITY UPGRADES =====\n - [★]: Upgrade is MAXED - \n - [∞]: Upgrade is infinite - \n - [✔]: Upgrade is unlocked - \n - [✖]: Upgrade is locked - \n'
-    const singUpgrade = Object.keys(player.singularityUpgrades) as SingularityDataKeys[]
+    const GQUpgrade = Object.keys(goldenQuarkUpgrades) as SingularityDataKeys[]
     let totalSingUpgradeCount = -1 // One upgrade cannot ever be leveled, by design, so subtract that from the actual count
     let totalSingInfiniteLevel = 0
     let totalSingUpgradeUnlocked = 0
     let totalSingUpgradeMax = 0
-    let totalGoldenQuarksSpent = 0
-    for (const key of singUpgrade) {
+
+    for (const key of GQUpgrade) {
       let upgradeText = ''
-      const singUpg = player.singularityUpgrades[key]
+      const singUpg = goldenQuarkUpgrades[key]
 
       totalSingUpgradeCount += 1
       if (singUpg.maxLevel === -1) {
@@ -346,8 +346,6 @@ export const generateExportSummary = async (): Promise<void> => {
       if (player.singularityCount >= singUpg.minimumSingularity) {
         totalSingUpgradeUnlocked += 1
       }
-
-      totalGoldenQuarksSpent += singUpg.goldenQuarksInvested
 
       let unicodeSymbol = '[✖]'
       if (player.singularityCount >= singUpg.minimumSingularity) {
@@ -365,12 +363,12 @@ export const generateExportSummary = async (): Promise<void> => {
       upgradeText = upgradeText + (singUpg.maxLevel === -1
         ? ` Level ${singUpg.level}`
         : ` Level ${singUpg.level}/${singUpg.maxLevel}`)
-      upgradeText = upgradeText + (singUpg.freeLevels > 0
-        ? ` [+${format(singUpg.computeFreeLevelSoftcap(), 2, true)}]`
+      upgradeText = upgradeText + (singUpg.freeLevel > 0
+        ? ` [+${format(singUpg.freeLevel, 2, true)}]`
         : '')
 
-      upgradeText = upgradeText + (singUpg.freeLevels > 0
-        ? ` =+= Effective Level: ${format(singUpg.actualTotalLevels(), 2, true)}`
+      upgradeText = upgradeText + (singUpg.freeLevel > 0
+        ? ` =+= Effective Level: ${format(actualGQUpgradeTotalLevels(key), 2, true)}`
         : '')
 
       upgradeText = `${upgradeText}\n`
@@ -382,15 +380,12 @@ export const generateExportSummary = async (): Promise<void> => {
     singularityUpgradeStats = `${singularityUpgradeStats}Upgrades MAXED: ${totalSingUpgradeMax}/${
       totalSingUpgradeCount - totalSingInfiniteLevel
     }\n`
-    singularityUpgradeStats = `${singularityUpgradeStats}Golden Quarks Spent on Upgrades: ${
-      format(totalGoldenQuarksSpent, 0, true)
-    }\n`
     singularityUpgradeStats = singularityUpgradeStats + subCategoryDivisor
   }
 
   // Create Octeract Stuff
   let octeractUpgradeStats = '\n'
-  if (player.singularityUpgrades.octeractUnlock.getEffect().bonus) {
+  if (getGQUpgradeEffect('octeractUnlock')) {
     octeractUpgradeStats =
       '===== OCTERACT UPGRADES =====\n - [★]: Upgrade is MAXED - \n - [∞]: Upgrade is infinite - \n - [ ]: Upgrade INCOMPLETE - \n'
     const octUpgrade = Object.keys(player.octeractUpgrades) as OcteractDataKeys[]

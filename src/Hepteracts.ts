@@ -10,7 +10,7 @@ import {
   forcedDailyReset
 } from './Calculate'
 import { Cube } from './CubeExperimental'
-import { calculateSingularityDebuff } from './singularity'
+import { calculateSingularityDebuff, getGQUpgradeEffect } from './singularity'
 import { format, player } from './Synergism'
 import type { Player } from './types/Synergism'
 import { Alert, Confirm, Prompt } from './UpdateHTML'
@@ -504,9 +504,9 @@ export const hepteractEffective = (data: HepteractNames) => {
     exponentBoost += 1 / 750 * player.platonicUpgrades[19]
   }
   if (data === 'quark') {
-    exponentBoost += +player.singularityUpgrades.singQuarkHepteract.getEffect().bonus
-    exponentBoost += +player.singularityUpgrades.singQuarkHepteract2.getEffect().bonus
-    exponentBoost += +player.singularityUpgrades.singQuarkHepteract3.getEffect().bonus
+    exponentBoost += getGQUpgradeEffect('singQuarkHepteract')
+    exponentBoost += getGQUpgradeEffect('singQuarkHepteract2')
+    exponentBoost += getGQUpgradeEffect('singQuarkHepteract3')
     exponentBoost += +player.octeractUpgrades.octeractImprovedQuarkHept.getEffect().bonus
     exponentBoost += player.shopUpgrades.improveQuarkHept / 100
     exponentBoost += player.shopUpgrades.improveQuarkHept2 / 100

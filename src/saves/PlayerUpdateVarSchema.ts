@@ -4,6 +4,7 @@ import { getHepteract, type HepteractNames } from '../Hepteracts'
 import { getTalisman } from '../Talismans'
 import { convertArrayToCorruption } from './PlayerJsonSchema'
 import { playerSchema } from './PlayerSchema'
+import { goldenQuarkUpgrades, type SingularityDataKeys } from '../singularity'
 
 export const playerUpdateVarSchema = playerSchema.transform((player) => {
   if (player.usedCorruptions !== undefined) {
@@ -122,6 +123,29 @@ export const playerUpdateVarSchema = playerSchema.transform((player) => {
     }
   }
 
+  if (player.singularityUpgrades !== undefined) {
+    for (const key of Object.keys(player.singularityUpgrades)) {
+
+      // This is shit - the old SingularityUpgrades object had this upgrade that didn't do anything
+      if (key === 'WIP') {
+        continue 
+      }
+
+      const k = key as SingularityDataKeys
+
+      const level = player.singularityUpgrades[k].level ?? 0
+      const freeLevel = player.singularityUpgrades[k].freeLevels ?? 0
+      
+      player.goldenQuarkUpgrades[k] = {
+        level,
+        freeLevel
+      }
+      goldenQuarkUpgrades[k].level = level
+      goldenQuarkUpgrades[k].freeLevel = freeLevel
+
+    }
+  }
+
   Reflect.deleteProperty(player, 'runeshards')
   Reflect.deleteProperty(player, 'maxofferings')
   Reflect.deleteProperty(player, 'researchPoints')
@@ -150,6 +174,7 @@ export const playerUpdateVarSchema = playerSchema.transform((player) => {
   Reflect.deleteProperty(player, 'runeBlessingLevels')
   Reflect.deleteProperty(player, 'runeSpiritLevels')
   Reflect.deleteProperty(player, 'hepteractCrafts')
+  Reflect.deleteProperty(player, 'singularityUpgrades')
 
   return player
 })

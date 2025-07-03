@@ -4,6 +4,7 @@ import { prod } from './Config'
 import { pressedKeys } from './Hotkeys'
 import { isLoggedIn } from './Login'
 import { initializeCart } from './purchases/CartTab'
+import { getGQUpgradeEffect } from './singularity'
 import { player } from './Synergism'
 import {
   setActiveSettingScreen,
@@ -289,7 +290,7 @@ const subtabInfo: Record<Tabs, SubTab> = {
       {
         subTabID: '3',
         get unlocked () {
-          return Boolean(player.singularityUpgrades.octeractUnlock.getEffect().bonus)
+          return Boolean(getGQUpgradeEffect('octeractUnlock'))
         },
         buttonID: 'toggleSingularitySubTab3'
       },
