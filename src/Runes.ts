@@ -15,6 +15,8 @@ import { CalcECC } from './Challenges'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { firstFiveRuneEffectivenessStats, runeEffectivenessStatsSI } from './Statistics'
 import { getTalisman, getTalismanBonus } from './Talismans'
+import { Tabs } from './Tabs'
+import { assert } from './Utility'
 
 export enum resetTiers {
   prestige = 1,
@@ -312,6 +314,8 @@ class Rune<K extends RuneKeys> extends AbstractRune<K> {
   }
 
   updateRuneHTML () {
+    assert(G.currentTab === Tabs.Runes, 'current tab is not Runes')
+
     DOMCacheGetOrSet(`${this.key}RuneLevel`).textContent = i18next.t('runes.level', { x: format(this.level, 0, true) })
     DOMCacheGetOrSet(`${this.key}RuneFreeLevel`).textContent = i18next.t('runes.freeLevels', {
       x: format(this.freeLevels, 0, true)
@@ -320,6 +324,8 @@ class Rune<K extends RuneKeys> extends AbstractRune<K> {
   }
 
   updateFocusedRuneHTML () {
+    assert(G.currentTab === Tabs.Runes, 'current tab is not Runes')
+
     DOMCacheGetOrSet('focusedRuneName').textContent = this.name
     DOMCacheGetOrSet('focusedRuneDescription').innerHTML = this.description
     DOMCacheGetOrSet('focusedRuneValues').innerHTML = this.valueText
@@ -336,7 +342,9 @@ class Rune<K extends RuneKeys> extends AbstractRune<K> {
   }
 
   updateRuneEffectHTML () {
-    DOMCacheGetOrSet(`${this.key}RunePower`).innerHTML = this.rewardDesc
+    if (G.currentTab === Tabs.Runes) {
+      DOMCacheGetOrSet(`${this.key}RunePower`).innerHTML = this.rewardDesc
+    }
   }
 }
 
