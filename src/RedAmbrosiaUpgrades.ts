@@ -621,7 +621,7 @@ export function initRedAmbrosiaUpgrades (investments: Record<RedAmbrosiaKeys, nu
     ;(upgrades as Record<RedAmbrosiaKeys, RedAmbrosiaUpgrade<RedAmbrosiaKeys>>)[key] = upgrade
   }
   redAmbrosiaUpgrades = upgrades as RedAmbrosiaUpgradesMap
-}``
+}
 
 export function getRedAmbrosiaUpgrade<K extends RedAmbrosiaKeys> (key: K): RedAmbrosiaUpgrade<K> {
   if (redAmbrosiaUpgrades === null) {
