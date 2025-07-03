@@ -272,31 +272,31 @@ export const allCubeStats: StatLine[] = [
   },
   {
     i18n: 'ModuleTutorial',
-    stat: () => +player.blueberryUpgrades.ambrosiaTutorial.bonus.cubes
+    stat: () => +player.blueberryUpgrades.ambrosiaTutorial.bonus.metadata.cubes
   },
   {
     i18n: 'ModuleCubes1',
-    stat: () => +player.blueberryUpgrades.ambrosiaCubes1.bonus.cubes
+    stat: () => +player.blueberryUpgrades.ambrosiaCubes1.bonus.metadata.cubes
   },
   {
     i18n: 'ModuleLuckCube1',
-    stat: () => +player.blueberryUpgrades.ambrosiaLuckCube1.bonus.cubes
+    stat: () => +player.blueberryUpgrades.ambrosiaLuckCube1.bonus.metadata.cubes
   },
   {
     i18n: 'ModuleQuarkCube1',
-    stat: () => +player.blueberryUpgrades.ambrosiaQuarkCube1.bonus.cubes
+    stat: () => +player.blueberryUpgrades.ambrosiaQuarkCube1.bonus.metadata.cubes
   },
   {
     i18n: 'ModuleCubes2',
-    stat: () => +player.blueberryUpgrades.ambrosiaCubes2.bonus.cubes
+    stat: () => +player.blueberryUpgrades.ambrosiaCubes2.bonus.metadata.cubes
   },
   {
     i18n: 'ModuleHyperflux',
-    stat: () => +player.blueberryUpgrades.ambrosiaHyperflux.bonus.hyperFlux
+    stat: () => +player.blueberryUpgrades.ambrosiaHyperflux.bonus.metadata.hyperFlux
   },
   {
     i18n: 'ModuleCubes3',
-    stat: () => +player.blueberryUpgrades.ambrosiaCubes3.bonus.cubes
+    stat: () => +player.blueberryUpgrades.ambrosiaCubes3.bonus.metadata.cubes
   },
   {
     i18n: 'RedAmbrosiaTutorial',
@@ -673,27 +673,27 @@ export const allOcteractCubeStats: StatLine[] = [
   },
   {
     i18n: 'ModuleTutorial',
-    stat: () => +player.blueberryUpgrades.ambrosiaTutorial.bonus.cubes
+    stat: () => +player.blueberryUpgrades.ambrosiaTutorial.bonus.metadata.cubes
   },
   {
     i18n: 'ModuleCubes1',
-    stat: () => +player.blueberryUpgrades.ambrosiaCubes1.bonus.cubes
+    stat: () => +player.blueberryUpgrades.ambrosiaCubes1.bonus.metadata.cubes
   },
   {
     i18n: 'ModuleLuckCube1',
-    stat: () => +player.blueberryUpgrades.ambrosiaLuckCube1.bonus.cubes
+    stat: () => +player.blueberryUpgrades.ambrosiaLuckCube1.bonus.metadata.cubes
   },
   {
     i18n: 'ModuleQuarkCube1',
-    stat: () => +player.blueberryUpgrades.ambrosiaQuarkCube1.bonus.cubes
+    stat: () => +player.blueberryUpgrades.ambrosiaQuarkCube1.bonus.metadata.cubes
   },
   {
     i18n: 'ModuleCubes2',
-    stat: () => +player.blueberryUpgrades.ambrosiaCubes2.bonus.cubes
+    stat: () => +player.blueberryUpgrades.ambrosiaCubes2.bonus.metadata.cubes
   },
   {
     i18n: 'ModuleCubes3',
-    stat: () => +player.blueberryUpgrades.ambrosiaCubes3.bonus.cubes
+    stat: () => +player.blueberryUpgrades.ambrosiaCubes3.bonus.metadata.cubes
   },
   {
     i18n: 'RedAmbrosiaTutorial',
@@ -773,11 +773,11 @@ export const allBaseOfferingStats: StatLine[] = [
   },
   {
     i18n: 'AmbrosiaBaseOffering1',
-    stat: () => +player.blueberryUpgrades.ambrosiaBaseOffering1.bonus.offering // Ambrosia Base Offering 1
+    stat: () => +player.blueberryUpgrades.ambrosiaBaseOffering1.bonus.metadata.offering // Ambrosia Base Offering 1
   },
   {
     i18n: 'AmbrosiaBaseOffering2',
-    stat: () => +player.blueberryUpgrades.ambrosiaBaseOffering2.bonus.offering // Ambrosia Base Offering 2
+    stat: () => +player.blueberryUpgrades.ambrosiaBaseOffering2.bonus.metadata.offering // Ambrosia Base Offering 2
   },
   {
     i18n: 'OfferingEX3',
@@ -953,7 +953,7 @@ export const allOfferingStats = [
   },
   {
     i18n: 'Ambrosia',
-    stat: () => 1 + 0.001 * +player.blueberryUpgrades.ambrosiaOffering1.bonus.offeringMult // Ambrosia!!
+    stat: () => 1 + 0.001 * +player.blueberryUpgrades.ambrosiaOffering1.bonus.metadata.offeringMult // Ambrosia!!
   },
   {
     i18n: 'RedAmbrosiaTutorial',
@@ -1216,27 +1216,27 @@ export const allQuarkStats: StatLine[] = [
   },
   {
     i18n: 'AmbrosiaTutorial',
-    stat: () => +player.blueberryUpgrades.ambrosiaTutorial.bonus.quarks
+    stat: () => +player.blueberryUpgrades.ambrosiaTutorial.bonus.metadata.quarks
   },
   {
     i18n: 'AmbrosiaQuarks1',
-    stat: () => +player.blueberryUpgrades.ambrosiaQuarks1.bonus.quarks
+    stat: () => +player.blueberryUpgrades.ambrosiaQuarks1.bonus.metadata.quarks
   },
   {
     i18n: 'AmbrosiaCubeQuark1',
-    stat: () => +player.blueberryUpgrades.ambrosiaCubeQuark1.bonus.quarks
+    stat: () => +player.blueberryUpgrades.ambrosiaCubeQuark1.bonus.metadata.quarks
   },
   {
     i18n: 'AmbrosiaLuckQuark1',
-    stat: () => +player.blueberryUpgrades.ambrosiaLuckQuark1.bonus.quarks
+    stat: () => +player.blueberryUpgrades.ambrosiaLuckQuark1.bonus.metadata.quarks
   },
   {
     i18n: 'AmbrosiaQuarks2',
-    stat: () => +player.blueberryUpgrades.ambrosiaQuarks2.bonus.quarks
+    stat: () => +player.blueberryUpgrades.ambrosiaQuarks2.bonus.metadata.quarks
   },
   {
     i18n: 'AmbrosiaQuarks3',
-    stat: () => +player.blueberryUpgrades.ambrosiaQuarks3.bonus.quarks
+    stat: () => +player.blueberryUpgrades.ambrosiaQuarks3.bonus.metadata.quarks
   },
   {
     i18n: 'Viscount',
@@ -1305,11 +1305,11 @@ export const allBaseObtainiumStats: StatLine[] = [
   },
   {
     i18n: 'AmbrosiaBaseObtainium1',
-    stat: () => +player.blueberryUpgrades.ambrosiaBaseObtainium1.bonus.obtainium // Ambrosia Base Obtainium 1
+    stat: () => +player.blueberryUpgrades.ambrosiaBaseObtainium1.bonus.metadata.obtainium // Ambrosia Base Obtainium 1
   },
   {
     i18n: 'AmbrosiaBaseObtainium2',
-    stat: () => +player.blueberryUpgrades.ambrosiaBaseObtainium2.bonus.obtainium // Ambrosia Base Obtainium 2
+    stat: () => +player.blueberryUpgrades.ambrosiaBaseObtainium2.bonus.metadata.obtainium // Ambrosia Base Obtainium 2
   }
 ]
 
@@ -1541,7 +1541,7 @@ export const allObtainiumStats: StatLine[] = [
   },
   {
     i18n: 'AmbrosiaObtainium1',
-    stat: () => 1 + 0.001 * +player.blueberryUpgrades.ambrosiaObtainium1.bonus.obtainiumMult // Ambrosia Obtainium 1
+    stat: () => 1 + 0.001 * +player.blueberryUpgrades.ambrosiaObtainium1.bonus.metadata.obtainiumMult // Ambrosia Obtainium 1
   },
   {
     i18n: 'EXUltraObtainium',
@@ -1918,7 +1918,7 @@ export const allAdditiveLuckMultStats: StatLine[] = [
   },
   {
     i18n: 'BlueberryUpgrade',
-    stat: () => +player.blueberryUpgrades.ambrosiaLuck4.bonus.ambrosiaLuckPercentage // Blueberry Upgrade 4
+    stat: () => +player.blueberryUpgrades.ambrosiaLuck4.bonus.metadata.ambrosiaLuckPercentage // Blueberry Upgrade 4
   },
   {
     i18n: 'HorseShoeTalisman',
@@ -1963,23 +1963,23 @@ export const allAmbrosiaLuckStats: StatLine[] = [
   },
   {
     i18n: 'AmbrosiaLuck1',
-    stat: () => +player.blueberryUpgrades.ambrosiaLuck1.bonus.ambrosiaLuck // Ambrosia Luck from Luck Module I
+    stat: () => +player.blueberryUpgrades.ambrosiaLuck1.bonus.metadata.ambrosiaLuck // Ambrosia Luck from Luck Module I
   },
   {
     i18n: 'AmbrosiaLuck2',
-    stat: () => +player.blueberryUpgrades.ambrosiaLuck2.bonus.ambrosiaLuck // Ambrosia Luck from Luck Module II
+    stat: () => +player.blueberryUpgrades.ambrosiaLuck2.bonus.metadata.ambrosiaLuck // Ambrosia Luck from Luck Module II
   },
   {
     i18n: 'AmbrosiaLuck3',
-    stat: () => +player.blueberryUpgrades.ambrosiaLuck3.bonus.ambrosiaLuck // Ambrosia Luck from Luck Module III
+    stat: () => +player.blueberryUpgrades.ambrosiaLuck3.bonus.metadata.ambrosiaLuck // Ambrosia Luck from Luck Module III
   },
   {
     i18n: 'AmbrosiaCubeLuck1',
-    stat: () => +player.blueberryUpgrades.ambrosiaCubeLuck1.bonus.ambrosiaLuck // Ambrosia Luck from Cube-Luck Synergy Module
+    stat: () => +player.blueberryUpgrades.ambrosiaCubeLuck1.bonus.metadata.ambrosiaLuck // Ambrosia Luck from Cube-Luck Synergy Module
   },
   {
     i18n: 'AmbrosiaQuarkLuck1',
-    stat: () => +player.blueberryUpgrades.ambrosiaQuarkLuck1.bonus.ambrosiaLuck // Ambrosia Luck from Quark-Luck Synergy Module
+    stat: () => +player.blueberryUpgrades.ambrosiaQuarkLuck1.bonus.metadata.ambrosiaLuck // Ambrosia Luck from Quark-Luck Synergy Module
   },
   {
     i18n: 'Singularity131',
@@ -2088,7 +2088,7 @@ export const allAmbrosiaGenerationSpeedStats: StatLine[] = [
   },
   {
     i18n: 'PatreonBonus',
-    stat: () => +player.blueberryUpgrades.ambrosiaPatreon.bonus.blueberryGeneration // Patreon Bonus
+    stat: () => +player.blueberryUpgrades.ambrosiaPatreon.bonus.metadata.blueberryGeneration // Patreon Bonus
   },
   {
     i18n: 'OneChallengeCap',
@@ -2576,13 +2576,13 @@ export const allShopTablets: StatLine[] = [
   },
   {
     i18n: 'Indigo',
-    stat: () => +player.blueberryUpgrades.ambrosiaInfiniteShopUpgrades1.bonus.freeLevels, // Blueberry Upgrade
+    stat: () => +player.blueberryUpgrades.ambrosiaInfiniteShopUpgrades1.bonus.metadata.freeLevels, // Blueberry Upgrade
     acc: 0,
     color: 'orchid'
   },
   {
     i18n: 'Violet',
-    stat: () => +player.blueberryUpgrades.ambrosiaInfiniteShopUpgrades2.bonus.freeLevels, // Blueberry Upgrade 2
+    stat: () => +player.blueberryUpgrades.ambrosiaInfiniteShopUpgrades2.bonus.metadata.freeLevels, // Blueberry Upgrade 2
     acc: 0,
     color: 'violet'
   }
@@ -2707,7 +2707,7 @@ export const allTalismanRuneBonusStats: StatLine[] = [
   },
   {
     i18n: 'BlueberryUpgrade',
-    stat: () => +player.blueberryUpgrades.ambrosiaTalismanBonusRuneLevel.bonus.talismanBonusRuneLevel
+    stat: () => +player.blueberryUpgrades.ambrosiaTalismanBonusRuneLevel.bonus.metadata.talismanBonusRuneLevel
   },
   {
     i18n: 'NoOfferingPower',

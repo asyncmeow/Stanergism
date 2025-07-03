@@ -1177,7 +1177,7 @@ p#promocodeinfo {
     justify-self: center;
     align-items: center;
     flex-direction: column;
-    margin: 10px
+    margin: 10px;
 }
 
 #achievementHeader > p {
@@ -1187,12 +1187,6 @@ p#promocodeinfo {
 
 #achievementTNLText {
     margin: 0;
-}
-
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
 }
 
 .NotificationToggle {

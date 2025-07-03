@@ -425,10 +425,90 @@ export interface ProgressiveAchievementsObject {
   rewardedAP: number
 }
 
+export const progressiveAchievements: Record<ProgressiveAchievements, ProgressiveAchievement> = {
+  runeLevel: {
+    maxPointValue: 1000,
+    pointsAwarded: (cached: number) => {
+      return Math.min(200, Math.floor(cached / 1000)) + Math.min(400, Math.floor(cached / 2500))
+        + Math.min(400, Math.floor(cached / 12500))
+    },
+    updateValue: () => {
+      return sumOfPurchasedRuneLevels()
+    },
+    useCachedValue: true
+  },
+  freeRuneLevel: {
+    maxPointValue: 1000,
+    pointsAwarded: (cached: number) => {
+      return Math.min(200, Math.floor(cached / 1000)) + Math.min(400, Math.floor(cached / 2500))
+        + Math.min(400, Math.floor(cached / 10000))
+    },
+    updateValue: () => {
+      return sumOfFreeRuneLevels()
+    },
+    useCachedValue: true
+  },
+  singularityCount: {
+    maxPointValue: 900,
+    pointsAwarded: (cached: number) => {
+      return 2 * cached
+        + Math.max(0, cached - 100)
+        + Math.max(0, cached - 200)
+    },
+    updateValue: () => {
+      return player.highestSingularityCount
+    },
+    useCachedValue: true
+  },
+  ambrosiaCount: {
+    maxPointValue: 800,
+    pointsAwarded: (cached: number) => {
+      return Math.min(200, Math.floor(cached / 100))
+        + Math.min(200, Math.floor(cached / 10000))
+        + Math.min(400, Math.floor(400 * Math.sqrt(cached / 1e8)))
+    },
+    updateValue: () => {
+      return player.lifetimeAmbrosia
+    },
+    useCachedValue: true
+  },
+  redAmbrosiaCount: {
+    maxPointValue: 800,
+    pointsAwarded: (cached: number) => {
+      return Math.min(200, Math.floor(cached / 25))
+        + Math.min(200, Math.floor(cached / 2500))
+        + Math.min(400, Math.floor(400 * Math.sqrt(cached / 5e6)))
+    },
+    updateValue: () => {
+      return player.lifetimeRedAmbrosia
+    },
+    useCachedValue: true
+  },
+  exalts: {
+    maxPointValue: -1,
+    pointsAwarded: (_cached: number) => {
+      let pointValue = 0
+      for (const chal of Object.keys(player.singularityChallenges) as SingularityChallengeDataKeys[]) {
+        pointValue += player.singularityChallenges[chal].rewardAP
+      }
+      return pointValue
+    },
+    updateValue: () => {
+      return 0
+    },
+    useCachedValue: false
+  }
+}
+
+export const emptyProgressiveAchievements = Object
+  .fromEntries(
+    (Object.keys(progressiveAchievements)).map((key) => [key, { cached: 0, rewardedAP: 0 }])
+  ) as Record<ProgressiveAchievements, ProgressiveAchievementsObject>
+
 export class AchievementManager {
   achievementMap: { [index: number]: boolean } = {}
 
-  progressiveAchievements: Record<ProgressiveAchievements, ProgressiveAchievementsObject> = {
+  progressiveAchievements = {
     ...emptyProgressiveAchievements
   }
 
@@ -2376,86 +2456,6 @@ export type ProgressiveAchievements =
   | 'ambrosiaCount'
   | 'redAmbrosiaCount'
   | 'exalts'
-
-export const progressiveAchievements: Record<ProgressiveAchievements, ProgressiveAchievement> = {
-  runeLevel: {
-    maxPointValue: 1000,
-    pointsAwarded: (cached: number) => {
-      return Math.min(200, Math.floor(cached / 1000)) + Math.min(400, Math.floor(cached / 2500))
-        + Math.min(400, Math.floor(cached / 12500))
-    },
-    updateValue: () => {
-      return sumOfPurchasedRuneLevels()
-    },
-    useCachedValue: true
-  },
-  freeRuneLevel: {
-    maxPointValue: 1000,
-    pointsAwarded: (cached: number) => {
-      return Math.min(200, Math.floor(cached / 1000)) + Math.min(400, Math.floor(cached / 2500))
-        + Math.min(400, Math.floor(cached / 10000))
-    },
-    updateValue: () => {
-      return sumOfFreeRuneLevels()
-    },
-    useCachedValue: true
-  },
-  singularityCount: {
-    maxPointValue: 900,
-    pointsAwarded: (cached: number) => {
-      return 2 * cached
-        + Math.max(0, cached - 100)
-        + Math.max(0, cached - 200)
-    },
-    updateValue: () => {
-      return player.highestSingularityCount
-    },
-    useCachedValue: true
-  },
-  ambrosiaCount: {
-    maxPointValue: 800,
-    pointsAwarded: (cached: number) => {
-      return Math.min(200, Math.floor(cached / 100))
-        + Math.min(200, Math.floor(cached / 10000))
-        + Math.min(400, Math.floor(400 * Math.sqrt(cached / 1e8)))
-    },
-    updateValue: () => {
-      return player.lifetimeAmbrosia
-    },
-    useCachedValue: true
-  },
-  redAmbrosiaCount: {
-    maxPointValue: 800,
-    pointsAwarded: (cached: number) => {
-      return Math.min(200, Math.floor(cached / 25))
-        + Math.min(200, Math.floor(cached / 2500))
-        + Math.min(400, Math.floor(400 * Math.sqrt(cached / 5e6)))
-    },
-    updateValue: () => {
-      return player.lifetimeRedAmbrosia
-    },
-    useCachedValue: true
-  },
-  exalts: {
-    maxPointValue: -1,
-    pointsAwarded: (_cached: number) => {
-      let pointValue = 0
-      for (const chal of Object.keys(player.singularityChallenges) as SingularityChallengeDataKeys[]) {
-        pointValue += player.singularityChallenges[chal].rewardAP
-      }
-      return pointValue
-    },
-    updateValue: () => {
-      return 0
-    },
-    useCachedValue: false
-  }
-}
-
-export const emptyProgressiveAchievements: Record<ProgressiveAchievements, ProgressiveAchievementsObject> = Object
-  .fromEntries(
-    (Object.keys(progressiveAchievements)).map((key) => [key, { cached: 0, rewardedAP: 0 }])
-  ) as Record<ProgressiveAchievements, ProgressiveAchievementsObject>
 
 export const emptyProgressiveCaches: Record<ProgressiveAchievements, number> = Object.fromEntries(
   (Object.keys(progressiveAchievements)).map((key) => [key, 0])

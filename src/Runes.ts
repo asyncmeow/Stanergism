@@ -559,7 +559,7 @@ export const speedRuneOOMIncrease = () => {
     + 1.5 * CalcECC('ascension', player.challengecompletions[14])
     + player.cubeUpgrades[16]
     + getTalisman('chronos').bonus.speedOOMBonus
-    + +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.runeOOMBonus
+    + +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.metadata.runeOOMBonus
   )
 }
 
@@ -572,7 +572,7 @@ export const duplicationRuneOOMIncrease = () => {
     + CalcECC('ascension', player.challengecompletions[11])
     + 1.5 * CalcECC('ascension', player.challengecompletions[14])
     + getTalisman('exemption').bonus.duplicationOOMBonus
-    + +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.runeOOMBonus
+    + +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.metadata.runeOOMBonus
   )
 }
 
@@ -585,7 +585,7 @@ export const prismRuneOOMIncrease = () => {
     + 1.5 * CalcECC('ascension', player.challengecompletions[14])
     + player.cubeUpgrades[16]
     + getTalisman('mortuus').bonus.prismOOMBonus
-    + +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.runeOOMBonus
+    + +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.metadata.runeOOMBonus
   )
 }
 
@@ -598,7 +598,7 @@ export const thriftRuneOOMIncrease = () => {
     + 1.5 * CalcECC('ascension', player.challengecompletions[14])
     + player.cubeUpgrades[37]
     + getTalisman('midas').bonus.thriftOOMBonus
-    + +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.runeOOMBonus
+    + +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.metadata.runeOOMBonus
   )
 }
 
@@ -610,13 +610,13 @@ export const superiorIntellectOOMIncrease = () => {
     + 1.5 * CalcECC('ascension', player.challengecompletions[14])
     + player.cubeUpgrades[37]
     + getTalisman('polymath').bonus.SIOOMBonus
-    + +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.runeOOMBonus
+    + +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.metadata.runeOOMBonus
   )
 }
 
 export const infiniteAscentOOMIncrease = () => {
   return (
-    +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.infiniteAscentOOMBonus
+    +player.blueberryUpgrades.ambrosiaRuneOOMBonus.bonus.metadata.infiniteAscentOOMBonus
   )
 }
 

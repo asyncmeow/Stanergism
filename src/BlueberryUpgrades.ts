@@ -48,9 +48,14 @@ export type BlueberryUpgradeNames =
 export type BlueberryOpt = Partial<Record<BlueberryUpgradeNames, number>>
 export type BlueberryLoadoutMode = 'saveTree' | 'loadTree'
 
+interface BlueberryRewardsFuckingHell {
+  desc: () => string
+  metadata: Record<string, string | number | boolean>
+}
+
 export interface IBlueberryData extends Omit<IUpgradeData, 'name' | 'description' | 'effect'> {
   costFormula(this: void, level: number, baseCost: number): number
-  rewards(this: void, n: number): Record<string, number | boolean | string>
+  rewards(this: void, n: number): BlueberryRewardsFuckingHell
   extraLevelCalc: () => number
   blueberryCost: number
   ambrosiaInvested?: number
@@ -62,7 +67,7 @@ export interface IBlueberryData extends Omit<IUpgradeData, 'name' | 'description
 
 export class BlueberryUpgrade extends DynamicUpgrade {
   readonly costFormula: (level: number, baseCost: number) => number
-  readonly rewards: (n: number) => Record<string, number | boolean | string>
+  readonly rewards: (n: number) => BlueberryRewardsFuckingHell
   public ambrosiaInvested = 0
   public blueberriesInvested = 0
   public blueberryCost: number
@@ -365,9 +370,11 @@ export const blueberryUpgradeData: Record<
       const cubeAmount = 1 + 0.05 * n
       const quarkAmount = 1 + 0.01 * n
       return {
-        quarks: quarkAmount,
-        cubes: cubeAmount,
-        desc: String(
+        metadata: {
+          quarks: quarkAmount,
+          cubes: cubeAmount
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaTutorial.effect', {
             cubeAmount: format(100 * (cubeAmount - 1), 0, true),
             quarkAmount: format(100 * (quarkAmount - 1), 0, true)
@@ -387,8 +394,10 @@ export const blueberryUpgradeData: Record<
     rewards: (n: number) => {
       const quarkAmount = 1 + 0.01 * n
       return {
-        quarks: quarkAmount,
-        desc: String(
+        metadata: {
+          quarks: quarkAmount
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaQuarks1.effect', {
             amount: format(100 * (quarkAmount - 1), 0, true)
           })
@@ -410,8 +419,10 @@ export const blueberryUpgradeData: Record<
     rewards: (n: number) => {
       const cubeAmount = (1 + 0.05 * n) * Math.pow(1.1, Math.floor(n / 5))
       return {
-        cubes: cubeAmount,
-        desc: String(
+        metadata: {
+          cubes: cubeAmount
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaCubes1.effect', {
             amount: format(100 * (cubeAmount - 1), 2, true)
           })
@@ -433,8 +444,10 @@ export const blueberryUpgradeData: Record<
     rewards: (n: number) => {
       const val = 2 * n + 12 * Math.floor(n / 10)
       return {
-        ambrosiaLuck: val,
-        desc: String(
+        metadata: {
+          ambrosiaLuck: val
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaLuck1.effect', {
             amount: format(val)
           })
@@ -459,8 +472,10 @@ export const blueberryUpgradeData: Record<
         + baseVal
           * Math.floor(Math.pow(Math.log10(Number(player.worlds) + 1) + 1, 2))
       return {
-        cubes: val,
-        desc: String(
+        metadata: {
+          cubes: val
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaQuarkCube1.effect', {
             amount: format(100 * (val - 1), 2, true)
           })
@@ -484,8 +499,10 @@ export const blueberryUpgradeData: Record<
       const baseVal = 0.0005 * n
       const val = 1 + baseVal * calculateAmbrosiaLuck()
       return {
-        cubes: val,
-        desc: String(
+        metadata: {
+          cubes: val
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaLuckCube1.effect', {
             amount: format(100 * (val - 1), 2, true)
           })
@@ -517,8 +534,10 @@ export const blueberryUpgradeData: Record<
             + Math.floor(Math.log10(player.wowOcteracts + 1))
             + 6)
       return {
-        quarks: val,
-        desc: String(
+        metadata: {
+          quarks: val
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaCubeQuark1.effect', {
             amount: format(100 * (val - 1), 2, true)
           })
@@ -548,8 +567,10 @@ export const blueberryUpgradeData: Record<
       )
       const val = 1 + baseVal * effectiveLuck
       return {
-        quarks: val,
-        desc: String(
+        metadata: {
+          quarks: val
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaLuckQuark1.effect', {
             amount: format(100 * (val - 1), 2, true)
           })
@@ -580,8 +601,10 @@ export const blueberryUpgradeData: Record<
           + Math.floor(Math.log10(player.wowOcteracts + 1))
           + 6)
       return {
-        ambrosiaLuck: val,
-        desc: String(
+        metadata: {
+          ambrosiaLuck: val
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaCubeLuck1.effect', {
             amount: format(val, 2, true)
           })
@@ -606,8 +629,10 @@ export const blueberryUpgradeData: Record<
       const val = baseVal
         * Math.floor(Math.pow(Math.log10(Number(player.worlds) + 1) + 1, 2))
       return {
-        ambrosiaLuck: val,
-        desc: String(
+        metadata: {
+          ambrosiaLuck: val
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaQuarkLuck1.effect', {
             amount: format(val, 2, true)
           })
@@ -634,8 +659,10 @@ export const blueberryUpgradeData: Record<
               / 1000)
           * n
       return {
-        quarks: quarkAmount,
-        desc: String(
+        metadata: {
+          quarks: quarkAmount
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaQuarks2.effect', {
             amount: format(100 * (quarkAmount - 1), 0, true)
           })
@@ -663,8 +690,10 @@ export const blueberryUpgradeData: Record<
           * n)
         * Math.pow(1.15, Math.floor(n / 5))
       return {
-        cubes: cubeAmount,
-        desc: String(
+        metadata: {
+          cubes: cubeAmount
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaCubes2.effect', {
             amount: format(100 * (cubeAmount - 1), 2, true)
           })
@@ -689,8 +718,10 @@ export const blueberryUpgradeData: Record<
           * n
         + 40 * Math.floor(n / 10)
       return {
-        ambrosiaLuck: val,
-        desc: String(
+        metadata: {
+          ambrosiaLuck: val
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaLuck2.effect', {
             amount: format(val, 1, true)
           })
@@ -714,8 +745,10 @@ export const blueberryUpgradeData: Record<
       const quark3Base = 0.05 * n
       const quarkAmount = 1 + quark3Base * quark2Mult
       return {
-        quarks: quarkAmount,
-        desc: String(
+        metadata: {
+          quarks: quarkAmount
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaQuarks3.effect', {
             amount: format(100 * (quarkAmount - 1), 0, true)
           })
@@ -741,8 +774,10 @@ export const blueberryUpgradeData: Record<
       const cube3Exponential = Math.pow(1.2, Math.floor(n / 5))
       const cubeAmount = (1 + cube3Base * cube2Multi) * cube3Exponential
       return {
-        cubes: cubeAmount,
-        desc: String(
+        metadata: {
+          cubes: cubeAmount
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaCubes3.effect', {
             amount: format(100 * (cubeAmount - 1), 2, true)
           })
@@ -765,8 +800,10 @@ export const blueberryUpgradeData: Record<
     rewards: (n: number) => {
       const perLevel = calculateBlueberryInventory()
       return {
-        ambrosiaLuck: perLevel * n,
-        desc: String(
+        metadata: {
+          ambrosiaLuck: perLevel * n
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaLuck3.effect', {
             amount: format(perLevel * n, 0, true)
           })
@@ -790,8 +827,10 @@ export const blueberryUpgradeData: Record<
       const digits = Math.ceil(Math.log10(player.lifetimeRedAmbrosia + 1))
         + Math.ceil(Math.log10(player.lifetimeAmbrosia + 1))
       return {
-        ambrosiaLuckPercentage: 1 / 10000 * digits * n,
-        desc: String(
+        metadata: {
+          ambrosiaLuckPercentage: 1 / 10000 * digits * n
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaLuck4.effect', {
             amount: formatAsPercentIncrease(1 + digits * n / 10000, 2)
           })
@@ -810,8 +849,10 @@ export const blueberryUpgradeData: Record<
     rewards: (n: number) => {
       const val = 1 + (n * getQuarkBonus()) / 100
       return {
-        blueberryGeneration: val,
-        desc: String(
+        metadata: {
+          blueberryGeneration: val
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaPatreon.effect', {
             amount: format(100 * (val - 1), 0, true)
           })
@@ -830,9 +871,11 @@ export const blueberryUpgradeData: Record<
     rewards: (n: number) => {
       const luck = calculateAmbrosiaLuck()
       return {
-        luckMult: n,
-        obtainiumMult: n * luck,
-        desc: String(
+        metadata: {
+          luckMult: n,
+          obtainiumMult: n * luck
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaObtainium1.effect', {
             amount: format((n * luck) / 10, 1, true)
           })
@@ -851,9 +894,11 @@ export const blueberryUpgradeData: Record<
     rewards: (n: number) => {
       const luck = calculateAmbrosiaLuck()
       return {
-        luckMult: n,
-        offeringMult: n * luck,
-        desc: String(
+        metadata: {
+          luckMult: n,
+          offeringMult: n * luck
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaOffering1.effect', {
             amount: format((n * luck) / 10, 1, true)
           })
@@ -872,11 +917,13 @@ export const blueberryUpgradeData: Record<
     rewards: (n: number) => {
       const fourByFourBase = n
       return {
-        hyperFlux: Math.pow(
-          1 + (1 / 100) * fourByFourBase,
-          player.platonicUpgrades[19]
-        ),
-        desc: String(
+        metadata: {
+          hyperFlux: Math.pow(
+            1 + (1 / 100) * fourByFourBase,
+            player.platonicUpgrades[19]
+          )
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaHyperflux.effect', {
             amount: format(
               100
@@ -902,8 +949,10 @@ export const blueberryUpgradeData: Record<
     rewards: (n: number) => {
       const val = n
       return {
-        offering: val,
-        desc: String(
+        metadata: {
+          offering: val
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaBaseOffering1.effect', {
             amount: format(val, 0, true)
           })
@@ -922,8 +971,10 @@ export const blueberryUpgradeData: Record<
     rewards: (n: number) => {
       const val = n
       return {
-        obtainium: val,
-        desc: String(
+        metadata: {
+          obtainium: val
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaBaseObtainium1.effect', {
             amount: format(val, 0, true)
           })
@@ -942,8 +993,10 @@ export const blueberryUpgradeData: Record<
     rewards: (n: number) => {
       const val = n
       return {
-        offering: val,
-        desc: String(
+        metadata: {
+          offering: val
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaBaseOffering2.effect', {
             amount: format(val, 0, true)
           })
@@ -966,8 +1019,10 @@ export const blueberryUpgradeData: Record<
     rewards: (n: number) => {
       const val = n
       return {
-        obtainium: val,
-        desc: String(
+        metadata: {
+          obtainium: val
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaBaseObtainium2.effect', {
             amount: format(val, 0, true)
           })
@@ -990,8 +1045,10 @@ export const blueberryUpgradeData: Record<
     rewards: (n: number) => {
       const val = (player.insideSingularityChallenge) ? 0 : n
       return {
-        singularityReduction: val,
-        desc: String(
+        metadata: {
+          singularityReduction: val
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaSingReduction1.effect', {
             amount: format(val, 0, true)
           })
@@ -1013,8 +1070,10 @@ export const blueberryUpgradeData: Record<
     rewards: (n: number) => {
       const val = n
       return {
-        freeLevels: val,
-        desc: String(
+        metadata: {
+          freeLevels: val
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaInfiniteShopUpgrades1.effect', {
             amount: format(val, 0, true)
           })
@@ -1038,8 +1097,10 @@ export const blueberryUpgradeData: Record<
     rewards: (n: number) => {
       const val = n
       return {
-        freeLevels: val,
-        desc: String(
+        metadata: {
+          freeLevels: val
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaInfiniteShopUpgrades2.effect', {
             amount: format(val, 0, true)
           })
@@ -1064,8 +1125,10 @@ export const blueberryUpgradeData: Record<
     rewards: (n: number) => {
       const val = (player.insideSingularityChallenge) ? n : 0
       return {
-        singularityReduction: val,
-        desc: String(
+        metadata: {
+          singularityReduction: val
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaSingReduction2.effect', {
             amount: format(val, 0, true)
           })
@@ -1085,8 +1148,10 @@ export const blueberryUpgradeData: Record<
     rewards: (n: number) => {
       const val = n / 200
       return {
-        talismanBonusRuneLevel: val,
-        desc: String(
+        metadata: {
+          talismanBonusRuneLevel: val
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaTalismanBonusRuneLevel.effect', {
             amount: formatAsPercentIncrease(1 + val, 2)
           })
@@ -1107,9 +1172,11 @@ export const blueberryUpgradeData: Record<
       const val = n
       const val2 = n / 1000
       return {
-        runeOOMBonus: val,
-        infiniteAscentOOMBonus: val2,
-        desc: String(
+        metadata: {
+          runeOOMBonus: val,
+          infiniteAscentOOMBonus: val2
+        },
+        desc: () => (
           i18next.t('ambrosia.data.ambrosiaRuneOOMBonus.effect', {
             amount: format(val, 0, false),
             amount2: format(val2, 3, false)
