@@ -341,10 +341,10 @@ export const automaticTools = (input: AutoToolInput, time: number) => {
         // Automatic purchase of Blessings
         if (player.highestSingularityCount >= 15) {
           if (player.toggles[36]) {
-            buyAllBlessingLevels(player.offerings.div(2), true)
+            buyAllBlessingLevels(player.offerings.div(2))
           }
           if (player.toggles[37]) {
-            buyAllSpiritLevels(player.offerings.div(2), true)
+            buyAllSpiritLevels(player.offerings.div(2))
           }
         }
         if (

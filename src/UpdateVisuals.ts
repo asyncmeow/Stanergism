@@ -56,7 +56,7 @@ import { getGoldenQuarkCost, type SingularityDataKeys } from './singularity'
 import { loadStatisticsUpdate } from './Statistics'
 import { format, formatAsPercentIncrease, formatTimeShort, player } from './Synergism'
 import { getActiveSubTab, Tabs } from './Tabs'
-import { getTalisman, type TalismanKeys } from './Talismans'
+import { getTalisman, updateAllTalismanHTML, type TalismanKeys } from './Talismans'
 import type { Player, ZeroToFour } from './types/Synergism'
 import { sumContents, timeReminingHours } from './Utility'
 import { Globals as G } from './Variables'
@@ -651,6 +651,7 @@ export const visualUpdateRunes = () => {
         y: format(getTalisman(talisman as TalismanKeys).effectiveLevelCap, 0, true)
       })
     }
+    updateAllTalismanHTML()
   } else if (getActiveSubTab() === 2) {
     for (const runeBlessing of Object.keys(player.runeBlessings)) {
       getRuneBlessing(runeBlessing as RuneBlessingKeys).updateRuneHTML()

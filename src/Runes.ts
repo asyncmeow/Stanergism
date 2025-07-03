@@ -243,7 +243,7 @@ abstract class AbstractRune<K extends string> {
     this.updateRuneEXP(exp)
   }
 
-  levelRune (timesLeveled: number, budget: Decimal, auto = false) {
+  levelRune (timesLeveled: number, budget: Decimal) {
     let budgetUsed = new Decimal(0)
 
     const expRequired = this.computeEXPLeftToLevel(this.level + timesLeveled)
@@ -260,12 +260,7 @@ abstract class AbstractRune<K extends string> {
     player.offerings = player.offerings.sub(budgetUsed)
 
     this.updatePlayerEXP()
-    this.updateRuneHTML()
     this.updateRuneEffectHTML()
-
-    if (!auto) {
-      this.updateFocusedRuneHTML()
-    }
   }
 
   abstract updateRuneHTML (): void
@@ -386,6 +381,7 @@ class RuneBlessing<K extends RuneBlessingKeys> extends AbstractRune<K> {
   }
 
   updateRuneHTML () {
+    assert(G.currentTab === Tabs.Runes, 'current tab is not Runes')
     const levelsToDisplay = Math.min(
       player.runeBlessingBuyAmount,
       Math.max(1, this.getLevelEstimate(player.offerings) - this.level)
@@ -455,6 +451,7 @@ class RuneSpirit<K extends RuneSpiritKeys> extends AbstractRune<K> {
   }
 
   updateRuneHTML () {
+    assert(G.currentTab === Tabs.Runes, 'current tab is not Runes')
     const levelsToDisplay = Math.min(
       player.runeSpiritBuyAmount,
       Math.max(1, this.getLevelEstimate(player.offerings) - this.level)
@@ -1524,41 +1521,41 @@ export const sacrificeOfferings = (rune: RuneKeys, budget: Decimal, auto = false
     levelsToAdd *= 20
   }
 
-  getRune(rune).levelRune(levelsToAdd, budget, auto)
+  getRune(rune).levelRune(levelsToAdd, budget)
 
   player.offerings = Decimal.max(0, player.offerings)
 }
 
-export const buyBlessingLevels = (blessing: RuneBlessingKeys, budget: Decimal, auto = false) => {
+export const buyBlessingLevels = (blessing: RuneBlessingKeys, budget: Decimal) => {
   if (!achievementManager.getBonus('blessingUnlock')) {
     return
   }
 
   const levelsToAdd = player.runeBlessingBuyAmount
 
-  getRuneBlessing(blessing).levelRune(levelsToAdd, budget, auto)
+  getRuneBlessing(blessing).levelRune(levelsToAdd, budget)
 }
 
-export const buyAllBlessingLevels = (budget: Decimal, auto = false) => {
+export const buyAllBlessingLevels = (budget: Decimal) => {
   const ratio = 5 // Change if there are more blessings later on
   for (const key of Object.keys(runeBlessingData) as RuneBlessingKeys[]) {
-    buyBlessingLevels(key, Decimal.floor(budget.div(ratio)), auto)
+    buyBlessingLevels(key, Decimal.floor(budget.div(ratio)))
   }
 }
 
-export const buySpiritLevels = (spirit: RuneSpiritKeys, budget: Decimal, auto = false) => {
+export const buySpiritLevels = (spirit: RuneSpiritKeys, budget: Decimal) => {
   if (player.challengecompletions[12] === 0) {
     return
   }
 
   const levelsToAdd = player.runeSpiritBuyAmount
 
-  getRuneSpirit(spirit).levelRune(levelsToAdd, budget, auto)
+  getRuneSpirit(spirit).levelRune(levelsToAdd, budget)
 }
 
-export const buyAllSpiritLevels = (budget: Decimal, auto = false) => {
+export const buyAllSpiritLevels = (budget: Decimal) => {
   const ratio = 5 // Change if there are more spirits later on
   for (const key of Object.keys(runeSpiritData) as RuneSpiritKeys[]) {
-    buySpiritLevels(key, Decimal.floor(budget.div(ratio)), auto)
+    buySpiritLevels(key, Decimal.floor(budget.div(ratio)))
   }
 }

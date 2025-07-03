@@ -47,7 +47,7 @@ import { forceResetShopUpgrades, shopData } from './Shop'
 import { calculateSingularityDebuff, getFastForwardTotalMultiplier } from './singularity'
 import { blankSave, deepClone, format, player, saveSynergy, updateAll, updateEffectiveLevelMult } from './Synergism'
 import { changeSubTab, changeTab, Tabs } from './Tabs'
-import { resetTalismans, updateAllTalismanHTML, updateTalismanInventory } from './Talismans'
+import { resetTalismans, updateTalismanInventory } from './Talismans'
 import { calculateTesseractBlessings } from './Tesseracts'
 import { IconSets } from './Themes'
 import { clearInterval, setInterval } from './Timers'
@@ -698,7 +698,6 @@ export const reset = (input: resetNames, fast = false, from = 'unknown') => {
     player.ascensionCounterReal = 0
     player.ascensionCounterRealReal = 0
 
-    updateAllTalismanHTML()
     updateTalismanInventory()
     calculateCubeBlessings()
     calculateTesseractBlessings()
