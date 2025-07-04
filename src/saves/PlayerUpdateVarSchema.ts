@@ -209,6 +209,7 @@ export const playerUpdateVarSchema = playerSchema.transform((player) => {
   Reflect.deleteProperty(player, 'hepteractCrafts')
   Reflect.deleteProperty(player, 'singularityUpgrades')
   Reflect.deleteProperty(player, 'octeractUpgrades')
+  Reflect.deleteProperty(player, 'blueberryUpgrades')
 
   return player
 })
