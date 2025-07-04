@@ -437,10 +437,14 @@ export class AchievementManager {
   }
 
   updateTotalPoints () {
-    this._totalPoints = Object.entries(this.achievementMap)
-      .filter(([, unlocked]) => unlocked)
-      .reduce((sum, [index]) => sum + achievements[Number(index)].pointValue, 0)
-      + sumContents(Object.values(this.progressiveAchievements).map((v) => v.rewardedAP))
+    for (let i = 0; i < this.achievementMap.length; i++) {
+      const unlocked = this.achievementMap[i]
+      if (unlocked) {
+        this._totalPoints += achievements[i].pointValue
+      }
+    }
+
+    this._totalPoints += sumContents(Object.values(this.progressiveAchievements).map((v) => v.rewardedAP))
   }
 
   updateAchievements (achievements: number[]) {
@@ -533,7 +537,7 @@ export class AchievementManager {
   // Convert achievementMap to an array of numbers, where 1 means unlocked and 0 means not unlocked
   // Used when saving with the player schema
   get achArray (): number[] {
-    return Object.values(this.achievementMap).map((val) => (val ? 1 : 0))
+    return this.achievementMap.map((val) => (val ? 1 : 0))
   }
 
   // Convert progressiveAchievements to an object with keys as the progressive achievement names
@@ -2549,7 +2553,7 @@ export const achievementsByReward: Record<AchievementRewards, number[]> = Object
     return rewards
   }, {} as Record<AchievementRewards, number[]>)
 
-export const getAchieveReward: Record<AchievementRewards, (ach: { [index: number]: boolean }) => number | boolean> = {
+export const getAchieveReward: Record<AchievementRewards, (ach: boolean[]) => number | boolean> = {
   acceleratorPower: (ach): number => {
     return achievementsByReward.acceleratorPower.reduce(
       (sum, index) => sum + (ach[index] ? achievements[index].reward!.acceleratorPower!() : 0),
