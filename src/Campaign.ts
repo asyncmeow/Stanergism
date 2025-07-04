@@ -9,12 +9,12 @@ import {
   corruptionStatsUpdate,
   maxCorruptionLevel
 } from './Corruptions'
+import { getOcteractUpgradeEffect } from './Octeracts'
 import { reset } from './Reset'
 import { getGQUpgradeEffect } from './singularity'
 import { format, formatAsPercentIncrease, player } from './Synergism'
 import { IconSets } from './Themes'
 import { Alert, Confirm, Notification } from './UpdateHTML'
-import { getOcteractUpgradeEffect } from './Octeracts'
 
 export type CampaignKeys =
   | 'first'

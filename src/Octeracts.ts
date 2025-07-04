@@ -60,10 +60,10 @@ export interface OcteractUpgrade {
   qualityOfLife: boolean
   costPerLevel: number
   costFormula(this: void, level: number, baseCost: number): number
-  effect (n: number): number
-  effectDescription (n: number): string
-  name (): string
-  description (): string
+  effect(n: number): number
+  effectDescription(n: number): string
+  name(): string
+  description(): string
 }
 
 export const octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade> = {
@@ -81,7 +81,7 @@ export const octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade> = {
     },
     effectDescription: (n: number) => i18next.t('octeract.data.octeractStarter.effect', { n: (n > 0) ? '' : 'not' }),
     name: () => i18next.t('octeract.data.octeractStarter.name'),
-    description: () => i18next.t('octeract.data.octeractStarter.description'),
+    description: () => i18next.t('octeract.data.octeractStarter.description')
   },
   octeractGain: {
     level: 0,
@@ -97,10 +97,10 @@ export const octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade> = {
     },
     effectDescription: function(n: number) {
       const effectValue = this.effect(n)
-      return i18next.t('octeract.data.octeractGain.effect', { n: formatAsPercentIncrease(effectValue, 2,) })
+      return i18next.t('octeract.data.octeractGain.effect', { n: formatAsPercentIncrease(effectValue, 2) })
     },
     name: () => i18next.t('octeract.data.octeractGain.name'),
-    description: () => i18next.t('octeract.data.octeractGain.description'),
+    description: () => i18next.t('octeract.data.octeractGain.description')
   },
   octeractGain2: {
     level: 0,
@@ -119,7 +119,7 @@ export const octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade> = {
       return i18next.t('octeract.data.octeractGain2.effect', { n: formatAsPercentIncrease(effectValue, 2) })
     },
     name: () => i18next.t('octeract.data.octeractGain2.name'),
-    description: () => i18next.t('octeract.data.octeractGain2.description'),
+    description: () => i18next.t('octeract.data.octeractGain2.description')
   },
   octeractQuarkGain: {
     level: 0,
@@ -145,7 +145,7 @@ export const octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade> = {
       return i18next.t('octeract.data.octeractQuarkGain.effect', { n: formatAsPercentIncrease(effectValue, 2) })
     },
     name: () => i18next.t('octeract.data.octeractQuarkGain.name'),
-    description: () => i18next.t('octeract.data.octeractQuarkGain.description'),
+    description: () => i18next.t('octeract.data.octeractQuarkGain.description')
   },
   octeractQuarkGain2: {
     level: 0,
@@ -161,7 +161,7 @@ export const octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade> = {
     },
     effectDescription: (n: number) => i18next.t('octeract.data.octeractQuarkGain2.effect', { n: n > 0 ? '' : 'NOT' }),
     name: () => i18next.t('octeract.data.octeractQuarkGain2.name'),
-    description: () => i18next.t('octeract.data.octeractQuarkGain2.description'),
+    description: () => i18next.t('octeract.data.octeractQuarkGain2.description')
   },
   octeractCorruption: {
     level: 0,
@@ -177,7 +177,7 @@ export const octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade> = {
     },
     effectDescription: (n: number) => i18next.t('octeract.data.octeractCorruption.effect', { n }),
     name: () => i18next.t('octeract.data.octeractCorruption.name'),
-    description: () => i18next.t('octeract.data.octeractCorruption.description'),
+    description: () => i18next.t('octeract.data.octeractCorruption.description')
   },
   octeractGQCostReduce: {
     level: 0,
@@ -193,7 +193,7 @@ export const octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade> = {
     },
     effectDescription: (n: number) => i18next.t('octeract.data.octeractGQCostReduce.effect', { n }),
     name: () => i18next.t('octeract.data.octeractGQCostReduce.name'),
-    description: () => i18next.t('octeract.data.octeractGQCostReduce.description'),
+    description: () => i18next.t('octeract.data.octeractGQCostReduce.description')
   },
   octeractExportQuarks: {
     level: 0,
@@ -207,9 +207,10 @@ export const octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade> = {
     effect: (n: number) => {
       return 4 * n / 10 + 1
     },
-    effectDescription: (n: number) => i18next.t('octeract.data.octeractExportQuarks.effect', { n: format(40 * n, 0, true) }),
+    effectDescription: (n: number) =>
+      i18next.t('octeract.data.octeractExportQuarks.effect', { n: format(40 * n, 0, true) }),
     name: () => i18next.t('octeract.data.octeractExportQuarks.name'),
-    description: () => i18next.t('octeract.data.octeractExportQuarks.description'),
+    description: () => i18next.t('octeract.data.octeractExportQuarks.description')
   },
   octeractImprovedDaily: {
     level: 0,
@@ -257,7 +258,8 @@ export const octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade> = {
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t('octeract.data.octeractImprovedDaily3.effect', { n: `${n} +${0.5 * n}%` }),
+    effectDescription: (n: number) =>
+      i18next.t('octeract.data.octeractImprovedDaily3.effect', { n: `${n} +${0.5 * n}%` }),
     name: () => i18next.t('octeract.data.octeractImprovedDaily3.name'),
     description: () => i18next.t('octeract.data.octeractImprovedDaily3.description'),
     qualityOfLife: true
@@ -292,7 +294,8 @@ export const octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade> = {
     effect: (n: number) => {
       return n / 100
     },
-    effectDescription: (n: number) => i18next.t('octeract.data.octeractImprovedGlobalSpeed.effect', { n: format(n, 0, true) }),
+    effectDescription: (n: number) =>
+      i18next.t('octeract.data.octeractImprovedGlobalSpeed.effect', { n: format(n, 0, true) }),
     name: () => i18next.t('octeract.data.octeractImprovedGlobalSpeed.name'),
     description: () => i18next.t('octeract.data.octeractImprovedGlobalSpeed.description'),
     qualityOfLife: false
@@ -308,7 +311,8 @@ export const octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade> = {
     effect: (n: number) => {
       return n / 2000
     },
-    effectDescription: (n: number) => i18next.t('octeract.data.octeractImprovedAscensionSpeed.effect', { n: format(n / 20, 2, true) }),
+    effectDescription: (n: number) =>
+      i18next.t('octeract.data.octeractImprovedAscensionSpeed.effect', { n: format(n / 20, 2, true) }),
     name: () => i18next.t('octeract.data.octeractImprovedAscensionSpeed.name'),
     description: () => i18next.t('octeract.data.octeractImprovedAscensionSpeed.description'),
     qualityOfLife: false
@@ -324,7 +328,8 @@ export const octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade> = {
     effect: (n: number) => {
       return n / 2000
     },
-    effectDescription: (n: number) => i18next.t('octeract.data.octeractImprovedAscensionSpeed2.effect', { n: format(n / 50, 2, true) }),
+    effectDescription: (n: number) =>
+      i18next.t('octeract.data.octeractImprovedAscensionSpeed2.effect', { n: format(n / 50, 2, true) }),
     name: () => i18next.t('octeract.data.octeractImprovedAscensionSpeed2.name'),
     description: () => i18next.t('octeract.data.octeractImprovedAscensionSpeed2.description'),
     qualityOfLife: false
@@ -340,7 +345,8 @@ export const octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade> = {
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t('octeract.data.octeractImprovedFree.effect', { n: (n > 0) ? '' : 'NOT' }),
+    effectDescription: (n: number) =>
+      i18next.t('octeract.data.octeractImprovedFree.effect', { n: (n > 0) ? '' : 'NOT' }),
     name: () => i18next.t('octeract.data.octeractImprovedFree.name'),
     description: () => i18next.t('octeract.data.octeractImprovedFree.description'),
     qualityOfLife: false
@@ -356,7 +362,8 @@ export const octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade> = {
     effect: (n: number) => {
       return 0.05 * n
     },
-    effectDescription: (n: number) => i18next.t('octeract.data.octeractImprovedFree2.effect', { n: format(n / 20, 2, true) }),
+    effectDescription: (n: number) =>
+      i18next.t('octeract.data.octeractImprovedFree2.effect', { n: format(n / 20, 2, true) }),
     name: () => i18next.t('octeract.data.octeractImprovedFree2.name'),
     description: () => i18next.t('octeract.data.octeractImprovedFree2.description'),
     qualityOfLife: false
@@ -372,7 +379,8 @@ export const octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade> = {
     effect: (n: number) => {
       return 0.05 * n
     },
-    effectDescription: (n: number) => i18next.t('octeract.data.octeractImprovedFree3.effect', { n: format(n / 20, 2, true) }),
+    effectDescription: (n: number) =>
+      i18next.t('octeract.data.octeractImprovedFree3.effect', { n: format(n / 20, 2, true) }),
     name: () => i18next.t('octeract.data.octeractImprovedFree3.name'),
     description: () => i18next.t('octeract.data.octeractImprovedFree3.description'),
     qualityOfLife: false
@@ -511,7 +519,8 @@ export const octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade> = {
     effect: (n: number) => {
       return n / 100
     },
-    effectDescription: (n: number) => i18next.t('octeract.data.octeractAscensionsOcteractGain.effect', { n: format(n, 1, true) }),
+    effectDescription: (n: number) =>
+      i18next.t('octeract.data.octeractAscensionsOcteractGain.effect', { n: format(n, 1, true) }),
     name: () => i18next.t('octeract.data.octeractAscensionsOcteractGain.name'),
     description: () => i18next.t('octeract.data.octeractAscensionsOcteractGain.description'),
     qualityOfLife: false
@@ -711,7 +720,8 @@ export const octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade> = {
     effect: (n: number) => {
       return 1 + 2 * n / 100
     },
-    effectDescription: (n: number) => i18next.t('octeract.data.octeractAmbrosiaGeneration4.effect', { n: format(2 * n) }),
+    effectDescription: (n: number) =>
+      i18next.t('octeract.data.octeractAmbrosiaGeneration4.effect', { n: format(2 * n) }),
     name: () => i18next.t('octeract.data.octeractAmbrosiaGeneration4.name'),
     description: () => i18next.t('octeract.data.octeractAmbrosiaGeneration4.description'),
     qualityOfLife: true
@@ -883,19 +893,20 @@ export const octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade> = {
   }
 }
 
-export const blankOcteractLevelObject: Record<OcteractDataKeys, { level: number; freeLevel: number }> = Object.fromEntries(
-  Object.keys(octeractUpgrades).map((key) => [
-    key as OcteractDataKeys,
-    {
-      level: 0,
-      freeLevel: 0
-    }
-  ])
-) as Record<OcteractDataKeys, { level: number; freeLevel: number }>
+export const blankOcteractLevelObject: Record<OcteractDataKeys, { level: number; freeLevel: number }> = Object
+  .fromEntries(
+    Object.keys(octeractUpgrades).map((key) => [
+      key as OcteractDataKeys,
+      {
+        level: 0,
+        freeLevel: 0
+      }
+    ])
+  ) as Record<OcteractDataKeys, { level: number; freeLevel: number }>
 
 export const getOcteractUpgradeCostTNL = (upgradeKey: OcteractDataKeys): number => {
   const upgrade = octeractUpgrades[upgradeKey]
-  
+
   if (upgrade.level === upgrade.maxLevel) {
     return 0
   }
@@ -911,14 +922,14 @@ export const computeOcteractFreeLevelSoftcap = (upgradeKey: OcteractDataKeys): n
 
 export const actualOcteractUpgradeTotalLevels = (upgradeKey: OcteractDataKeys): number => {
   const upgrade = octeractUpgrades[upgradeKey]
-  
+
   if (
     (player.singularityChallenges.noOcteracts.enabled || player.singularityChallenges.sadisticPrequel.enabled)
     && !upgrade.qualityOfLife
   ) {
     return 0
   }
-  
+
   const actualFreeLevels = computeOcteractFreeLevelSoftcap(upgradeKey)
 
   if (upgrade.level >= actualFreeLevels) {
@@ -931,7 +942,7 @@ export const actualOcteractUpgradeTotalLevels = (upgradeKey: OcteractDataKeys): 
 export const upgradeOcteractToString = (upgradeKey: OcteractDataKeys): string => {
   const upgrade = octeractUpgrades[upgradeKey]
   const costNextLevel = getOcteractUpgradeCostTNL(upgradeKey)
-  
+
   const maxLevel = upgrade.maxLevel === -1
     ? ''
     : `/${format(upgrade.maxLevel, 0, true)}`
@@ -957,7 +968,7 @@ export const upgradeOcteractToString = (upgradeKey: OcteractDataKeys): string =>
       ? formatTimeShort((costNextLevel - player.wowOcteracts) / octPerSecond)
       : `${i18next.t('general.infinity')}`
   }
-  
+
   const affordableInfo = isMaxLevel
     ? `<span style="color: plum"> ${i18next.t('general.maxed')}</span>`
     : isAffordable

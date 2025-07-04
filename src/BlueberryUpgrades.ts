@@ -4,7 +4,7 @@ import { calculateAmbrosiaLuck, calculateBlueberryInventory } from './Calculate'
 import { exportData, saveFilename } from './ImportExport'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { getQuarkBonus } from './Quark'
-import { getRedAmbrosiaUpgrade } from './RedAmbrosiaUpgrades'
+import { getRedAmbrosiaUpgradeEffects } from './RedAmbrosiaUpgrades'
 import { format, formatAsPercentIncrease, player } from './Synergism'
 import { Alert, Confirm, Prompt } from './UpdateHTML'
 import { visualUpdateAmbrosia } from './UpdateVisuals'
@@ -96,9 +96,9 @@ export const ambrosiaUpgrades: {
         quarkAmount: format(100 * (vals.quarks - 1), 0, true)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeTutorialLevels').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeTutorialLevels').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaTutorial.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaTutorial.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaTutorial.description')
   },
   ambrosiaQuarks1: {
     level: 0,
@@ -126,9 +126,9 @@ export const ambrosiaUpgrades: {
         amount: format(100 * (vals.quarks - 1), 0, true)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow2').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow2').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaQuarks1.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaQuarks1.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaQuarks1.description')
   },
   ambrosiaCubes1: {
     level: 0,
@@ -156,9 +156,9 @@ export const ambrosiaUpgrades: {
         amount: format(100 * (vals.cubes - 1), 2, true)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow2').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow2').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaCubes1.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaCubes1.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaCubes1.description')
   },
   ambrosiaLuck1: {
     level: 0,
@@ -186,9 +186,9 @@ export const ambrosiaUpgrades: {
         amount: format(vals.ambrosiaLuck)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow2').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow2').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaLuck1.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaLuck1.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaLuck1.description')
   },
   ambrosiaQuarkCube1: {
     level: 0,
@@ -220,9 +220,9 @@ export const ambrosiaUpgrades: {
         amount: format(100 * (vals.cubes - 1), 2, true)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow3').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow3').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaQuarkCube1.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaQuarkCube1.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaQuarkCube1.description')
   },
   ambrosiaLuckCube1: {
     level: 0,
@@ -252,9 +252,9 @@ export const ambrosiaUpgrades: {
         amount: format(100 * (vals.cubes - 1), 2, true)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow3').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow3').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaLuckCube1.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaLuckCube1.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaLuckCube1.description')
   },
   ambrosiaCubeQuark1: {
     level: 0,
@@ -292,9 +292,9 @@ export const ambrosiaUpgrades: {
         amount: format(100 * (vals.quarks - 1), 2, true)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow3').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow3').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaCubeQuark1.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaCubeQuark1.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaCubeQuark1.description')
   },
   ambrosiaLuckQuark1: {
     level: 0,
@@ -329,9 +329,9 @@ export const ambrosiaUpgrades: {
         amount: format(100 * (vals.quarks - 1), 2, true)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow3').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow3').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaLuckQuark1.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaLuckQuark1.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaLuckQuark1.description')
   },
   ambrosiaCubeLuck1: {
     level: 0,
@@ -368,9 +368,9 @@ export const ambrosiaUpgrades: {
         amount: format(vals.ambrosiaLuck, 2, true)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow3').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow3').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaCubeLuck1.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaCubeLuck1.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaCubeLuck1.description')
   },
   ambrosiaQuarkLuck1: {
     level: 0,
@@ -400,9 +400,9 @@ export const ambrosiaUpgrades: {
         amount: format(vals.ambrosiaLuck, 2, true)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow3').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow3').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaQuarkLuck1.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaQuarkLuck1.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaQuarkLuck1.description')
   },
   ambrosiaQuarks2: {
     level: 0,
@@ -434,9 +434,9 @@ export const ambrosiaUpgrades: {
         amount: format(100 * (vals.quarks - 1), 0, true)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow4').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow4').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaQuarks2.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaQuarks2.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaQuarks2.description')
   },
   ambrosiaCubes2: {
     level: 0,
@@ -470,9 +470,9 @@ export const ambrosiaUpgrades: {
         amount: format(100 * (vals.cubes - 1), 2, true)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow4').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow4').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaCubes2.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaCubes2.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaCubes2.description')
   },
   ambrosiaLuck2: {
     level: 0,
@@ -503,9 +503,9 @@ export const ambrosiaUpgrades: {
         amount: format(vals.ambrosiaLuck, 1, true)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow4').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow4').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaLuck2.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaLuck2.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaLuck2.description')
   },
   ambrosiaQuarks3: {
     level: 0,
@@ -536,9 +536,9 @@ export const ambrosiaUpgrades: {
         amount: format(100 * (vals.quarks - 1), 0, true)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow5').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow5').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaQuarks3.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaQuarks3.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaQuarks3.description')
   },
   ambrosiaCubes3: {
     level: 0,
@@ -570,9 +570,9 @@ export const ambrosiaUpgrades: {
         amount: format(100 * (vals.cubes - 1), 2, true)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow5').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow5').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaCubes3.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaCubes3.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaCubes3.description')
   },
   ambrosiaLuck3: {
     level: 0,
@@ -601,9 +601,9 @@ export const ambrosiaUpgrades: {
         amount: format(vals.ambrosiaLuck, 0, true)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow5').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow5').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaLuck3.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaLuck3.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaLuck3.description')
   },
   ambrosiaLuck4: {
     level: 0,
@@ -630,9 +630,9 @@ export const ambrosiaUpgrades: {
         amount: formatAsPercentIncrease(1 + vals.ambrosiaLuckPercentage, 2)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow5').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow5').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaLuck4.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaLuck4.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaLuck4.description')
   },
   ambrosiaPatreon: {
     level: 0,
@@ -660,7 +660,7 @@ export const ambrosiaUpgrades: {
     },
     extraLevelCalc: () => 0,
     name: () => i18next.t('ambrosia.data.ambrosiaPatreon.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaPatreon.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaPatreon.description')
   },
   ambrosiaObtainium1: {
     level: 0,
@@ -689,7 +689,7 @@ export const ambrosiaUpgrades: {
     },
     extraLevelCalc: () => 0,
     name: () => i18next.t('ambrosia.data.ambrosiaObtainium1.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaObtainium1.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaObtainium1.description')
   },
   ambrosiaOffering1: {
     level: 0,
@@ -718,7 +718,7 @@ export const ambrosiaUpgrades: {
     },
     extraLevelCalc: () => 0,
     name: () => i18next.t('ambrosia.data.ambrosiaOffering1.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaOffering1.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaOffering1.description')
   },
   ambrosiaHyperflux: {
     level: 0,
@@ -749,7 +749,7 @@ export const ambrosiaUpgrades: {
     },
     extraLevelCalc: () => 0,
     name: () => i18next.t('ambrosia.data.ambrosiaHyperflux.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaHyperflux.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaHyperflux.description')
   },
   ambrosiaBaseOffering1: {
     level: 0,
@@ -774,9 +774,9 @@ export const ambrosiaUpgrades: {
         amount: format(vals.offering, 0, true)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow2').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow2').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaBaseOffering1.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaBaseOffering1.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaBaseOffering1.description')
   },
   ambrosiaBaseObtainium1: {
     level: 0,
@@ -802,9 +802,9 @@ export const ambrosiaUpgrades: {
         amount: format(vals.obtainium, 0, true)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow2').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow2').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaBaseObtainium1.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaBaseObtainium1.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaBaseObtainium1.description')
   },
   ambrosiaBaseOffering2: {
     level: 0,
@@ -833,9 +833,9 @@ export const ambrosiaUpgrades: {
         amount: format(vals.offering, 0, true)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow4').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow4').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaBaseOffering2.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaBaseOffering2.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaBaseOffering2.description')
   },
   ambrosiaBaseObtainium2: {
     level: 0,
@@ -864,9 +864,9 @@ export const ambrosiaUpgrades: {
         amount: format(vals.obtainium, 0, true)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow4').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow4').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaBaseObtainium2.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaBaseObtainium2.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaBaseObtainium2.description')
   },
   ambrosiaSingReduction1: {
     level: 0,
@@ -896,7 +896,7 @@ export const ambrosiaUpgrades: {
     },
     extraLevelCalc: () => 0,
     name: () => i18next.t('ambrosia.data.ambrosiaSingReduction1.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaSingReduction1.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaSingReduction1.description')
   },
   ambrosiaInfiniteShopUpgrades1: {
     level: 0,
@@ -926,9 +926,9 @@ export const ambrosiaUpgrades: {
         amount: format(vals.freeLevels, 0, true)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow4').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow4').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaInfiniteShopUpgrades1.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaInfiniteShopUpgrades1.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaInfiniteShopUpgrades1.description')
   },
   ambrosiaInfiniteShopUpgrades2: {
     level: 0,
@@ -959,9 +959,9 @@ export const ambrosiaUpgrades: {
         amount: format(vals.freeLevels, 0, true)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow5').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow5').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaInfiniteShopUpgrades2.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaInfiniteShopUpgrades2.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaInfiniteShopUpgrades2.description')
   },
   ambrosiaSingReduction2: {
     level: 0,
@@ -989,7 +989,7 @@ export const ambrosiaUpgrades: {
     },
     extraLevelCalc: () => 0,
     name: () => i18next.t('ambrosia.data.ambrosiaSingReduction2.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaSingReduction2.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaSingReduction2.description')
   },
   ambrosiaTalismanBonusRuneLevel: {
     level: 0,
@@ -1015,9 +1015,9 @@ export const ambrosiaUpgrades: {
         amount: formatAsPercentIncrease(1 + vals.talismanBonusRuneLevel, 2)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow2').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow2').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaTalismanBonusRuneLevel.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaTalismanBonusRuneLevel.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaTalismanBonusRuneLevel.description')
   },
   ambrosiaRuneOOMBonus: {
     level: 0,
@@ -1046,13 +1046,16 @@ export const ambrosiaUpgrades: {
         amount2: format(vals.infiniteAscentOOMBonus, 3, false)
       })
     },
-    extraLevelCalc: () => getRedAmbrosiaUpgrade('freeLevelsRow4').bonus.freeLevels,
+    extraLevelCalc: () => getRedAmbrosiaUpgradeEffects('freeLevelsRow4').freeLevels,
     name: () => i18next.t('ambrosia.data.ambrosiaRuneOOMBonus.name'),
-    description: () => i18next.t('ambrosia.data.ambrosiaRuneOOMBonus.description'),
+    description: () => i18next.t('ambrosia.data.ambrosiaRuneOOMBonus.description')
   }
 }
 
-export const blankAmbrosiaUpgradeObject: Record<AmbrosiaUpgradeNames, { ambrosiaInvested: number; blueberriesInvested: number; }> = Object.fromEntries(
+export const blankAmbrosiaUpgradeObject: Record<
+  AmbrosiaUpgradeNames,
+  { ambrosiaInvested: number; blueberriesInvested: number }
+> = Object.fromEntries(
   Object.keys(ambrosiaUpgrades).map((key) => [
     key as AmbrosiaUpgradeNames,
     {
@@ -1061,6 +1064,39 @@ export const blankAmbrosiaUpgradeObject: Record<AmbrosiaUpgradeNames, { ambrosia
     }
   ])
 ) as Record<AmbrosiaUpgradeNames, { ambrosiaInvested: number; blueberriesInvested: number }>
+
+export const setAmbrosiaUpgradeLevels = () => {
+  for (const upgradeKey of Object.keys(ambrosiaUpgrades) as AmbrosiaUpgradeNames[]) {
+    const invested = ambrosiaUpgrades[upgradeKey].ambrosiaInvested
+    const upgradeCost = ambrosiaUpgrades[upgradeKey].costFormula
+    const perLevelCost = ambrosiaUpgrades[upgradeKey].costPerLevel
+
+    let level = 0
+    let budget = invested
+
+    let nextCost = upgradeCost(level, perLevelCost)
+
+    while (budget >= nextCost) {
+      budget -= nextCost
+      level += 1
+      nextCost = upgradeCost(level, perLevelCost)
+
+      if (level >= ambrosiaUpgrades[upgradeKey].maxLevel) {
+        break
+      }
+    }
+
+    // If there is leftover budget, then the formulae has probably changed, or above max.
+    // We refund the remaining budget.
+    if (budget > 0) {
+      player.ambrosiaUpgrades[upgradeKey].ambrosiaInvested -= budget
+      player.ambrosia += budget
+    }
+
+    ambrosiaUpgrades[upgradeKey].level = level
+    ambrosiaUpgrades[upgradeKey].ambrosiaInvested = invested - budget
+  }
+}
 
 export const getAmbrosiaUpgradeEffectiveLevels = (upgradeKey: AmbrosiaUpgradeNames): number => {
   const upgrade = ambrosiaUpgrades[upgradeKey]
@@ -1093,11 +1129,11 @@ export const getAmbrosiaUpgradeCostTNL = (upgradeKey: AmbrosiaUpgradeNames): num
 export const checkAmbrosiaUpgradePrerequisites = (upgradeKey: AmbrosiaUpgradeNames): boolean => {
   const upgrade = ambrosiaUpgrades[upgradeKey]
   const prerequisites = upgrade.prerequisites
-  
+
   if (Object.keys(prerequisites).length === 0) {
     return true
   }
-  
+
   for (const [prereq, val] of Object.entries(prerequisites)) {
     const k = prereq as AmbrosiaUpgradeNames
     if (ambrosiaUpgrades[k].level < val!) {
@@ -1109,7 +1145,7 @@ export const checkAmbrosiaUpgradePrerequisites = (upgradeKey: AmbrosiaUpgradeNam
 
 export const refundAmbrosiaUpgrade = (upgradeKey: AmbrosiaUpgradeNames): void => {
   const upgrade = ambrosiaUpgrades[upgradeKey]
-  
+
   player.ambrosia += upgrade.ambrosiaInvested
   upgrade.ambrosiaInvested = 0
   upgrade.level = 0
@@ -1147,9 +1183,7 @@ export const ambrosiaUpgradeToString = (upgradeKey: AmbrosiaUpgradeNames): strin
       const met = ambrosiaUpgrades[k].level >= val!
         ? ''
         : i18next.t('ambrosia.prereqNotMet')
-      preReqText = `${preReqText}<span style="color:${color}"> ${
-        ambrosiaUpgrades[k].name()
-      } lv.${val} ${met}</span> |`
+      preReqText = `${preReqText}<span style="color:${color}"> ${ambrosiaUpgrades[k].name()} lv.${val} ${met}</span> |`
     }
 
     preReqText = preReqText.slice(0, -1)
@@ -1158,23 +1192,17 @@ export const ambrosiaUpgradeToString = (upgradeKey: AmbrosiaUpgradeNames): strin
   const effectsDescription = getAmbrosiaUpgradeEffectsDescription(upgradeKey)
 
   return `<span style="color: gold">${upgrade.name()}</span>
-          <span style="color: ${color}"> ${
-    i18next.t('general.level')
-  } ${format(upgrade.level, 0, true)}${maxLevel}${freeLevelInfo}</span>${preReqText ? `\n ${preReqText}` : ''}${
+          <span style="color: ${color}"> ${i18next.t('general.level')} ${
+    format(upgrade.level, 0, true)
+  }${maxLevel}${freeLevelInfo}</span>${preReqText ? `\n ${preReqText}` : ''}${
     upgrade.ignoreEXALT ? `\n<span style="color: orchid"> ${i18next.t('ambrosia.ignoreEXALT')}</span>\n` : '\n'
   }<span style="color: lightblue">${upgrade.description()}</span>
               <span style="color: gold">${effectsDescription}</span>
-              ${
-    i18next.t('octeract.toString.costNextLevel')
-  }: <span style="color:orange">${
+              ${i18next.t('octeract.toString.costNextLevel')}: <span style="color:orange">${
     format(costNextLevel, 0, true, true, true)
   }</span> ${i18next.t('ambrosia.ambrosia')} ${affordableInfo}
-              ${
-    i18next.t('ambrosia.blueberryCost')
-  } <span style="color:blue">${upgrade.blueberryCost}</span>
-              ${i18next.t('general.spent')} ${
-    i18next.t('ambrosia.ambrosia')
-  }: <span style="color:orange">${
+              ${i18next.t('ambrosia.blueberryCost')} <span style="color:blue">${upgrade.blueberryCost}</span>
+              ${i18next.t('general.spent')} ${i18next.t('ambrosia.ambrosia')}: <span style="color:orange">${
     format(upgrade.ambrosiaInvested, 0, true, true, true)
   }</span>`
 }

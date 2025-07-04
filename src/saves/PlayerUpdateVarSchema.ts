@@ -1,12 +1,12 @@
 import Decimal from 'break_infinity.js'
+import { type AmbrosiaUpgradeNames, ambrosiaUpgrades } from '../BlueberryUpgrades'
 import { CorruptionLoadout, type Corruptions, CorruptionSaves } from '../Corruptions'
 import { getHepteract, type HepteractNames } from '../Hepteracts'
+import { type OcteractDataKeys, octeractUpgrades } from '../Octeracts'
 import { goldenQuarkUpgrades, type SingularityDataKeys } from '../singularity'
 import { getTalisman } from '../Talismans'
 import { convertArrayToCorruption } from './PlayerJsonSchema'
 import { playerSchema } from './PlayerSchema'
-import { type OcteractDataKeys, octeractUpgrades } from '../Octeracts'
-import { type AmbrosiaUpgradeNames, ambrosiaUpgrades } from '../BlueberryUpgrades'
 
 export const playerUpdateVarSchema = playerSchema.transform((player) => {
   if (player.usedCorruptions !== undefined) {
@@ -164,7 +164,6 @@ export const playerUpdateVarSchema = playerSchema.transform((player) => {
 
   if (player.blueberryUpgrades !== undefined) {
     for (const key of Object.keys(player.blueberryUpgrades)) {
-
       const k = key as AmbrosiaUpgradeNames
 
       const ambrosiaInvested = player.blueberryUpgrades[k].ambrosiaInvested ?? 0
@@ -172,7 +171,7 @@ export const playerUpdateVarSchema = playerSchema.transform((player) => {
 
       player.ambrosiaUpgrades[k] = {
         ambrosiaInvested,
-        blueberriesInvested,
+        blueberriesInvested
       }
       ambrosiaUpgrades[k].ambrosiaInvested = ambrosiaInvested
       ambrosiaUpgrades[k].blueberriesInvested = blueberriesInvested

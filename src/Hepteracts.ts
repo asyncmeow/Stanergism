@@ -10,13 +10,13 @@ import {
   forcedDailyReset
 } from './Calculate'
 import { Cube } from './CubeExperimental'
+import { getOcteractUpgradeEffect } from './Octeracts'
 import { calculateSingularityDebuff, getGQUpgradeEffect } from './singularity'
 import { format, player } from './Synergism'
 import type { Player } from './types/Synergism'
 import { Alert, Confirm, Prompt } from './UpdateHTML'
 import { isDecimal } from './Utility'
 import { Globals } from './Variables'
-import { getOcteractUpgradeEffect } from './Octeracts'
 
 export interface HepteractValues {
   BAL: number

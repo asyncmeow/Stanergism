@@ -1,6 +1,7 @@
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
 import { achievementManager } from './Achievements'
+import { getAmbrosiaUpgradeEffects } from './BlueberryUpgrades'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import {
   calculateAllCubeMultiplier,
@@ -91,9 +92,10 @@ import {
   addCodeSingularityPerkBonus,
   addCodeTimeToNextUse
 } from './ImportExport'
+import { getOcteractUpgradeEffect, octeractUpgrades } from './Octeracts'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { getQuarkBonus } from './Quark'
-import { getRedAmbrosiaUpgrade } from './RedAmbrosiaUpgrades'
+import { getRedAmbrosiaUpgradeEffects } from './RedAmbrosiaUpgrades'
 import {
   firstFiveEffectiveRuneLevelMult,
   getRune,
@@ -114,8 +116,6 @@ import { getTalisman, sumOfTalismanRarities, universalTalismanBonusMult } from '
 import type { GlobalVariables } from './types/Synergism'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
-import { getOcteractUpgradeEffect, octeractUpgrades } from './Octeracts'
-import { getAmbrosiaUpgradeEffects } from './BlueberryUpgrades'
 
 export interface StatLine {
   i18n: string
@@ -307,7 +307,7 @@ export const allCubeStats: StatLine[] = [
   },
   {
     i18n: 'RedAmbrosiaTutorial',
-    stat: () => getRedAmbrosiaUpgrade('tutorial').bonus.cubeMult
+    stat: () => getRedAmbrosiaUpgradeEffects('tutorial').cubeMult
   },
   {
     i18n: 'RedAmbrosia',
@@ -704,7 +704,7 @@ export const allOcteractCubeStats: StatLine[] = [
   },
   {
     i18n: 'RedAmbrosiaTutorial',
-    stat: () => getRedAmbrosiaUpgrade('tutorial').bonus.cubeMult
+    stat: () => getRedAmbrosiaUpgradeEffects('tutorial').cubeMult
   },
   {
     i18n: 'RedAmbrosia',
@@ -964,7 +964,7 @@ export const allOfferingStats = [
   },
   {
     i18n: 'RedAmbrosiaTutorial',
-    stat: () => getRedAmbrosiaUpgrade('tutorial').bonus.offeringMult // Red Ambrosia Tutorial
+    stat: () => getRedAmbrosiaUpgradeEffects('tutorial').offeringMult // Red Ambrosia Tutorial
   },
   {
     i18n: 'RedAmbrosia',
@@ -1192,7 +1192,7 @@ export const allQuarkStats: StatLine[] = [
   },
   {
     i18n: 'OcteractStarter',
-    stat: () => 1 + (octeractUpgrades.octeractStarter.level > 0 ? 0.15: 0)
+    stat: () => 1 + (octeractUpgrades.octeractStarter.level > 0 ? 0.15 : 0)
   },
   {
     i18n: 'OcteractQuarkGain',
@@ -1247,7 +1247,7 @@ export const allQuarkStats: StatLine[] = [
   },
   {
     i18n: 'Viscount',
-    stat: () => getRedAmbrosiaUpgrade('viscount').bonus.quarkBonus,
+    stat: () => getRedAmbrosiaUpgradeEffects('viscount').quarkBonus,
     color: 'red'
   },
   {
@@ -1376,7 +1376,7 @@ export const allObtainiumIgnoreDRStats: StatLine[] = [
   },
   {
     i18n: 'RedAmbrosiaTutorial',
-    stat: () => getRedAmbrosiaUpgrade('tutorial').bonus.obtainiumMult // Red Ambrosia Tutorial
+    stat: () => getRedAmbrosiaUpgradeEffects('tutorial').obtainiumMult // Red Ambrosia Tutorial
   },
   {
     i18n: 'RedAmbrosia',
@@ -2007,15 +2007,15 @@ export const allAmbrosiaLuckStats: StatLine[] = [
   },
   {
     i18n: 'RedAmbrosiaUpgrade',
-    stat: () => getRedAmbrosiaUpgrade('regularLuck').bonus.ambrosiaLuck // Red Ambrosia Upgrade
+    stat: () => getRedAmbrosiaUpgradeEffects('regularLuck').ambrosiaLuck // Red Ambrosia Upgrade
   },
   {
     i18n: 'RedAmbrosiaUpgrade2',
-    stat: () => getRedAmbrosiaUpgrade('regularLuck2').bonus.ambrosiaLuck // Red Ambrosia Upgrade 2
+    stat: () => getRedAmbrosiaUpgradeEffects('regularLuck2').ambrosiaLuck // Red Ambrosia Upgrade 2
   },
   {
     i18n: 'Viscount',
-    stat: () => getRedAmbrosiaUpgrade('viscount').bonus.luckBonus, // Viscount Red Ambrosia Upgrade
+    stat: () => getRedAmbrosiaUpgradeEffects('viscount').luckBonus, // Viscount Red Ambrosia Upgrade
     color: 'red'
   },
   {
@@ -2107,11 +2107,11 @@ export const allAmbrosiaGenerationSpeedStats: StatLine[] = [
   },
   {
     i18n: 'RedAmbrosiaUpgrade',
-    stat: () => getRedAmbrosiaUpgrade('blueberryGenerationSpeed').bonus.blueberryGenerationSpeed // Red Ambrosia Upgrade
+    stat: () => getRedAmbrosiaUpgradeEffects('blueberryGenerationSpeed').blueberryGenerationSpeed // Red Ambrosia Upgrade
   },
   {
     i18n: 'RedAmbrosiaUpgrade2',
-    stat: () => getRedAmbrosiaUpgrade('blueberryGenerationSpeed2').bonus.blueberryGenerationSpeed // Red Ambrosia Upgrade 2
+    stat: () => getRedAmbrosiaUpgradeEffects('blueberryGenerationSpeed2').blueberryGenerationSpeed // Red Ambrosia Upgrade 2
   },
   {
     i18n: 'CookieUpgrade26',
@@ -2419,15 +2419,15 @@ export const allLuckConversionStats: StatLine[] = [
   },
   {
     i18n: 'RedAmbrosiaUpgrade1',
-    stat: () => getRedAmbrosiaUpgrade('conversionImprovement1').bonus.conversionImprovement // Conversion Improvement I
+    stat: () => getRedAmbrosiaUpgradeEffects('conversionImprovement1').conversionImprovement // Conversion Improvement I
   },
   {
     i18n: 'RedAmbrosiaUpgrade2',
-    stat: () => getRedAmbrosiaUpgrade('conversionImprovement2').bonus.conversionImprovement // Conversion Improvement II
+    stat: () => getRedAmbrosiaUpgradeEffects('conversionImprovement2').conversionImprovement // Conversion Improvement II
   },
   {
     i18n: 'RedAmbrosiaUpgrade3',
-    stat: () => getRedAmbrosiaUpgrade('conversionImprovement3').bonus.conversionImprovement // Conversion Improvement III
+    stat: () => getRedAmbrosiaUpgradeEffects('conversionImprovement3').conversionImprovement // Conversion Improvement III
   },
   {
     i18n: 'ShopRedLuck1',
@@ -2463,7 +2463,7 @@ export const allRedAmbrosiaLuckStats: StatLine[] = [
   },
   {
     i18n: 'RedAmbrosia',
-    stat: () => getRedAmbrosiaUpgrade('redLuck').bonus.redAmbrosiaLuck // The Dice That Decide Your Fate
+    stat: () => getRedAmbrosiaUpgradeEffects('redLuck').redAmbrosiaLuck // The Dice That Decide Your Fate
   },
   {
     i18n: 'Exalt5',
@@ -2483,7 +2483,7 @@ export const allRedAmbrosiaLuckStats: StatLine[] = [
   },
   {
     i18n: 'Viscount',
-    stat: () => getRedAmbrosiaUpgrade('viscount').bonus.redLuckBonus, // Viscount Red Ambrosia Upgrade
+    stat: () => getRedAmbrosiaUpgradeEffects('viscount').redLuckBonus, // Viscount Red Ambrosia Upgrade
     color: 'red'
   },
   {
@@ -2515,7 +2515,7 @@ export const allRedAmbrosiaGenerationSpeedStats: StatLine[] = [
   },
   {
     i18n: 'RedAmbrosia',
-    stat: () => getRedAmbrosiaUpgrade('redGenerationSpeed').bonus.redAmbrosiaGenerationSpeed
+    stat: () => getRedAmbrosiaUpgradeEffects('redGenerationSpeed').redAmbrosiaGenerationSpeed
   },
   {
     i18n: 'Exalt5',
@@ -2545,7 +2545,7 @@ export const infinityShopUpgrades: StatLine[] = [
 export const allShopTablets: StatLine[] = [
   {
     i18n: 'Red',
-    stat: () => getRedAmbrosiaUpgrade('infiniteShopUpgrades').bonus.freeLevels, // Red Ambrosia Upgrade
+    stat: () => getRedAmbrosiaUpgradeEffects('infiniteShopUpgrades').freeLevels, // Red Ambrosia Upgrade
     acc: 0,
     color: 'red'
   },

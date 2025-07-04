@@ -65,9 +65,19 @@ import {
   updateSaveString
 } from './ImportExport'
 import { exitFastForward, getTips, sendToWebsocket, setTips } from './Login'
-import { buyOcteractUpgradeLevel, octeractUpgrades, updateOcteractUpgradeHTML, type OcteractDataKeys } from './Octeracts'
+import {
+  buyOcteractUpgradeLevel,
+  type OcteractDataKeys,
+  octeractUpgrades,
+  updateOcteractUpgradeHTML
+} from './Octeracts'
 import { buyPlatonicUpgrades, createPlatonicDescription } from './Platonic'
-import { displayRedAmbrosiaLevels, getRedAmbrosiaUpgrade, resetRedAmbrosiaDisplay } from './RedAmbrosiaUpgrades'
+import {
+  buyRedAmbrosiaUpgradeLevel,
+  displayRedAmbrosiaLevels,
+  resetRedAmbrosiaDisplay,
+  updateRedAmbrosiaUpgradeHTML
+} from './RedAmbrosiaUpgrades'
 import { buyResearch, researchDescriptions } from './Research'
 import { resetrepeat, updateAutoCubesOpens, updateAutoReset, updateTesseractAutoBuyAmount } from './Reset'
 import {
@@ -1078,11 +1088,11 @@ TODO: Fix this entire tab it's utter shit
     const capitalizedName = key.charAt(0).toUpperCase() + key.slice(1)
     DOMCacheGetOrSet(`redAmbrosia${capitalizedName}`).addEventListener(
       'mouseover',
-      () => getRedAmbrosiaUpgrade(key).updateUpgradeHTML()
+      () => updateRedAmbrosiaUpgradeHTML(key)
     )
     DOMCacheGetOrSet(`redAmbrosia${capitalizedName}`).addEventListener(
       'click',
-      (event) => getRedAmbrosiaUpgrade(key).buyLevel(event)
+      (event) => buyRedAmbrosiaUpgradeLevel(key, event)
     )
   }
 

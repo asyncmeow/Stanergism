@@ -1,6 +1,12 @@
 import type Decimal from 'break_infinity.js'
 import type { ProgressiveAchievements } from '../Achievements'
-import type { AmbrosiaUpgradeNames, BlueberryLoadoutMode, BlueberryOpt, BlueberryUpgrade, BlueberryUpgradeNames } from '../BlueberryUpgrades'
+import type {
+  AmbrosiaUpgradeNames,
+  BlueberryLoadoutMode,
+  BlueberryOpt,
+  BlueberryUpgrade,
+  BlueberryUpgradeNames
+} from '../BlueberryUpgrades'
 import type { CampaignManager } from '../Campaign'
 import type { Challenge15RewardObject, Challenge15Rewards } from '../Challenges'
 import type { CorruptionLoadout, Corruptions, CorruptionSaves } from '../Corruptions'
@@ -10,7 +16,7 @@ import type { Category, ResetHistoryEntryUnion } from '../History'
 import type { OcteractDataKeys, OcteractUpgrade } from '../Octeracts'
 import type { IPlatBaseCost } from '../Platonic'
 import type { QuarkHandler } from '../Quark'
-import type { RedAmbrosiaKeys } from '../RedAmbrosiaUpgrades'
+import type { RedAmbrosiaNames } from '../RedAmbrosiaUpgrades'
 import type { RuneBlessingKeys, RuneKeys, RuneSpiritKeys } from '../Runes'
 import type { SingularityDataKeys, SingularityUpgrade } from '../singularity'
 import type {
@@ -662,14 +668,14 @@ export interface Player {
   visitedAmbrosiaSubtab: boolean
   visitedAmbrosiaSubtabRed: boolean
   spentBlueberries: number
-  
+
   blueberryLoadouts: Record<number, BlueberryOpt>
   blueberryLoadoutMode: BlueberryLoadoutMode
 
   redAmbrosia: number
   lifetimeRedAmbrosia: number
   redAmbrosiaTime: number
-  redAmbrosiaUpgrades: Record<RedAmbrosiaKeys, number>
+  redAmbrosiaUpgrades: Record<RedAmbrosiaNames, number>
 
   singChallengeTimer: number
 

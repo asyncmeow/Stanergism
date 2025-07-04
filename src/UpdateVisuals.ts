@@ -41,7 +41,7 @@ import type { IMultiBuy } from './Cubes'
 import { BuffType, consumableEventBuff, eventBuffType, getEvent, getEventBuff } from './Event'
 import { getHepteract, hepteractData, type HepteractNames } from './Hepteracts'
 import { allDurableConsumables, type PseudoCoinConsumableNames } from './Login'
-import { getOcteractUpgradeCostTNL, octeractUpgrades, type OcteractDataKeys } from './Octeracts'
+import { getOcteractUpgradeCostTNL, type OcteractDataKeys, octeractUpgrades } from './Octeracts'
 import { getQuarkBonus, quarkHandler } from './Quark'
 import {
   getRune,

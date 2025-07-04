@@ -3,6 +3,7 @@
 import ClipboardJS from 'clipboard'
 import i18next from 'i18next'
 import { maxAchievementPoints } from './Achievements'
+import { type AmbrosiaUpgradeNames, ambrosiaUpgrades } from './BlueberryUpgrades'
 import {
   calculateAscensionSpeedMult,
   calculateBlueberryInventory,
@@ -16,8 +17,13 @@ import { getMaxChallenges } from './Challenges'
 import { version } from './Config'
 import { getHepteract, type HepteractNames } from './Hepteracts'
 import { saveFilename } from './ImportExport'
-import { actualOcteractUpgradeTotalLevels, computeOcteractFreeLevelSoftcap, octeractUpgrades, type OcteractDataKeys } from './Octeracts'
-import { getRedAmbrosiaUpgrade } from './RedAmbrosiaUpgrades'
+import {
+  actualOcteractUpgradeTotalLevels,
+  computeOcteractFreeLevelSoftcap,
+  type OcteractDataKeys,
+  octeractUpgrades
+} from './Octeracts'
+import { redAmbrosiaUpgrades } from './RedAmbrosiaUpgrades'
 import { getRune, type RuneKeys } from './Runes'
 import { friendlyShopName, isShopUpgradeUnlocked, shopData, shopUpgradeTypes } from './Shop'
 import {
@@ -33,7 +39,6 @@ import type { Player } from './types/Synergism'
 import { Alert } from './UpdateHTML'
 import { formatS, sumContents } from './Utility'
 import { Globals as G } from './Variables'
-import { type AmbrosiaUpgradeNames, ambrosiaUpgrades } from './BlueberryUpgrades'
 
 export const generateExportSummary = async (): Promise<void> => {
   const titleText = '===== SUMMARY STATS ====='
@@ -501,7 +506,9 @@ export const generateExportSummary = async (): Promise<void> => {
 
       upgradeText = upgradeText + unicodeSymbol
       upgradeText = `${upgradeText} ${ambUpg.name}:`
-      upgradeText = `${upgradeText} Level ${ambUpg.level}/${ambUpg.maxLevel} [+${format(ambUpg.extraLevelCalc(), 0, true)}]`
+      upgradeText = `${upgradeText} Level ${ambUpg.level}/${ambUpg.maxLevel} [+${
+        format(ambUpg.extraLevelCalc(), 0, true)
+      }]`
 
       upgradeText = upgradeText + (ambUpg.extraLevelCalc() > 0
         ? ` // Effective Level: ${format(ambUpg.extraLevelCalc(), 0, true)}`
@@ -535,7 +542,7 @@ export const generateExportSummary = async (): Promise<void> => {
 
     for (const key of redAmbUpgrade) {
       let upgradeText = ''
-      const redAmbUpg = getRedAmbrosiaUpgrade(key)
+      const redAmbUpg = redAmbrosiaUpgrades[key]
 
       const unicodeSymbol = (redAmbUpg.level === redAmbUpg.maxLevel) ? '[★]' : '[ ]'
 

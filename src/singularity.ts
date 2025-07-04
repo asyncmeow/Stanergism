@@ -1,13 +1,12 @@
 import i18next from 'i18next'
 import { achievementManager } from './Achievements'
+import { getAmbrosiaUpgradeEffects } from './BlueberryUpgrades'
 import { DOMCacheGetOrSet } from './Cache/DOM'
-import type { IUpgradeData } from './DynamicUpgrade'
+import { getOcteractUpgradeEffect } from './Octeracts'
 import { getRune } from './Runes'
 import { format, formatAsPercentIncrease, player } from './Synergism'
 import { Alert, Prompt, revealStuff } from './UpdateHTML'
 import { toOrdinal } from './Utility'
-import { getOcteractUpgradeEffect } from './Octeracts'
-import { getAmbrosiaUpgradeEffects } from './BlueberryUpgrades'
 
 export type SingularityDataKeys =
   | 'goldenQuarks1'
@@ -209,15 +208,6 @@ type SingularitySpecialCostFormulae =
   | 'Quadratic'
   | 'Cubic'
   | 'Exponential2'
-
-export interface ISingularityData extends Omit<IUpgradeData, 'name' | 'description'> {
-  goldenQuarksInvested?: number
-  minimumSingularity?: number
-  canExceedCap?: boolean
-  specialCostForm?: SingularitySpecialCostFormulae
-  qualityOfLife?: boolean
-  cacheUpdates?: (() => void)[] // TODO: Improve this type signature -Plat
-}
 
 export interface GoldenQuarkUpgrade {
   level: number

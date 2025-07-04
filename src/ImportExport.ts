@@ -7,6 +7,7 @@ import { calculateOcteractMultiplier } from './Calculate'
 import { testing, version } from './Config'
 import { addTimers } from './Helper'
 import { getHepteract } from './Hepteracts'
+import { getOcteractUpgradeEffect, octeractUpgrades } from './Octeracts'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { getQuarkBonus, quarkHandler } from './Quark'
 import { Seed, seededBetween, seededRandom } from './RNG'
@@ -26,7 +27,6 @@ import { Alert, Confirm, Prompt } from './UpdateHTML'
 import { cleanString, getElementById } from './Utility'
 import { btoa } from './Utility'
 import { Globals as G } from './Variables'
-import { getOcteractUpgradeEffect, octeractUpgrades } from './Octeracts'
 
 const format24 = new Intl.DateTimeFormat('EN-GB', {
   year: 'numeric',

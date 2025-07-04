@@ -122,7 +122,7 @@ const goldenQuarkUpgradeSchema = z.object({
 
 const ambrosiaUpgradeSchema = z.object({
   ambrosiaInvested: z.number().default(0),
-  level: z.number().default(0),
+  level: z.number().default(0)
 })
 
 export const playerCorruptionSchema = z.object({
@@ -766,7 +766,7 @@ export const playerSchema = z.object({
       })
     )
   })
-  .default(() => ({ ...blankSave.octUpgrades })),
+    .default(() => ({ ...blankSave.octUpgrades })),
 
   ambrosiaUpgrades: z.record(z.string(), ambrosiaUpgradeSchema).transform((object) => {
     return Object.fromEntries(
@@ -832,7 +832,8 @@ export const playerSchema = z.object({
   visitedAmbrosiaSubtabRed: z.boolean().default(() => blankSave.visitedAmbrosiaSubtabRed),
   spentBlueberries: z.number().default(() => blankSave.spentBlueberries),
   // TODO: is this right?
-  blueberryUpgrades: z.record(z.string(), singularityUpgradeSchema('blueberriesInvested', 'ambrosiaInvested')).optional(),
+  blueberryUpgrades: z.record(z.string(), singularityUpgradeSchema('blueberriesInvested', 'ambrosiaInvested'))
+    .optional(),
 
   // TODO: what type?
   blueberryLoadouts: z.record(integerStringSchema, z.any()).default(() => blankSave.blueberryLoadouts),

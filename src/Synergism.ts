@@ -159,6 +159,7 @@ import {
   ambrosiaUpgrades,
   blankAmbrosiaUpgradeObject,
   displayProperLoadoutCount,
+  setAmbrosiaUpgradeLevels,
   updateBlueberryLoadoutCount
 } from './BlueberryUpgrades'
 import { DOMCacheGetOrSet } from './Cache/DOM'
@@ -182,11 +183,21 @@ import {
 import { disableHotkeys } from './Hotkeys'
 import { init as i18nInit } from './i18n'
 import { handleLogin } from './Login'
-import { blankOcteractLevelObject, getOcteractUpgradeEffect, type OcteractDataKeys, octeractUpgrades } from './Octeracts'
+import {
+  blankOcteractLevelObject,
+  getOcteractUpgradeEffect,
+  type OcteractDataKeys,
+  octeractUpgrades
+} from './Octeracts'
 import { updatePlatonicUpgradeBG } from './Platonic'
 import { initializePCoinCache, PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { getQuarkBonus, QuarkHandler } from './Quark'
-import { initRedAmbrosiaUpgrades } from './RedAmbrosiaUpgrades'
+import {
+  blankRedAmbrosiaUpgradeObject,
+  type RedAmbrosiaNames,
+  redAmbrosiaUpgrades,
+  setRedAmbrosiaUpgradeLevels
+} from './RedAmbrosiaUpgrades'
 import { playerJsonSchema } from './saves/PlayerJsonSchema'
 import { playerUpdateVarSchema } from './saves/PlayerUpdateVarSchema'
 import {
@@ -1144,30 +1155,7 @@ export const player: Player = {
   redAmbrosiaTime: 0,
   // NOTE: This only keeps track of the total number of Red Ambrosia
   // Invested, because I realized that keeping classes on the player is generally a bad idea
-  redAmbrosiaUpgrades: {
-    'tutorial': 0,
-    'conversionImprovement1': 0,
-    'conversionImprovement2': 0,
-    'conversionImprovement3': 0,
-    'freeTutorialLevels': 0,
-    'freeLevelsRow2': 0,
-    'freeLevelsRow3': 0,
-    'freeLevelsRow4': 0,
-    'freeLevelsRow5': 0,
-    'blueberryGenerationSpeed': 0,
-    'blueberryGenerationSpeed2': 0,
-    'regularLuck': 0,
-    'regularLuck2': 0,
-    'redGenerationSpeed': 0,
-    'redLuck': 0,
-    'redAmbrosiaCube': 0,
-    'redAmbrosiaObtainium': 0,
-    'redAmbrosiaOffering': 0,
-    'redAmbrosiaCubeImprover': 0,
-    'viscount': 0,
-    'infiniteShopUpgrades': 0,
-    'redAmbrosiaAccelerator': 0
-  },
+  redAmbrosiaUpgrades: blankRedAmbrosiaUpgradeObject,
 
   singChallengeTimer: 0,
 
@@ -1193,7 +1181,7 @@ export const deepClone = () =>
         new CorruptionLoadout(o.loadout)],
       [CorruptionSaves, (o: CorruptionSaves) => new CorruptionSaves(o.corrSaveData)],
       [CampaignManager, (o: CampaignManager) => new CampaignManager(o.campaignManagerData)],
-      [SingularityChallenge, (o: SingularityChallenge) => new SingularityChallenge(o.valueOf(), o.key())],
+      [SingularityChallenge, (o: SingularityChallenge) => new SingularityChallenge(o.valueOf(), o.key())]
     ]
   })
 
@@ -1232,6 +1220,12 @@ export const saveSynergy = (button?: boolean) => {
     })
   ) as Record<AmbrosiaUpgradeNames, { ambrosiaInvested: number; blueberriesInvested: number }>
 
+  player.redAmbrosiaUpgrades = Object.fromEntries(
+    Object.entries(player.redAmbrosiaUpgrades).map(([key]) => {
+      const k = key as RedAmbrosiaNames
+      return [key, redAmbrosiaUpgrades[k].redAmbrosiaInvested]
+    })
+  ) as Record<RedAmbrosiaNames, number>
 
   const p = playerJsonSchema.parse(player)
   const save = btoa(JSON.stringify(p))
@@ -5627,13 +5621,29 @@ export const reloadShit = (reset = false) => {
   if (player.octUpgrades !== undefined) {
     for (const [key, value] of Object.entries(player.octUpgrades)) {
       const k = key as OcteractDataKeys
-      
+
       octeractUpgrades[k].level = value.level
       octeractUpgrades[k].freeLevel = value.freeLevel
     }
   }
 
-  initRedAmbrosiaUpgrades(player.redAmbrosiaUpgrades)
+  if (player.ambrosiaUpgrades !== undefined) {
+    for (const [key, value] of Object.entries(player.ambrosiaUpgrades)) {
+      const k = key as AmbrosiaUpgradeNames
+      ambrosiaUpgrades[k].ambrosiaInvested = value.ambrosiaInvested
+      ambrosiaUpgrades[k].blueberriesInvested = value.blueberriesInvested
+    }
+  }
+
+  if (player.redAmbrosiaUpgrades !== undefined) {
+    for (const [key, value] of Object.entries(player.redAmbrosiaUpgrades)) {
+      const k = key as RedAmbrosiaNames
+      redAmbrosiaUpgrades[k].redAmbrosiaInvested = value
+    }
+  }
+
+  setAmbrosiaUpgradeLevels()
+  setRedAmbrosiaUpgradeLevels()
   initRunes(player.runes)
   initRuneBlessings(player.runeBlessings)
   initRuneSpirits(player.runeSpirits)
@@ -5777,7 +5787,6 @@ window.addEventListener('load', async () => {
   createCampaignIconHTMLS()
   generateAchievementHTMLs()
 
-  initRedAmbrosiaUpgrades(player.redAmbrosiaUpgrades)
   initRunes(player.runes)
   initRuneBlessings(player.runeBlessings)
   initRuneSpirits(player.runeSpirits)

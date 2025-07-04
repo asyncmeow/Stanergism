@@ -10,6 +10,7 @@ import { Globals as G } from './Variables'
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
 import { achievementManager } from './Achievements'
+import { getAmbrosiaUpgradeEffects } from './BlueberryUpgrades'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { CalcECC } from './Challenges'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
@@ -17,7 +18,6 @@ import { firstFiveRuneEffectivenessStats, runeEffectivenessStatsSI } from './Sta
 import { Tabs } from './Tabs'
 import { getTalisman, getTalismanBonus } from './Talismans'
 import { assert } from './Utility'
-import { getAmbrosiaUpgradeEffects } from './BlueberryUpgrades'
 
 export enum resetTiers {
   prestige = 1,

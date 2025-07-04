@@ -13,8 +13,9 @@ import {
   calculateRequiredRedAmbrosiaTime,
   calculateResearchAutomaticObtainium
 } from './Calculate'
+import { getOcteractUpgradeEffect } from './Octeracts'
 import { quarkHandler } from './Quark'
-import { getRedAmbrosiaUpgrade } from './RedAmbrosiaUpgrades'
+import { getRedAmbrosiaUpgradeEffects } from './RedAmbrosiaUpgrades'
 import { Seed, seededRandom } from './RNG'
 import {
   buyAllBlessingLevels,
@@ -32,7 +33,6 @@ import { Tabs } from './Tabs'
 import { buyAllTalismanResources } from './Talismans'
 import { visualUpdateAmbrosia, visualUpdateOcteracts, visualUpdateResearch } from './UpdateVisuals'
 import { Globals as G } from './Variables'
-import { getOcteractUpgradeEffect } from './Octeracts'
 
 type TimerInput =
   | 'prestige'
@@ -171,7 +171,7 @@ export const addTimers = (input: TimerInput, time = 0) => {
 
         const timerThreshold = (180 * Math.pow(1.03, -player.highestSingularityCount))
           / getOcteractUpgradeEffect('octeractAutoPotionSpeed')
-          
+
         const effectiveOfferingThreshold = toggleOfferingOn
           ? Math.min(1, timerThreshold) / 20
           : timerThreshold
@@ -270,7 +270,7 @@ export const addTimers = (input: TimerInput, time = 0) => {
         let timeToRedAmbrosia = calculateRequiredRedAmbrosiaTime()
 
         let ambrosiaTimeToGrant = 0
-        const timeCoeff = getRedAmbrosiaUpgrade('redAmbrosiaAccelerator').bonus.ambrosiaTimePerRedAmbrosia
+        const timeCoeff = getRedAmbrosiaUpgradeEffects('redAmbrosiaAccelerator').ambrosiaTimePerRedAmbrosia
 
         while (player.redAmbrosiaTime >= timeToRedAmbrosia) {
           const redAmbrosiaLuck = calculateRedAmbrosiaLuck()

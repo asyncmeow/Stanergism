@@ -7,9 +7,10 @@ import { BuffType, calculateEventSourceBuff } from './Event'
 import { addTimers, automaticTools } from './Helper'
 import { hepteractEffective } from './Hepteracts'
 import { disableHotkeys, enableHotkeys } from './Hotkeys'
+import { getOcteractUpgradeEffect } from './Octeracts'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { quarkHandler } from './Quark'
-import { getRedAmbrosiaUpgrade } from './RedAmbrosiaUpgrades'
+import { getRedAmbrosiaUpgradeEffects } from './RedAmbrosiaUpgrades'
 import { reset } from './Reset'
 import { getRuneBlessing, sumOfRuneLevels } from './Runes'
 import { getGQUpgradeEffect } from './singularity'
@@ -52,7 +53,6 @@ import { clearInterval, setInterval } from './Timers'
 import { Alert, Prompt } from './UpdateHTML'
 import { findInsertionIndex, sumContents } from './Utility'
 import { Globals as G } from './Variables'
-import { getOcteractUpgradeEffect } from './Octeracts'
 
 const CASH_GRAB_ULTRA_QUARK = 0.08
 const CASH_GRAB_ULTRA_CUBE = 1.2
@@ -2127,8 +2127,8 @@ export const calculateCookieUpgrade29Luck = () => {
 }
 
 export const calculateRedAmbrosiaCubes = () => {
-  if (getRedAmbrosiaUpgrade('redAmbrosiaCube').bonus.unlockedRedAmbrosiaCube) {
-    const exponent = 0.4 + getRedAmbrosiaUpgrade('redAmbrosiaCubeImprover').bonus.extraExponent
+  if (getRedAmbrosiaUpgradeEffects('redAmbrosiaCube').unlockedRedAmbrosiaCube) {
+    const exponent = 0.4 + getRedAmbrosiaUpgradeEffects('redAmbrosiaCubeImprover').extraExponent
     return 1 + Math.pow(player.lifetimeRedAmbrosia, exponent) / 100
   } else {
     return 1
@@ -2136,7 +2136,7 @@ export const calculateRedAmbrosiaCubes = () => {
 }
 
 export const calculateRedAmbrosiaObtainium = () => {
-  if (getRedAmbrosiaUpgrade('redAmbrosiaObtainium').bonus.unlockRedAmbrosiaObtainium) {
+  if (getRedAmbrosiaUpgradeEffects('redAmbrosiaObtainium').unlockRedAmbrosiaObtainium) {
     return 1 + Math.pow(player.lifetimeRedAmbrosia, 0.6) / 100
   } else {
     return 1
@@ -2144,7 +2144,7 @@ export const calculateRedAmbrosiaObtainium = () => {
 }
 
 export const calculateRedAmbrosiaOffering = () => {
-  if (getRedAmbrosiaUpgrade('redAmbrosiaOffering').bonus.unlockRedAmbrosiaOffering) {
+  if (getRedAmbrosiaUpgradeEffects('redAmbrosiaOffering').unlockRedAmbrosiaOffering) {
     return 1 + Math.pow(player.lifetimeRedAmbrosia, 0.6) / 100
   } else {
     return 1

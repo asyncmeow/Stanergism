@@ -4,6 +4,7 @@ import { achievementManager, ungroupedNameMap } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { isShopTalismanUnlocked } from './Calculate'
 import { CalcECC } from './Challenges'
+import { getOcteractUpgradeEffect } from './Octeracts'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { getRune, resetTiers, type RuneKeys } from './Runes'
 import { allTalismanRuneBonusStats } from './Statistics'
@@ -11,7 +12,6 @@ import { format, formatAsPercentIncrease, player } from './Synergism'
 import { Tabs } from './Tabs'
 import { assert } from './Utility'
 import { Globals as G } from './Variables'
-import { getOcteractUpgradeEffect } from './Octeracts'
 
 interface TalismanFragmentCost {
   obtainium: number

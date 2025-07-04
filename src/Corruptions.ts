@@ -2,6 +2,7 @@ import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
 import { z } from 'zod'
 import { DOMCacheGetOrSet } from './Cache/DOM'
+import { getOcteractUpgradeEffect } from './Octeracts'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { getGQUpgradeEffect } from './singularity'
 import { format, player } from './Synergism'
@@ -11,7 +12,6 @@ import { toggleCorruptionLevel } from './Toggles'
 import { Alert, Notification, Prompt } from './UpdateHTML'
 import { getElementById, productContents, sumContents, validateNonnegativeInteger } from './Utility'
 import { Globals as G } from './Variables'
-import { getOcteractUpgradeEffect } from './Octeracts'
 
 export enum CorruptionIndices {
   'viscosity' = 0,

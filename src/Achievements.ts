@@ -3,7 +3,8 @@ import i18next from 'i18next'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { CalcCorruptionStuff, calculateAscensionScore } from './Calculate'
 import { getHepteract } from './Hepteracts'
-import { getMaxRedAmbrosiaUpgrades } from './RedAmbrosiaUpgrades'
+import { octeractUpgrades } from './Octeracts'
+import { redAmbrosiaUpgrades } from './RedAmbrosiaUpgrades'
 import {
   getRune,
   getRuneBlessing,
@@ -20,7 +21,6 @@ import type { resetNames } from './types/Synergism'
 import { Alert, Notification, revealStuff } from './UpdateHTML'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
-import { octeractUpgrades } from './Octeracts'
 
 export const resetAchievementCheck = (reset: resetNames) => {
   if (reset === 'prestige') {
@@ -365,7 +365,12 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
   redAmbrosiaUpgrades: {
     maxPointValue: -1,
     pointsAwarded: () => {
-      return 10 * getMaxRedAmbrosiaUpgrades()
+      return 10 * Object.entries(redAmbrosiaUpgrades).reduce((acc, [_key, upgrade]) => {
+        if (upgrade.maxLevel !== -1 && upgrade.level >= upgrade.maxLevel) {
+          acc++
+        }
+        return acc
+      }, 0)
     },
     updateValue: () => {
       return 0
