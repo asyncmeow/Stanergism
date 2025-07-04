@@ -5,7 +5,7 @@ import type { IUpgradeData } from './DynamicUpgrade'
 import { getRune } from './Runes'
 import { format, formatAsPercentIncrease, player } from './Synergism'
 import { Alert, Prompt, revealStuff } from './UpdateHTML'
-import { sumContents, toOrdinal } from './Utility'
+import { toOrdinal } from './Utility'
 
 export type SingularityDataKeys =
   | 'goldenQuarks1'
@@ -226,10 +226,10 @@ export interface GoldenQuarkUpgrade {
   costPerLevel: number
   minimumSingularity: number
   specialCostForm: SingularitySpecialCostFormulae
-  effect (n: number): number
-  effectDescription (n: number): string
-  name (): string
-  description (): string
+  effect(n: number): number
+  effectDescription(n: number): string
+  name(): string
+  description(): string
 }
 
 export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade> = {
@@ -250,8 +250,12 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
         n: formatAsPercentIncrease(this.effect(n), 2)
       })
     },
-    name: () => { return i18next.t('singularity.data.goldenQuarks1.name') },
-    description: () => { return i18next.t('singularity.data.goldenQuarks1.description') }
+    name: () => {
+      return i18next.t('singularity.data.goldenQuarks1.name')
+    },
+    description: () => {
+      return i18next.t('singularity.data.goldenQuarks1.description')
+    }
   },
   goldenQuarks2: {
     level: 0,
@@ -268,16 +272,20 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effectDescription: function(n: number) {
       const effectValue = this.effect(n)
       // Convert the effect to percentage format like the original
-      const percentageValue = n > 250 
-        ? 100 - 100 * effectValue  // Since effectValue = 1/Math.log2(n/62.5), this gives us the reduction %
-        : (1 - effectValue) * 100  // Since effectValue = 1 - reduction, this gives us the reduction %
-      
+      const percentageValue = n > 250
+        ? 100 - 100 * effectValue // Since effectValue = 1/Math.log2(n/62.5), this gives us the reduction %
+        : (1 - effectValue) * 100 // Since effectValue = 1 - reduction, this gives us the reduction %
+
       return i18next.t('singularity.data.goldenQuarks2.effect', {
         n: format(percentageValue, 2, true)
       })
     },
-    name: () => { return i18next.t('singularity.data.goldenQuarks2.name') },
-    description: () => { return i18next.t('singularity.data.goldenQuarks2.description') }
+    name: () => {
+      return i18next.t('singularity.data.goldenQuarks2.name')
+    },
+    description: () => {
+      return i18next.t('singularity.data.goldenQuarks2.description')
+    }
   },
   goldenQuarks3: {
     level: 0,
@@ -296,8 +304,12 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
         n: format(this.effect(n))
       })
     },
-    name: () => { return i18next.t('singularity.data.goldenQuarks3.name') },
-    description: () => { return i18next.t('singularity.data.goldenQuarks3.description') }
+    name: () => {
+      return i18next.t('singularity.data.goldenQuarks3.name')
+    },
+    description: () => {
+      return i18next.t('singularity.data.goldenQuarks3.description')
+    }
   },
   starterPack: {
     level: 0,
@@ -311,10 +323,13 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.starterPack.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
-    name: () => { return i18next.t('singularity.data.starterPack.name') },
+    name: () => {
+      return i18next.t('singularity.data.starterPack.name')
+    },
     description: () => i18next.t('singularity.data.starterPack.description')
   },
   wowPass: {
@@ -329,7 +344,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.wowPass.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
     name: () => i18next.t('singularity.data.wowPass.name'),
@@ -347,7 +363,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.cookies.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
     name: () => i18next.t('singularity.data.cookies.name'),
@@ -365,7 +382,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.cookies2.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
     name: () => i18next.t('singularity.data.cookies2.name'),
@@ -383,7 +401,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.cookies3.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
     name: () => i18next.t('singularity.data.cookies3.name'),
@@ -401,7 +420,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.cookies4.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
     name: () => i18next.t('singularity.data.cookies4.name'),
@@ -419,7 +439,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.cookies5.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
     name: () => i18next.t('singularity.data.cookies5.name'),
@@ -458,7 +479,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.corruptionFourteen.effect${n > 0 ? 'Have' : 'HaveNot'}`,
         {
           m: n > 0 ? ':)' : ':('
@@ -479,7 +501,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.corruptionFifteen.effect${n > 0 ? 'Have' : 'HaveNot'}`,
         {
           m: n > 0 ? ':)' : ':('
@@ -607,8 +630,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     },
     name: () => i18next.t('singularity.data.singObtainium3.name'),
     description: () => i18next.t('singularity.data.singObtainium3.description')
-    },
-    singCubes1: {
+  },
+  singCubes1: {
     level: 0,
     freeLevel: 0,
     maxLevel: -1,
@@ -720,7 +743,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.octeractUnlock.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
     name: () => i18next.t('singularity.data.octeractUnlock.name'),
@@ -738,7 +762,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t('singularity.data.singOcteractPatreonBonus.effect', {
+    effectDescription: (n: number) =>
+      i18next.t('singularity.data.singOcteractPatreonBonus.effect', {
         n
       }),
     name: () => i18next.t('singularity.data.singOcteractPatreonBonus.name'),
@@ -772,7 +797,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.intermediatePack.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
     name: () => i18next.t('singularity.data.intermediatePack.name'),
@@ -790,7 +816,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.advancedPack.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
     name: () => i18next.t('singularity.data.advancedPack.name'),
@@ -808,7 +835,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.expertPack.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
     name: () => i18next.t('singularity.data.expertPack.name'),
@@ -826,7 +854,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.masterPack.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
     name: () => i18next.t('singularity.data.masterPack.name'),
@@ -875,7 +904,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.wowPass2.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
     name: () => i18next.t('singularity.data.wowPass2.name'),
@@ -893,7 +923,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.wowPass3.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
     name: () => i18next.t('singularity.data.wowPass3.name'),
@@ -971,7 +1002,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t('singularity.data.singChallengeExtension.effect', {
+    effectDescription: (n: number) =>
+      i18next.t('singularity.data.singChallengeExtension.effect', {
         n: 2 * n,
         m: n
       }),
@@ -990,7 +1022,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t('singularity.data.singChallengeExtension2.effect', {
+    effectDescription: (n: number) =>
+      i18next.t('singularity.data.singChallengeExtension2.effect', {
         n: 2 * n,
         m: n
       }),
@@ -1009,7 +1042,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t('singularity.data.singChallengeExtension3.effect', {
+    effectDescription: (n: number) =>
+      i18next.t('singularity.data.singChallengeExtension3.effect', {
         n: 2 * n,
         m: n
       }),
@@ -1048,7 +1082,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n / 100
     },
-    effectDescription: (n: number) => i18next.t('singularity.data.singQuarkHepteract.effect', {
+    effectDescription: (n: number) =>
+      i18next.t('singularity.data.singQuarkHepteract.effect', {
         n: format(2 * n, 2, true)
       }),
     name: () => i18next.t('singularity.data.singQuarkHepteract.name'),
@@ -1066,7 +1101,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n / 100
     },
-    effectDescription: (n: number) => i18next.t('singularity.data.singQuarkHepteract2.effect', {
+    effectDescription: (n: number) =>
+      i18next.t('singularity.data.singQuarkHepteract2.effect', {
         n: format(2 * n, 2, true)
       }),
     name: () => i18next.t('singularity.data.singQuarkHepteract2.name'),
@@ -1084,7 +1120,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n / 100
     },
-    effectDescription: (n: number) => i18next.t('singularity.data.singQuarkHepteract3.effect', {
+    effectDescription: (n: number) =>
+      i18next.t('singularity.data.singQuarkHepteract3.effect', {
         n: format(2 * n, 2, true)
       }),
     name: () => i18next.t('singularity.data.singQuarkHepteract3.name'),
@@ -1202,7 +1239,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.platonicTau.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
     name: () => i18next.t('singularity.data.platonicTau.name'),
@@ -1220,7 +1258,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.platonicAlpha.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
     name: () => i18next.t('singularity.data.platonicAlpha.name'),
@@ -1238,7 +1277,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.platonicDelta.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
     name: () => i18next.t('singularity.data.platonicDelta.name'),
@@ -1256,7 +1296,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.platonicPhi.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
     name: () => i18next.t('singularity.data.platonicPhi.name'),
@@ -1274,7 +1315,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.singFastForward.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
     name: () => i18next.t('singularity.data.singFastForward.name'),
@@ -1292,7 +1334,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.singFastForward2.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
     name: () => i18next.t('singularity.data.singFastForward2.name'),
@@ -1310,7 +1353,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return 0.03 * n
     },
-    effectDescription: (n: number) => i18next.t('singularity.data.singAscensionSpeed.effect', {
+    effectDescription: (n: number) =>
+      i18next.t('singularity.data.singAscensionSpeed.effect', {
         n: format(1 + 0.03 * n, 2, true),
         m: format(1 - 0.03 * n, 2, true)
       }),
@@ -1349,7 +1393,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t('singularity.data.ultimatePen.effect', {
+    effectDescription: (n: number) =>
+      i18next.t('singularity.data.ultimatePen.effect', {
         n: n > 0 ? '' : 'NOT',
         m: n > 0
           ? ' However, the pen just ran out of ink. How will you get more?'
@@ -1370,7 +1415,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.halfMind.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
     name: () => i18next.t('singularity.data.halfMind.name'),
@@ -1388,7 +1434,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.oneMind.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
     name: () => i18next.t('singularity.data.oneMind.name'),
@@ -1406,7 +1453,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t(
+    effectDescription: (n: number) =>
+      i18next.t(
         `singularity.data.wowPass4.effect${n > 0 ? 'Have' : 'HaveNot'}`
       ),
     name: () => i18next.t('singularity.data.wowPass4.name'),
@@ -1520,7 +1568,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return 1 + n / 100
     },
-    effectDescription: (n: number) => i18next.t('singularity.data.singAmbrosiaGeneration.effect', {
+    effectDescription: (n: number) =>
+      i18next.t('singularity.data.singAmbrosiaGeneration.effect', {
         n: format(n)
       }),
     name: () => i18next.t('singularity.data.singAmbrosiaGeneration.name'),
@@ -1538,7 +1587,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return 1 + n / 100
     },
-    effectDescription: (n: number) => i18next.t('singularity.data.singAmbrosiaGeneration2.effect', {
+    effectDescription: (n: number) =>
+      i18next.t('singularity.data.singAmbrosiaGeneration2.effect', {
         n: format(n)
       }),
     name: () => i18next.t('singularity.data.singAmbrosiaGeneration2.name'),
@@ -1556,7 +1606,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return 1 + n / 100
     },
-    effectDescription: (n: number) => i18next.t('singularity.data.singAmbrosiaGeneration3.effect', {
+    effectDescription: (n: number) =>
+      i18next.t('singularity.data.singAmbrosiaGeneration3.effect', {
         n: format(n)
       }),
     name: () => i18next.t('singularity.data.singAmbrosiaGeneration3.name'),
@@ -1574,7 +1625,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return 1 + (2 * n) / 100
     },
-    effectDescription: (n: number) => i18next.t('singularity.data.singAmbrosiaGeneration4.effect', {
+    effectDescription: (n: number) =>
+      i18next.t('singularity.data.singAmbrosiaGeneration4.effect', {
         n: format(2 * n)
       }),
     name: () => i18next.t('singularity.data.singAmbrosiaGeneration4.name'),
@@ -1592,7 +1644,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t('singularity.data.singBonusTokens1.effect', {
+    effectDescription: (n: number) =>
+      i18next.t('singularity.data.singBonusTokens1.effect', {
         n: format(n)
       }),
     name: () => i18next.t('singularity.data.singBonusTokens1.name'),
@@ -1610,7 +1663,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return 1 + n / 100
     },
-    effectDescription: (n: number) => i18next.t('singularity.data.singBonusTokens2.effect', {
+    effectDescription: (n: number) =>
+      i18next.t('singularity.data.singBonusTokens2.effect', {
         n: format(n)
       }),
     name: () => i18next.t('singularity.data.singBonusTokens2.name'),
@@ -1668,7 +1722,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n
     },
-    effectDescription: (n: number) => i18next.t('singularity.data.singInfiniteShopUpgrades.effect', {
+    effectDescription: (n: number) =>
+      i18next.t('singularity.data.singInfiniteShopUpgrades.effect', {
         n: format(n)
       }),
     name: () => i18next.t('singularity.data.singInfiniteShopUpgrades.name'),
@@ -1686,7 +1741,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n / 100
     },
-    effectDescription: (n: number) => i18next.t('singularity.data.singTalismanBonusRunes1.effect', {
+    effectDescription: (n: number) =>
+      i18next.t('singularity.data.singTalismanBonusRunes1.effect', {
         n: format(n, 0, true)
       }),
     name: () => i18next.t('singularity.data.singTalismanBonusRunes1.name'),
@@ -1704,7 +1760,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n / 100
     },
-    effectDescription: (n: number) => i18next.t('singularity.data.singTalismanBonusRunes2.effect', {
+    effectDescription: (n: number) =>
+      i18next.t('singularity.data.singTalismanBonusRunes2.effect', {
         n: format(n, 0, true)
       }),
     name: () => i18next.t('singularity.data.singTalismanBonusRunes2.name'),
@@ -1722,7 +1779,8 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n / 100
     },
-    effectDescription: (n: number) => i18next.t('singularity.data.singTalismanBonusRunes3.effect', {
+    effectDescription: (n: number) =>
+      i18next.t('singularity.data.singTalismanBonusRunes3.effect', {
         n: format(n, 0, true)
       }),
     name: () => i18next.t('singularity.data.singTalismanBonusRunes3.name'),
@@ -1740,12 +1798,13 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
     effect: (n: number) => {
       return n / 100
     },
-    effectDescription: (n: number) => i18next.t('singularity.data.singTalismanBonusRunes4.effect', {
+    effectDescription: (n: number) =>
+      i18next.t('singularity.data.singTalismanBonusRunes4.effect', {
         n: format(n, 0, true)
       }),
     name: () => i18next.t('singularity.data.singTalismanBonusRunes4.name'),
     description: () => i18next.t('singularity.data.singTalismanBonusRunes4.description')
-  },
+  }
 }
 
 export const blankGQLevelObject: Record<SingularityDataKeys, { level: number; freeLevel: number }> = Object.fromEntries(
@@ -1761,7 +1820,7 @@ export const blankGQLevelObject: Record<SingularityDataKeys, { level: number; fr
 /**
  * Get the upgrade's string representation with all relevant information
  */
-export function upgradeGQToString(upgradeKey: SingularityDataKeys): string {
+export function upgradeGQToString (upgradeKey: SingularityDataKeys): string {
   const upgrade = goldenQuarkUpgrades[upgradeKey]
   const name = upgrade.name()
   const description = upgrade.description()
@@ -1784,18 +1843,20 @@ export function upgradeGQToString(upgradeKey: SingularityDataKeys): string {
     : 'var(--green-text-color)'
   const minimumSingularity = upgrade.minimumSingularity > 0
     ? i18next.t('singularity.toString.minimum', {
-        minSingularity: upgrade.minimumSingularity
-      }) 
+      minSingularity: upgrade.minimumSingularity
+    })
     : i18next.t('singularity.toString.noMinimum')
 
   const minSingularityHTML = `<span style="color: ${minReqColor}">${minimumSingularity}</span>`
 
   // Level Text
-  const freeMultText = freeLevelMult > 1 ?
-      `<span style="color: crimson"> (x${format(freeLevelMult, 2, true)})</span>` : ''
+  const freeMultText = freeLevelMult > 1
+    ? `<span style="color: crimson"> (x${format(freeLevelMult, 2, true)})</span>`
+    : ''
 
-  let freeLevelText = freeLevelsWithMult > 0 ?
-      `<span style="color: orange"> [+${format(upgrade.freeLevel, 2, true)}${freeMultText}]</span>` : ''
+  let freeLevelText = freeLevelsWithMult > 0
+    ? `<span style="color: orange"> [+${format(upgrade.freeLevel, 2, true)}${freeMultText}]</span>`
+    : ''
 
   if (freeLevelsWithMult > upgrade.level) {
     freeLevelText = `${freeLevelText}<span style="color: lightgray"> ${
@@ -1805,7 +1866,9 @@ export function upgradeGQToString(upgradeKey: SingularityDataKeys): string {
     }</span>`
   }
 
-  const levelText = `<span style="color: ${color}">${i18next.t('general.level')} ${format(upgrade.level, 0, true)}${maxLevel}${freeLevelText}</span>`
+  const levelText = `<span style="color: ${color}">${i18next.t('general.level')} ${
+    format(upgrade.level, 0, true)
+  }${maxLevel}${freeLevelText}</span>`
 
   // Upgrade Effect Text
   const upgradeEffectHTML = `<span style="color: gold">${effectDesc}</span>`
@@ -1819,17 +1882,17 @@ export function upgradeGQToString(upgradeKey: SingularityDataKeys): string {
 /**
  * Update the upgrade HTML display
  */
-export function updateGQUpgradeHTML(upgradeKey: SingularityDataKeys): void {
+export function updateGQUpgradeHTML (upgradeKey: SingularityDataKeys): void {
   DOMCacheGetOrSet('testingMultiline').innerHTML = upgradeGQToString(upgradeKey)
 }
 
 /**
  * Get the cost for upgrading once. Returns 0 if maxed.
  */
-export function getGQUpgradeCostTNL(upgradeKey: SingularityDataKeys): number {
+export function getGQUpgradeCostTNL (upgradeKey: SingularityDataKeys): number {
   const upgrade = goldenQuarkUpgrades[upgradeKey]
   let costMultiplier = 1
-  
+
   if (computeGQUpgradeMaxLevel(upgradeKey) === upgrade.level) {
     return 0
   }
@@ -1872,7 +1935,7 @@ export function getGQUpgradeCostTNL(upgradeKey: SingularityDataKeys): number {
 /**
  * Buy levels for an upgrade
  */
-export async function buyGQUpgradeLevel(upgradeKey: SingularityDataKeys, event: MouseEvent): Promise<void> {
+export async function buyGQUpgradeLevel (upgradeKey: SingularityDataKeys, event: MouseEvent): Promise<void> {
   const upgrade = goldenQuarkUpgrades[upgradeKey]
   let purchased = 0
   let maxPurchasable = 1
@@ -1963,7 +2026,7 @@ export function computeFreeLevelMultiplier (): number {
   return (player.shopUpgrades.shopSingularityPotency > 0 ? 3.66 : 1) + 0.3 / 100 * player.cubeUpgrades[75]
 }
 
-export function computeGQUpgradeFreeLevelSoftcap(upgradeKey: SingularityDataKeys): number {
+export function computeGQUpgradeFreeLevelSoftcap (upgradeKey: SingularityDataKeys): number {
   const upgrade = goldenQuarkUpgrades[upgradeKey]
   const freeLevelMult = computeFreeLevelMultiplier()
   const baseRealFreeLevels = freeLevelMult * upgrade.freeLevel
@@ -1973,7 +2036,7 @@ export function computeGQUpgradeFreeLevelSoftcap(upgradeKey: SingularityDataKeys
   )
 }
 
-export function computeGQUpgradeMaxLevel(upgradeKey: SingularityDataKeys): number {
+export function computeGQUpgradeMaxLevel (upgradeKey: SingularityDataKeys): number {
   const upgrade = goldenQuarkUpgrades[upgradeKey]
   if (!upgrade.canExceedCap) {
     return upgrade.maxLevel
@@ -1992,9 +2055,9 @@ export function computeGQUpgradeMaxLevel(upgradeKey: SingularityDataKeys): numbe
   }
 }
 
-export function actualGQUpgradeTotalLevels(upgradeKey: SingularityDataKeys): number {
+export function actualGQUpgradeTotalLevels (upgradeKey: SingularityDataKeys): number {
   const upgrade = goldenQuarkUpgrades[upgradeKey]
-  
+
   if (
     (player.singularityChallenges.noSingularityUpgrades.enabled
       || player.singularityChallenges.sadisticPrequel.enabled)
@@ -2014,7 +2077,7 @@ export function actualGQUpgradeTotalLevels(upgradeKey: SingularityDataKeys): num
   const actualFreeLevels = computeGQUpgradeFreeLevelSoftcap(upgradeKey)
   const linearLevels = upgrade.level + actualFreeLevels
   let polynomialLevels = 0
-  
+
   if (player.octeractUpgrades.octeractImprovedFree.getEffect().bonus) {
     let exponent = 0.6
     exponent += +player.octeractUpgrades.octeractImprovedFree2.getEffect().bonus
@@ -2029,19 +2092,19 @@ export function actualGQUpgradeTotalLevels(upgradeKey: SingularityDataKeys): num
 /**
  * Gets effect of a Golden Quark upgrade, using actualTotalLevels
  */
-export function getGQUpgradeEffect(upgradeKey: SingularityDataKeys): number {
+export function getGQUpgradeEffect (upgradeKey: SingularityDataKeys): number {
   const upgrade = goldenQuarkUpgrades[upgradeKey]
   const totalLevels = actualGQUpgradeTotalLevels(upgradeKey)
   return upgrade.effect(totalLevels)
 }
 
-export function getGQUpgradeDescription(upgradeKey: SingularityDataKeys): string {
+export function getGQUpgradeDescription (upgradeKey: SingularityDataKeys): string {
   const upgrade = goldenQuarkUpgrades[upgradeKey]
   const totalLevels = actualGQUpgradeTotalLevels(upgradeKey)
   return upgrade.effectDescription(totalLevels)
 }
 
-export function resetGQUpgrade(upgradeKey: SingularityDataKeys): void {
+export function resetGQUpgrade (upgradeKey: SingularityDataKeys): void {
   const upgrade = goldenQuarkUpgrades[upgradeKey]
   upgrade.level = 0
 }
@@ -3065,14 +3128,12 @@ export type SingularityDebuffs =
   | 'Hepteract Costs'
 
 export const calculateSingularityReductions = () => {
-  const arr = [
-    player.shopUpgrades.shopSingularityPenaltyDebuff,
-    (player.insideSingularityChallenge)
+  return (
+    player.shopUpgrades.shopSingularityPenaltyDebuff
+    + (player.insideSingularityChallenge
       ? +player.blueberryUpgrades.ambrosiaSingReduction2.bonus.metadata.singularityReduction
-      : +player.blueberryUpgrades.ambrosiaSingReduction1.bonus.metadata.singularityReduction
-  ]
-
-  return sumContents(arr)
+      : +player.blueberryUpgrades.ambrosiaSingReduction1.bonus.metadata.singularityReduction)
+  )
 }
 
 export const calculateEffectiveSingularities = (

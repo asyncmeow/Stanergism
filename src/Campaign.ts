@@ -10,10 +10,10 @@ import {
   maxCorruptionLevel
 } from './Corruptions'
 import { reset } from './Reset'
+import { getGQUpgradeEffect } from './singularity'
 import { format, formatAsPercentIncrease, player } from './Synergism'
 import { IconSets } from './Themes'
 import { Alert, Confirm, Notification } from './UpdateHTML'
-import { getGQUpgradeEffect } from './singularity'
 
 export type CampaignKeys =
   | 'first'

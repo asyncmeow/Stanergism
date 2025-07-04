@@ -12,6 +12,7 @@ import {
   sumOfPurchasedRuneLevels,
   sumOfRuneLevels
 } from './Runes'
+import { goldenQuarkUpgrades } from './singularity'
 import type { SingularityChallengeDataKeys } from './SingularityChallenges'
 import { format, formatAsPercentIncrease, player } from './Synergism'
 import { sumOfTalismanRarities } from './Talismans'
@@ -19,7 +20,6 @@ import type { resetNames } from './types/Synergism'
 import { Alert, Notification, revealStuff } from './UpdateHTML'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
-import { goldenQuarkUpgrades } from './singularity'
 
 export const resetAchievementCheck = (reset: resetNames) => {
   if (reset === 'prestige') {
@@ -363,7 +363,7 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
   },
   redAmbrosiaUpgrades: {
     maxPointValue: -1,
-    pointsAwarded: (_cached: number) => {
+    pointsAwarded: () => {
       return 10 * getMaxRedAmbrosiaUpgrades()
     },
     updateValue: () => {
@@ -389,7 +389,7 @@ export const emptyProgressiveAchievements = Object
   ) as Record<ProgressiveAchievements, ProgressiveAchievementsObject>
 
 export class AchievementManager {
-  achievementMap: { [index: number]: boolean } = {}
+  achievementMap: boolean[] = []
 
   progressiveAchievements = {
     ...emptyProgressiveAchievements
@@ -447,6 +447,7 @@ export class AchievementManager {
     achievements.forEach((val, index) => {
       this.achievementMap[index] = val > 0
     })
+
     this.updateTotalPoints()
     updateGroupedAchievementProgress()
     updateUngroupedAchievementProgress()
@@ -3120,8 +3121,10 @@ export const generateAchievementHTMLs = () => {
     const sortedGroups = (Object.keys(achievementsByGroup) as AchievementGroups[])
       .filter((k) => k !== 'ungrouped')
       .sort((a, b) => {
-        const orderA = groupedAchievementData[a as Exclude<AchievementGroups, 'ungrouped'>]?.order ?? Number.POSITIVE_INFINITY
-        const orderB = groupedAchievementData[b as Exclude<AchievementGroups, 'ungrouped'>]?.order ?? Number.POSITIVE_INFINITY
+        const orderA = groupedAchievementData[a as Exclude<AchievementGroups, 'ungrouped'>]?.order
+          ?? Number.POSITIVE_INFINITY
+        const orderB = groupedAchievementData[b as Exclude<AchievementGroups, 'ungrouped'>]?.order
+          ?? Number.POSITIVE_INFINITY
         return orderA - orderB
       })
 

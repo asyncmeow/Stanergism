@@ -3,11 +3,10 @@ import i18next from 'i18next'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { hepteractEffective } from './Hepteracts'
 import { autoResearchEnabled } from './Research'
+import { getGQUpgradeEffect } from './singularity'
 import { format, player, resetCheck } from './Synergism'
 import { toggleAutoChallengeModeText, toggleChallenges } from './Toggles'
-import { productContents } from './Utility'
 import { Globals as G } from './Variables'
-import { getGQUpgradeEffect } from './singularity'
 
 export type Challenge15Rewards =
   | 'cube1'
@@ -745,10 +744,9 @@ export const autoAscensionChallengeSweepUnlock = () => {
 }
 
 export const challenge15ScoreMultiplier = () => {
-  const arr = [
-    player.campaigns.c15Bonus, // Campaign Bonus to c15
-    1 + 5 / 10000 * hepteractEffective('challenge'), // Challenge Hepteract
-    1 + 0.25 * player.platonicUpgrades[15] // Omega Upgrade
-  ]
-  return productContents(arr)
+  return (
+    player.campaigns.c15Bonus // Campaign Bonus to c15
+    * (1 + 5 / 10000 * hepteractEffective('challenge')) // Challenge Hepteract
+    * (1 + 0.25 * player.platonicUpgrades[15]) // Omega Upgrade
+  )
 }

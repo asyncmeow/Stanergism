@@ -12,6 +12,7 @@ import { getQuarkBonus, quarkHandler } from './Quark'
 import { Seed, seededBetween, seededRandom } from './RNG'
 import { playerJsonSchema } from './saves/PlayerJsonSchema'
 import { shopData } from './Shop'
+import { getGQUpgradeEffect, goldenQuarkUpgrades } from './singularity'
 import {
   allAddCodeCapacityMultiplierStats,
   allAddCodeCapacityStats,
@@ -25,7 +26,6 @@ import { Alert, Confirm, Prompt } from './UpdateHTML'
 import { cleanString, getElementById } from './Utility'
 import { btoa } from './Utility'
 import { Globals as G } from './Variables'
-import { getGQUpgradeEffect, goldenQuarkUpgrades } from './singularity'
 
 const format24 = new Intl.DateTimeFormat('EN-GB', {
   year: 'numeric',

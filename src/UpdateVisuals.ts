@@ -52,11 +52,19 @@ import {
   type RuneSpiritKeys
 } from './Runes'
 import { getShopCosts, isShopUpgradeUnlocked, shopData, shopUpgradeTypes } from './Shop'
-import { computeGQUpgradeFreeLevelSoftcap, computeGQUpgradeMaxLevel, getGoldenQuarkCost, getGQUpgradeCostTNL, getGQUpgradeEffect, goldenQuarkUpgrades, type SingularityDataKeys } from './singularity'
+import {
+  computeGQUpgradeFreeLevelSoftcap,
+  computeGQUpgradeMaxLevel,
+  getGoldenQuarkCost,
+  getGQUpgradeCostTNL,
+  getGQUpgradeEffect,
+  goldenQuarkUpgrades,
+  type SingularityDataKeys
+} from './singularity'
 import { loadStatisticsUpdate } from './Statistics'
 import { format, formatAsPercentIncrease, formatTimeShort, player } from './Synergism'
 import { getActiveSubTab, Tabs } from './Tabs'
-import { getTalisman, updateAllTalismanHTML, type TalismanKeys } from './Talismans'
+import { getTalisman, type TalismanKeys, updateAllTalismanHTML } from './Talismans'
 import type { Player, ZeroToFour } from './types/Synergism'
 import { sumContents, timeReminingHours } from './Utility'
 import { Globals as G } from './Variables'

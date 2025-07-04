@@ -633,7 +633,7 @@ export interface Player {
     level: number
     freeLevel: number
   }>
-  
+
   octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade>
   dailyCodeUsed: boolean
   hepteractAutoCraftPercentage: number

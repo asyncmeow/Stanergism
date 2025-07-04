@@ -14,8 +14,8 @@ import { DOMCacheGetOrSet } from './Cache/DOM'
 import { CalcECC } from './Challenges'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { firstFiveRuneEffectivenessStats, runeEffectivenessStatsSI } from './Statistics'
-import { getTalisman, getTalismanBonus } from './Talismans'
 import { Tabs } from './Tabs'
+import { getTalisman, getTalismanBonus } from './Talismans'
 import { assert } from './Utility'
 
 export enum resetTiers {

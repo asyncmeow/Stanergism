@@ -103,7 +103,12 @@ import {
   sumOfRuneLevels
 } from './Runes'
 import { shopData } from './Shop'
-import { calculateSingularityDebuff, getFastForwardTotalMultiplier, getGQUpgradeEffect, goldenQuarkUpgrades } from './singularity'
+import {
+  calculateSingularityDebuff,
+  getFastForwardTotalMultiplier,
+  getGQUpgradeEffect,
+  goldenQuarkUpgrades
+} from './singularity'
 import { format, formatAsPercentIncrease, player } from './Synergism'
 import { getTalisman, sumOfTalismanRarities, universalTalismanBonusMult } from './Talismans'
 import type { GlobalVariables } from './types/Synergism'
@@ -2673,8 +2678,7 @@ export const allTalismanRuneBonusStats: StatLine[] = [
     i18n: 'SingularityUpgrade1',
     stat: () => getGQUpgradeEffect('singTalismanBonusRunes1'), // Singularity Upgrade 1
     displayCriterion: () => {
-      const singStuff =
-        player.highestSingularityCount >= goldenQuarkUpgrades.singTalismanBonusRunes1.minimumSingularity
+      const singStuff = player.highestSingularityCount >= goldenQuarkUpgrades.singTalismanBonusRunes1.minimumSingularity
       return singStuff
     }
   },
@@ -2682,8 +2686,7 @@ export const allTalismanRuneBonusStats: StatLine[] = [
     i18n: 'SingularityUpgrade2',
     stat: () => getGQUpgradeEffect('singTalismanBonusRunes2'),
     displayCriterion: () => {
-      const singStuff =
-        player.highestSingularityCount >= goldenQuarkUpgrades.singTalismanBonusRunes2.minimumSingularity
+      const singStuff = player.highestSingularityCount >= goldenQuarkUpgrades.singTalismanBonusRunes2.minimumSingularity
       return singStuff
     }
   },
@@ -2691,8 +2694,7 @@ export const allTalismanRuneBonusStats: StatLine[] = [
     i18n: 'SingularityUpgrade3',
     stat: () => getGQUpgradeEffect('singTalismanBonusRunes3'),
     displayCriterion: () => {
-      const singStuff =
-        player.highestSingularityCount >= goldenQuarkUpgrades.singTalismanBonusRunes3.minimumSingularity
+      const singStuff = player.highestSingularityCount >= goldenQuarkUpgrades.singTalismanBonusRunes3.minimumSingularity
       return singStuff
     }
   },
@@ -2700,8 +2702,7 @@ export const allTalismanRuneBonusStats: StatLine[] = [
     i18n: 'SingularityUpgrade4',
     stat: () => getGQUpgradeEffect('singTalismanBonusRunes4'),
     displayCriterion: () => {
-      const singStuff =
-        player.highestSingularityCount >= goldenQuarkUpgrades.singTalismanBonusRunes4.minimumSingularity
+      const singStuff = player.highestSingularityCount >= goldenQuarkUpgrades.singTalismanBonusRunes4.minimumSingularity
       return singStuff
     }
   },

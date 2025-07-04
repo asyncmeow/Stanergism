@@ -4,11 +4,11 @@ import i18next from 'i18next'
 import { antSacrificePointsToMultiplier } from './Ants'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { applyCorruptions, convertInputToCorruption, type Corruptions } from './Corruptions'
+import { getGQUpgradeEffect } from './singularity'
 import { format, formatTimeShort, player } from './Synergism'
 import { IconSets } from './Themes'
 import { Notification } from './UpdateHTML'
 import { Globals as G } from './Variables'
-import { getGQUpgradeEffect } from './singularity'
 
 // The categories are the different tables & storages for each type.
 export type Category = 'ants' | 'reset' | 'ascend' | 'singularity'
