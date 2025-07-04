@@ -1172,17 +1172,8 @@ export const singularity = (setSingNumber = -1) => {
 
   hold.goldenQuarkUpgrades = { ...player.goldenQuarkUpgrades }
   hold.octUpgrades = { ...player.octUpgrades }
-  
-  hold.blueberryUpgrades = Object.fromEntries(
-    Object.entries(player.blueberryUpgrades).map(([key, value]) => {
-      return [key, {
-        level: value.level,
-        ambrosiaInvested: value.ambrosiaInvested,
-        blueberriesInvested: value.blueberriesInvested,
-        freeLevels: value.freeLevels
-      }]
-    })
-  ) as unknown as Player['blueberryUpgrades']
+  hold.ambrosiaUpgrades = { ...player.ambrosiaUpgrades }
+
   hold.spentBlueberries = player.spentBlueberries
   hold.autoChallengeToggles = player.autoChallengeToggles
   hold.autoChallengeTimer = player.autoChallengeTimer

@@ -155,7 +155,7 @@ import {
 import i18next from 'i18next'
 import rfdc from 'rfdc'
 import {
-  AmbrosiaUpgradeNames,
+  type AmbrosiaUpgradeNames,
   ambrosiaUpgrades,
   blankAmbrosiaUpgradeObject,
   displayProperLoadoutCount,
@@ -182,7 +182,7 @@ import {
 import { disableHotkeys } from './Hotkeys'
 import { init as i18nInit } from './i18n'
 import { handleLogin } from './Login'
-import { blankOcteractLevelObject, getOcteractUpgradeEffect, OcteractDataKeys, octeractUpgrades } from './Octeracts'
+import { blankOcteractLevelObject, getOcteractUpgradeEffect, type OcteractDataKeys, octeractUpgrades } from './Octeracts'
 import { updatePlatonicUpgradeBG } from './Platonic'
 import { initializePCoinCache, PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { getQuarkBonus, QuarkHandler } from './Quark'

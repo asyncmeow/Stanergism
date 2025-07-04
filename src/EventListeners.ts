@@ -9,7 +9,9 @@ import {
   updateAntDescription
 } from './Ants'
 import {
-  type BlueberryUpgradeNames,
+  type AmbrosiaUpgradeNames,
+  ambrosiaUpgrades,
+  buyAmbrosiaUpgradeLevel,
   createLoadoutDescription,
   displayLevelsBlueberry,
   displayOnlyLoadout,
@@ -19,7 +21,8 @@ import {
   loadoutHandler,
   resetBlueberryTree,
   resetHighlights,
-  resetLoadoutOnlyDisplay
+  resetLoadoutOnlyDisplay,
+  updateAmbrosiaUpgradeHTML
 } from './BlueberryUpgrades'
 import {
   boostAccelerator,
@@ -996,15 +999,14 @@ TODO: Fix this entire tab it's utter shit
 
   // BLUEBERRY UPGRADES
   const blueberryUpgrades = Object.keys(
-    player.blueberryUpgrades
-  ) as BlueberryUpgradeNames[]
+    ambrosiaUpgrades
+  ) as AmbrosiaUpgradeNames[]
   for (const key of blueberryUpgrades) {
-    const k = key as BlueberryUpgradeNames
     DOMCacheGetOrSet(key).addEventListener(
       'mouseover',
       () => {
-        player.blueberryUpgrades[key].updateUpgradeHTML()
-        highlightPrerequisites(k)
+        updateAmbrosiaUpgradeHTML(key)
+        highlightPrerequisites(key)
       }
     )
     DOMCacheGetOrSet(key).addEventListener(
@@ -1015,7 +1017,7 @@ TODO: Fix this entire tab it's utter shit
     )
     DOMCacheGetOrSet(key).addEventListener(
       'click',
-      (event) => player.blueberryUpgrades[key].buyLevel(event)
+      (event) => buyAmbrosiaUpgradeLevel(key, event)
     )
   }
 

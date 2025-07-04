@@ -3,7 +3,6 @@
 import ClipboardJS from 'clipboard'
 import i18next from 'i18next'
 import { maxAchievementPoints } from './Achievements'
-import type { BlueberryUpgradeNames } from './BlueberryUpgrades'
 import {
   calculateAscensionSpeedMult,
   calculateBlueberryInventory,
@@ -34,6 +33,7 @@ import type { Player } from './types/Synergism'
 import { Alert } from './UpdateHTML'
 import { formatS, sumContents } from './Utility'
 import { Globals as G } from './Variables'
+import { type AmbrosiaUpgradeNames, ambrosiaUpgrades } from './BlueberryUpgrades'
 
 export const generateExportSummary = async (): Promise<void> => {
   const titleText = '===== SUMMARY STATS ====='
@@ -480,7 +480,7 @@ export const generateExportSummary = async (): Promise<void> => {
   if (player.visitedAmbrosiaSubtab) {
     ambrosiaUpgradeStats =
       '===== AMBROSIA UPGRADES =====\n - [★]: Upgrade is MAXED - \n - [𖥔]: Upgrade is ACTIVE - \n - [ ]: Upgrade INACTIVE - \n'
-    const ambUpgrade = Object.keys(player.blueberryUpgrades) as BlueberryUpgradeNames[]
+    const ambUpgrade = Object.keys(ambrosiaUpgrades) as AmbrosiaUpgradeNames[]
 
     let spentBlueberries = 0
 
@@ -491,7 +491,7 @@ export const generateExportSummary = async (): Promise<void> => {
 
     for (const key of ambUpgrade) {
       let upgradeText = ''
-      const ambUpg = player.blueberryUpgrades[key]
+      const ambUpg = ambrosiaUpgrades[key]
 
       let unicodeSymbol = '[ ]'
       if (ambUpg.level > 0) {
@@ -501,10 +501,10 @@ export const generateExportSummary = async (): Promise<void> => {
 
       upgradeText = upgradeText + unicodeSymbol
       upgradeText = `${upgradeText} ${ambUpg.name}:`
-      upgradeText = `${upgradeText} Level ${ambUpg.level}/${ambUpg.maxLevel} [+${format(ambUpg.extraLevels, 0, true)}]`
+      upgradeText = `${upgradeText} Level ${ambUpg.level}/${ambUpg.maxLevel} [+${format(ambUpg.extraLevelCalc(), 0, true)}]`
 
-      upgradeText = upgradeText + (ambUpg.extraLevels > 0
-        ? ` // Effective Level: ${format(ambUpg.effectiveLevels, 0, true)}`
+      upgradeText = upgradeText + (ambUpg.extraLevelCalc() > 0
+        ? ` // Effective Level: ${format(ambUpg.extraLevelCalc(), 0, true)}`
         : '')
 
       upgradeText = `${upgradeText}\n`

@@ -7,6 +7,7 @@ import { format, formatAsPercentIncrease, player } from './Synergism'
 import { Alert, Prompt, revealStuff } from './UpdateHTML'
 import { toOrdinal } from './Utility'
 import { getOcteractUpgradeEffect } from './Octeracts'
+import { getAmbrosiaUpgradeEffects } from './BlueberryUpgrades'
 
 export type SingularityDataKeys =
   | 'goldenQuarks1'
@@ -3132,8 +3133,8 @@ export const calculateSingularityReductions = () => {
   return (
     player.shopUpgrades.shopSingularityPenaltyDebuff
     + (player.insideSingularityChallenge
-      ? +player.blueberryUpgrades.ambrosiaSingReduction2.bonus.metadata.singularityReduction
-      : +player.blueberryUpgrades.ambrosiaSingReduction1.bonus.metadata.singularityReduction)
+      ? getAmbrosiaUpgradeEffects('ambrosiaSingReduction2').singularityReduction
+      : getAmbrosiaUpgradeEffects('ambrosiaSingReduction1').singularityReduction)
   )
 }
 

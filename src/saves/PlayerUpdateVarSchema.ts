@@ -5,8 +5,8 @@ import { goldenQuarkUpgrades, type SingularityDataKeys } from '../singularity'
 import { getTalisman } from '../Talismans'
 import { convertArrayToCorruption } from './PlayerJsonSchema'
 import { playerSchema } from './PlayerSchema'
-import { OcteractDataKeys, octeractUpgrades } from '../Octeracts'
-import { AmbrosiaUpgradeNames, ambrosiaUpgrades } from '../BlueberryUpgrades'
+import { type OcteractDataKeys, octeractUpgrades } from '../Octeracts'
+import { type AmbrosiaUpgradeNames, ambrosiaUpgrades } from '../BlueberryUpgrades'
 
 export const playerUpdateVarSchema = playerSchema.transform((player) => {
   if (player.usedCorruptions !== undefined) {
