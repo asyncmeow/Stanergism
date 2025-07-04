@@ -188,7 +188,12 @@ import { getQuarkBonus, QuarkHandler } from './Quark'
 import { initRedAmbrosiaUpgrades } from './RedAmbrosiaUpgrades'
 import { playerJsonSchema } from './saves/PlayerJsonSchema'
 import { playerUpdateVarSchema } from './saves/PlayerUpdateVarSchema'
-import { blankGQLevelObject, getFastForwardTotalMultiplier, goldenQuarkUpgrades, SingularityDataKeys } from './singularity'
+import {
+  blankGQLevelObject,
+  getFastForwardTotalMultiplier,
+  goldenQuarkUpgrades,
+  type SingularityDataKeys
+} from './singularity'
 import {
   SingularityChallenge,
   singularityChallengeData,
@@ -5908,7 +5913,7 @@ export const reloadShit = (reset = false) => {
     loadSynergy()
   }
 
-    // Recover Sing Upgrade (now GQ upgrade) level from Player Obj
+  // Recover Sing Upgrade (now GQ upgrade) level from Player Obj
   if (player.goldenQuarkUpgrades !== undefined) {
     for (const [key, value] of Object.entries(player.goldenQuarkUpgrades)) {
       const k = key as SingularityDataKeys

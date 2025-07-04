@@ -119,7 +119,7 @@ const talismanFragmentSchema = z.object({
 
 const goldenQuarkUpgradeSchema = z.object({
   level: z.number().default(0),
-  freeLevel: z.number().default(0),
+  freeLevel: z.number().default(0)
 })
 
 export const playerCorruptionSchema = z.object({
@@ -751,7 +751,7 @@ export const playerSchema = z.object({
       })
     )
   })
-  .default(() => ({ ...blankSave.goldenQuarkUpgrades })),
+    .default(() => ({ ...blankSave.goldenQuarkUpgrades })),
   singularityUpgrades: z.record(z.string(), singularityUpgradeSchema('goldenQuarksInvested')).optional(),
   // TODO: why is this on player?
   octeractUpgrades: z.record(z.string(), singularityUpgradeSchema('octeractsInvested'))

@@ -19,11 +19,11 @@ import {
 } from './Calculate'
 import type { IMultiBuy } from './Cubes'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
+import { getGQUpgradeEffect } from './singularity'
 import { format, player } from './Synergism'
 import type { Player } from './types/Synergism'
 import { Alert, Confirm, Prompt, revealStuff } from './UpdateHTML'
 import { Globals as G } from './Variables'
-import { getGQUpgradeEffect } from './singularity'
 
 /**
  * Standardization of metadata contained for each shop upgrade.

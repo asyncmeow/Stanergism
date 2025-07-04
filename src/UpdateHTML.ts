@@ -152,8 +152,7 @@ export const revealStuff = () => {
   document.documentElement.dataset.cookies4 = getGQUpgradeEffect('cookies4') ? 'true' : 'false'
   document.documentElement.dataset.cookies5 = getGQUpgradeEffect('cookies5') ? 'true' : 'false'
 
-  document.documentElement.dataset.goldenQuark3Upg =
-    getGQUpgradeEffect('goldenQuarks3') > 0 ? 'true' : 'false'
+  document.documentElement.dataset.goldenQuark3Upg = getGQUpgradeEffect('goldenQuarks3') > 0 ? 'true' : 'false'
 
   if (player.upgrades[89] === 1) {
     DOMCacheGetOrSet('transcendautotoggle').style.display = 'block'

@@ -21,7 +21,13 @@ import type { OcteractDataKeys } from './Octeracts'
 import { getRedAmbrosiaUpgrade } from './RedAmbrosiaUpgrades'
 import { getRune, type RuneKeys } from './Runes'
 import { friendlyShopName, isShopUpgradeUnlocked, shopData, shopUpgradeTypes } from './Shop'
-import { actualGQUpgradeTotalLevels, calculateEffectiveSingularities, getGQUpgradeEffect, goldenQuarkUpgrades, type SingularityDataKeys } from './singularity'
+import {
+  actualGQUpgradeTotalLevels,
+  calculateEffectiveSingularities,
+  getGQUpgradeEffect,
+  goldenQuarkUpgrades,
+  type SingularityDataKeys
+} from './singularity'
 import type { SingularityChallengeDataKeys } from './SingularityChallenges'
 import { format, player } from './Synergism'
 import type { Player } from './types/Synergism'

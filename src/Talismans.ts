@@ -8,9 +8,9 @@ import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { getRune, resetTiers, type RuneKeys } from './Runes'
 import { allTalismanRuneBonusStats } from './Statistics'
 import { format, formatAsPercentIncrease, player } from './Synergism'
-import { Globals as G } from './Variables'
-import { assert } from './Utility'
 import { Tabs } from './Tabs'
+import { assert } from './Utility'
+import { Globals as G } from './Variables'
 
 interface TalismanFragmentCost {
   obtainium: number

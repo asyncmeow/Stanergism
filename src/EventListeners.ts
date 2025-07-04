@@ -80,7 +80,15 @@ import {
   sacrificeOfferings
 } from './Runes'
 import { buyShopUpgrades, resetShopUpgrades, shopData, shopDescriptions, shopUpgradeTypes, useConsumable } from './Shop'
-import { buyGoldenQuarks, buyGQUpgradeLevel, getLastUpgradeInfo, goldenQuarkUpgrades, type SingularityDataKeys, singularityPerks, updateGQUpgradeHTML } from './singularity'
+import {
+  buyGoldenQuarks,
+  buyGQUpgradeLevel,
+  getLastUpgradeInfo,
+  goldenQuarkUpgrades,
+  type SingularityDataKeys,
+  singularityPerks,
+  updateGQUpgradeHTML
+} from './singularity'
 import type { SingularityChallengeDataKeys } from './SingularityChallenges'
 import { displayStats } from './Statistics'
 import { generateExportSummary } from './Summary'

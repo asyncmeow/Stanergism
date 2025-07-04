@@ -12,6 +12,7 @@ import {
   sumOfPurchasedRuneLevels,
   sumOfRuneLevels
 } from './Runes'
+import { goldenQuarkUpgrades } from './singularity'
 import type { SingularityChallengeDataKeys } from './SingularityChallenges'
 import { format, formatAsPercentIncrease, player } from './Synergism'
 import { sumOfTalismanRarities } from './Talismans'
@@ -19,7 +20,6 @@ import type { resetNames } from './types/Synergism'
 import { Alert, Notification, revealStuff } from './UpdateHTML'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
-import { goldenQuarkUpgrades } from './singularity'
 
 export const resetAchievementCheck = (reset: resetNames) => {
   if (reset === 'prestige') {
@@ -363,7 +363,7 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
   },
   redAmbrosiaUpgrades: {
     maxPointValue: -1,
-    pointsAwarded: (_cached: number) => {
+    pointsAwarded: () => {
       return 10 * getMaxRedAmbrosiaUpgrades()
     },
     updateValue: () => {
@@ -389,7 +389,7 @@ export const emptyProgressiveAchievements = Object
   ) as Record<ProgressiveAchievements, ProgressiveAchievementsObject>
 
 export class AchievementManager {
-  achievementMap: { [index: number]: boolean } = {}
+  achievementMap: boolean[] = []
 
   progressiveAchievements = {
     ...emptyProgressiveAchievements
@@ -437,16 +437,21 @@ export class AchievementManager {
   }
 
   updateTotalPoints () {
-    this._totalPoints = Object.entries(this.achievementMap)
-      .filter(([, unlocked]) => unlocked)
-      .reduce((sum, [index]) => sum + achievements[Number(index)].pointValue, 0)
-      + sumContents(Object.values(this.progressiveAchievements).map((v) => v.rewardedAP))
+    for (let i = 0; i < this.achievementMap.length; i++) {
+      const unlocked = this.achievementMap[i]
+      if (unlocked) {
+        this._totalPoints += achievements[i].pointValue
+      }
+    }
+
+    this._totalPoints += sumContents(Object.values(this.progressiveAchievements).map((v) => v.rewardedAP))
   }
 
   updateAchievements (achievements: number[]) {
     achievements.forEach((val, index) => {
       this.achievementMap[index] = val > 0
     })
+
     this.updateTotalPoints()
     updateGroupedAchievementProgress()
     updateUngroupedAchievementProgress()
@@ -532,7 +537,7 @@ export class AchievementManager {
   // Convert achievementMap to an array of numbers, where 1 means unlocked and 0 means not unlocked
   // Used when saving with the player schema
   get achArray (): number[] {
-    return Object.values(this.achievementMap).map((val) => (val ? 1 : 0))
+    return this.achievementMap.map((val) => (val ? 1 : 0))
   }
 
   // Convert progressiveAchievements to an object with keys as the progressive achievement names
@@ -2548,7 +2553,7 @@ export const achievementsByReward: Record<AchievementRewards, number[]> = Object
     return rewards
   }, {} as Record<AchievementRewards, number[]>)
 
-export const getAchieveReward: Record<AchievementRewards, (ach: { [index: number]: boolean }) => number | boolean> = {
+export const getAchieveReward: Record<AchievementRewards, (ach: boolean[]) => number | boolean> = {
   acceleratorPower: (ach): number => {
     return achievementsByReward.acceleratorPower.reduce(
       (sum, index) => sum + (ach[index] ? achievements[index].reward!.acceleratorPower!() : 0),
@@ -3120,8 +3125,10 @@ export const generateAchievementHTMLs = () => {
     const sortedGroups = (Object.keys(achievementsByGroup) as AchievementGroups[])
       .filter((k) => k !== 'ungrouped')
       .sort((a, b) => {
-        const orderA = groupedAchievementData[a as Exclude<AchievementGroups, 'ungrouped'>]?.order ?? Number.POSITIVE_INFINITY
-        const orderB = groupedAchievementData[b as Exclude<AchievementGroups, 'ungrouped'>]?.order ?? Number.POSITIVE_INFINITY
+        const orderA = groupedAchievementData[a as Exclude<AchievementGroups, 'ungrouped'>]?.order
+          ?? Number.POSITIVE_INFINITY
+        const orderB = groupedAchievementData[b as Exclude<AchievementGroups, 'ungrouped'>]?.order
+          ?? Number.POSITIVE_INFINITY
         return orderA - orderB
       })
 

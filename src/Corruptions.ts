@@ -3,6 +3,7 @@ import i18next from 'i18next'
 import { z } from 'zod'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
+import { getGQUpgradeEffect } from './singularity'
 import { format, player } from './Synergism'
 import { getTalisman } from './Talismans'
 import { IconSets } from './Themes'
@@ -10,7 +11,6 @@ import { toggleCorruptionLevel } from './Toggles'
 import { Alert, Notification, Prompt } from './UpdateHTML'
 import { getElementById, productContents, sumContents, validateNonnegativeInteger } from './Utility'
 import { Globals as G } from './Variables'
-import { getGQUpgradeEffect } from './singularity'
 
 export enum CorruptionIndices {
   'viscosity' = 0,
@@ -101,7 +101,7 @@ export class CorruptionLoadout {
       const corrKey = corr as keyof Corruptions
       if (
         player.challengecompletions[corrChallengeMinimum(corrKey)] === 0
-        && !Boolean(getGQUpgradeEffect('platonicTau'))
+        && !getGQUpgradeEffect('platonicTau')
       ) {
         this.setLevel(corrKey, 0)
       }

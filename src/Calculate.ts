@@ -12,6 +12,7 @@ import { quarkHandler } from './Quark'
 import { getRedAmbrosiaUpgrade } from './RedAmbrosiaUpgrades'
 import { reset } from './Reset'
 import { getRuneBlessing, sumOfRuneLevels } from './Runes'
+import { getGQUpgradeEffect } from './singularity'
 import {
   allAdditiveLuckMultStats,
   allAmbrosiaBlueberryStats,
@@ -49,9 +50,8 @@ import { format, getTimePinnedToLoadDate, player, resourceGain, saveSynergy, upd
 import { getTalisman, toggleTalismanBuy, updateTalismanInventory } from './Talismans'
 import { clearInterval, setInterval } from './Timers'
 import { Alert, Prompt } from './UpdateHTML'
-import { findInsertionIndex, productContents, sumContents } from './Utility'
+import { findInsertionIndex, sumContents } from './Utility'
 import { Globals as G } from './Variables'
-import { getGQUpgradeEffect } from './singularity'
 
 const CASH_GRAB_ULTRA_QUARK = 0.08
 const CASH_GRAB_ULTRA_CUBE = 1.2
@@ -621,7 +621,7 @@ export const calculateAnts = () => {
 export const calculateAntSacrificeELO = () => {
   G.antELO = 0
   G.effectiveELO = 0
-  const antUpgradeSum = sumContents(player.antUpgrades as number[])
+  const antUpgradeSum = sumContents(player.antUpgrades)
   if (player.antPoints.gte('1e40')) {
     G.antELO += Decimal.log(player.antPoints, 10)
     G.antELO += (1 / 2) * antUpgradeSum
@@ -1725,62 +1725,53 @@ export const calculateSingularityAmbrosiaLuckMilestoneBonus = () => {
 }
 
 export const calculateAmbrosiaGenerationShopUpgrade = () => {
-  const multipliers = [
-    1 + player.shopUpgrades.shopAmbrosiaGeneration1 / 100,
-    1 + player.shopUpgrades.shopAmbrosiaGeneration2 / 100,
-    1 + player.shopUpgrades.shopAmbrosiaGeneration3 / 100,
-    1 + player.shopUpgrades.shopAmbrosiaGeneration4 / 1000
-  ]
-
-  return productContents(multipliers)
+  return (
+    (1 + player.shopUpgrades.shopAmbrosiaGeneration1 / 100)
+    * (1 + player.shopUpgrades.shopAmbrosiaGeneration2 / 100)
+    * (1 + player.shopUpgrades.shopAmbrosiaGeneration3 / 100)
+    * (1 + player.shopUpgrades.shopAmbrosiaGeneration4 / 1000)
+  )
 }
 
 export const calculateAmbrosiaLuckShopUpgrade = () => {
-  const vals = [
-    2 * player.shopUpgrades.shopAmbrosiaLuck1,
-    2 * player.shopUpgrades.shopAmbrosiaLuck2,
-    2 * player.shopUpgrades.shopAmbrosiaLuck3,
-    0.6 * player.shopUpgrades.shopAmbrosiaLuck4
-  ]
-
-  return sumContents(vals)
+  return (
+    2 * player.shopUpgrades.shopAmbrosiaLuck1
+    + 2 * player.shopUpgrades.shopAmbrosiaLuck2
+    + 2 * player.shopUpgrades.shopAmbrosiaLuck3
+    + 0.6 * player.shopUpgrades.shopAmbrosiaLuck4
+  )
 }
 
 export const calculateAmbrosiaGenerationSingularityUpgrade = () => {
-  return getGQUpgradeEffect('singAmbrosiaGeneration') *
-    getGQUpgradeEffect('singAmbrosiaGeneration2') *
-    getGQUpgradeEffect('singAmbrosiaGeneration3') *
-    getGQUpgradeEffect('singAmbrosiaGeneration4')
-
+  return getGQUpgradeEffect('singAmbrosiaGeneration')
+    * getGQUpgradeEffect('singAmbrosiaGeneration2')
+    * getGQUpgradeEffect('singAmbrosiaGeneration3')
+    * getGQUpgradeEffect('singAmbrosiaGeneration4')
 }
 
 export const calculateAmbrosiaLuckSingularityUpgrade = () => {
-  return getGQUpgradeEffect('singAmbrosiaLuck') +
-    getGQUpgradeEffect('singAmbrosiaLuck2') +
-    getGQUpgradeEffect('singAmbrosiaLuck3') +
-    getGQUpgradeEffect('singAmbrosiaLuck4')
+  return getGQUpgradeEffect('singAmbrosiaLuck')
+    + getGQUpgradeEffect('singAmbrosiaLuck2')
+    + getGQUpgradeEffect('singAmbrosiaLuck3')
+    + getGQUpgradeEffect('singAmbrosiaLuck4')
 }
 
 export const calculateAmbrosiaGenerationOcteractUpgrade = () => {
-  const vals = [
-    +player.octeractUpgrades.octeractAmbrosiaGeneration.getEffect().bonus,
-    +player.octeractUpgrades.octeractAmbrosiaGeneration2.getEffect().bonus,
-    +player.octeractUpgrades.octeractAmbrosiaGeneration3.getEffect().bonus,
-    +player.octeractUpgrades.octeractAmbrosiaGeneration4.getEffect().bonus
-  ]
-
-  return productContents(vals)
+  return (
+    +player.octeractUpgrades.octeractAmbrosiaGeneration.getEffect().bonus
+    * +player.octeractUpgrades.octeractAmbrosiaGeneration2.getEffect().bonus
+    * +player.octeractUpgrades.octeractAmbrosiaGeneration3.getEffect().bonus
+    * +player.octeractUpgrades.octeractAmbrosiaGeneration4.getEffect().bonus
+  )
 }
 
 export const calculateAmbrosiaLuckOcteractUpgrade = () => {
-  const vals = [
-    +player.octeractUpgrades.octeractAmbrosiaLuck.getEffect().bonus,
-    +player.octeractUpgrades.octeractAmbrosiaLuck2.getEffect().bonus,
-    +player.octeractUpgrades.octeractAmbrosiaLuck3.getEffect().bonus,
-    +player.octeractUpgrades.octeractAmbrosiaLuck4.getEffect().bonus
-  ]
-
-  return sumContents(vals)
+  return (
+    +player.octeractUpgrades.octeractAmbrosiaLuck.getEffect().bonus
+    + +player.octeractUpgrades.octeractAmbrosiaLuck2.getEffect().bonus
+    + +player.octeractUpgrades.octeractAmbrosiaLuck3.getEffect().bonus
+    + +player.octeractUpgrades.octeractAmbrosiaLuck4.getEffect().bonus
+  )
 }
 
 const digitReduction = 4
@@ -2121,11 +2112,9 @@ export const calculateObtainiumPotionBaseObtainium = () => {
 }
 
 export const calculateAscensionSpeedExponentSpread = () => {
-
-  return getGQUpgradeEffect('singAscensionSpeed') +
-    getGQUpgradeEffect('singAscensionSpeed2') +
-    0.001 * Math.floor((player.shopUpgrades.chronometerInfinity + calculateFreeShopInfinityUpgrades()) / 40)
-
+  return getGQUpgradeEffect('singAscensionSpeed')
+    + getGQUpgradeEffect('singAscensionSpeed2')
+    + 0.001 * Math.floor((player.shopUpgrades.chronometerInfinity + calculateFreeShopInfinityUpgrades()) / 40)
 }
 
 export const calculateCookieUpgrade29Luck = () => {

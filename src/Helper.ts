@@ -26,12 +26,12 @@ import {
   sacrificeOfferings
 } from './Runes'
 import { useConsumable } from './Shop'
+import { getGQUpgradeEffect } from './singularity'
 import { player } from './Synergism'
 import { Tabs } from './Tabs'
 import { buyAllTalismanResources } from './Talismans'
 import { visualUpdateAmbrosia, visualUpdateOcteracts, visualUpdateResearch } from './UpdateVisuals'
 import { Globals as G } from './Variables'
-import { getGQUpgradeEffect } from './singularity'
 
 type TimerInput =
   | 'prestige'

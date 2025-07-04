@@ -44,7 +44,12 @@ import { buyResearch, updateResearchBG } from './Research'
 import { getRune, resetOfferings, resetRuneBlessings, resetRunes, resetRuneSpirits } from './Runes'
 import { playerJsonSchema } from './saves/PlayerJsonSchema'
 import { forceResetShopUpgrades, shopData } from './Shop'
-import { calculateSingularityDebuff, getFastForwardTotalMultiplier, getGQUpgradeEffect, goldenQuarkUpgrades } from './singularity'
+import {
+  calculateSingularityDebuff,
+  getFastForwardTotalMultiplier,
+  getGQUpgradeEffect,
+  goldenQuarkUpgrades
+} from './singularity'
 import { blankSave, deepClone, format, player, saveSynergy, updateAll, updateEffectiveLevelMult } from './Synergism'
 import { changeSubTab, changeTab, Tabs } from './Tabs'
 import { resetTalismans, updateTalismanInventory } from './Talismans'
@@ -1166,7 +1171,7 @@ export const singularity = (setSingNumber = -1) => {
   }
 
   hold.goldenQuarkUpgrades = { ...player.goldenQuarkUpgrades }
-  
+
   hold.octeractUpgrades = Object.fromEntries(
     Object.entries(player.octeractUpgrades).map(([key, value]) => {
       return [key, {
