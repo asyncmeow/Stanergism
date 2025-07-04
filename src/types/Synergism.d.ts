@@ -634,7 +634,11 @@ export interface Player {
     freeLevel: number
   }>
 
-  octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade>
+  octUpgrades: Record<OcteractDataKeys, {
+    level: number
+    freeLevel: number
+  }>
+
   dailyCodeUsed: boolean
   hepteractAutoCraftPercentage: number
   octeractTimer: number

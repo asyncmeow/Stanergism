@@ -62,7 +62,7 @@ import {
   updateSaveString
 } from './ImportExport'
 import { exitFastForward, getTips, sendToWebsocket, setTips } from './Login'
-import type { OcteractDataKeys } from './Octeracts'
+import { buyOcteractUpgradeLevel, octeractUpgrades, updateOcteractUpgradeHTML, type OcteractDataKeys } from './Octeracts'
 import { buyPlatonicUpgrades, createPlatonicDescription } from './Platonic'
 import { displayRedAmbrosiaLevels, getRedAmbrosiaUpgrade, resetRedAmbrosiaDisplay } from './RedAmbrosiaUpgrades'
 import { buyResearch, researchDescriptions } from './Research'
@@ -960,15 +960,15 @@ TODO: Fix this entire tab it's utter shit
   }
 
   // Octeract Upgrades
-  const octeractUpgrades = Object.keys(player.octeractUpgrades) as OcteractDataKeys[]
-  for (const key of octeractUpgrades) {
+  const octUpgrade = Object.keys(octeractUpgrades) as OcteractDataKeys[]
+  for (const key of octUpgrade) {
     DOMCacheGetOrSet(key).addEventListener(
       'mouseover',
-      () => player.octeractUpgrades[key].updateUpgradeHTML()
+      () => updateOcteractUpgradeHTML(key)
     )
     DOMCacheGetOrSet(key).addEventListener(
       'click',
-      (event) => player.octeractUpgrades[key].buyLevel(event)
+      (event) => buyOcteractUpgradeLevel(key, event)
     )
   }
 

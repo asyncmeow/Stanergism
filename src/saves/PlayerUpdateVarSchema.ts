@@ -5,6 +5,7 @@ import { goldenQuarkUpgrades, type SingularityDataKeys } from '../singularity'
 import { getTalisman } from '../Talismans'
 import { convertArrayToCorruption } from './PlayerJsonSchema'
 import { playerSchema } from './PlayerSchema'
+import { OcteractDataKeys, octeractUpgrades } from '../Octeracts'
 
 export const playerUpdateVarSchema = playerSchema.transform((player) => {
   if (player.usedCorruptions !== undefined) {
@@ -144,6 +145,22 @@ export const playerUpdateVarSchema = playerSchema.transform((player) => {
     }
   }
 
+  if (player.octeractUpgrades !== undefined) {
+    for (const key of Object.keys(player.octeractUpgrades)) {
+      const k = key as OcteractDataKeys
+
+      const level = player.octeractUpgrades[k].level ?? 0
+      const freeLevel = player.octeractUpgrades[k].freeLevels ?? 0
+
+      player.octUpgrades[k] = {
+        level,
+        freeLevel
+      }
+      octeractUpgrades[k].level = level
+      octeractUpgrades[k].freeLevel = level
+    }
+  }
+
   Reflect.deleteProperty(player, 'runeshards')
   Reflect.deleteProperty(player, 'maxofferings')
   Reflect.deleteProperty(player, 'researchPoints')
@@ -173,6 +190,7 @@ export const playerUpdateVarSchema = playerSchema.transform((player) => {
   Reflect.deleteProperty(player, 'runeSpiritLevels')
   Reflect.deleteProperty(player, 'hepteractCrafts')
   Reflect.deleteProperty(player, 'singularityUpgrades')
+  Reflect.deleteProperty(player, 'octeractUpgrades')
 
   return player
 })

@@ -11,6 +11,7 @@ import { format, formatAsPercentIncrease, player } from './Synergism'
 import { Tabs } from './Tabs'
 import { assert } from './Utility'
 import { Globals as G } from './Variables'
+import { getOcteractUpgradeEffect } from './Octeracts'
 
 interface TalismanFragmentCost {
   obtainium: number
@@ -675,10 +676,10 @@ export const universalTalismanMaxLevelIncreasers = () => {
     6 * CalcECC('ascension', player.challengecompletions[13])
     + Math.floor(player.researches[200] / 400)
     + +player.singularityChallenges.noOfferingPower.rewards.talismanFreeLevel
-    + +player.octeractUpgrades.octeractTalismanLevelCap1.getEffect().bonus
-    + +player.octeractUpgrades.octeractTalismanLevelCap2.getEffect().bonus
-    + +player.octeractUpgrades.octeractTalismanLevelCap3.getEffect().bonus
-    + +player.octeractUpgrades.octeractTalismanLevelCap4.getEffect().bonus
+    + getOcteractUpgradeEffect('octeractTalismanLevelCap1')
+    + getOcteractUpgradeEffect('octeractTalismanLevelCap2')
+    + getOcteractUpgradeEffect('octeractTalismanLevelCap3')
+    + getOcteractUpgradeEffect('octeractTalismanLevelCap4')
   )
 }
 

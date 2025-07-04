@@ -14,6 +14,7 @@ import { getGQUpgradeEffect } from './singularity'
 import { format, formatAsPercentIncrease, player } from './Synergism'
 import { IconSets } from './Themes'
 import { Alert, Confirm, Notification } from './UpdateHTML'
+import { getOcteractUpgradeEffect } from './Octeracts'
 
 export type CampaignKeys =
   | 'first'
@@ -279,7 +280,7 @@ export class CampaignManager {
 
     sum += inheritanceTokens()
     sum += getGQUpgradeEffect('singBonusTokens4')
-    sum += +player.octeractUpgrades.octeractBonusTokens4.getEffect().bonus
+    sum += getOcteractUpgradeEffect('octeractBonusTokens4')
     return sum
   }
 
@@ -292,7 +293,7 @@ export class CampaignManager {
 
     sum += inheritanceTokens()
     sum += getGQUpgradeEffect('singBonusTokens4')
-    sum += +player.octeractUpgrades.octeractBonusTokens4.getEffect().bonus
+    sum += getOcteractUpgradeEffect('octeractBonusTokens4')
 
     return sum
   }
@@ -559,7 +560,7 @@ export class Campaign {
         additiveTotal += 5
       }
       additiveTotal += getGQUpgradeEffect('singBonusTokens1')
-      additiveTotal += +player.octeractUpgrades.octeractBonusTokens3.getEffect().bonus
+      additiveTotal += getOcteractUpgradeEffect('octeractBonusTokens3')
     }
 
     if (completed === this.#limit) {
@@ -567,7 +568,7 @@ export class Campaign {
         additiveTotal += 10
       }
       additiveTotal += getGQUpgradeEffect('singBonusTokens3')
-      additiveTotal += +player.octeractUpgrades.octeractBonusTokens1.getEffect().bonus
+      additiveTotal += getOcteractUpgradeEffect('octeractBonusTokens1')
     }
 
     let multiplier = 1
@@ -575,7 +576,7 @@ export class Campaign {
     multiplier *= this.#isMeta ? 2 : 1
     multiplier *= singularityBonusTokenMult()
     multiplier *= getGQUpgradeEffect('singBonusTokens2')
-    multiplier *= +player.octeractUpgrades.octeractBonusTokens2.getEffect().bonus
+    multiplier *= getOcteractUpgradeEffect('octeractBonusTokens2')
     return Math.floor(additiveTotal * multiplier)
   }
 

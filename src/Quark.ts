@@ -1,4 +1,5 @@
 import { calculateCubeQuarkMultiplier, calculateQuarkMultiplier } from './Calculate'
+import { getOcteractUpgradeEffect } from './Octeracts'
 import { format, player } from './Synergism'
 
 export const quarkHandler = () => {
@@ -15,7 +16,7 @@ export const quarkHandler = () => {
     baseQuarkPerHour += player.researches[el]
   }
 
-  baseQuarkPerHour *= +player.octeractUpgrades.octeractExportQuarks.getEffect().bonus
+  baseQuarkPerHour *= getOcteractUpgradeEffect('octeractExportQuarks')
 
   const quarkPerHour = baseQuarkPerHour
 

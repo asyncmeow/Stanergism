@@ -181,7 +181,7 @@ import {
 import { disableHotkeys } from './Hotkeys'
 import { init as i18nInit } from './i18n'
 import { handleLogin } from './Login'
-import { octeractData, OcteractUpgrade } from './Octeracts'
+import { blankOcteractLevelObject, getOcteractUpgradeEffect, OcteractDataKeys, octeractUpgrades } from './Octeracts'
 import { updatePlatonicUpgradeBG } from './Platonic'
 import { initializePCoinCache, PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { getQuarkBonus, QuarkHandler } from './Quark'
@@ -1067,197 +1067,7 @@ export const player: Player = {
   notation: 'Default',
 
   goldenQuarkUpgrades: blankGQLevelObject,
-
-  octeractUpgrades: {
-    octeractStarter: new OcteractUpgrade(
-      octeractData.octeractStarter,
-      'octeractStarter'
-    ),
-    octeractGain: new OcteractUpgrade(
-      octeractData.octeractGain,
-      'octeractGain'
-    ),
-    octeractGain2: new OcteractUpgrade(
-      octeractData.octeractGain2,
-      'octeractGain2'
-    ),
-    octeractQuarkGain: new OcteractUpgrade(
-      octeractData.octeractQuarkGain,
-      'octeractQuarkGain'
-    ),
-    octeractQuarkGain2: new OcteractUpgrade(
-      octeractData.octeractQuarkGain2,
-      'octeractQuarkGain2'
-    ),
-    octeractCorruption: new OcteractUpgrade(
-      octeractData.octeractCorruption,
-      'octeractCorruption'
-    ),
-    octeractGQCostReduce: new OcteractUpgrade(
-      octeractData.octeractGQCostReduce,
-      'octeractGQCostReduce'
-    ),
-    octeractExportQuarks: new OcteractUpgrade(
-      octeractData.octeractExportQuarks,
-      'octeractExportQuarks'
-    ),
-    octeractImprovedDaily: new OcteractUpgrade(
-      octeractData.octeractImprovedDaily,
-      'octeractImprovedDaily'
-    ),
-    octeractImprovedDaily2: new OcteractUpgrade(
-      octeractData.octeractImprovedDaily2,
-      'octeractImprovedDaily2'
-    ),
-    octeractImprovedDaily3: new OcteractUpgrade(
-      octeractData.octeractImprovedDaily3,
-      'octeractImprovedDaily3'
-    ),
-    octeractImprovedQuarkHept: new OcteractUpgrade(
-      octeractData.octeractImprovedQuarkHept,
-      'octeractImprovedQuarkHept'
-    ),
-    octeractImprovedGlobalSpeed: new OcteractUpgrade(
-      octeractData.octeractImprovedGlobalSpeed,
-      'octeractImprovedGlobalSpeed'
-    ),
-    octeractImprovedAscensionSpeed: new OcteractUpgrade(
-      octeractData.octeractImprovedAscensionSpeed,
-      'octeractImprovedAscensionSpeed'
-    ),
-    octeractImprovedAscensionSpeed2: new OcteractUpgrade(
-      octeractData.octeractImprovedAscensionSpeed2,
-      'octeractImprovedAscensionSpeed2'
-    ),
-    octeractImprovedFree: new OcteractUpgrade(
-      octeractData.octeractImprovedFree,
-      'octeractImprovedFree'
-    ),
-    octeractImprovedFree2: new OcteractUpgrade(
-      octeractData.octeractImprovedFree2,
-      'octeractImprovedFree2'
-    ),
-    octeractImprovedFree3: new OcteractUpgrade(
-      octeractData.octeractImprovedFree3,
-      'octeractImprovedFree3'
-    ),
-    octeractImprovedFree4: new OcteractUpgrade(
-      octeractData.octeractImprovedFree4,
-      'octeractImprovedFree4'
-    ),
-    octeractSingUpgradeCap: new OcteractUpgrade(
-      octeractData.octeractSingUpgradeCap,
-      'octeractSingUpgradeCap'
-    ),
-    octeractOfferings1: new OcteractUpgrade(
-      octeractData.octeractOfferings1,
-      'octeractOfferings1'
-    ),
-    octeractObtainium1: new OcteractUpgrade(
-      octeractData.octeractObtainium1,
-      'octeractObtainium1'
-    ),
-    octeractAscensions: new OcteractUpgrade(
-      octeractData.octeractAscensions,
-      'octeractAscensions'
-    ),
-    octeractAscensions2: new OcteractUpgrade(
-      octeractData.octeractAscensions2,
-      'octeractAscensions2'
-    ),
-    octeractAscensionsOcteractGain: new OcteractUpgrade(
-      octeractData.octeractAscensionsOcteractGain,
-      'octeractAscensionsOcteractGain'
-    ),
-    octeractFastForward: new OcteractUpgrade(
-      octeractData.octeractFastForward,
-      'octeractFastForward'
-    ),
-    octeractAutoPotionSpeed: new OcteractUpgrade(
-      octeractData.octeractAutoPotionSpeed,
-      'octeractAutoPotionSpeed'
-    ),
-    octeractAutoPotionEfficiency: new OcteractUpgrade(
-      octeractData.octeractAutoPotionEfficiency,
-      'octeractAutoPotionEfficiency'
-    ),
-    octeractOneMindImprover: new OcteractUpgrade(
-      octeractData.octeractOneMindImprover,
-      'octeractOneMindImprover'
-    ),
-    octeractAmbrosiaLuck: new OcteractUpgrade(
-      octeractData.octeractAmbrosiaLuck,
-      'octeractAmbrosiaLuck'
-    ),
-    octeractAmbrosiaLuck2: new OcteractUpgrade(
-      octeractData.octeractAmbrosiaLuck2,
-      'octeractAmbrosiaLuck2'
-    ),
-    octeractAmbrosiaLuck3: new OcteractUpgrade(
-      octeractData.octeractAmbrosiaLuck3,
-      'octeractAmbrosiaLuck3'
-    ),
-    octeractAmbrosiaLuck4: new OcteractUpgrade(
-      octeractData.octeractAmbrosiaLuck4,
-      'octeractAmbrosiaLuck4'
-    ),
-    octeractAmbrosiaGeneration: new OcteractUpgrade(
-      octeractData.octeractAmbrosiaGeneration,
-      'octeractAmbrosiaGeneration'
-    ),
-    octeractAmbrosiaGeneration2: new OcteractUpgrade(
-      octeractData.octeractAmbrosiaGeneration2,
-      'octeractAmbrosiaGeneration2'
-    ),
-    octeractAmbrosiaGeneration3: new OcteractUpgrade(
-      octeractData.octeractAmbrosiaGeneration3,
-      'octeractAmbrosiaGeneration3'
-    ),
-    octeractAmbrosiaGeneration4: new OcteractUpgrade(
-      octeractData.octeractAmbrosiaGeneration4,
-      'octeractAmbrosiaGeneration4'
-    ),
-    octeractBonusTokens1: new OcteractUpgrade(
-      octeractData.octeractBonusTokens1,
-      'octeractBonusTokens1'
-    ),
-    octeractBonusTokens2: new OcteractUpgrade(
-      octeractData.octeractBonusTokens2,
-      'octeractBonusTokens2'
-    ),
-    octeractBonusTokens3: new OcteractUpgrade(
-      octeractData.octeractBonusTokens3,
-      'octeractBonusTokens3'
-    ),
-    octeractBonusTokens4: new OcteractUpgrade(
-      octeractData.octeractBonusTokens4,
-      'octeractBonusTokens4'
-    ),
-    octeractBlueberries: new OcteractUpgrade(
-      octeractData.octeractBlueberries,
-      'octeractBlueberries'
-    ),
-    octeractInfiniteShopUpgrades: new OcteractUpgrade(
-      octeractData.octeractInfiniteShopUpgrades,
-      'octeractInfiniteShopUpgrades'
-    ),
-    octeractTalismanLevelCap1: new OcteractUpgrade(
-      octeractData.octeractTalismanLevelCap1,
-      'octeractTalismanLevelCap1'
-    ),
-    octeractTalismanLevelCap2: new OcteractUpgrade(
-      octeractData.octeractTalismanLevelCap2,
-      'octeractTalismanLevelCap2'
-    ),
-    octeractTalismanLevelCap3: new OcteractUpgrade(
-      octeractData.octeractTalismanLevelCap3,
-      'octeractTalismanLevelCap3'
-    ),
-    octeractTalismanLevelCap4: new OcteractUpgrade(
-      octeractData.octeractTalismanLevelCap4,
-      'octeractTalismanLevelCap4'
-    )
-  },
+  octUpgrades: blankOcteractLevelObject,
 
   dailyCodeUsed: false,
   hepteractAutoCraftPercentage: 50,
@@ -1507,7 +1317,6 @@ export const deepClone = () =>
         new CorruptionLoadout(o.loadout)],
       [CorruptionSaves, (o: CorruptionSaves) => new CorruptionSaves(o.corrSaveData)],
       [CampaignManager, (o: CampaignManager) => new CampaignManager(o.campaignManagerData)],
-      [OcteractUpgrade, (o: OcteractUpgrade) => new OcteractUpgrade(o.valueOf(), o.key())],
       [SingularityChallenge, (o: SingularityChallenge) => new SingularityChallenge(o.valueOf(), o.key())],
       [BlueberryUpgrade, (o: BlueberryUpgrade) => new BlueberryUpgrade(o.valueOf(), o.key())]
     ]
@@ -1531,6 +1340,14 @@ export const saveSynergy = (button?: boolean) => {
       return [key, { level: gqu.level, freeLevel: gqu.freeLevel }]
     })
   ) as Record<SingularityDataKeys, { level: number; freeLevel: number }>
+
+  player.octUpgrades = Object.fromEntries(
+    Object.entries(player.octUpgrades).map(([key]) => {
+      const k = key as OcteractDataKeys
+      const ou = octeractUpgrades[k]
+      return [key, { level: ou.level, freeLevel: ou.freeLevel }]
+    })
+  ) as Record<OcteractDataKeys, { level: number; freeLevel: number }>
 
   const p = playerJsonSchema.parse(player)
   const save = btoa(JSON.stringify(p))
@@ -4364,7 +4181,7 @@ export const updateAntMultipliers = (): void => {
     G.globalAntMult = Decimal.pow(G.globalAntMult, 0.02)
   }
 
-  if (player.octeractUpgrades.octeractStarter.getEffect().bonus) {
+  if (getOcteractUpgradeEffect('octeractStarter')) {
     G.globalAntMult = G.globalAntMult.times(100000)
   }
 
@@ -5921,6 +5738,17 @@ export const reloadShit = (reset = false) => {
       goldenQuarkUpgrades[k].freeLevel = value.freeLevel
     }
   }
+
+  // Recover Oct Upgrades level from Player Obj
+  if (player.octUpgrades !== undefined) {
+    for (const [key, value] of Object.entries(player.octUpgrades)) {
+      const k = key as OcteractDataKeys
+      
+      octeractUpgrades[k].level = value.level
+      octeractUpgrades[k].freeLevel = value.freeLevel
+    }
+  }
+
   initRedAmbrosiaUpgrades(player.redAmbrosiaUpgrades)
   initRunes(player.runes)
   initRuneBlessings(player.runeBlessings)

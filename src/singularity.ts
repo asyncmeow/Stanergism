@@ -6,6 +6,7 @@ import { getRune } from './Runes'
 import { format, formatAsPercentIncrease, player } from './Synergism'
 import { Alert, Prompt, revealStuff } from './UpdateHTML'
 import { toOrdinal } from './Utility'
+import { getOcteractUpgradeEffect } from './Octeracts'
 
 export type SingularityDataKeys =
   | 'goldenQuarks1'
@@ -2050,7 +2051,7 @@ export function computeGQUpgradeMaxLevel (upgradeKey: SingularityDataKeys): numb
         break
       }
     }
-    cap += +player.octeractUpgrades.octeractSingUpgradeCap.getEffect().bonus
+    cap += getOcteractUpgradeEffect('octeractSingUpgradeCap')
     return cap
   }
 }
@@ -2078,11 +2079,11 @@ export function actualGQUpgradeTotalLevels (upgradeKey: SingularityDataKeys): nu
   const linearLevels = upgrade.level + actualFreeLevels
   let polynomialLevels = 0
 
-  if (player.octeractUpgrades.octeractImprovedFree.getEffect().bonus) {
+  if (getOcteractUpgradeEffect('octeractImprovedFree')) {
     let exponent = 0.6
-    exponent += +player.octeractUpgrades.octeractImprovedFree2.getEffect().bonus
-    exponent += +player.octeractUpgrades.octeractImprovedFree3.getEffect().bonus
-    exponent += +player.octeractUpgrades.octeractImprovedFree4.getEffect().bonus
+    exponent += getOcteractUpgradeEffect('octeractImprovedFree2')
+    exponent += getOcteractUpgradeEffect('octeractImprovedFree3')
+    exponent += getOcteractUpgradeEffect('octeractImprovedFree4')
     polynomialLevels = Math.pow(upgrade.level * actualFreeLevels, exponent)
   }
 
@@ -2993,7 +2994,7 @@ export const getFastForwardTotalMultiplier = (): number => {
   let fastForward = 0
   fastForward += getGQUpgradeEffect('singFastForward')
   fastForward += getGQUpgradeEffect('singFastForward2')
-  fastForward += +player.octeractUpgrades.octeractFastForward.getEffect().bonus
+  fastForward += getOcteractUpgradeEffect('octeractFastForward')
 
   // Stop at sing 200 even if you include fast forward
   fastForward = Math.max(
@@ -3034,7 +3035,7 @@ export const getGoldenQuarkCost = (): {
   costReduction *= achievementManager.goldQuarkDiscountMultiplier
   costReduction *= 1 - (0.3 * player.cubeUpgrades[60]) / 10000
   costReduction *= getGQUpgradeEffect('goldenQuarks2')
-  costReduction *= +player.octeractUpgrades.octeractGQCostReduce.getEffect().bonus
+  costReduction *= getOcteractUpgradeEffect('octeractGQCostReduce')
   costReduction *= player.highestSingularityCount >= 100
     ? 1 - (0.5 * player.highestSingularityCount) / 250
     : 1

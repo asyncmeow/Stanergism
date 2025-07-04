@@ -4,13 +4,6 @@ import { calculateOcteractMultiplier } from './Calculate'
 import { format, formatAsPercentIncrease, formatTimeShort, player } from './Synergism'
 import { Alert, Prompt } from './UpdateHTML'
 
-/*export interface IOcteractData extends Omit<IUpgradeData, 'name' | 'description'> {
-  costFormula(this: void, level: number, baseCost: number): number
-  cacheUpdates?: (() => void)[] // TODO: Improve this type signature -Plat
-  octeractsInvested?: number
-  qualityOfLife?: boolean
-}*/
-
 export type OcteractDataKeys =
   | 'octeractStarter'
   | 'octeractGain'
@@ -60,201 +53,7 @@ export type OcteractDataKeys =
   | 'octeractTalismanLevelCap3'
   | 'octeractTalismanLevelCap4'
 
-
-/*export class OcteractUpgrade extends DynamicUpgrade {
-  readonly costFormula: (level: number, baseCost: number) => number
-  public octeractsInvested = 0
-  public qualityOfLife: boolean
-  readonly cacheUpdates: (() => void)[] | undefined
-  #key: string
-
-  constructor (data: IOcteractData, key: string) {
-    const name = i18next.t(`octeract.data.${key}.name`)
-    const description = i18next.t(`octeract.data.${key}.description`)
-    super({ ...data, name, description })
-    this.costFormula = data.costFormula
-    this.octeractsInvested = data.octeractsInvested ?? 0
-    this.qualityOfLife = data.qualityOfLife ?? false
-    this.cacheUpdates = data.cacheUpdates ?? undefined
-    this.#key = key
-  }
-
-  getCostTNL (): number {
-    if (this.level === this.maxLevel) {
-      return 0
-    }
-
-    return this.costFormula(this.level, this.costPerLevel)
-  }
-
-  public async buyLevel (event: MouseEvent): Promise<void> {
-    let purchased = 0
-    let maxPurchasable = 1
-    let OCTBudget = player.wowOcteracts
-
-    if (event.shiftKey) {
-      maxPurchasable = 1000000
-      const buy = Number(
-        await Prompt(`${i18next.t('octeract.buyLevel.buyPrompt', { n: format(player.wowOcteracts, 0, true) })}`)
-      )
-
-      if (isNaN(buy) || !isFinite(buy) || !Number.isInteger(buy)) { // nan + Infinity checks
-        return Alert(i18next.t('general.validation.finite'))
-      }
-
-      if (buy === -1) {
-        OCTBudget = player.wowOcteracts
-      } else if (buy <= 0) {
-        return Alert(i18next.t('octeract.buyLevel.cancelPurchase'))
-      } else {
-        OCTBudget = buy
-      }
-      OCTBudget = Math.min(player.wowOcteracts, OCTBudget)
-    }
-
-    if (this.maxLevel > 0) {
-      maxPurchasable = Math.min(maxPurchasable, this.maxLevel - this.level)
-    }
-
-    if (maxPurchasable === 0) {
-      return Alert(i18next.t('octeract.buyLevel.alreadyMax'))
-    }
-
-    while (maxPurchasable > 0) {
-      const cost = this.getCostTNL()
-      if (player.wowOcteracts < cost || OCTBudget < cost) {
-        break
-      } else {
-        player.wowOcteracts -= cost
-        OCTBudget -= cost
-        this.octeractsInvested += cost
-        this.level += 1
-        purchased += 1
-        maxPurchasable -= 1
-      }
-    }
-
-    if (purchased === 0) {
-      return Alert(i18next.t('octeract.buyLevel.cannotAfford'))
-    }
-    if (purchased > 1) {
-      return Alert(`${i18next.t('octeract.buyLevel.multiBuy', { n: format(purchased) })}`)
-    }
-
-    this.updateCaches()
-    this.updateUpgradeHTML()
-  }
-
-  toString (): string {
-    const costNextLevel = this.getCostTNL()
-    const maxLevel = this.maxLevel === -1
-      ? ''
-      : `/${format(this.maxLevel, 0, true)}`
-    const isMaxLevel = this.maxLevel === this.level
-    const color = isMaxLevel ? 'plum' : 'white'
-
-    let freeLevelInfo = this.freeLevels > 0
-      ? `<span style="color: orange"> [+${format(this.freeLevels, 1, true)}]</span>`
-      : ''
-
-    if (this.freeLevels > this.level) {
-      freeLevelInfo = `${freeLevelInfo}<span style="color: var(--maroon-text-color)">${
-        i18next.t('general.softCapped')
-      }</span>`
-    }
-
-    const isAffordable = costNextLevel <= player.wowOcteracts
-    let affordTime = ''
-    if (!isMaxLevel && !isAffordable) {
-      const octPerSecond = calculateOcteractMultiplier()
-      affordTime = octPerSecond > 0
-        ? formatTimeShort((costNextLevel - player.wowOcteracts) / octPerSecond)
-        : `${i18next.t('general.infinity')}`
-    }
-    const affordableInfo = isMaxLevel
-      ? `<span style="color: plum"> ${i18next.t('general.maxed')}</span>`
-      : isAffordable
-      ? `<span style="color: var(--green-text-color)"> ${i18next.t('general.affordable')}</span>`
-      : `<span style="color: yellow"> ${i18next.t('octeract.toString.becomeAffordable', { n: affordTime })}</span>`
-
-    return `<span style="color: gold">${this.name}</span>
-                <span style="color: lightblue">${this.description}</span>
-                <span style="color: ${color}"> ${i18next.t('general.level')} ${
-      format(this.level, 0, true)
-    }${maxLevel}${freeLevelInfo}</span>
-                <span style="color: gold">${this.getEffect().desc()}</span>
-                ${i18next.t('octeract.toString.costNextLevel')} ${
-      format(costNextLevel, 2, true, true, true)
-    } Octeracts${affordableInfo}
-                ${i18next.t('general.spent')} Octeracts: ${format(this.octeractsInvested, 2, true, true, true)}`
-  }
-
-  public updateUpgradeHTML (): void {
-    DOMCacheGetOrSet('singularityOcteractsMultiline').innerHTML = this.toString()
-    DOMCacheGetOrSet('octeractAmount').innerHTML = i18next.t('octeract.amount', {
-      octeracts: format(player.wowOcteracts, 2, true, true, true)
-    })
-  }
-
-  public computeFreeLevelSoftcap (): number {
-    const freeLevelMult = 1 + 0.3 / 100 * player.cubeUpgrades[78]
-    return this.freeLevels * freeLevelMult
-  }
-
-  public actualTotalLevels (): number {
-    if (
-      (player.singularityChallenges.noOcteracts.enabled || player.singularityChallenges.sadisticPrequel.enabled)
-      && !this.qualityOfLife
-    ) {
-      return 0
-    }
-    const actualFreeLevels = this.computeFreeLevelSoftcap()
-
-    if (this.level >= actualFreeLevels) {
-      return actualFreeLevels + this.level
-    } else {
-      return 2 * Math.sqrt(actualFreeLevels * this.level)
-    }
-  }
-
-  public getEffect (): { bonus: number | boolean; desc: () => string } {
-    return this.effect(this.actualTotalLevels())
-  }
-
-  public refund (): void {
-    player.wowOcteracts += this.octeractsInvested
-    this.level = 0
-    this.octeractsInvested = 0
-  }
-
-  updateCaches (): void {
-    if (this.cacheUpdates !== undefined) {
-      for (const cache of this.cacheUpdates) {
-        cache()
-      }
-    }
-  }
-
-  valueOf (): IOcteractData {
-    return {
-      costFormula: this.costFormula,
-      costPerLevel: this.costPerLevel,
-      maxLevel: this.maxLevel,
-      cacheUpdates: this.cacheUpdates,
-      effect: this.effect,
-      freeLevels: this.freeLevels,
-      level: this.level,
-      octeractsInvested: this.octeractsInvested,
-      qualityOfLife: this.qualityOfLife
-    }
-  }
-
-  key () {
-    return this.#key
-  }
-} */
-
-export interface OcteractUpgrades {
+export interface OcteractUpgrade {
   level: number
   freeLevel: number
   maxLevel: number
@@ -267,7 +66,7 @@ export interface OcteractUpgrades {
   description (): string
 }
 
-export const octeractData: Record<OcteractDataKeys, OcteractUpgrades> = {
+export const octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade> = {
   octeractStarter: {
     level: 0,
     freeLevel: 0,
@@ -1156,8 +955,8 @@ export const octeractData: Record<OcteractDataKeys, OcteractUpgrades> = {
   }
 }
 
-export const blackOcteractLevelObject: Record<OcteractDataKeys, { level: number; freeLevel: number }> = Object.fromEntries(
-  Object.keys(octeractData).map((key) => [
+export const blankOcteractLevelObject: Record<OcteractDataKeys, { level: number; freeLevel: number }> = Object.fromEntries(
+  Object.keys(octeractUpgrades).map((key) => [
     key as OcteractDataKeys,
     {
       level: 0,
@@ -1167,7 +966,7 @@ export const blackOcteractLevelObject: Record<OcteractDataKeys, { level: number;
 ) as Record<OcteractDataKeys, { level: number; freeLevel: number }>
 
 export const getOcteractUpgradeCostTNL = (upgradeKey: OcteractDataKeys): number => {
-  const upgrade = octeractData[upgradeKey]
+  const upgrade = octeractUpgrades[upgradeKey]
   
   if (upgrade.level === upgrade.maxLevel) {
     return 0
@@ -1178,12 +977,12 @@ export const getOcteractUpgradeCostTNL = (upgradeKey: OcteractDataKeys): number 
 
 export const computeOcteractFreeLevelSoftcap = (upgradeKey: OcteractDataKeys): number => {
   const freeLevelMult = 1 + 0.3 / 100 * player.cubeUpgrades[78]
-  const upgrade = octeractData[upgradeKey]
+  const upgrade = octeractUpgrades[upgradeKey]
   return upgrade.freeLevel * freeLevelMult
 }
 
 export const actualOcteractUpgradeTotalLevels = (upgradeKey: OcteractDataKeys): number => {
-  const upgrade = octeractData[upgradeKey]
+  const upgrade = octeractUpgrades[upgradeKey]
   
   if (
     (player.singularityChallenges.noOcteracts.enabled || player.singularityChallenges.sadisticPrequel.enabled)
@@ -1202,7 +1001,7 @@ export const actualOcteractUpgradeTotalLevels = (upgradeKey: OcteractDataKeys): 
 }
 
 export const upgradeOcteractToString = (upgradeKey: OcteractDataKeys): string => {
-  const upgrade = octeractData[upgradeKey]
+  const upgrade = octeractUpgrades[upgradeKey]
   const costNextLevel = getOcteractUpgradeCostTNL(upgradeKey)
   
   const maxLevel = upgrade.maxLevel === -1
@@ -1259,7 +1058,7 @@ export const updateOcteractUpgradeHTML = (upgradeKey: OcteractDataKeys): void =>
 }
 
 export const buyOcteractUpgradeLevel = async (upgradeKey: OcteractDataKeys, event: MouseEvent): Promise<void> => {
-  const upgrade = octeractData[upgradeKey]
+  const upgrade = octeractUpgrades[upgradeKey]
   let purchased = 0
   let maxPurchasable = 1
   let OCTBudget = player.wowOcteracts
@@ -1317,7 +1116,7 @@ export const buyOcteractUpgradeLevel = async (upgradeKey: OcteractDataKeys, even
 }
 
 export const getOcteractUpgradeEffect = (upgradeKey: OcteractDataKeys): number => {
-  const upgrade = octeractData[upgradeKey]
+  const upgrade = octeractUpgrades[upgradeKey]
   const totalLevels = actualOcteractUpgradeTotalLevels(upgradeKey)
   return upgrade.effect(totalLevels)
 }

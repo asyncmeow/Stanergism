@@ -52,6 +52,7 @@ import { clearInterval, setInterval } from './Timers'
 import { Alert, Prompt } from './UpdateHTML'
 import { findInsertionIndex, sumContents } from './Utility'
 import { Globals as G } from './Variables'
+import { getOcteractUpgradeEffect } from './Octeracts'
 
 const CASH_GRAB_ULTRA_QUARK = 0.08
 const CASH_GRAB_ULTRA_CUBE = 1.2
@@ -211,7 +212,7 @@ export const calculatePotionValue = (resetTime: number, resourceMult: Decimal, b
   const potionMultipliers = getGQUpgradeEffect('potionBuff')
     * getGQUpgradeEffect('potionBuff2')
     * getGQUpgradeEffect('potionBuff3')
-    * +player.octeractUpgrades.octeractAutoPotionEfficiency.getEffect().bonus
+    * getOcteractUpgradeEffect('octeractAutoPotionEfficiency')
 
   return fastForwardMult.times(potionMultipliers)
 }
@@ -1618,8 +1619,8 @@ export const calcAscensionCount = () => {
       * Math.min(1, player.overfluxPowder / 100000)
   ascCount *= 1 + player.singularityCount / 10
   ascCount *= getGQUpgradeEffect('ascensions')
-  ascCount *= +player.octeractUpgrades.octeractAscensions.getEffect().bonus
-  ascCount *= +player.octeractUpgrades.octeractAscensions2.getEffect().bonus
+  ascCount *= getOcteractUpgradeEffect('octeractAscensions')
+  ascCount *= getOcteractUpgradeEffect('octeractAscensions2')
   ascCount *= getGQUpgradeEffect('oneMind')
     ? calculateAscensionSpeedMult() / 10
     : 1
@@ -1758,19 +1759,19 @@ export const calculateAmbrosiaLuckSingularityUpgrade = () => {
 
 export const calculateAmbrosiaGenerationOcteractUpgrade = () => {
   return (
-    +player.octeractUpgrades.octeractAmbrosiaGeneration.getEffect().bonus
-    * +player.octeractUpgrades.octeractAmbrosiaGeneration2.getEffect().bonus
-    * +player.octeractUpgrades.octeractAmbrosiaGeneration3.getEffect().bonus
-    * +player.octeractUpgrades.octeractAmbrosiaGeneration4.getEffect().bonus
+    getOcteractUpgradeEffect('octeractAmbrosiaGeneration')
+    * getOcteractUpgradeEffect('octeractAmbrosiaGeneration2')
+    * getOcteractUpgradeEffect('octeractAmbrosiaGeneration3')
+    * getOcteractUpgradeEffect('octeractAmbrosiaGeneration4')
   )
 }
 
 export const calculateAmbrosiaLuckOcteractUpgrade = () => {
   return (
-    +player.octeractUpgrades.octeractAmbrosiaLuck.getEffect().bonus
-    + +player.octeractUpgrades.octeractAmbrosiaLuck2.getEffect().bonus
-    + +player.octeractUpgrades.octeractAmbrosiaLuck3.getEffect().bonus
-    + +player.octeractUpgrades.octeractAmbrosiaLuck4.getEffect().bonus
+    getOcteractUpgradeEffect('octeractAmbrosiaLuck')
+    + getOcteractUpgradeEffect('octeractAmbrosiaLuck2')
+    + getOcteractUpgradeEffect('octeractAmbrosiaLuck3')
+    + getOcteractUpgradeEffect('octeractAmbrosiaLuck4')
   )
 }
 

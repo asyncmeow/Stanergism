@@ -114,6 +114,7 @@ import { getTalisman, sumOfTalismanRarities, universalTalismanBonusMult } from '
 import type { GlobalVariables } from './types/Synergism'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
+import { getOcteractUpgradeEffect, octeractUpgrades } from './Octeracts'
 
 export interface StatLine {
   i18n: string
@@ -627,15 +628,15 @@ export const allOcteractCubeStats: StatLine[] = [
   },
   {
     i18n: 'OcteractStarter',
-    stat: () => 1 + 0.2 * +player.octeractUpgrades.octeractStarter.getEffect().bonus
+    stat: () => getOcteractUpgradeEffect('octeractStarter')
   },
   {
     i18n: 'OcteractGain',
-    stat: () => +player.octeractUpgrades.octeractGain.getEffect().bonus
+    stat: () => getOcteractUpgradeEffect('octeractGain')
   },
   {
     i18n: 'OcteractGain2',
-    stat: () => +player.octeractUpgrades.octeractGain2.getEffect().bonus
+    stat: () => getOcteractUpgradeEffect('octeractGain2')
   },
   {
     i18n: 'DerpsmithCornucopia',
@@ -645,7 +646,7 @@ export const allOcteractCubeStats: StatLine[] = [
     i18n: 'DigitalOcteractAccumulator',
     stat: () =>
       Math.pow(
-        1 + +player.octeractUpgrades.octeractAscensionsOcteractGain.getEffect().bonus,
+        1 + getOcteractUpgradeEffect('octeractAscensionsOcteractGain'),
         1 + Math.floor(Math.log10(1 + player.ascensionCount))
       )
   },
@@ -722,7 +723,7 @@ export const allOcteractCubeStats: StatLine[] = [
       const ascensionSpeed = getGQUpgradeEffect('oneMind')
         ? Math.pow(10, 1 / 2) * Math.pow(
           calculateAscensionSpeedMult() / 10,
-          +player.octeractUpgrades.octeractOneMindImprover.getEffect().bonus
+          getOcteractUpgradeEffect('octeractOneMindImprover')
         )
         : Math.pow(calculateAscensionSpeedMult(), 1 / 2)
       return ascensionSpeed
@@ -950,7 +951,7 @@ export const allOfferingStats = [
   },
   {
     i18n: 'OcteractElectrolosis',
-    stat: () => +player.octeractUpgrades.octeractOfferings1.getEffect().bonus // Offering Electrolosis OC Upgrade
+    stat: () => getOcteractUpgradeEffect('octeractOfferings1') // Offering Electrolosis OC Upgrade
   },
   {
     i18n: 'OcteractBonus',
@@ -1190,18 +1191,18 @@ export const allQuarkStats: StatLine[] = [
   },
   {
     i18n: 'OcteractStarter',
-    stat: () => +player.octeractUpgrades.octeractStarter.getEffect().bonus
+    stat: () => 1 + (octeractUpgrades.octeractStarter.level > 0 ? 0.15: 0)
   },
   {
     i18n: 'OcteractQuarkGain',
-    stat: () => +player.octeractUpgrades.octeractQuarkGain.getEffect().bonus
+    stat: () => getOcteractUpgradeEffect('octeractQuarkGain')
   },
   {
     i18n: 'OcteractQuarkGain2',
     stat: () =>
       1
-      + (1 / 10000) * Math.floor(player.octeractUpgrades.octeractQuarkGain.level / 111)
-        * player.octeractUpgrades.octeractQuarkGain2.level
+      + (1 / 10000) * Math.floor(octeractUpgrades.octeractQuarkGain.level / 111)
+        * octeractUpgrades.octeractQuarkGain2.level
         * Math.floor(1 + Math.log10(Math.max(1, getHepteract('quark').BAL)))
   },
   {
@@ -1542,7 +1543,7 @@ export const allObtainiumStats: StatLine[] = [
   },
   {
     i18n: 'OcteractObtainium1',
-    stat: () => +player.octeractUpgrades.octeractObtainium1.getEffect().bonus // Octeract Obtainium 1
+    stat: () => getOcteractUpgradeEffect('octeractObtainium1') // Octeract Obtainium 1
   },
   {
     i18n: 'AmbrosiaObtainium1',
@@ -1691,7 +1692,7 @@ export const allGlobalSpeedIgnoreDRStats: StatLine[] = [
   },
   {
     i18n: 'OcteractGlobalSpeed',
-    stat: () => 1 + +player.octeractUpgrades.octeractImprovedGlobalSpeed.getEffect().bonus * player.singularityCount // Oct Improved Global Speed
+    stat: () => 1 + getOcteractUpgradeEffect('octeractImprovedGlobalSpeed') * player.singularityCount // Oct Improved Global Speed
   },
   {
     i18n: 'LimitedTimeChallenge',
@@ -1840,11 +1841,11 @@ export const allAscensionSpeedStats: StatLine[] = [
   },
   {
     i18n: 'AbstractPhotokinetics',
-    stat: () => 1 + +player.octeractUpgrades.octeractImprovedAscensionSpeed.getEffect().bonus * player.singularityCount // Abstract Photokinetics, Oct Upg
+    stat: () => 1 + getOcteractUpgradeEffect('octeractImprovedAscensionSpeed') * player.singularityCount // Abstract Photokinetics, Oct Upg
   },
   {
     i18n: 'AbstractExokinetics',
-    stat: () => 1 + +player.octeractUpgrades.octeractImprovedAscensionSpeed2.getEffect().bonus * player.singularityCount // Abstract Exokinetics, Oct Upg
+    stat: () => 1 + getOcteractUpgradeEffect('octeractImprovedAscensionSpeed2') * player.singularityCount // Abstract Exokinetics, Oct Upg
   },
   {
     i18n: 'ChronometerINF',
@@ -2053,7 +2054,7 @@ export const allAmbrosiaBlueberryStats: StatLine[] = [
   },
   {
     i18n: 'OcteractBlueberries',
-    stat: () => +player.octeractUpgrades.octeractBlueberries.getEffect().bonus // Octeract Blueberry Upgrade
+    stat: () => getOcteractUpgradeEffect('octeractBlueberries') // Octeract Blueberry Upgrade
   },
   {
     i18n: 'ConglomerateBerries',
@@ -2255,7 +2256,7 @@ export const allGoldenQuarkPurchaseCostStats: StatLine[] = [
   },
   {
     i18n: 'OcteractCostReduce',
-    stat: () => +player.octeractUpgrades.octeractGQCostReduce.getEffect().bonus
+    stat: () => getOcteractUpgradeEffect('octeractGQCostReduce')
   },
   {
     i18n: 'GoldenRevolution2',
@@ -2569,7 +2570,7 @@ export const allShopTablets: StatLine[] = [
   },
   {
     i18n: 'Green',
-    stat: () => +player.octeractUpgrades.octeractInfiniteShopUpgrades.getEffect().bonus, // Octeract Upgrade
+    stat: () => getOcteractUpgradeEffect('octeractInfiniteShopUpgrades'), // Octeract Upgrade
     acc: 0,
     color: 'green'
   },

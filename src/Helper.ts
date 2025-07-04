@@ -32,6 +32,7 @@ import { Tabs } from './Tabs'
 import { buyAllTalismanResources } from './Talismans'
 import { visualUpdateAmbrosia, visualUpdateOcteracts, visualUpdateResearch } from './UpdateVisuals'
 import { Globals as G } from './Variables'
+import { getOcteractUpgradeEffect } from './Octeracts'
 
 type TimerInput =
   | 'prestige'
@@ -169,8 +170,8 @@ export const addTimers = (input: TimerInput, time = 0) => {
         player.autoPotionTimerObtainium += time * timeMultiplier
 
         const timerThreshold = (180 * Math.pow(1.03, -player.highestSingularityCount))
-          / +player.octeractUpgrades.octeractAutoPotionSpeed.getEffect().bonus
-
+          / getOcteractUpgradeEffect('octeractAutoPotionSpeed')
+          
         const effectiveOfferingThreshold = toggleOfferingOn
           ? Math.min(1, timerThreshold) / 20
           : timerThreshold

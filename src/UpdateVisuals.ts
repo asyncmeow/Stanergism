@@ -41,7 +41,7 @@ import type { IMultiBuy } from './Cubes'
 import { BuffType, consumableEventBuff, eventBuffType, getEvent, getEventBuff } from './Event'
 import { getHepteract, hepteractData, type HepteractNames } from './Hepteracts'
 import { allDurableConsumables, type PseudoCoinConsumableNames } from './Login'
-import type { OcteractDataKeys } from './Octeracts'
+import { getOcteractUpgradeCostTNL, octeractUpgrades, type OcteractDataKeys } from './Octeracts'
 import { getQuarkBonus, quarkHandler } from './Quark'
 import {
   getRune,
@@ -1415,18 +1415,18 @@ export const visualUpdateSingularity = () => {
       }
     }
   } else if (getActiveSubTab() === 2) {
-    const keys = Object.keys(player.octeractUpgrades) as OcteractDataKeys[]
+    const keys = Object.keys(octeractUpgrades) as OcteractDataKeys[]
     const val = G.shopEnhanceVision
 
     for (const key of keys) {
-      const octItem = player.octeractUpgrades[key]
+      const octItem = octeractUpgrades[key]
       const el = DOMCacheGetOrSet(`${String(key)}`)
       if (octItem.maxLevel !== -1 && octItem.level >= octItem.maxLevel) {
         el.style.filter = val ? 'brightness(.9)' : 'none'
-      } else if (octItem.getCostTNL() > player.wowOcteracts) {
+      } else if (getOcteractUpgradeCostTNL(key) > player.wowOcteracts) {
         el.style.filter = val ? 'grayscale(.9) brightness(.8)' : 'none'
       } else if (octItem.maxLevel === -1 || octItem.level < octItem.maxLevel) {
-        if (octItem.freeLevels > octItem.level) {
+        if (octItem.freeLevel > octItem.level) {
           el.style.filter = val ? 'blur(2px) invert(.9) saturate(200)' : 'none'
         } else {
           el.style.filter = val ? 'invert(.9) brightness(1.1)' : 'none'

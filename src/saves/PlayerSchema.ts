@@ -5,7 +5,6 @@ import { CampaignManager, type ICampaignManagerData } from '../Campaign'
 import { CorruptionLoadout, CorruptionSaves } from '../Corruptions'
 import { WowCubes, WowHypercubes, WowPlatonicCubes, WowTesseracts } from '../CubeExperimental'
 import { hepteractData, type HepteractNames } from '../Hepteracts'
-import { octeractData, type OcteractDataKeys, OcteractUpgrade } from '../Octeracts'
 import { QuarkHandler } from '../Quark'
 import {
   SingularityChallenge,
@@ -752,33 +751,21 @@ export const playerSchema = z.object({
     )
   })
     .default(() => ({ ...blankSave.goldenQuarkUpgrades })),
-  singularityUpgrades: z.record(z.string(), singularityUpgradeSchema('goldenQuarksInvested')).optional(),
-  // TODO: why is this on player?
-  octeractUpgrades: z.record(z.string(), singularityUpgradeSchema('octeractsInvested'))
-    .transform((upgrades) =>
-      Object.fromEntries(
-        Object.keys(octeractData).map((key) => {
-          const k = key as OcteractDataKeys
-          const { level, octeractsInvested, freeLevels } = upgrades[k] ?? blankSave.octeractUpgrades[k]
 
-          return [
-            k,
-            new OcteractUpgrade({
-              maxLevel: octeractData[k].maxLevel,
-              costPerLevel: octeractData[k].costPerLevel,
-              level: level as number,
-              octeractsInvested,
-              effect: octeractData[k].effect,
-              costFormula: octeractData[k].costFormula,
-              freeLevels: freeLevels as number,
-              qualityOfLife: octeractData[k].qualityOfLife,
-              cacheUpdates: octeractData[k].cacheUpdates
-            }, k)
-          ]
-        })
-      )
+  octUpgrades: z.record(z.string(), goldenQuarkUpgradeSchema).transform((object) => {
+    // We use the same goldenQuarkUpgradeSchema for multiple things. maybe it should be called
+    // something different. Oh well... this can be changed later. -Plat
+    return Object.fromEntries(
+      Object.keys(blankSave.octUpgrades).map((key) => {
+        const value = object[key] ?? { level: 0, freeLevel: 0 }
+        return value === null ? [key, { level: 0, freeLevel: 0 }] : [key, value]
+      })
     )
-    .default(() => JSON.parse(JSON.stringify(blankSave.octeractUpgrades))),
+  })
+  .default(() => ({ ...blankSave.octUpgrades })),
+
+  singularityUpgrades: z.record(z.string(), singularityUpgradeSchema('goldenQuarksInvested')).optional(),
+  octeractUpgrades: z.record(z.string(), singularityUpgradeSchema('octeractsInvested')).optional(),
 
   dailyCodeUsed: z.boolean().default(() => blankSave.dailyCodeUsed),
   hepteractAutoCraftPercentage: z.number().default(() => blankSave.hepteractAutoCraftPercentage),

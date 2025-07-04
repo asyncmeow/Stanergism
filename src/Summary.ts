@@ -17,7 +17,7 @@ import { getMaxChallenges } from './Challenges'
 import { version } from './Config'
 import { getHepteract, type HepteractNames } from './Hepteracts'
 import { saveFilename } from './ImportExport'
-import type { OcteractDataKeys } from './Octeracts'
+import { actualOcteractUpgradeTotalLevels, computeOcteractFreeLevelSoftcap, octeractUpgrades, type OcteractDataKeys } from './Octeracts'
 import { getRedAmbrosiaUpgrade } from './RedAmbrosiaUpgrades'
 import { getRune, type RuneKeys } from './Runes'
 import { friendlyShopName, isShopUpgradeUnlocked, shopData, shopUpgradeTypes } from './Shop'
@@ -394,14 +394,13 @@ export const generateExportSummary = async (): Promise<void> => {
   if (getGQUpgradeEffect('octeractUnlock')) {
     octeractUpgradeStats =
       '===== OCTERACT UPGRADES =====\n - [★]: Upgrade is MAXED - \n - [∞]: Upgrade is infinite - \n - [ ]: Upgrade INCOMPLETE - \n'
-    const octUpgrade = Object.keys(player.octeractUpgrades) as OcteractDataKeys[]
+    const octUpgrade = Object.keys(octeractUpgrades) as OcteractDataKeys[]
     let totalOctUpgradeCount = 0
     let totalOctUpgradeMax = 0
-    let totalOcteractsSpent = 0
 
     for (const key of octUpgrade) {
       let upgradeText = ''
-      const octUpg = player.octeractUpgrades[key]
+      const octUpg = octeractUpgrades[key]
 
       if (octUpg.maxLevel !== -1) {
         totalOctUpgradeCount += 1
@@ -409,7 +408,6 @@ export const generateExportSummary = async (): Promise<void> => {
       if (octUpg.level === octUpg.maxLevel) {
         totalOctUpgradeMax += 1
       }
-      totalOcteractsSpent += octUpg.octeractsInvested
 
       let unicodeSymbol = '[ ]'
       if (octUpg.maxLevel === -1) {
@@ -423,12 +421,12 @@ export const generateExportSummary = async (): Promise<void> => {
       upgradeText = upgradeText + (octUpg.maxLevel === -1
         ? ` Level ${octUpg.level}`
         : ` Level ${octUpg.level}/${octUpg.maxLevel}`)
-      upgradeText = upgradeText + (octUpg.freeLevels > 0
-        ? ` [+${format(octUpg.computeFreeLevelSoftcap(), 2, true)}]`
+      upgradeText = upgradeText + (octUpg.freeLevel > 0
+        ? ` [+${format(computeOcteractFreeLevelSoftcap(key), 2, true)}]`
         : '')
 
-      upgradeText = upgradeText + (octUpg.freeLevels > 0
-        ? ` =+= Effective Level: ${format(octUpg.actualTotalLevels(), 2, true)}`
+      upgradeText = upgradeText + (octUpg.freeLevel > 0
+        ? ` =+= Effective Level: ${format(actualOcteractUpgradeTotalLevels(key), 2, true)}`
         : '')
 
       upgradeText = `${upgradeText}\n`
@@ -436,9 +434,6 @@ export const generateExportSummary = async (): Promise<void> => {
     }
     octeractUpgradeStats = octeractUpgradeStats + subCategoryDivisor
     octeractUpgradeStats = `${octeractUpgradeStats}Upgrades MAXED: ${totalOctUpgradeMax}/${totalOctUpgradeCount}\n`
-    octeractUpgradeStats = `${octeractUpgradeStats}Octeracts Spent on Upgrades: ${
-      format(totalOcteractsSpent, 0, true)
-    }\n`
     octeractUpgradeStats = octeractUpgradeStats + subCategoryDivisor
   }
 

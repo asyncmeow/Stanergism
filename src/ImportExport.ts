@@ -26,6 +26,7 @@ import { Alert, Confirm, Prompt } from './UpdateHTML'
 import { cleanString, getElementById } from './Utility'
 import { btoa } from './Utility'
 import { Globals as G } from './Variables'
+import { getOcteractUpgradeEffect, octeractUpgrades } from './Octeracts'
 
 const format24 = new Intl.DateTimeFormat('EN-GB', {
   year: 'numeric',
@@ -504,7 +505,7 @@ export const promocodes = async (input: string | null, amount?: number) => {
         ascensions: { value: 1, pdf: (x: number) => 800 < x && x <= 1000 }
       }
       let rolls = 3 * Math.sqrt(player.highestSingularityCount)
-      rolls += +player.octeractUpgrades.octeractImprovedDaily.getEffect().bonus
+      rolls += getOcteractUpgradeEffect('octeractImprovedDaily')
       rolls += player.shopUpgrades.shopImprovedDaily2
       rolls += player.shopUpgrades.shopImprovedDaily3
       rolls += player.shopUpgrades.shopImprovedDaily4
@@ -515,11 +516,11 @@ export const promocodes = async (input: string | null, amount?: number) => {
             ? (250 * player.singularityCounter) / (3600 * 24)
             : (5 * player.singularityCounter) / (3600 * 24)
         )
-      rolls += +player.octeractUpgrades.octeractImprovedDaily3.getEffect().bonus
+      rolls += getOcteractUpgradeEffect('octeractImprovedDaily3')
       rolls += +player.singularityChallenges.sadisticPrequel.rewards.extraFree
-      rolls *= +player.octeractUpgrades.octeractImprovedDaily2.getEffect().bonus
+      rolls *= getOcteractUpgradeEffect('octeractImprovedDaily2')
       rolls *= 1
-        + +player.octeractUpgrades.octeractImprovedDaily3.getEffect().bonus / 200
+        + getOcteractUpgradeEffect('octeractImprovedDaily3') / 200
       rolls *= 1 + +player.singularityChallenges.sadisticPrequel.rewards.freeUpgradeMult
       if (player.highestSingularityCount >= 200) {
         rolls *= 2
@@ -565,33 +566,33 @@ export const promocodes = async (input: string | null, amount?: number) => {
 
       if (player.highestSingularityCount >= 200 && player.highestSingularityCount < 205) {
         const freeLevelOct1 = Math.max(
-          player.octeractUpgrades.octeractGain.level / 100,
+          octeractUpgrades.octeractGain.level / 100,
           Math.pow(
-            player.octeractUpgrades.octeractGain.level * player.octeractUpgrades.octeractGain.freeLevels / 1000,
+            octeractUpgrades.octeractGain.level * octeractUpgrades.octeractGain.freeLevel / 1000,
             0.5
           )
         )
-        player.octeractUpgrades.octeractGain.freeLevels += freeLevelOct1
+        octeractUpgrades.octeractGain.freeLevel += freeLevelOct1
         freeLevels.octeractGain = freeLevelOct1
       } else if (player.highestSingularityCount >= 205) {
         const freeLevelOct1 = Math.max(
-          player.octeractUpgrades.octeractGain.level / 100,
+          octeractUpgrades.octeractGain.level / 100,
           Math.pow(
-            player.octeractUpgrades.octeractGain.level * player.octeractUpgrades.octeractGain.freeLevels / 640,
+            octeractUpgrades.octeractGain.level * octeractUpgrades.octeractGain.freeLevel / 640,
             0.5
           )
         )
         const freeLevelOct2 = Math.max(
-          player.octeractUpgrades.octeractGain2.level / 100,
+          octeractUpgrades.octeractGain2.level / 100,
           Math.pow(
-            Math.pow(player.octeractUpgrades.octeractGain2.level, 2) * player.octeractUpgrades.octeractGain2.freeLevels
+            Math.pow(octeractUpgrades.octeractGain2.level, 2) * octeractUpgrades.octeractGain2.freeLevel
               / 125000,
             0.333
           )
         )
 
-        player.octeractUpgrades.octeractGain.freeLevels += freeLevelOct1
-        player.octeractUpgrades.octeractGain2.freeLevels += freeLevelOct2
+        octeractUpgrades.octeractGain.freeLevel += freeLevelOct1
+        octeractUpgrades.octeractGain2.freeLevel += freeLevelOct2
         freeLevels.octeractGain = freeLevelOct1
         freeLevels.octeractGain2 = freeLevelOct2
       }

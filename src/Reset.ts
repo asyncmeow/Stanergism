@@ -1171,16 +1171,8 @@ export const singularity = (setSingNumber = -1) => {
   }
 
   hold.goldenQuarkUpgrades = { ...player.goldenQuarkUpgrades }
-
-  hold.octeractUpgrades = Object.fromEntries(
-    Object.entries(player.octeractUpgrades).map(([key, value]) => {
-      return [key, {
-        level: value.level,
-        octeractsInvested: value.octeractsInvested,
-        freeLevels: value.freeLevels
-      }]
-    })
-  ) as unknown as Player['octeractUpgrades']
+  hold.octUpgrades = { ...player.octUpgrades }
+  
   hold.blueberryUpgrades = Object.fromEntries(
     Object.entries(player.blueberryUpgrades).map(([key, value]) => {
       return [key, {

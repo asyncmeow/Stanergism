@@ -16,6 +16,7 @@ import type { Player } from './types/Synergism'
 import { Alert, Confirm, Prompt } from './UpdateHTML'
 import { isDecimal } from './Utility'
 import { Globals } from './Variables'
+import { getOcteractUpgradeEffect } from './Octeracts'
 
 export interface HepteractValues {
   BAL: number
@@ -507,7 +508,7 @@ export const hepteractEffective = (data: HepteractNames) => {
     exponentBoost += getGQUpgradeEffect('singQuarkHepteract')
     exponentBoost += getGQUpgradeEffect('singQuarkHepteract2')
     exponentBoost += getGQUpgradeEffect('singQuarkHepteract3')
-    exponentBoost += +player.octeractUpgrades.octeractImprovedQuarkHept.getEffect().bonus
+    exponentBoost += getOcteractUpgradeEffect('octeractImprovedQuarkHept')
     exponentBoost += player.shopUpgrades.improveQuarkHept / 100
     exponentBoost += player.shopUpgrades.improveQuarkHept2 / 100
     exponentBoost += player.shopUpgrades.improveQuarkHept3 / 100

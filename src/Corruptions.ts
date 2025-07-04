@@ -11,6 +11,7 @@ import { toggleCorruptionLevel } from './Toggles'
 import { Alert, Notification, Prompt } from './UpdateHTML'
 import { getElementById, productContents, sumContents, validateNonnegativeInteger } from './Utility'
 import { Globals as G } from './Variables'
+import { getOcteractUpgradeEffect } from './Octeracts'
 
 export enum CorruptionIndices {
   'viscosity' = 0,
@@ -419,7 +420,7 @@ export const maxCorruptionLevel = () => {
   if (getGQUpgradeEffect('corruptionFourteen')) {
     max += 1
   }
-  max += +player.octeractUpgrades.octeractCorruption.getEffect().bonus
+  max += getOcteractUpgradeEffect('octeractCorruption')
 
   return max
 }

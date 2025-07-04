@@ -4383,17 +4383,17 @@
       "octeractGain": {
         "name": "Octeract Cogenesis",
         "description": "Have you despised how slow these damn things are? Gain 1% more of them per level! Simple.",
-        "effect": "Octeract Gain is increased by {{n}}%."
+        "effect": "Octeract Gain is increased by {{n}}."
       },
       "octeractGain2": {
         "name": "Octeract Trigenesis",
         "description": "It turns out that you have six additional dimensions to modify your Cogenesis. +1% more Octs per level!",
-        "effect": "Octeract Gain is increased by {{n}}%."
+        "effect": "Octeract Gain is increased by {{n}}."
       },
       "octeractQuarkGain": {
         "name": "Quark Octeract",
         "description": "An altered forme of the hepteract, this gives a 1.1% Quark Bonus per level without Diminishing Return.",
-        "effect": "Quark gain is increased by {{n}}%."
+        "effect": "Quark gain is increased by {{n}}."
       },
       "octeractQuarkGain2": {
         "name": "Octo-Hepteract Primality Synergism",
@@ -4498,12 +4498,12 @@
       "octeractOfferings1": {
         "name": "Offering Electrolosis",
         "description": "Gain 1% more offerings per level.",
-        "effect": "Offering gain +{{n}}%"
+        "effect": "Offering gain +{{n}}"
       },
       "octeractObtainium1": {
         "name": "Obtainium Deluge",
         "description": "Gain 1% more obtainium per level.",
-        "effect": "Obtainium gain +{{n}}%"
+        "effect": "Obtainium gain +{{n}}"
       },
       "octeractAscensions": {
         "name": "Voided Warranty",
