@@ -974,7 +974,7 @@ export function initRunes (investments: Record<RuneKeys, Decimal>) {
       // Use a function that casts the result appropriately
       const rune = new Rune(dataWithInvestment, key) // Here we need to use type assertion because TypeScript can't track
        // the relationship between the key and the generic parameter in the loop
-      ;(runes as Record<RuneKeys, Rune<RuneKeys>>)[key] = rune
+      ;(upgrades as Record<RuneKeys, Rune<RuneKeys>>)[key] = rune
     }
 
     runes = upgrades
