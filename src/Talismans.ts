@@ -406,7 +406,7 @@ export class Talisman<K extends TalismanKeys> {
     return this.bonus.signatureDesc()
   }
 
-  public get runeBonuses (): TalismanRuneBonus {
+  runeBonuses (key: RuneKeys): number {
     const rarityValue = rarityValues[this.rarity] ?? 1
 
     let specialMultiplier = universalTalismanBonusMult()
@@ -416,15 +416,23 @@ export class Talisman<K extends TalismanKeys> {
       specialMultiplier *= (this.bonus as MetaphysicsReward).extraTalismanEffect
     }
 
-    return {
-      speed: this.talismanBaseCoefficient.speed * rarityValue * this.level * specialMultiplier,
-      duplication: this.talismanBaseCoefficient.duplication * rarityValue * this.level * specialMultiplier,
-      prism: this.talismanBaseCoefficient.prism * rarityValue * this.level * specialMultiplier,
-      thrift: this.talismanBaseCoefficient.thrift * rarityValue * this.level * specialMultiplier,
-      superiorIntellect: this.talismanBaseCoefficient.superiorIntellect * rarityValue * this.level * specialMultiplier,
-      infiniteAscent: this.talismanBaseCoefficient.infiniteAscent * rarityValue * this.level * specialMultiplier,
-      antiquities: this.talismanBaseCoefficient.antiquities * rarityValue * this.level * specialMultiplier,
-      horseShoe: this.talismanBaseCoefficient.horseShoe * rarityValue * this.level * specialMultiplier
+    switch (key) {
+      case 'speed':
+        return this.talismanBaseCoefficient.speed * rarityValue * this.level * specialMultiplier
+      case 'duplication':
+        return this.talismanBaseCoefficient.duplication * rarityValue * this.level * specialMultiplier
+      case 'prism':
+        return this.talismanBaseCoefficient.prism * rarityValue * this.level * specialMultiplier
+      case 'thrift':
+        return this.talismanBaseCoefficient.thrift * rarityValue * this.level * specialMultiplier
+      case 'superiorIntellect':
+        return this.talismanBaseCoefficient.superiorIntellect * rarityValue * this.level * specialMultiplier
+      case 'infiniteAscent':
+        return this.talismanBaseCoefficient.infiniteAscent * rarityValue * this.level * specialMultiplier
+      case 'antiquities':
+        return this.talismanBaseCoefficient.antiquities * rarityValue * this.level * specialMultiplier
+      case 'horseShoe':
+        return this.talismanBaseCoefficient.horseShoe * rarityValue * this.level * specialMultiplier
     }
   }
 
@@ -460,71 +468,72 @@ export class Talisman<K extends TalismanKeys> {
         signatureHTML.style.display = 'none'
       })()
 
-    this.runeBonuses.speed > 0 && getRune('speed').isUnlocked
+    // Platonic. WHAT THE FUCK?
+    this.runeBonuses('speed') > 0 && getRune('speed').isUnlocked
       ? (() => {
         speedHTML.style.display = 'block'
         speedHTML.innerHTML = i18next.t('runes.talismans.bonusRuneLevels.speed', {
-          x: format(this.runeBonuses.speed, 0, true)
+          x: format(this.runeBonuses('speed'), 0, true)
         })
       })()
       : (() => {
         DOMCacheGetOrSet('talismanSpeedEffect').style.display = 'none'
       })()
-    this.runeBonuses.duplication > 0 && getRune('duplication').isUnlocked
+    this.runeBonuses('duplication') > 0 && getRune('duplication').isUnlocked
       ? (() => {
         duplicationHTML.style.display = 'block'
         duplicationHTML.innerHTML = i18next.t('runes.talismans.bonusRuneLevels.duplication', {
-          x: format(this.runeBonuses.duplication, 0, true)
+          x: format(this.runeBonuses('duplication'), 0, true)
         })
       })()
       : (() => {
         DOMCacheGetOrSet('talismanDupeEffect').style.display = 'none'
       })()
-    this.runeBonuses.prism > 0 && getRune('prism').isUnlocked
+    this.runeBonuses('prism') > 0 && getRune('prism').isUnlocked
       ? (() => {
         prismHTML.style.display = 'block'
         prismHTML.innerHTML = i18next.t('runes.talismans.bonusRuneLevels.prism', {
-          x: format(this.runeBonuses.prism, 0, true)
+          x: format(this.runeBonuses('prism'), 0, true)
         })
       })()
       : (() => {
         DOMCacheGetOrSet('talismanPrismEffect').style.display = 'none'
       })()
-    this.runeBonuses.thrift > 0 && getRune('thrift').isUnlocked
+    this.runeBonuses('thrift') > 0 && getRune('thrift').isUnlocked
       ? (() => {
         thriftHTML.style.display = 'block'
         thriftHTML.innerHTML = i18next.t('runes.talismans.bonusRuneLevels.thrift', {
-          x: format(this.runeBonuses.thrift, 0, true)
+          x: format(this.runeBonuses('thrift'), 0, true)
         })
       })()
       : (() => {
         DOMCacheGetOrSet('talismanThriftEffect').style.display = 'none'
       })()
-    this.runeBonuses.superiorIntellect > 0 && getRune('superiorIntellect').isUnlocked
+    this.runeBonuses('superiorIntellect') > 0 && getRune('superiorIntellect').isUnlocked
       ? (() => {
         sIHTML.style.display = 'block'
         sIHTML.innerHTML = i18next.t('runes.talismans.bonusRuneLevels.SI', {
-          x: format(this.runeBonuses.superiorIntellect, 0, true)
+          x: format(this.runeBonuses('superiorIntellect'), 0, true)
         })
       })()
       : (() => {
         DOMCacheGetOrSet('talismanSIEffect').style.display = 'none'
       })()
-    this.runeBonuses.infiniteAscent > 0 && getRune('infiniteAscent').isUnlocked
+    this.runeBonuses('infiniteAscent') > 0 && getRune('infiniteAscent').isUnlocked
       ? (() => {
         iAHTML.style.display = 'block'
         iAHTML.innerHTML = i18next.t('runes.talismans.bonusRuneLevels.IA', {
-          x: format(this.runeBonuses.infiniteAscent, 2, true)
+          x: format(this.runeBonuses('infiniteAscent'), 2, true)
         })
       })()
       : (() => {
         DOMCacheGetOrSet('talismanIAEffect').style.display = 'none'
       })()
-    this.runeBonuses.antiquities > 0 && getRune('antiquities').isUnlocked
+    this.runeBonuses('antiquities') > 0 && getRune('antiquities').isUnlocked
       ? (() => {
         antiquitiesHTML.style.display = 'block'
         antiquitiesHTML.innerHTML = i18next.t('runes.talismans.bonusRuneLevels.antiquities', {
-          x: format(this.runeBonuses.antiquities, 2, true)
+          x: format(this.runeBonuses('antiquities'), 2, true)
         })
       })()
       : (() => {
@@ -1095,7 +1104,7 @@ export const getTalismanBonus = (rune: RuneKeys) => {
     return 0
   } else {
     for (const talisman of Object.values(talismans)) {
-      totalBonus += talisman.runeBonuses[rune]
+      totalBonus += talisman.runeBonuses(rune)
     }
   }
   return totalBonus

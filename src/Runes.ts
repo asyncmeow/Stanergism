@@ -974,13 +974,15 @@ export function initRunes (investments: Record<RuneKeys, Decimal>) {
       // Use a function that casts the result appropriately
       const rune = new Rune(dataWithInvestment, key) // Here we need to use type assertion because TypeScript can't track
        // the relationship between the key and the generic parameter in the loop
-      ;(upgrades as Record<RuneKeys, Rune<RuneKeys>>)[key] = rune
+      ;(runes as Record<RuneKeys, Rune<RuneKeys>>)[key] = rune
     }
 
-    runes = upgrades as RunesMap
+    runes = upgrades
 
-    setInterval(() => achievementManager.tryUnlockByGroup('runeLevel'), 1000)
-    setInterval(() => achievementManager.tryUnlockByGroup('runeFreeLevel'), 1000)
+    setInterval(() => {
+      achievementManager.tryUnlockByGroup('runeLevel')
+      achievementManager.tryUnlockByGroup('runeFreeLevel')
+    }, 1000)
   }
 }
 
