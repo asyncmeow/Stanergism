@@ -365,7 +365,7 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
   redAmbrosiaUpgrades: {
     maxPointValue: -1,
     pointsAwarded: () => {
-      return 10 * Object.entries(redAmbrosiaUpgrades).reduce((acc, [_key, upgrade]) => {
+      return 10 * Object.values(redAmbrosiaUpgrades).reduce((acc, upgrade) => {
         if (upgrade.maxLevel !== -1 && upgrade.level >= upgrade.maxLevel) {
           acc++
         }

@@ -57,7 +57,7 @@ const singularityUpgradeSchema = (...keys: string[]) => {
 
 const toggleSchema = z.record(z.string(), z.boolean()).transform((record) => {
   return Object.fromEntries(
-    Object.entries(record).filter(([key, _value]) => /^\d+$/.test(key))
+    Object.entries(record).filter(([key]) => /^\d+$/.test(key))
   )
 }).transform((record) => {
   const entries = Object.entries(blankSave.toggles)

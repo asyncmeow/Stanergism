@@ -1197,7 +1197,7 @@ export const saveSynergy = (button?: boolean) => {
 
   // save to player.goldenQuarkUpgrades, taking the level and freeLevel from corresponding goldenQuarkUpgrades from singularity.ts
   player.goldenQuarkUpgrades = Object.fromEntries(
-    Object.entries(player.goldenQuarkUpgrades).map(([key]) => {
+    Object.keys(player.goldenQuarkUpgrades).map((key) => {
       const k = key as SingularityDataKeys
       const gqu = goldenQuarkUpgrades[k]
       return [key, { level: gqu.level, freeLevel: gqu.freeLevel }]
@@ -1205,7 +1205,7 @@ export const saveSynergy = (button?: boolean) => {
   ) as Record<SingularityDataKeys, { level: number; freeLevel: number }>
 
   player.octUpgrades = Object.fromEntries(
-    Object.entries(player.octUpgrades).map(([key]) => {
+    Object.keys(player.octUpgrades).map((key) => {
       const k = key as OcteractDataKeys
       const ou = octeractUpgrades[k]
       return [key, { level: ou.level, freeLevel: ou.freeLevel }]
@@ -1213,7 +1213,7 @@ export const saveSynergy = (button?: boolean) => {
   ) as Record<OcteractDataKeys, { level: number; freeLevel: number }>
 
   player.ambrosiaUpgrades = Object.fromEntries(
-    Object.entries(player.ambrosiaUpgrades).map(([key]) => {
+    Object.keys(player.ambrosiaUpgrades).map((key) => {
       const k = key as AmbrosiaUpgradeNames
       const au = ambrosiaUpgrades[k]
       return [key, { ambrosiaInvested: au.ambrosiaInvested, blueberriesInvested: au.blueberriesInvested }]
@@ -1221,7 +1221,7 @@ export const saveSynergy = (button?: boolean) => {
   ) as Record<AmbrosiaUpgradeNames, { ambrosiaInvested: number; blueberriesInvested: number }>
 
   player.redAmbrosiaUpgrades = Object.fromEntries(
-    Object.entries(player.redAmbrosiaUpgrades).map(([key]) => {
+    Object.keys(player.redAmbrosiaUpgrades).map((key) => {
       const k = key as RedAmbrosiaNames
       return [key, redAmbrosiaUpgrades[k].redAmbrosiaInvested]
     })
