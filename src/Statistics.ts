@@ -112,7 +112,7 @@ import {
   goldenQuarkUpgrades
 } from './singularity'
 import { format, formatAsPercentIncrease, player } from './Synergism'
-import { getTalisman, sumOfTalismanRarities, universalTalismanBonusMult } from './Talismans'
+import { getTalisman, sumOfTalismanRarities } from './Talismans'
 import type { GlobalVariables } from './types/Synergism'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
@@ -2595,6 +2595,33 @@ export const allShopTablets: StatLine[] = [
   }
 ]
 
+/**
+ * Do NOT add anything here without adding it to @see {allTalismanRuneBonusStats}
+ */
+export const allTalismanRuneBonusStatsSum = () => {
+  return (
+    1
+    + +achievementManager.getBonus('talismanPower')
+    + (player.researches[106] / 1000)
+    + (player.researches[107] / 1000)
+    + (player.researches[116] / 1000)
+    + (player.researches[117] / 1000)
+    + (2 * player.researches[118] / 1000)
+    + (0.004 * Math.floor(player.researches[200] / 10000))
+    + (0.006 * Math.floor(player.cubeUpgrades[50] / 10000))
+    + (G.challenge15Rewards.talismanBonus.value - 1)
+    + getGQUpgradeEffect('singTalismanBonusRunes1')
+    + getGQUpgradeEffect('singTalismanBonusRunes2')
+    + getGQUpgradeEffect('singTalismanBonusRunes3')
+    + getGQUpgradeEffect('singTalismanBonusRunes4')
+    + getAmbrosiaUpgradeEffects('ambrosiaTalismanBonusRuneLevel').talismanBonusRuneLevel
+    + +player.singularityChallenges.noOfferingPower.rewards.talismanRuneEffect
+  )
+}
+
+/**
+ * Do NOT add anything here without adding it to @see {allTalismanRuneBonusStatsSum}
+ */
 export const allTalismanRuneBonusStats: StatLine[] = [
   {
     i18n: 'Base',
@@ -3383,7 +3410,7 @@ export const loadTalismanRuneBonusMultiplierStats = () => {
     'talismanRuneBonusMultiplierStats',
     'statTRBM',
     'TalismanRuneBonusStat',
-    universalTalismanBonusMult
+    allTalismanRuneBonusStatsSum
   )
 }
 

@@ -7,7 +7,7 @@ import { CalcECC } from './Challenges'
 import { getOcteractUpgradeEffect } from './Octeracts'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { getRune, resetTiers, type RuneKeys } from './Runes'
-import { allTalismanRuneBonusStats } from './Statistics'
+import { allTalismanRuneBonusStatsSum } from './Statistics'
 import { format, formatAsPercentIncrease, player } from './Synergism'
 import { Tabs } from './Tabs'
 import { assert } from './Utility'
@@ -150,10 +150,6 @@ const rarityValues: Record<number, number> = {
   8: 3.25,
   9: 3.5,
   10: 4
-}
-
-export const universalTalismanBonusMult = () => {
-  return allTalismanRuneBonusStats.reduce((a, b) => a + b.stat(), 0)
 }
 
 interface TalismanData<K extends TalismanKeys> {
@@ -409,7 +405,7 @@ export class Talisman<K extends TalismanKeys> {
   runeBonuses (key: RuneKeys): number {
     const rarityValue = rarityValues[this.rarity] ?? 1
 
-    let specialMultiplier = universalTalismanBonusMult()
+    let specialMultiplier = allTalismanRuneBonusStatsSum()
 
     if (this.#key === 'metaphysics') {
       specialMultiplier += (this.bonus as MetaphysicsReward).talismanEffect
