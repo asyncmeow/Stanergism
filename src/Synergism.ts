@@ -155,8 +155,9 @@ import {
 import i18next from 'i18next'
 import rfdc from 'rfdc'
 import {
-  BlueberryUpgrade,
-  blueberryUpgradeData,
+  AmbrosiaUpgradeNames,
+  ambrosiaUpgrades,
+  blankAmbrosiaUpgradeObject,
   displayProperLoadoutCount,
   updateBlueberryLoadoutCount
 } from './BlueberryUpgrades'
@@ -1068,6 +1069,7 @@ export const player: Player = {
 
   goldenQuarkUpgrades: blankGQLevelObject,
   octUpgrades: blankOcteractLevelObject,
+  ambrosiaUpgrades: blankAmbrosiaUpgradeObject,
 
   dailyCodeUsed: false,
   hepteractAutoCraftPercentage: 50,
@@ -1116,132 +1118,6 @@ export const player: Player = {
   visitedAmbrosiaSubtab: false,
   visitedAmbrosiaSubtabRed: false,
   spentBlueberries: 0,
-  blueberryUpgrades: {
-    ambrosiaTutorial: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaTutorial,
-      'ambrosiaTutorial'
-    ),
-    ambrosiaQuarks1: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaQuarks1,
-      'ambrosiaQuarks1'
-    ),
-    ambrosiaCubes1: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaCubes1,
-      'ambrosiaQuarks1'
-    ),
-    ambrosiaLuck1: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaLuck1,
-      'ambrosiaLuck1'
-    ),
-    ambrosiaCubeQuark1: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaCubeQuark1,
-      'ambrosiaCubeQuark1'
-    ),
-    ambrosiaLuckQuark1: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaLuckQuark1,
-      'ambrosiaLuckQuark1'
-    ),
-    ambrosiaLuckCube1: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaLuckCube1,
-      'ambrosiaLuckCube1'
-    ),
-    ambrosiaQuarkCube1: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaQuarkCube1,
-      'ambrosiaQuarkCube1'
-    ),
-    ambrosiaCubeLuck1: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaCubeLuck1,
-      'ambrosiaCubeLuck1'
-    ),
-    ambrosiaQuarkLuck1: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaQuarkLuck1,
-      'ambrosiaQuarkLuck1'
-    ),
-    ambrosiaQuarks2: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaQuarks2,
-      'ambrosiaQuarks2'
-    ),
-    ambrosiaCubes2: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaCubes2,
-      'ambrosiaQuarks2'
-    ),
-    ambrosiaLuck2: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaLuck2,
-      'ambrosiaLuck2'
-    ),
-    ambrosiaQuarks3: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaQuarks3,
-      'ambrosiaQuarks3'
-    ),
-    ambrosiaCubes3: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaCubes3,
-      'ambrosiaQuarks3'
-    ),
-    ambrosiaLuck3: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaLuck3,
-      'ambrosiaLuck3'
-    ),
-    ambrosiaPatreon: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaPatreon,
-      'ambrosiaPatreon'
-    ),
-    ambrosiaObtainium1: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaObtainium1,
-      'ambrosiaObtainium1'
-    ),
-    ambrosiaOffering1: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaOffering1,
-      'ambrosiaOffering1'
-    ),
-    ambrosiaHyperflux: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaHyperflux,
-      'ambrosiaHyperflux'
-    ),
-    ambrosiaBaseObtainium1: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaBaseObtainium1,
-      'ambrosiaBaseObtainium1'
-    ),
-    ambrosiaBaseOffering1: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaBaseOffering1,
-      'ambrosiaBaseOffering1'
-    ),
-    ambrosiaBaseObtainium2: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaBaseObtainium2,
-      'ambrosiaBaseObtainium2'
-    ),
-    ambrosiaBaseOffering2: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaBaseOffering2,
-      'ambrosiaBaseOffering2'
-    ),
-    ambrosiaSingReduction1: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaSingReduction1,
-      'ambrosiaSingReduction1'
-    ),
-    ambrosiaInfiniteShopUpgrades1: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaInfiniteShopUpgrades1,
-      'ambrosiaInfiniteShopUpgrades'
-    ),
-    ambrosiaInfiniteShopUpgrades2: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaInfiniteShopUpgrades2,
-      'ambrosiaInfiniteShopUpgrades2'
-    ),
-    ambrosiaSingReduction2: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaSingReduction2,
-      'ambrosiaSingReduction2'
-    ),
-    ambrosiaTalismanBonusRuneLevel: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaTalismanBonusRuneLevel,
-      'ambrosiaTalismanBonusRuneLevel'
-    ),
-    ambrosiaRuneOOMBonus: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaRuneOOMBonus,
-      'ambrosiaRuneOOMBonus'
-    ),
-    ambrosiaLuck4: new BlueberryUpgrade(
-      blueberryUpgradeData.ambrosiaLuck4,
-      'ambrosiaLuck4'
-    )
-  },
 
   blueberryLoadouts: {
     1: {},
@@ -1318,7 +1194,6 @@ export const deepClone = () =>
       [CorruptionSaves, (o: CorruptionSaves) => new CorruptionSaves(o.corrSaveData)],
       [CampaignManager, (o: CampaignManager) => new CampaignManager(o.campaignManagerData)],
       [SingularityChallenge, (o: SingularityChallenge) => new SingularityChallenge(o.valueOf(), o.key())],
-      [BlueberryUpgrade, (o: BlueberryUpgrade) => new BlueberryUpgrade(o.valueOf(), o.key())]
     ]
   })
 
@@ -1348,6 +1223,15 @@ export const saveSynergy = (button?: boolean) => {
       return [key, { level: ou.level, freeLevel: ou.freeLevel }]
     })
   ) as Record<OcteractDataKeys, { level: number; freeLevel: number }>
+
+  player.ambrosiaUpgrades = Object.fromEntries(
+    Object.entries(player.ambrosiaUpgrades).map(([key]) => {
+      const k = key as AmbrosiaUpgradeNames
+      const au = ambrosiaUpgrades[k]
+      return [key, { ambrosiaInvested: au.ambrosiaInvested, blueberriesInvested: au.blueberriesInvested }]
+    })
+  ) as Record<AmbrosiaUpgradeNames, { ambrosiaInvested: number; blueberriesInvested: number }>
+
 
   const p = playerJsonSchema.parse(player)
   const save = btoa(JSON.stringify(p))

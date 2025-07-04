@@ -1,6 +1,6 @@
 import type Decimal from 'break_infinity.js'
 import type { ProgressiveAchievements } from '../Achievements'
-import type { BlueberryLoadoutMode, BlueberryOpt, BlueberryUpgrade, BlueberryUpgradeNames } from '../BlueberryUpgrades'
+import type { AmbrosiaUpgradeNames, BlueberryLoadoutMode, BlueberryOpt, BlueberryUpgrade, BlueberryUpgradeNames } from '../BlueberryUpgrades'
 import type { CampaignManager } from '../Campaign'
 import type { Challenge15RewardObject, Challenge15Rewards } from '../Challenges'
 import type { CorruptionLoadout, Corruptions, CorruptionSaves } from '../Corruptions'
@@ -639,6 +639,11 @@ export interface Player {
     freeLevel: number
   }>
 
+  ambrosiaUpgrades: Record<AmbrosiaUpgradeNames, {
+    ambrosiaInvested: number
+    blueberriesInvested: number
+  }>
+
   dailyCodeUsed: boolean
   hepteractAutoCraftPercentage: number
   octeractTimer: number
@@ -657,10 +662,7 @@ export interface Player {
   visitedAmbrosiaSubtab: boolean
   visitedAmbrosiaSubtabRed: boolean
   spentBlueberries: number
-  blueberryUpgrades: Record<
-    BlueberryUpgradeNames,
-    BlueberryUpgrade
-  >
+  
   blueberryLoadouts: Record<number, BlueberryOpt>
   blueberryLoadoutMode: BlueberryLoadoutMode
 

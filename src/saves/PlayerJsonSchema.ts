@@ -44,7 +44,7 @@ export const playerJsonSchema = playerSchema.extend({
       showStats: stuff.showStats
     }
   }),
-  
+
   singularityChallenges: z.any().transform((challenges: Player['singularityChallenges']) =>
     Object.fromEntries(
       Object.entries(challenges).map(([key, value]) => {
@@ -54,21 +54,6 @@ export const playerJsonSchema = playerSchema.extend({
             completions: value.completions,
             highestSingularityCompleted: value.highestSingularityCompleted,
             enabled: value.enabled
-          }
-        ]
-      })
-    )
-  ),
-  blueberryUpgrades: z.any().transform((upgrades: Player['blueberryUpgrades']) =>
-    Object.fromEntries(
-      Object.entries(upgrades).map(([key, value]) => {
-        return [
-          key,
-          {
-            level: value.level,
-            ambrosiaInvested: value.ambrosiaInvested,
-            blueberriesInvested: value.blueberriesInvested,
-            freeLevels: value.freeLevels
           }
         ]
       })

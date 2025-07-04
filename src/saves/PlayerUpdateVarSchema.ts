@@ -6,6 +6,7 @@ import { getTalisman } from '../Talismans'
 import { convertArrayToCorruption } from './PlayerJsonSchema'
 import { playerSchema } from './PlayerSchema'
 import { OcteractDataKeys, octeractUpgrades } from '../Octeracts'
+import { AmbrosiaUpgradeNames, ambrosiaUpgrades } from '../BlueberryUpgrades'
 
 export const playerUpdateVarSchema = playerSchema.transform((player) => {
   if (player.usedCorruptions !== undefined) {
@@ -158,6 +159,23 @@ export const playerUpdateVarSchema = playerSchema.transform((player) => {
       }
       octeractUpgrades[k].level = level
       octeractUpgrades[k].freeLevel = level
+    }
+  }
+
+  if (player.blueberryUpgrades !== undefined) {
+    for (const key of Object.keys(player.blueberryUpgrades)) {
+
+      const k = key as AmbrosiaUpgradeNames
+
+      const ambrosiaInvested = player.blueberryUpgrades[k].ambrosiaInvested ?? 0
+      const blueberriesInvested = player.blueberryUpgrades[k].blueberriesInvested ?? 0
+
+      player.ambrosiaUpgrades[k] = {
+        ambrosiaInvested,
+        blueberriesInvested,
+      }
+      ambrosiaUpgrades[k].ambrosiaInvested = ambrosiaInvested
+      ambrosiaUpgrades[k].blueberriesInvested = blueberriesInvested
     }
   }
 

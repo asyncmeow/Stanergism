@@ -1,6 +1,5 @@
 import Decimal, { type DecimalSource } from 'break_infinity.js'
 import { z, type ZodNumber, type ZodType } from 'zod'
-import { BlueberryUpgrade, blueberryUpgradeData, type BlueberryUpgradeNames } from '../BlueberryUpgrades'
 import { CampaignManager, type ICampaignManagerData } from '../Campaign'
 import { CorruptionLoadout, CorruptionSaves } from '../Corruptions'
 import { WowCubes, WowHypercubes, WowPlatonicCubes, WowTesseracts } from '../CubeExperimental'
@@ -119,6 +118,11 @@ const talismanFragmentSchema = z.object({
 const goldenQuarkUpgradeSchema = z.object({
   level: z.number().default(0),
   freeLevel: z.number().default(0)
+})
+
+const ambrosiaUpgradeSchema = z.object({
+  ambrosiaInvested: z.number().default(0),
+  level: z.number().default(0),
 })
 
 export const playerCorruptionSchema = z.object({
@@ -764,6 +768,16 @@ export const playerSchema = z.object({
   })
   .default(() => ({ ...blankSave.octUpgrades })),
 
+  ambrosiaUpgrades: z.record(z.string(), ambrosiaUpgradeSchema).transform((object) => {
+    return Object.fromEntries(
+      Object.keys(blankSave.ambrosiaUpgrades).map((key) => {
+        const value = object[key] ?? { ambrosiaInvested: 0, blueberriesInvested: 0 }
+        return value === null ? [key, { ambrosiaInvested: 0, blueberriesInvested: 0 }] : [key, value]
+      })
+    )
+  })
+    .default(() => ({ ...blankSave.ambrosiaUpgrades })),
+
   singularityUpgrades: z.record(z.string(), singularityUpgradeSchema('goldenQuarksInvested')).optional(),
   octeractUpgrades: z.record(z.string(), singularityUpgradeSchema('octeractsInvested')).optional(),
 
@@ -818,35 +832,7 @@ export const playerSchema = z.object({
   visitedAmbrosiaSubtabRed: z.boolean().default(() => blankSave.visitedAmbrosiaSubtabRed),
   spentBlueberries: z.number().default(() => blankSave.spentBlueberries),
   // TODO: is this right?
-  blueberryUpgrades: z.record(z.string(), singularityUpgradeSchema('blueberriesInvested', 'ambrosiaInvested'))
-    .transform((upgrades) =>
-      Object.fromEntries(
-        Object.keys(blankSave.blueberryUpgrades).map((key) => {
-          const k = key as BlueberryUpgradeNames
-          const { level, ambrosiaInvested, blueberriesInvested, freeLevels } = upgrades[k]
-            ?? blankSave.blueberryUpgrades[k]
-
-          return [
-            k,
-            new BlueberryUpgrade({
-              maxLevel: blueberryUpgradeData[k].maxLevel,
-              costPerLevel: blueberryUpgradeData[k].costPerLevel,
-              level: level as number,
-              ambrosiaInvested,
-              blueberriesInvested,
-              blueberryCost: blueberryUpgradeData[k].blueberryCost,
-              rewards: blueberryUpgradeData[k].rewards,
-              costFormula: blueberryUpgradeData[k].costFormula,
-              extraLevelCalc: blueberryUpgradeData[k].extraLevelCalc,
-              freeLevels: freeLevels as number,
-              prerequisites: blueberryUpgradeData[k].prerequisites,
-              ignoreEXALT: blueberryUpgradeData[k].ignoreEXALT
-            }, k)
-          ]
-        })
-      )
-    )
-    .default(() => JSON.parse(JSON.stringify(blankSave.blueberryUpgrades))),
+  blueberryUpgrades: z.record(z.string(), singularityUpgradeSchema('blueberriesInvested', 'ambrosiaInvested')).optional(),
 
   // TODO: what type?
   blueberryLoadouts: z.record(integerStringSchema, z.any()).default(() => blankSave.blueberryLoadouts),
