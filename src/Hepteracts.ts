@@ -109,7 +109,7 @@ export class HepteractCraft {
     this.BASE_CAP = data.BASE_CAP
     this.HEPTERACT_CONVERSION = data.HEPTERACT_CONVERSION
     this.OTHER_CONVERSIONS = data.OTHER_CONVERSIONS
-    this.UNLOCKED = data.UNLOCKED ?? false // This would basically always be true if this parameter is provided
+    this.UNLOCKED = data.UNLOCKED
     this.BAL = data.BAL ?? 0
     this.TIMES_CAP_EXTENDED = data.TIMES_CAP_EXTENDED ?? this.BASE_CAP // This sets cap either as previous value or keeps it to default.
     this.AUTO = data.AUTO ?? false
@@ -140,7 +140,7 @@ export class HepteractCraft {
     const heptCap = this.computeActualCap()
     const craftCostMulti = calculateSingularityDebuff('Hepteract Costs')
     // If craft is unlocked, we return object
-    if (!this.UNLOCKED) {
+    if (!this.UNLOCKED()) {
       return Alert(i18next.t('hepteracts.notUnlocked'))
     }
 
@@ -295,7 +295,7 @@ export class HepteractCraft {
     const heptCap = this.computeActualCap()
     const currHeptCapNoMulti = this.computeCapWithExpansions()
 
-    if (!this.UNLOCKED) {
+    if (!this.UNLOCKED()) {
       return Alert(i18next.t('hepteracts.notUnlocked'))
     }
 
