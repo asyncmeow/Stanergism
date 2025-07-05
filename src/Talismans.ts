@@ -61,16 +61,16 @@ const talismanResourceCosts: Record<TalismanCraftItems, TalismanFragmentCost> = 
 export type TalismanRuneBonus = Record<RuneKeys, number>
 
 type TalismanTypeMap = {
-  exemption: { taxReduction: number, duplicationOOMBonus: number }
-  chronos: { globalSpeed: number, speedOOMBonus: number }
-  midas: { blessingBonus: number, thriftOOMBonus: number }
-  metaphysics: { talismanEffect: number, extraTalismanEffect: number }
-  polymath: { ascensionSpeedBonus: number, SIOOMBonus: number }
-  mortuus: { antBonus: number, prismOOMBonus: number }
+  exemption: { taxReduction: number; duplicationOOMBonus: number }
+  chronos: { globalSpeed: number; speedOOMBonus: number }
+  midas: { blessingBonus: number; thriftOOMBonus: number }
+  metaphysics: { talismanEffect: number; extraTalismanEffect: number }
+  polymath: { ascensionSpeedBonus: number; SIOOMBonus: number }
+  mortuus: { antBonus: number; prismOOMBonus: number }
   plastic: { quarkBonus: number }
-  wowSquare: { evenDimBonus: number, oddDimBonus: number }
-  cookieGrandma: { freeCorruptionLevel: number, cookieSix: boolean }
-  horseShoe: { luckPercentage: number, redLuck: number }
+  wowSquare: { evenDimBonus: number; oddDimBonus: number }
+  cookieGrandma: { freeCorruptionLevel: number; cookieSix: boolean }
+  horseShoe: { luckPercentage: number; redLuck: number }
 }
 
 export type TalismanKeys = keyof TalismanTypeMap
@@ -659,7 +659,7 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
       const duplicationBonus = (n >= 6) ? 12 : 0
       return {
         taxReduction: inscriptValues[n] ?? 0,
-        duplicationOOMBonus: duplicationBonus,
+        duplicationOOMBonus: duplicationBonus
       }
     },
     inscriptionDesc: (n) => {
@@ -925,7 +925,7 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
     effects: (n) => {
       const inscriptValues = [1, 1.005, 1.01, 1.015, 1.02, 1.025, 1.03, 1.04, 1.045, 1.05, 1.0666]
       return {
-        quarkBonus: inscriptValues[n] ?? 1,
+        quarkBonus: inscriptValues[n] ?? 1
       }
     },
     inscriptionDesc: (n) => {
@@ -1127,7 +1127,7 @@ export const getTalismanBonus = (rune: RuneKeys) => {
     }
   }
 
-  let effectMultiplier = allTalismanRuneBonusStatsSum()
+  const effectMultiplier = allTalismanRuneBonusStatsSum()
 
   return totalBonus * effectMultiplier
 }

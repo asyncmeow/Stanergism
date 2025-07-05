@@ -92,7 +92,14 @@ import {
   runeToIndex,
   sacrificeOfferings
 } from './Runes'
-import { buyShopUpgrades, resetShopUpgrades, shopData, shopDescriptions, shopUpgradeTypes, useConsumable } from './Shop'
+import {
+  buyShopUpgrades,
+  resetShopUpgrades,
+  shopData,
+  shopDescriptions,
+  shopUpgradeTypes,
+  useConsumablePrompt
+} from './Shop'
 import {
   buyGoldenQuarks,
   buyGQUpgradeLevel,
@@ -891,7 +898,7 @@ TODO: Fix this entire tab it's utter shit
   DOMCacheGetOrSet('useofferingpotion').addEventListener('mouseover', () => shopDescriptions('offeringPotion'))
   DOMCacheGetOrSet('buyofferingpotion').addEventListener('click', () => buyShopUpgrades('offeringPotion'))
   // DOMCacheGetOrSet('offeringPotions').addEventListener('click', () => buyShopUpgrades("offeringPotion"))  //Allow clicking of image to buy also
-  DOMCacheGetOrSet('useofferingpotion').addEventListener('click', () => useConsumable('offeringPotion'))
+  DOMCacheGetOrSet('useofferingpotion').addEventListener('click', () => useConsumablePrompt('offeringPotion'))
   DOMCacheGetOrSet('toggle42').addEventListener('click', () => {
     player.autoPotionTimer = 0
   })
@@ -902,7 +909,7 @@ TODO: Fix this entire tab it's utter shit
   DOMCacheGetOrSet('useobtainiumpotion').addEventListener('mouseover', () => shopDescriptions('obtainiumPotion'))
   DOMCacheGetOrSet('buyobtainiumpotion').addEventListener('click', () => buyShopUpgrades('obtainiumPotion'))
   // DOMCacheGetOrSet('obtainiumPotions').addEventListener('click', () => buyShopUpgrades("obtainiumPotion"))  //Allow clicking of image to buy also
-  DOMCacheGetOrSet('useobtainiumpotion').addEventListener('click', () => useConsumable('obtainiumPotion'))
+  DOMCacheGetOrSet('useobtainiumpotion').addEventListener('click', () => useConsumablePrompt('obtainiumPotion'))
   DOMCacheGetOrSet('toggle43').addEventListener('click', () => {
     player.autoPotionTimerObtainium = 0
   })

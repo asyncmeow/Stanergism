@@ -184,7 +184,7 @@ export const addTimers = (input: TimerInput, time = 0) => {
             - (player.autoPotionTimer % effectiveOfferingThreshold))
             / effectiveOfferingThreshold
           player.autoPotionTimer %= effectiveOfferingThreshold
-          void useConsumable(
+          useConsumable(
             'offeringPotion',
             true,
             amountOfPotions,
@@ -197,7 +197,7 @@ export const addTimers = (input: TimerInput, time = 0) => {
             - (player.autoPotionTimerObtainium % effectiveObtainiumThreshold))
             / effectiveObtainiumThreshold
           player.autoPotionTimerObtainium %= effectiveObtainiumThreshold
-          void useConsumable(
+          useConsumable(
             'obtainiumPotion',
             true,
             amountOfPotions,

@@ -1724,60 +1724,67 @@ export const autoBuyConsumable = (input: ShopUpgradeNames) => {
   player.shopUpgrades[input] += maxBuyablePotions
 }
 
-export const useConsumable = async (
+export const useConsumablePrompt = async (
+  input: ShopUpgradeNames,
+  used = 1,
+  spend = true
+) => {
+  const p = player.shopConfirmationToggle || await Confirm('Would you like to use some of this potion?')
+
+  if (p) {
+    return useConsumable(input, false, used, spend)
+  }
+}
+
+export const useConsumable = (
   input: ShopUpgradeNames,
   automatic = false,
   used = 1,
   spend = true
 ) => {
   const infiniteAutoBrew = PCoinUpgradeEffects.AUTO_POTION_FREE_POTIONS_QOL
-  const p = player.shopConfirmationToggle && !automatic
-    ? await Confirm('Would you like to use some of this potion?')
-    : true
 
-  if (p) {
-    if (input === 'offeringPotion') {
-      const offeringPotionValue = calculatePotionValue(
-        player.prestigecounter,
-        calculateOfferingsDecimal(),
-        calculateBaseOfferings()
-      )
+  if (input === 'offeringPotion') {
+    const offeringPotionValue = calculatePotionValue(
+      player.prestigecounter,
+      calculateOfferingsDecimal(),
+      calculateBaseOfferings()
+    )
 
-      if (infiniteAutoBrew && automatic) {
-        player.offerings = player.offerings.sub(offeringPotionValue.times(used))
-        player.shopPotionsConsumed.offering += used
-      } else if (player.shopUpgrades.offeringPotion >= used || !spend) {
-        player.shopUpgrades.offeringPotion -= spend ? used : 0
-        player.offerings = player.offerings.add(offeringPotionValue.times(used))
-        player.shopPotionsConsumed.offering += used
-      }
+    if (infiniteAutoBrew && automatic) {
+      player.offerings = player.offerings.sub(offeringPotionValue.times(used))
+      player.shopPotionsConsumed.offering += used
+    } else if (player.shopUpgrades.offeringPotion >= used || !spend) {
+      player.shopUpgrades.offeringPotion -= spend ? used : 0
+      player.offerings = player.offerings.add(offeringPotionValue.times(used))
+      player.shopPotionsConsumed.offering += used
+    }
 
-      if (!automatic) {
-        shopDescriptions('offeringPotion')
-      }
-    } else if (input === 'obtainiumPotion') {
-      if (player.currentChallenge.ascension === 14) {
-        return
-      }
+    if (!automatic) {
+      shopDescriptions('offeringPotion')
+    }
+  } else if (input === 'obtainiumPotion') {
+    if (player.currentChallenge.ascension === 14) {
+      return
+    }
 
-      const obtainiumPotionValue = calculatePotionValue(
-        player.reincarnationcounter,
-        calculateObtainium(),
-        calculateBaseObtainium()
-      )
+    const obtainiumPotionValue = calculatePotionValue(
+      player.reincarnationcounter,
+      calculateObtainium(),
+      calculateBaseObtainium()
+    )
 
-      if (infiniteAutoBrew && automatic) {
-        player.obtainium = player.obtainium.plus(obtainiumPotionValue.times(used))
-        player.shopPotionsConsumed.obtainium += used
-      } else if (player.shopUpgrades.obtainiumPotion >= used || !spend) {
-        player.shopUpgrades.obtainiumPotion -= spend ? used : 0
-        player.obtainium = player.obtainium.plus(obtainiumPotionValue.times(used))
-        player.shopPotionsConsumed.obtainium += used
-      }
+    if (infiniteAutoBrew && automatic) {
+      player.obtainium = player.obtainium.plus(obtainiumPotionValue.times(used))
+      player.shopPotionsConsumed.obtainium += used
+    } else if (player.shopUpgrades.obtainiumPotion >= used || !spend) {
+      player.shopUpgrades.obtainiumPotion -= spend ? used : 0
+      player.obtainium = player.obtainium.plus(obtainiumPotionValue.times(used))
+      player.shopPotionsConsumed.obtainium += used
+    }
 
-      if (!automatic) {
-        shopDescriptions('obtainiumPotion')
-      }
+    if (!automatic) {
+      shopDescriptions('obtainiumPotion')
     }
   }
 }
