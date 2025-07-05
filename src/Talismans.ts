@@ -60,71 +60,17 @@ const talismanResourceCosts: Record<TalismanCraftItems, TalismanFragmentCost> = 
 
 export type TalismanRuneBonus = Record<RuneKeys, number>
 
-interface BaseReward {
-  inscriptionDesc: () => string
-  signatureDesc: () => string
-}
-
-interface ExemptionReward extends BaseReward {
-  taxReduction: number
-  duplicationOOMBonus: number
-}
-
-interface ChronosReward extends BaseReward {
-  globalSpeed: number
-  speedOOMBonus: number
-}
-
-interface MidasReward extends BaseReward {
-  blessingBonus: number
-  thriftOOMBonus: number
-}
-
-interface MetaphysicsReward extends BaseReward {
-  talismanEffect: number
-  extraTalismanEffect: number
-}
-
-interface PolymathReward extends BaseReward {
-  ascensionSpeedBonus: number
-  SIOOMBonus: number
-}
-
-interface MortuusReward extends BaseReward {
-  antBonus: number
-  prismOOMBonus: number
-}
-
-interface PlasticReward extends BaseReward {
-  quarkBonus: number
-}
-
-interface WowSquareReward extends BaseReward {
-  evenDimBonus: number
-  oddDimBonus: number
-}
-
-interface GrandmaReward extends BaseReward {
-  freeCorruptionLevel: number
-  cookieSix: boolean
-}
-
-interface HorseShoeReward extends BaseReward {
-  luckPercentage: number
-  redLuck: number
-}
-
 type TalismanTypeMap = {
-  exemption: ExemptionReward
-  chronos: ChronosReward
-  midas: MidasReward
-  metaphysics: MetaphysicsReward
-  polymath: PolymathReward
-  mortuus: MortuusReward
-  plastic: PlasticReward
-  wowSquare: WowSquareReward
-  cookieGrandma: GrandmaReward
-  horseShoe: HorseShoeReward
+  exemption: { taxReduction: number, duplicationOOMBonus: number }
+  chronos: { globalSpeed: number, speedOOMBonus: number }
+  midas: { blessingBonus: number, thriftOOMBonus: number }
+  metaphysics: { talismanEffect: number, extraTalismanEffect: number }
+  polymath: { ascensionSpeedBonus: number, SIOOMBonus: number }
+  mortuus: { antBonus: number, prismOOMBonus: number }
+  plastic: { quarkBonus: number }
+  wowSquare: { evenDimBonus: number, oddDimBonus: number }
+  cookieGrandma: { freeCorruptionLevel: number, cookieSix: boolean }
+  horseShoe: { luckPercentage: number, redLuck: number }
 }
 
 export type TalismanKeys = keyof TalismanTypeMap
@@ -153,18 +99,22 @@ const rarityValues: Record<number, number> = {
 }
 
 interface TalismanData<K extends TalismanKeys> {
-  // Fields supplied by data object
+  level: number
   baseMult: number
   maxLevel: number
   costs: (this: void, baseMult: number, level: number) => Record<TalismanCraftItems, number>
   levelCapIncrease: () => number
-  rewards(n: number): TalismanTypeMap[K]
+  effects(n: number): TalismanTypeMap[K]
+  inscriptionDesc(n: number): string
+  signatureDesc(n: number): string
   isUnlocked: () => boolean
   minimalResetTier: keyof typeof resetTiers
   talismanBaseCoefficient: TalismanRuneBonus
+  name: () => string
+  description: () => string
 
   // Field that is stored in the player
-  fragmentsInvested?: Record<TalismanCraftItems, number>
+  fragmentsInvested: Record<TalismanCraftItems, number>
 }
 
 export class Talisman<K extends TalismanKeys> {
@@ -698,26 +648,31 @@ export const plasticTalismanMaxLevelIncreasers = () => {
 
 const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
   exemption: {
+    level: 0,
+    fragmentsInvested: noTalismanFragments,
     baseMult: 1,
     maxLevel: 180,
     costs: regularCostProgression,
     levelCapIncrease: () => universalTalismanMaxLevelIncreasers(),
-    rewards: (n) => {
-      // Corresponding to rarity, here
+    effects: (n) => {
       const inscriptValues = [0, -0.2, -0.3, -0.4, -0.45, -0.5, -0.55, -0.6, -0.61, -0.62, -0.65]
       const duplicationBonus = (n >= 6) ? 12 : 0
       return {
-        inscriptionDesc: () =>
-          i18next.t('runes.talismans.exemption.inscription', {
-            val: format(1 + (inscriptValues[n] ?? 1), 2, true)
-          }),
-        signatureDesc: () =>
-          i18next.t('runes.talismans.exemption.signature', {
-            val: format(duplicationBonus, 0, true)
-          }),
         taxReduction: inscriptValues[n] ?? 0,
-        duplicationOOMBonus: duplicationBonus
+        duplicationOOMBonus: duplicationBonus,
       }
+    },
+    inscriptionDesc: (n) => {
+      const inscriptValues = [0, -0.2, -0.3, -0.4, -0.45, -0.5, -0.55, -0.6, -0.61, -0.62, -0.65]
+      return i18next.t('runes.talismans.exemption.inscription', {
+        val: format(1 + (inscriptValues[n] ?? 1), 2, true)
+      })
+    },
+    signatureDesc: (n) => {
+      const duplicationBonus = (n >= 6) ? 12 : 0
+      return i18next.t('runes.talismans.exemption.signature', {
+        val: format(duplicationBonus, 0, true)
+      })
     },
     talismanBaseCoefficient: {
       speed: 0,
@@ -732,28 +687,36 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
     minimalResetTier: 'ascension',
     isUnlocked: () => {
       return Boolean(achievementManager.getBonus('exemptionTalisman'))
-    }
+    },
+    name: () => i18next.t('runes.talismans.exemption.name'),
+    description: () => i18next.t('runes.talismans.exemption.description')
   },
   chronos: {
+    level: 0,
+    fragmentsInvested: noTalismanFragments,
     baseMult: 4,
     maxLevel: 180,
     costs: regularCostProgression,
     levelCapIncrease: () => universalTalismanMaxLevelIncreasers(),
-    rewards: (n) => {
+    effects: (n) => {
       const inscriptValues = [1, 1.04, 1.08, 1.12, 1.16, 1.20, 1.25, 1.30, 1.325, 1.35, 1.4]
       const speedBonus = (n >= 6) ? 12 : 0
       return {
-        inscriptionDesc: () =>
-          i18next.t('runes.talismans.chronos.inscription', {
-            val: formatAsPercentIncrease(inscriptValues[n] ?? 1, 0)
-          }),
-        signatureDesc: () =>
-          i18next.t('runes.talismans.chronos.signature', {
-            val: format(speedBonus, 0, true)
-          }),
         globalSpeed: inscriptValues[n] ?? 1,
         speedOOMBonus: speedBonus
       }
+    },
+    inscriptionDesc: (n) => {
+      const inscriptValues = [1, 1.04, 1.08, 1.12, 1.16, 1.20, 1.25, 1.30, 1.325, 1.35, 1.4]
+      return i18next.t('runes.talismans.chronos.inscription', {
+        val: formatAsPercentIncrease(inscriptValues[n] ?? 1, 0)
+      })
+    },
+    signatureDesc: (n) => {
+      const speedBonus = (n >= 6) ? 12 : 0
+      return i18next.t('runes.talismans.chronos.signature', {
+        val: format(speedBonus, 0, true)
+      })
     },
     talismanBaseCoefficient: {
       speed: 1.5,
@@ -768,28 +731,36 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
     minimalResetTier: 'ascension',
     isUnlocked: () => {
       return Boolean(achievementManager.getBonus('chronosTalisman'))
-    }
+    },
+    name: () => i18next.t('runes.talismans.chronos.name'),
+    description: () => i18next.t('runes.talismans.chronos.description')
   },
   midas: {
+    level: 0,
+    fragmentsInvested: noTalismanFragments,
     baseMult: 1e4,
     maxLevel: 180,
     costs: regularCostProgression,
     levelCapIncrease: () => universalTalismanMaxLevelIncreasers(),
-    rewards: (n) => {
+    effects: (n) => {
       const inscriptValues = [1, 1.04, 1.08, 1.12, 1.16, 1.20, 1.25, 1.30, 1.325, 1.35, 1.40]
       const thriftBonus = (n >= 6) ? 12 : 0
       return {
-        inscriptionDesc: () =>
-          i18next.t('runes.talismans.midas.inscription', {
-            val: formatAsPercentIncrease(inscriptValues[n] ?? 1, 0)
-          }),
-        signatureDesc: () =>
-          i18next.t('runes.talismans.midas.signature', {
-            val: format(thriftBonus, 0, true)
-          }),
         blessingBonus: inscriptValues[n] ?? 1,
         thriftOOMBonus: thriftBonus
       }
+    },
+    inscriptionDesc: (n) => {
+      const inscriptValues = [1, 1.04, 1.08, 1.12, 1.16, 1.20, 1.25, 1.30, 1.325, 1.35, 1.40]
+      return i18next.t('runes.talismans.midas.inscription', {
+        val: formatAsPercentIncrease(inscriptValues[n] ?? 1, 0)
+      })
+    },
+    signatureDesc: (n) => {
+      const thriftBonus = (n >= 6) ? 12 : 0
+      return i18next.t('runes.talismans.midas.signature', {
+        val: format(thriftBonus, 0, true)
+      })
     },
     talismanBaseCoefficient: {
       speed: 0,
@@ -804,30 +775,38 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
     minimalResetTier: 'ascension',
     isUnlocked: () => {
       return Boolean(achievementManager.getBonus('midasTalisman'))
-    }
+    },
+    name: () => i18next.t('runes.talismans.midas.name'),
+    description: () => i18next.t('runes.talismans.midas.description')
   },
   metaphysics: {
+    level: 0,
+    fragmentsInvested: noTalismanFragments,
     baseMult: 1e8,
     maxLevel: 180,
     costs: regularCostProgression,
     levelCapIncrease: () => {
       return universalTalismanMaxLevelIncreasers() + metaphysicsTalismanMaxLevelIncreasers()
     },
-    rewards: (n) => {
+    effects: (n) => {
       const inscriptValues = [0, 0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.25, 1.5]
       const signatureValue = (n >= 6) ? 1.07 : 1
       return {
-        inscriptionDesc: () =>
-          i18next.t('runes.talismans.metaphysics.inscription', {
-            val: formatAsPercentIncrease(1 + (inscriptValues[n] ?? 0), 0)
-          }),
-        signatureDesc: () =>
-          i18next.t('runes.talismans.metaphysics.signature', {
-            val: formatAsPercentIncrease(signatureValue, 2)
-          }),
         talismanEffect: inscriptValues[n] ?? 0,
         extraTalismanEffect: signatureValue
       }
+    },
+    inscriptionDesc: (n) => {
+      const inscriptValues = [0, 0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.25, 1.5]
+      return i18next.t('runes.talismans.metaphysics.inscription', {
+        val: formatAsPercentIncrease(1 + (inscriptValues[n] ?? 0), 0)
+      })
+    },
+    signatureDesc: (n) => {
+      const signatureValue = (n >= 6) ? 1.07 : 1
+      return i18next.t('runes.talismans.metaphysics.signature', {
+        val: formatAsPercentIncrease(signatureValue, 2)
+      })
     },
     talismanBaseCoefficient: {
       speed: 0.6,
@@ -842,28 +821,36 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
     minimalResetTier: 'ascension',
     isUnlocked: () => {
       return Boolean(achievementManager.getBonus('metaphysicsTalisman'))
-    }
+    },
+    name: () => i18next.t('runes.talismans.metaphysics.name'),
+    description: () => i18next.t('runes.talismans.metaphysics.description')
   },
   polymath: {
+    level: 0,
+    fragmentsInvested: noTalismanFragments,
     baseMult: 1e13,
     maxLevel: 180,
     costs: regularCostProgression,
     levelCapIncrease: () => universalTalismanMaxLevelIncreasers(),
-    rewards: (n) => {
+    effects: (n) => {
       const inscriptValues = [1, 1.04, 1.08, 1.12, 1.16, 1.20, 1.25, 1.30, 1.325, 1.35, 1.40]
       const SIOOMBonus = (n >= 6) ? 12 : 0
       return {
-        inscriptionDesc: () =>
-          i18next.t('runes.talismans.polymath.inscription', {
-            val: formatAsPercentIncrease(inscriptValues[n] ?? 1, 0)
-          }),
-        signatureDesc: () =>
-          i18next.t('runes.talismans.polymath.signature', {
-            val: format(SIOOMBonus, 0, true)
-          }),
         ascensionSpeedBonus: inscriptValues[n] ?? 1,
         SIOOMBonus: SIOOMBonus
       }
+    },
+    inscriptionDesc: (n) => {
+      const inscriptValues = [1, 1.04, 1.08, 1.12, 1.16, 1.20, 1.25, 1.30, 1.325, 1.35, 1.40]
+      return i18next.t('runes.talismans.polymath.inscription', {
+        val: formatAsPercentIncrease(inscriptValues[n] ?? 1, 0)
+      })
+    },
+    signatureDesc: (n) => {
+      const SIOOMBonus = (n >= 6) ? 12 : 0
+      return i18next.t('runes.talismans.polymath.signature', {
+        val: format(SIOOMBonus, 0, true)
+      })
     },
     talismanBaseCoefficient: {
       speed: 0.75,
@@ -878,28 +865,36 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
     minimalResetTier: 'ascension',
     isUnlocked: () => {
       return Boolean(achievementManager.getBonus('polymathTalisman'))
-    }
+    },
+    name: () => i18next.t('runes.talismans.polymath.name'),
+    description: () => i18next.t('runes.talismans.polymath.description')
   },
   mortuus: {
+    level: 0,
+    fragmentsInvested: noTalismanFragments,
     baseMult: 10,
     maxLevel: 180,
     costs: regularCostProgression,
     levelCapIncrease: () => universalTalismanMaxLevelIncreasers(),
-    rewards: (n) => {
+    effects: (n) => {
       const inscriptValues = [1, 1.02, 1.04, 1.06, 1.07, 1.08, 1.09, 1.10, 1.11, 1.125, 1.15]
       const prismOOMBonus = (n >= 6) ? 12 : 0
       return {
-        inscriptionDesc: () =>
-          i18next.t('runes.talismans.mortuus.inscription', {
-            val: formatAsPercentIncrease(inscriptValues[n] ?? 1, 0)
-          }),
-        signatureDesc: () =>
-          i18next.t('runes.talismans.mortuus.signature', {
-            val: format(prismOOMBonus, 0, true)
-          }),
         antBonus: inscriptValues[n] ?? 1,
         prismOOMBonus: prismOOMBonus
       }
+    },
+    inscriptionDesc: (n) => {
+      const inscriptValues = [1, 1.02, 1.04, 1.06, 1.07, 1.08, 1.09, 1.10, 1.11, 1.125, 1.15]
+      return i18next.t('runes.talismans.mortuus.inscription', {
+        val: formatAsPercentIncrease(inscriptValues[n] ?? 1, 0)
+      })
+    },
+    signatureDesc: (n) => {
+      const prismOOMBonus = (n >= 6) ? 12 : 0
+      return i18next.t('runes.talismans.mortuus.signature', {
+        val: format(prismOOMBonus, 0, true)
+      })
     },
     talismanBaseCoefficient: {
       speed: 0.6,
@@ -914,26 +909,32 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
     minimalResetTier: 'ascension',
     isUnlocked: () => {
       return player.antUpgrades[11]! > 0 || player.ascensionCount > 0
-    }
+    },
+    name: () => i18next.t('runes.talismans.mortuus.name'),
+    description: () => i18next.t('runes.talismans.mortuus.description')
   },
   plastic: {
+    level: 0,
+    fragmentsInvested: noTalismanFragments,
     baseMult: 100,
     maxLevel: 180,
     costs: regularCostProgression,
     levelCapIncrease: () => {
       return universalTalismanMaxLevelIncreasers() + plasticTalismanMaxLevelIncreasers()
     },
-    rewards: (n) => {
+    effects: (n) => {
       const inscriptValues = [1, 1.005, 1.01, 1.015, 1.02, 1.025, 1.03, 1.04, 1.045, 1.05, 1.0666]
       return {
-        inscriptionDesc: () =>
-          i18next.t('runes.talismans.plastic.inscription', {
-            val: formatAsPercentIncrease(inscriptValues[n] ?? 1, 2)
-          }),
-        signatureDesc: () => i18next.t('runes.talismans.plastic.signature'),
-        quarkBonus: inscriptValues[n] ?? 1
+        quarkBonus: inscriptValues[n] ?? 1,
       }
     },
+    inscriptionDesc: (n) => {
+      const inscriptValues = [1, 1.005, 1.01, 1.015, 1.02, 1.025, 1.03, 1.04, 1.045, 1.05, 1.0666]
+      return i18next.t('runes.talismans.plastic.inscription', {
+        val: formatAsPercentIncrease(inscriptValues[n] ?? 1, 2)
+      })
+    },
+    signatureDesc: () => i18next.t('runes.talismans.plastic.signature'),
     talismanBaseCoefficient: {
       speed: 0.75,
       duplication: 0,
@@ -947,25 +948,31 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
     minimalResetTier: 'ascension',
     isUnlocked: () => {
       return isShopTalismanUnlocked()
-    }
+    },
+    name: () => i18next.t('runes.talismans.plastic.name'),
+    description: () => i18next.t('runes.talismans.plastic.description')
   },
   wowSquare: {
+    level: 0,
+    fragmentsInvested: noTalismanFragments,
     maxLevel: 210,
     baseMult: 1e20,
     costs: exponentialCostProgression,
     levelCapIncrease: () => universalTalismanMaxLevelIncreasers(),
-    rewards: (n) => {
+    effects: (n) => {
       const inscriptValues = [1, 1.025, 1.05, 1.075, 1.1, 1.125, 1.15, 1.2, 1.225, 1.25, 1.30]
       return {
-        inscriptionDesc: () =>
-          i18next.t('runes.talismans.wowSquare.inscription', {
-            val: formatAsPercentIncrease(inscriptValues[n] ?? 1, 0)
-          }),
-        signatureDesc: () => i18next.t('runes.talismans.wowSquare.signature'),
         evenDimBonus: inscriptValues[n] ?? 1,
-        oddDimBonus: n >= 6 ? 1.20 : 1
+        oddDimBonus: n >= 6 ? 0.05 : 0
       }
     },
+    inscriptionDesc: (n) => {
+      const inscriptValues = [1, 1.025, 1.05, 1.075, 1.1, 1.125, 1.15, 1.2, 1.225, 1.25, 1.30]
+      return i18next.t('runes.talismans.wowSquare.inscription', {
+        val: formatAsPercentIncrease(inscriptValues[n] ?? 1, 0)
+      })
+    },
+    signatureDesc: () => i18next.t('runes.talismans.wowSquare.signature'),
     talismanBaseCoefficient: {
       speed: 0,
       duplication: 1,
@@ -979,26 +986,32 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
     minimalResetTier: 'ascension',
     isUnlocked: () => {
       return player.ascensionCount >= 100
-    }
+    },
+    name: () => i18next.t('runes.talismans.wowSquare.name'),
+    description: () => i18next.t('runes.talismans.wowSquare.description')
   },
   cookieGrandma: {
+    level: 0,
+    fragmentsInvested: noTalismanFragments,
     baseMult: 1e290,
     maxLevel: 60,
     costs: exponentialCostProgression,
     levelCapIncrease: () => 0,
-    rewards: (n) => {
+    effects: (n) => {
       const inscriptValues = [0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.15, 0.15, 0.16, 0.175]
       const cookiesSix = n >= 6
       return {
-        inscriptionDesc: () =>
-          i18next.t('runes.talismans.cookieGrandma.inscription', {
-            val: format(inscriptValues[n] ?? 0, 3)
-          }),
-        signatureDesc: () => i18next.t('runes.talismans.cookieGrandma.signature'),
         freeCorruptionLevel: inscriptValues[n] ?? 0,
         cookieSix: cookiesSix
       }
     },
+    inscriptionDesc: (n) => {
+      const inscriptValues = [0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.15, 0.15, 0.16, 0.175]
+      return i18next.t('runes.talismans.cookieGrandma.inscription', {
+        val: format(inscriptValues[n] ?? 0, 3)
+      })
+    },
+    signatureDesc: () => i18next.t('runes.talismans.cookieGrandma.signature'),
     talismanBaseCoefficient: {
       speed: 1,
       duplication: 1,
@@ -1012,28 +1025,36 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
     minimalResetTier: 'never',
     isUnlocked: () => {
       return player.cubeUpgrades[80] > 0
-    }
+    },
+    name: () => i18next.t('runes.talismans.cookieGrandma.name'),
+    description: () => i18next.t('runes.talismans.cookieGrandma.description')
   },
   horseShoe: {
+    level: 0,
+    fragmentsInvested: noTalismanFragments,
     baseMult: 1e290,
     maxLevel: 100,
     costs: exponentialCostProgression,
     levelCapIncrease: () => 0,
-    rewards: (n) => {
-      const inscriptValues = [0, 0.005, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.055, 0.06, 0.777]
+    effects: (n) => {
+      const inscriptValues = [0, 0.005, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.055, 0.06, 0.077]
       const signatureValue = (n >= 6) ? 40 : 0
       return {
-        inscriptionDesc: () =>
-          i18next.t('runes.talismans.horseShoe.inscription', {
-            val: format(100 * (inscriptValues[n] ?? 0), 2)
-          }),
-        signatureDesc: () =>
-          i18next.t('runes.talismans.horseShoe.signature', {
-            val: signatureValue
-          }),
         luckPercentage: inscriptValues[n] ?? 0,
         redLuck: signatureValue
       }
+    },
+    inscriptionDesc: (n) => {
+      const inscriptValues = [0, 0.005, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.055, 0.06, 0.077]
+      return i18next.t('runes.talismans.horseShoe.inscription', {
+        val: format(100 * (inscriptValues[n] ?? 0), 2)
+      })
+    },
+    signatureDesc: (n) => {
+      const signatureValue = (n >= 6) ? 40 : 0
+      return i18next.t('runes.talismans.horseShoe.signature', {
+        val: format(signatureValue, 0, true)
+      })
     },
     talismanBaseCoefficient: {
       speed: 1.2,
@@ -1048,7 +1069,9 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
     minimalResetTier: 'never',
     isUnlocked: () => {
       return Boolean(player.singularityChallenges.noOfferingPower.rewards.talismanUnlock)
-    }
+    },
+    name: () => i18next.t('runes.talismans.horseShoe.name'),
+    description: () => i18next.t('runes.talismans.horseShoe.description')
   }
 }
 
