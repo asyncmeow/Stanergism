@@ -799,7 +799,7 @@ export const getRuneBonusFromIndividualTalisman = (t: TalismanKeys, rune: RuneKe
 }
 
 export const getRuneBonusFromAllTalismans = (rune: RuneKeys): number => {
-  const specialMultiplier = 1 // allTalismanRuneBonusStatsSum()
+  const specialMultiplier = allTalismanRuneBonusStatsSum()
   let totalBonus = 0
   for (const t of Object.keys(talismans) as TalismanKeys[]) {
     totalBonus += getRuneBonusFromIndividualTalisman(t, rune)

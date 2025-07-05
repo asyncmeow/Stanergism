@@ -940,7 +940,7 @@ export const runeData: { [K in RuneKeys]: RuneData<K> } = {
       }
     },
     effectiveLevelMult: () => 1,
-    freeLevels: () => 0,
+    freeLevels: () => bonusRuneLevelsHorseShoe(),
     runeEXPPerOffering: (purchasedLevels) => universalRuneEXPMult(purchasedLevels),
     isUnlocked: () => {
       const condition = Boolean(player.singularityChallenges.noOfferingPower.rewards.horseShoeUnlock)
