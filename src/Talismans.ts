@@ -355,10 +355,10 @@ export class Talisman<K extends TalismanKeys> {
   runeBonuses (key: RuneKeys): number {
     const rarityValue = rarityValues[this.rarity] ?? 1
 
-    let specialMultiplier = allTalismanRuneBonusStatsSum()
+    let specialMultiplier = 1
 
     if (this.#key === 'metaphysics') {
-      specialMultiplier += (this.bonus as MetaphysicsReward).talismanEffect
+      specialMultiplier *= (this.bonus as MetaphysicsReward).talismanEffect
       specialMultiplier *= (this.bonus as MetaphysicsReward).extraTalismanEffect
     }
 
@@ -789,17 +789,17 @@ const talismanData: { [K in TalismanKeys]: TalismanData<K> } = {
       return universalTalismanMaxLevelIncreasers() + metaphysicsTalismanMaxLevelIncreasers()
     },
     effects: (n) => {
-      const inscriptValues = [0, 0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.25, 1.5]
+      const inscriptValues = [1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2]
       const signatureValue = (n >= 6) ? 1.07 : 1
       return {
-        talismanEffect: inscriptValues[n] ?? 0,
+        talismanEffect: inscriptValues[n] ?? 1,
         extraTalismanEffect: signatureValue
       }
     },
     inscriptionDesc: (n) => {
-      const inscriptValues = [0, 0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.25, 1.5]
+      const inscriptValues = [1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2]
       return i18next.t('runes.talismans.metaphysics.inscription', {
-        val: formatAsPercentIncrease(1 + (inscriptValues[n] ?? 0), 0)
+        val: formatAsPercentIncrease(1 + (inscriptValues[n] ?? 1), 0)
       })
     },
     signatureDesc: (n) => {
@@ -1126,7 +1126,10 @@ export const getTalismanBonus = (rune: RuneKeys) => {
       totalBonus += talisman.runeBonuses(rune)
     }
   }
-  return totalBonus
+
+  let effectMultiplier = allTalismanRuneBonusStatsSum()
+
+  return totalBonus * effectMultiplier
 }
 
 export const resetTalismans = (tier: keyof typeof resetTiers) => {
