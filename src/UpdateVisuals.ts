@@ -64,7 +64,7 @@ import {
 import { loadStatisticsUpdate } from './Statistics'
 import { format, formatAsPercentIncrease, formatTimeShort, player } from './Synergism'
 import { getActiveSubTab, Tabs } from './Tabs'
-import { getTalisman, type TalismanKeys, updateAllTalismanHTML } from './Talismans'
+import { getTalismanLevelCap, talismans, updateAllTalismanHTML, type TalismanKeys } from './Talismans'
 import type { Player, ZeroToFour } from './types/Synergism'
 import { sumContents, timeReminingHours } from './Utility'
 import { Globals as G } from './Variables'
@@ -653,10 +653,10 @@ export const visualUpdateRunes = () => {
   }
 
   if (getActiveSubTab() === 1) {
-    for (const talisman of Object.keys(player.talismans)) {
-      DOMCacheGetOrSet(`${talisman}TalismanLevel`).textContent = i18next.t('runes.talismans.level', {
-        x: format(getTalisman(talisman as TalismanKeys).level, 0, true),
-        y: format(getTalisman(talisman as TalismanKeys).effectiveLevelCap, 0, true)
+    for (const t of Object.keys(talismans) as TalismanKeys[]) {
+      DOMCacheGetOrSet(`${t}TalismanLevel`).textContent = i18next.t('runes.talismans.level', {
+        x: format(talismans[t].level, 0, true),
+        y: format(getTalismanLevelCap(t), 0, true)
       })
     }
     updateAllTalismanHTML()

@@ -16,8 +16,8 @@ import { CalcECC } from './Challenges'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { firstFiveRuneEffectivenessStats, runeEffectivenessStatsSI } from './Statistics'
 import { Tabs } from './Tabs'
-import { getTalisman, getTalismanBonus } from './Talismans'
 import { assert } from './Utility'
+import { getRuneBonusFromAllTalismans, getTalismanEffects } from './Talismans'
 
 export enum resetTiers {
   prestige = 1,
@@ -493,7 +493,7 @@ export const firstFiveFreeLevels = () => {
 
 export const bonusRuneLevelsSpeed = () => {
   return (
-    getTalismanBonus('speed')
+    getRuneBonusFromAllTalismans('speed')
     + (
       player.upgrades[27] * (Math.min(50, Math.floor(Decimal.log(player.coins.add(1), 1e10)))
         + Math.max(0, Math.min(50, Math.floor(Decimal.log(player.coins.add(1), 1e50)) - 10)))
@@ -510,7 +510,7 @@ export const bonusRuneLevelsSpeed = () => {
 
 export const bonusRuneLevelsDuplication = () => {
   return (
-    getTalismanBonus('duplication')
+    getRuneBonusFromAllTalismans('duplication')
     + player.upgrades[28] * Math.min(
         100,
         Math.floor(
@@ -527,19 +527,19 @@ export const bonusRuneLevelsDuplication = () => {
 
 export const bonusRuneLevelsPrism = () => {
   return (
-    getTalismanBonus('prism')
+    getRuneBonusFromAllTalismans('prism')
   )
 }
 
 export const bonusRuneLevelsThrift = () => {
   return (
-    getTalismanBonus('thrift')
+    getRuneBonusFromAllTalismans('thrift')
   )
 }
 
 export const bonusRuneLevelsSI = () => {
   return (
-    getTalismanBonus('superiorIntellect')
+    getRuneBonusFromAllTalismans('superiorIntellect')
   )
 }
 
@@ -548,12 +548,16 @@ export const bonusRuneLevelsIA = () => {
     (PCoinUpgradeEffects.INSTANT_UNLOCK_2 ? 6 : 0)
     + player.cubeUpgrades[73]
     + player.campaigns.bonusRune6
-    + getTalismanBonus('infiniteAscent')
+    + getRuneBonusFromAllTalismans('infiniteAscent')
   )
 }
 
 export const bonusRuneLevelsAntiquities = () => {
-  return 0
+  return getRuneBonusFromAllTalismans('antiquities')
+}
+
+export const bonusRuneLevelsHorseShoe = () => {
+  return getRuneBonusFromAllTalismans('horseShoe')
 }
 
 export const speedRuneOOMIncrease = () => {
@@ -564,7 +568,7 @@ export const speedRuneOOMIncrease = () => {
     + CalcECC('ascension', player.challengecompletions[11])
     + 1.5 * CalcECC('ascension', player.challengecompletions[14])
     + player.cubeUpgrades[16]
-    + getTalisman('chronos').bonus.speedOOMBonus
+    + getTalismanEffects('chronos').speedOOMBonus
     + getAmbrosiaUpgradeEffects('ambrosiaRuneOOMBonus').runeOOMBonus
   )
 }
@@ -577,7 +581,7 @@ export const duplicationRuneOOMIncrease = () => {
     + player.researches[112]
     + CalcECC('ascension', player.challengecompletions[11])
     + 1.5 * CalcECC('ascension', player.challengecompletions[14])
-    + getTalisman('exemption').bonus.duplicationOOMBonus
+    + getTalismanEffects('exemption').duplicationOOMBonus
     + getAmbrosiaUpgradeEffects('ambrosiaRuneOOMBonus').runeOOMBonus
   )
 }
@@ -590,7 +594,7 @@ export const prismRuneOOMIncrease = () => {
     + CalcECC('ascension', player.challengecompletions[11])
     + 1.5 * CalcECC('ascension', player.challengecompletions[14])
     + player.cubeUpgrades[16]
-    + getTalisman('mortuus').bonus.prismOOMBonus
+    + getTalismanEffects('mortuus').prismOOMBonus
     + getAmbrosiaUpgradeEffects('ambrosiaRuneOOMBonus').runeOOMBonus
   )
 }
@@ -603,7 +607,7 @@ export const thriftRuneOOMIncrease = () => {
     + CalcECC('ascension', player.challengecompletions[11])
     + 1.5 * CalcECC('ascension', player.challengecompletions[14])
     + player.cubeUpgrades[37]
-    + getTalisman('midas').bonus.thriftOOMBonus
+    + getTalismanEffects('midas').thriftOOMBonus
     + getAmbrosiaUpgradeEffects('ambrosiaRuneOOMBonus').runeOOMBonus
   )
 }
@@ -615,7 +619,7 @@ export const superiorIntellectOOMIncrease = () => {
     + CalcECC('ascension', player.challengecompletions[11])
     + 1.5 * CalcECC('ascension', player.challengecompletions[14])
     + player.cubeUpgrades[37]
-    + getTalisman('polymath').bonus.SIOOMBonus
+    + getTalismanEffects('polymath').SIOOMBonus
     + getAmbrosiaUpgradeEffects('ambrosiaRuneOOMBonus').runeOOMBonus
   )
 }
@@ -1135,7 +1139,7 @@ const blessingMultiplier = (key: RuneKeys) => {
   return (
     getRune(key).level + getRune(key).freeLevels
       * (1 + (6.9 * player.researches[134]) / 100)
-      * (getTalisman('midas').bonus.blessingBonus)
+      * (getTalismanEffects('midas').blessingBonus)
       * (1 + 0.1 * Math.log10(player.epicFragments + 1) * player.researches[174])
       * (1 + (2 * player.researches[194]) / 100)
       * (1 + 0.25 * player.researches[160])

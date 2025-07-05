@@ -4,9 +4,9 @@ import { CorruptionLoadout, type Corruptions, CorruptionSaves } from '../Corrupt
 import { getHepteract, type HepteractNames } from '../Hepteracts'
 import { type OcteractDataKeys, octeractUpgrades } from '../Octeracts'
 import { goldenQuarkUpgrades, type SingularityDataKeys } from '../singularity'
-import { getTalisman } from '../Talismans'
 import { convertArrayToCorruption } from './PlayerJsonSchema'
 import { playerSchema } from './PlayerSchema'
+import { updateResourcePredefinedLevel } from '../Talismans'
 
 export const playerUpdateVarSchema = playerSchema.transform((player) => {
   if (player.usedCorruptions !== undefined) {
@@ -48,13 +48,13 @@ export const playerUpdateVarSchema = playerSchema.transform((player) => {
   }
 
   if (player.talismanLevels !== undefined) {
-    getTalisman('exemption').updateResourcePredefinedLevel(player.talismanLevels[0])
-    getTalisman('chronos').updateResourcePredefinedLevel(player.talismanLevels[1])
-    getTalisman('midas').updateResourcePredefinedLevel(player.talismanLevels[2])
-    getTalisman('metaphysics').updateResourcePredefinedLevel(player.talismanLevels[3])
-    getTalisman('polymath').updateResourcePredefinedLevel(player.talismanLevels[4])
-    getTalisman('mortuus').updateResourcePredefinedLevel(player.talismanLevels[5])
-    getTalisman('plastic').updateResourcePredefinedLevel(player.talismanLevels[6])
+    updateResourcePredefinedLevel(player.talismanLevels[0], 'exemption')
+    updateResourcePredefinedLevel(player.talismanLevels[1], 'chronos')
+    updateResourcePredefinedLevel(player.talismanLevels[2], 'midas')
+    updateResourcePredefinedLevel(player.talismanLevels[3], 'metaphysics')
+    updateResourcePredefinedLevel(player.talismanLevels[4], 'polymath')
+    updateResourcePredefinedLevel(player.talismanLevels[5], 'mortuus')
+    updateResourcePredefinedLevel(player.talismanLevels[6], 'plastic')
   }
 
   if (player.runeexp !== undefined) {
@@ -165,7 +165,7 @@ export const playerUpdateVarSchema = playerSchema.transform((player) => {
   if (player.blueberryUpgrades !== undefined) {
     for (const key of Object.keys(player.blueberryUpgrades)) {
       const k = key as AmbrosiaUpgradeNames
-
+      
       const ambrosiaInvested = player.blueberryUpgrades[k].ambrosiaInvested ?? 0
       const blueberriesInvested = player.blueberryUpgrades[k].blueberriesInvested ?? 0
 

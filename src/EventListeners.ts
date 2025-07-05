@@ -116,10 +116,16 @@ import { player, resetCheck, saveSynergy } from './Synergism'
 import { changeSubTab, changeTab, Tabs } from './Tabs'
 import {
   buyAllTalismanResources,
+  buyTalismanLevel,
+  buyTalismanLevelToMax,
+  buyTalismanLevelToRarityIncrease,
   buyTalismanResources,
-  getTalisman,
+  TalismanKeys,
+  talismans,
+  talismanToStringHTML,
   toggleTalismanBuy,
-  updateTalismanCostDisplay
+  updateTalismanCostDisplay,
+  updateTalismanCostHTML,
 } from './Talismans'
 import { IconSets, imgErrorHandler, toggleAnnotation, toggleIconSet, toggleTheme } from './Themes'
 import {
@@ -506,36 +512,36 @@ export const generateEventHandlers = () => {
   buyTalismanAll.addEventListener('click', () => buyAllTalismanResources())
 
   const talismanStats = Object.keys(
-    player.talismans
-  ) as (keyof Player['talismans'])[]
+    talismans
+  ) as TalismanKeys[]
   for (const key of talismanStats) {
     DOMCacheGetOrSet(`${key}Talisman`).addEventListener(
       'mouseover',
-      () => getTalisman(key).updateRewardHTML()
+      () => talismanToStringHTML(key)
     )
     DOMCacheGetOrSet(`level${key}Once`).addEventListener(
       'click',
-      () => getTalisman(key).buyTalismanLevel()
+      () => buyTalismanLevel(key)
     )
     DOMCacheGetOrSet(`level${key}Once`).addEventListener(
       'mouseover',
-      () => getTalisman(key).updateCostHTML()
+      () => updateTalismanCostHTML(key)
     )
     DOMCacheGetOrSet(`level${key}ToRarityIncrease`).addEventListener(
       'click',
-      () => getTalisman(key).buyLevelToRarityIncrease()
+      () => buyTalismanLevelToRarityIncrease(key)
     )
     DOMCacheGetOrSet(`level${key}ToRarityIncrease`).addEventListener(
       'mouseover',
-      () => getTalisman(key).updateCostHTML()
+      () => updateTalismanCostHTML(key)
     )
     DOMCacheGetOrSet(`level${key}ToMax`).addEventListener(
       'click',
-      () => getTalisman(key).buyLevelToMax()
+      () => buyTalismanLevelToMax(key)
     )
     DOMCacheGetOrSet(`level${key}ToMax`).addEventListener(
       'mouseover',
-      () => getTalisman(key).updateCostHTML()
+      () => updateTalismanCostHTML(key)
     )
   }
 

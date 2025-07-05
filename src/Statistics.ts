@@ -112,10 +112,10 @@ import {
   goldenQuarkUpgrades
 } from './singularity'
 import { format, formatAsPercentIncrease, player } from './Synergism'
-import { getTalisman, sumOfTalismanRarities } from './Talismans'
 import type { GlobalVariables } from './types/Synergism'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
+import { getTalismanEffects, sumOfTalismanRarities, talismans } from './Talismans'
 
 export interface StatLine {
   i18n: string
@@ -351,7 +351,7 @@ export const allWowCubeStats: StatLine[] = [
   },
   {
     i18n: 'WowSquare',
-    stat: () => getTalisman('wowSquare').bonus.oddDimBonus
+    stat: () => getTalismanEffects('wowSquare').oddDimBonus
   },
   {
     i18n: 'Researches',
@@ -428,7 +428,7 @@ export const allTesseractStats: StatLine[] = [
   },
   {
     i18n: 'WowSquare',
-    stat: () => getTalisman('wowSquare').bonus.evenDimBonus
+    stat: () => getTalismanEffects('wowSquare').evenDimBonus
   },
   {
     i18n: 'ConstantUpgrade10',
@@ -471,7 +471,7 @@ export const allHypercubeStats: StatLine[] = [
   },
   {
     i18n: 'WowSquare',
-    stat: () => getTalisman('wowSquare').bonus.oddDimBonus
+    stat: () => getTalismanEffects('wowSquare').oddDimBonus
   },
   {
     i18n: 'PlatonicCube',
@@ -506,7 +506,7 @@ export const allPlatonicCubeStats: StatLine[] = [
   },
   {
     i18n: 'WowSquare',
-    stat: () => getTalisman('wowSquare').bonus.evenDimBonus
+    stat: () => getTalismanEffects('wowSquare').evenDimBonus
   },
   {
     i18n: 'PlatonicCube',
@@ -537,7 +537,7 @@ export const allHepteractCubeStats: StatLine[] = [
   },
   {
     i18n: 'WowSquare',
-    stat: () => getTalisman('wowSquare').bonus.oddDimBonus
+    stat: () => getTalismanEffects('wowSquare').oddDimBonus
   }
 ]
 
@@ -581,7 +581,7 @@ export const allOcteractCubeStats: StatLine[] = [
   },
   {
     i18n: 'WowSquare',
-    stat: () => getTalisman('wowSquare').bonus.evenDimBonus
+    stat: () => getTalismanEffects('wowSquare').evenDimBonus
   },
   {
     i18n: 'CookieUpgrade20',
@@ -862,8 +862,8 @@ export const allOfferingStats = [
   {
     i18n: 'ResearchTalismans',
     stat: () =>
-      1 + 0.0003 * getTalisman('midas').level * player.researches[149]
-      + 0.0004 * getTalisman('midas').level * player.researches[179] // Research 6x24,8x4
+      1 + 0.0003 * talismans.midas.level * player.researches[149]
+      + 0.0004 * talismans.midas.level * player.researches[179] // Research 6x24,8x4
   },
   {
     i18n: 'TutorialBonus',
@@ -1132,7 +1132,7 @@ export const allQuarkStats: StatLine[] = [
   },
   {
     i18n: 'PlasticTalisman',
-    stat: () => getTalisman('plastic').bonus.quarkBonus
+    stat: () => getTalismanEffects('plastic').quarkBonus
   },
   {
     i18n: 'PlatonicALPHA',
@@ -1766,7 +1766,7 @@ export const allGlobalSpeedStats: StatLine[] = [
   },
   {
     i18n: 'ChronosTalisman',
-    stat: () => getTalisman('chronos').bonus.globalSpeed // Chronos Talisman bonus
+    stat: () => getTalismanEffects('chronos').globalSpeed // Chronos Talisman bonus
   },
   {
     i18n: 'Challenge15',
@@ -1802,7 +1802,7 @@ export const allGlobalSpeedDRStats: StatLine[] = [
 export const allAscensionSpeedStats: StatLine[] = [
   {
     i18n: 'PolymathTalisman',
-    stat: () => getTalisman('polymath').bonus.ascensionSpeedBonus // Polymath Talisman
+    stat: () => getTalismanEffects('polymath').ascensionSpeedBonus // Polymath Talisman
   },
   {
     i18n: 'Chronometer',
@@ -1929,7 +1929,7 @@ export const allAdditiveLuckMultStats: StatLine[] = [
   },
   {
     i18n: 'HorseShoeTalisman',
-    stat: () => getTalisman('horseShoe').bonus.luckPercentage // Horseshoe Talisman
+    stat: () => getTalismanEffects('horseShoe').luckPercentage // Horseshoe Talisman
   },
   {
     i18n: 'Event',
@@ -2492,7 +2492,7 @@ export const allRedAmbrosiaLuckStats: StatLine[] = [
   },
   {
     i18n: 'HorseShoeTalisman',
-    stat: () => getTalisman('horseShoe').bonus.redLuck // Horseshoe Talisman
+    stat: () => getTalismanEffects('horseShoe').redLuck // Horseshoe Talisman
   }
 ]
 

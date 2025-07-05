@@ -106,13 +106,15 @@ import {
 } from './Runes'
 import { c15RewardUpdate } from './Statistics'
 import {
+  buyTalismanLevelToRarityIncrease,
   generateTalismansHTML,
-  getTalisman,
-  initTalismans,
   noTalismanFragments,
+  TalismanCraftItems,
   type TalismanKeys,
+  talismans,
   toggleTalismanBuy,
-  updateTalismanInventory
+  updateTalismanInventory,
+  updateTalismanLevelAndSpentFromInvested
 } from './Talismans'
 import { calculatetax } from './Tax'
 import { calculateTesseractBlessings } from './Tesseracts'
@@ -1226,6 +1228,13 @@ export const saveSynergy = (button?: boolean) => {
       return [key, redAmbrosiaUpgrades[k].redAmbrosiaInvested]
     })
   ) as Record<RedAmbrosiaNames, number>
+
+  player.talismans = Object.fromEntries(
+    Object.keys(player.talismans).map((key) => {
+      const k = key as TalismanKeys
+      return [key, {...talismans[k].fragmentsInvested}]
+    })
+  ) as Record<TalismanKeys, Record<TalismanCraftItems, number>>
 
   const p = playerJsonSchema.parse(player)
   const save = btoa(JSON.stringify(p))
@@ -4938,8 +4947,8 @@ export const updateAll = (): void => {
   // Talismans
 
   if ((player.researches[130] > 0 || player.researches[135] > 0) && player.autoFortifyToggle) {
-    for (const key in player.talismans) {
-      getTalisman(key as TalismanKeys).buyLevelToRarityIncrease(true)
+    for (const key of Object.keys(talismans) as TalismanKeys[]) {
+      buyTalismanLevelToRarityIncrease(key, true)
     }
   }
 
@@ -5608,6 +5617,9 @@ export const reloadShit = (reset = false) => {
     loadSynergy()
   }
 
+  achievementManager.updateAchievements(player.achievements)
+  achievementManager.updateProgressiveAchievements(player.progressiveAchievements)
+
   // Recover Sing Upgrade (now GQ upgrade) level from Player Obj
   if (player.goldenQuarkUpgrades !== undefined) {
     for (const [key, value] of Object.entries(player.goldenQuarkUpgrades)) {
@@ -5630,8 +5642,8 @@ export const reloadShit = (reset = false) => {
   if (player.ambrosiaUpgrades !== undefined) {
     for (const [key, value] of Object.entries(player.ambrosiaUpgrades)) {
       const k = key as AmbrosiaUpgradeNames
-      ambrosiaUpgrades[k].ambrosiaInvested = value.ambrosiaInvested
-      ambrosiaUpgrades[k].blueberriesInvested = value.blueberriesInvested
+      ambrosiaUpgrades[k].ambrosiaInvested = value.ambrosiaInvested ?? 0
+      ambrosiaUpgrades[k].blueberriesInvested = value.blueberriesInvested ?? 0
     }
   }
 
@@ -5642,16 +5654,18 @@ export const reloadShit = (reset = false) => {
     }
   }
 
+  if (player.talismans !== undefined) {
+    for (const key of Object.keys(player.talismans) as TalismanKeys[]) {
+      updateTalismanLevelAndSpentFromInvested(key)
+    }
+  }
+
   setAmbrosiaUpgradeLevels()
   setRedAmbrosiaUpgradeLevels()
   initRunes(player.runes)
   initRuneBlessings(player.runeBlessings)
   initRuneSpirits(player.runeSpirits)
-  initTalismans(player.talismans)
   initHepteracts(player.hepteracts)
-
-  achievementManager.updateAchievements(player.achievements)
-  achievementManager.updateProgressiveAchievements(player.progressiveAchievements)
 
   for (const k of Object.keys(getAchieveReward) as AchievementRewards[]) {
     console.log(`Applying reward ${k}: `, achievementManager.getBonus(k))
@@ -5790,7 +5804,6 @@ window.addEventListener('load', async () => {
   initRunes(player.runes)
   initRuneBlessings(player.runeBlessings)
   initRuneSpirits(player.runeSpirits)
-  initTalismans(player.talismans)
   initHepteracts(player.hepteracts)
   reloadShit()
 }, { once: true })

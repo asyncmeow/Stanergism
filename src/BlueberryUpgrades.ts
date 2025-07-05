@@ -1266,13 +1266,13 @@ export const buyAmbrosiaUpgradeLevel = async (upgradeKey: AmbrosiaUpgradeNames, 
           return Alert(i18next.t('ambrosia.notEnoughBlueberries'))
         } else {
           player.spentBlueberries += upgrade.blueberryCost
-          upgrade.blueberriesInvested = upgrade.blueberryCost
+          ambrosiaUpgrades[upgradeKey].blueberriesInvested = upgrade.blueberryCost
         }
       }
       player.ambrosia -= cost
       ambrosiaBudget -= cost
-      upgrade.ambrosiaInvested += cost
-      upgrade.level += 1
+      ambrosiaUpgrades[upgradeKey].ambrosiaInvested += cost
+      ambrosiaUpgrades[upgradeKey].level += 1
       purchased += 1
       maxPurchasable -= 1
     }

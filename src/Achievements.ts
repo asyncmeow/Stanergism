@@ -9,18 +9,17 @@ import {
   getRune,
   getRuneBlessing,
   getRuneSpirit,
-  sumOfFreeRuneLevels,
   sumOfPurchasedRuneLevels,
   sumOfRuneLevels
 } from './Runes'
 import { goldenQuarkUpgrades } from './singularity'
 import type { SingularityChallengeDataKeys } from './SingularityChallenges'
 import { format, formatAsPercentIncrease, player } from './Synergism'
-import { sumOfTalismanRarities } from './Talismans'
 import type { resetNames } from './types/Synergism'
 import { Alert, Notification, revealStuff } from './UpdateHTML'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
+import { talismans } from './Talismans'
 
 export const resetAchievementCheck = (reset: resetNames) => {
   if (reset === 'prestige') {
@@ -274,7 +273,7 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
         + Math.min(400, Math.floor(cached / 10000))
     },
     updateValue: () => {
-      return sumOfFreeRuneLevels()
+      return 0 //sumOfFreeRuneLevels()
     },
     useCachedValue: true
   },
@@ -383,7 +382,10 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
       return 5 * cached
     },
     updateValue: () => {
-      return sumOfTalismanRarities()
+      return Object.values(talismans).reduce((acc, rarity) => {
+        acc += 5 * rarity.rarity
+        return acc }
+        ,0)
     },
     useCachedValue: true
   }

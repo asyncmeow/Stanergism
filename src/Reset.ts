@@ -52,7 +52,7 @@ import {
 } from './singularity'
 import { blankSave, deepClone, format, player, saveSynergy, updateAll, updateEffectiveLevelMult } from './Synergism'
 import { changeSubTab, changeTab, Tabs } from './Tabs'
-import { resetTalismans, updateTalismanInventory } from './Talismans'
+import { resetTalismanData, updateTalismanInventory } from './Talismans'
 import { calculateTesseractBlessings } from './Tesseracts'
 import { IconSets } from './Themes'
 import { clearInterval, setInterval } from './Timers'
@@ -601,7 +601,7 @@ export const reset = (input: resetNames, fast = false, from = 'unknown') => {
     // reset rest
     resetResearches()
     resetAnts()
-    resetTalismans('ascension')
+    resetTalismanData('ascension')
     player.reincarnationPoints = new Decimal('0')
     player.reincarnationShards = new Decimal('0')
     player.antSacrificePoints = 0
@@ -1116,7 +1116,7 @@ export const singularity = (setSingNumber = -1) => {
   resetRunes('singularity')
   resetRuneBlessings('singularity')
   resetRuneSpirits('singularity')
-  resetTalismans('singularity')
+  resetTalismanData('singularity')
   achievementManager.resetAchievements()
 
   player.goldenQuarks += calculateGoldenQuarks()

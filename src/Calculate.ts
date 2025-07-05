@@ -48,7 +48,7 @@ import {
   offeringObtainiumTimeModifiers
 } from './Statistics'
 import { format, getTimePinnedToLoadDate, player, resourceGain, saveSynergy, updateAll } from './Synergism'
-import { getTalisman, toggleTalismanBuy, updateTalismanInventory } from './Talismans'
+import { getTalismanEffects, toggleTalismanBuy, updateTalismanInventory } from './Talismans'
 import { clearInterval, setInterval } from './Timers'
 import { Alert, Prompt } from './UpdateHTML'
 import { findInsertionIndex, sumContents } from './Utility'
@@ -639,7 +639,7 @@ export const calculateAntSacrificeELO = () => {
     G.antELO *= +achievementManager.getBonus('antELOMultiplicative')
     G.antELO *= 1 + player.researches[110] / 100
     G.antELO *= 1 + (2.5 * player.researches[148]) / 100
-    G.antELO *= getTalisman('mortuus').bonus.antBonus
+    G.antELO *= getTalismanEffects('mortuus').antBonus
 
     G.antELO += 25 * player.researches[108]
     G.antELO += 25 * player.researches[109]
