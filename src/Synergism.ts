@@ -109,7 +109,7 @@ import {
   buyTalismanLevelToRarityIncrease,
   generateTalismansHTML,
   noTalismanFragments,
-  TalismanCraftItems,
+  type TalismanCraftItems,
   type TalismanKeys,
   talismans,
   toggleTalismanBuy,
@@ -1232,7 +1232,7 @@ export const saveSynergy = (button?: boolean) => {
   player.talismans = Object.fromEntries(
     Object.keys(player.talismans).map((key) => {
       const k = key as TalismanKeys
-      return [key, {...talismans[k].fragmentsInvested}]
+      return [key, { ...talismans[k].fragmentsInvested }]
     })
   ) as Record<TalismanKeys, Record<TalismanCraftItems, number>>
 

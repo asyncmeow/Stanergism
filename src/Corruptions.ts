@@ -6,12 +6,12 @@ import { getOcteractUpgradeEffect } from './Octeracts'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { getGQUpgradeEffect } from './singularity'
 import { format, player } from './Synergism'
+import { getTalismanEffects } from './Talismans'
 import { IconSets } from './Themes'
 import { toggleCorruptionLevel } from './Toggles'
 import { Alert, Notification, Prompt } from './UpdateHTML'
 import { getElementById, productContents, sumContents, validateNonnegativeInteger } from './Utility'
 import { Globals as G } from './Variables'
-import { getTalismanEffects } from './Talismans'
 
 export enum CorruptionIndices {
   'viscosity' = 0,

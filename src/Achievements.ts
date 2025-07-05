@@ -5,21 +5,15 @@ import { CalcCorruptionStuff, calculateAscensionScore } from './Calculate'
 import { getHepteract } from './Hepteracts'
 import { octeractUpgrades } from './Octeracts'
 import { redAmbrosiaUpgrades } from './RedAmbrosiaUpgrades'
-import {
-  getRune,
-  getRuneBlessing,
-  getRuneSpirit,
-  sumOfPurchasedRuneLevels,
-  sumOfRuneLevels
-} from './Runes'
+import { getRune, getRuneBlessing, getRuneSpirit, sumOfPurchasedRuneLevels, sumOfRuneLevels } from './Runes'
 import { goldenQuarkUpgrades } from './singularity'
 import type { SingularityChallengeDataKeys } from './SingularityChallenges'
 import { format, formatAsPercentIncrease, player } from './Synergism'
+import { talismans } from './Talismans'
 import type { resetNames } from './types/Synergism'
 import { Alert, Notification, revealStuff } from './UpdateHTML'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
-import { talismans } from './Talismans'
 
 export const resetAchievementCheck = (reset: resetNames) => {
   if (reset === 'prestige') {
@@ -273,7 +267,7 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
         + Math.min(400, Math.floor(cached / 10000))
     },
     updateValue: () => {
-      return 0 //sumOfFreeRuneLevels()
+      return 0 // sumOfFreeRuneLevels()
     },
     useCachedValue: true
   },
@@ -384,8 +378,8 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
     updateValue: () => {
       return Object.values(talismans).reduce((acc, rarity) => {
         acc += 5 * rarity.rarity
-        return acc }
-        ,0)
+        return acc
+      }, 0)
     },
     useCachedValue: true
   }

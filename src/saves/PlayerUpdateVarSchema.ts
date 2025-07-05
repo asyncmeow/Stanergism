@@ -4,9 +4,9 @@ import { CorruptionLoadout, type Corruptions, CorruptionSaves } from '../Corrupt
 import { getHepteract, type HepteractNames } from '../Hepteracts'
 import { type OcteractDataKeys, octeractUpgrades } from '../Octeracts'
 import { goldenQuarkUpgrades, type SingularityDataKeys } from '../singularity'
+import { updateResourcePredefinedLevel } from '../Talismans'
 import { convertArrayToCorruption } from './PlayerJsonSchema'
 import { playerSchema } from './PlayerSchema'
-import { updateResourcePredefinedLevel } from '../Talismans'
 
 export const playerUpdateVarSchema = playerSchema.transform((player) => {
   if (player.usedCorruptions !== undefined) {
@@ -165,7 +165,7 @@ export const playerUpdateVarSchema = playerSchema.transform((player) => {
   if (player.blueberryUpgrades !== undefined) {
     for (const key of Object.keys(player.blueberryUpgrades)) {
       const k = key as AmbrosiaUpgradeNames
-      
+
       const ambrosiaInvested = player.blueberryUpgrades[k].ambrosiaInvested ?? 0
       const blueberriesInvested = player.blueberryUpgrades[k].blueberriesInvested ?? 0
 

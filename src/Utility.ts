@@ -53,7 +53,7 @@ export const sumContents = (array: number[]): number => {
   for (let i = 0; i < array.length; i++) {
     total += array[i]
   }
-  
+
   return total
 }
 
@@ -81,7 +81,7 @@ export const productContents = (array: number[]) => {
   for (let i = 0; i < array.length; i++) {
     total *= array[i]
   }
-  
+
   return total
 }
 

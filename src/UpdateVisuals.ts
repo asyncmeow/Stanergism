@@ -64,7 +64,7 @@ import {
 import { loadStatisticsUpdate } from './Statistics'
 import { format, formatAsPercentIncrease, formatTimeShort, player } from './Synergism'
 import { getActiveSubTab, Tabs } from './Tabs'
-import { getTalismanLevelCap, talismans, updateAllTalismanHTML, type TalismanKeys } from './Talismans'
+import { getTalismanLevelCap, type TalismanKeys, talismans, updateAllTalismanHTML } from './Talismans'
 import type { Player, ZeroToFour } from './types/Synergism'
 import { sumContents, timeReminingHours } from './Utility'
 import { Globals as G } from './Variables'

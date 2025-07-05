@@ -178,7 +178,7 @@ export const talismans: { [K in TalismanKeys]: TalismanData<K> } = {
   exemption: {
     level: 0,
     rarity: 0,
-    fragmentsInvested: {...noTalismanFragments},
+    fragmentsInvested: { ...noTalismanFragments },
     baseMult: 1,
     maxLevel: 180,
     costs: regularCostProgression,
@@ -223,7 +223,7 @@ export const talismans: { [K in TalismanKeys]: TalismanData<K> } = {
   chronos: {
     level: 0,
     rarity: 0,
-    fragmentsInvested: {...noTalismanFragments},
+    fragmentsInvested: { ...noTalismanFragments },
     baseMult: 4,
     maxLevel: 180,
     costs: regularCostProgression,
@@ -268,7 +268,7 @@ export const talismans: { [K in TalismanKeys]: TalismanData<K> } = {
   midas: {
     level: 0,
     rarity: 0,
-    fragmentsInvested: {...noTalismanFragments},
+    fragmentsInvested: { ...noTalismanFragments },
     baseMult: 1e4,
     maxLevel: 180,
     costs: regularCostProgression,
@@ -313,7 +313,7 @@ export const talismans: { [K in TalismanKeys]: TalismanData<K> } = {
   metaphysics: {
     level: 0,
     rarity: 0,
-    fragmentsInvested: {...noTalismanFragments},
+    fragmentsInvested: { ...noTalismanFragments },
     baseMult: 1e8,
     maxLevel: 180,
     costs: regularCostProgression,
@@ -360,7 +360,7 @@ export const talismans: { [K in TalismanKeys]: TalismanData<K> } = {
   polymath: {
     level: 0,
     rarity: 0,
-    fragmentsInvested: {...noTalismanFragments},
+    fragmentsInvested: { ...noTalismanFragments },
     baseMult: 1e13,
     maxLevel: 180,
     costs: regularCostProgression,
@@ -405,7 +405,7 @@ export const talismans: { [K in TalismanKeys]: TalismanData<K> } = {
   mortuus: {
     level: 0,
     rarity: 0,
-    fragmentsInvested: {...noTalismanFragments},
+    fragmentsInvested: { ...noTalismanFragments },
     baseMult: 10,
     maxLevel: 180,
     costs: regularCostProgression,
@@ -450,7 +450,7 @@ export const talismans: { [K in TalismanKeys]: TalismanData<K> } = {
   plastic: {
     level: 0,
     rarity: 0,
-    fragmentsInvested: {...noTalismanFragments},
+    fragmentsInvested: { ...noTalismanFragments },
     baseMult: 100,
     maxLevel: 180,
     costs: regularCostProgression,
@@ -490,7 +490,7 @@ export const talismans: { [K in TalismanKeys]: TalismanData<K> } = {
   wowSquare: {
     level: 0,
     rarity: 0,
-    fragmentsInvested: {...noTalismanFragments},
+    fragmentsInvested: { ...noTalismanFragments },
     maxLevel: 210,
     baseMult: 1e20,
     costs: exponentialCostProgression,
@@ -529,7 +529,7 @@ export const talismans: { [K in TalismanKeys]: TalismanData<K> } = {
   cookieGrandma: {
     level: 0,
     rarity: 0,
-    fragmentsInvested: {...noTalismanFragments},
+    fragmentsInvested: { ...noTalismanFragments },
     baseMult: 1e290,
     maxLevel: 60,
     costs: exponentialCostProgression,
@@ -569,7 +569,7 @@ export const talismans: { [K in TalismanKeys]: TalismanData<K> } = {
   horseShoe: {
     level: 0,
     rarity: 0,
-    fragmentsInvested: {...noTalismanFragments},
+    fragmentsInvested: { ...noTalismanFragments },
     baseMult: 1e290,
     maxLevel: 100,
     costs: exponentialCostProgression,
@@ -643,7 +643,7 @@ export const setTalismanRarity = (t: TalismanKeys) => {
     }
   }
 
-  talismans[t].rarity =  1 + Math.min(6, Math.floor(6 * levelRatio)) + extraRarity
+  talismans[t].rarity = 1 + Math.min(6, Math.floor(6 * levelRatio)) + extraRarity
 }
 
 export const levelsUntilRarityIncrease = (t: TalismanKeys) => {
@@ -744,7 +744,6 @@ export const buyTalismanLevel = (t: TalismanKeys, fromMultibuy = false): void =>
     updateTalismanInventory()
     setTalismanRarity(t)
   }
-
 }
 
 export const buyTalismanLevelToRarityIncrease = (t: TalismanKeys, auto = false): void => {
@@ -785,12 +784,11 @@ export const buyTalismanLevelToMax = (t: TalismanKeys): void => {
 }
 
 export const getRuneBonusFromIndividualTalisman = (t: TalismanKeys, rune: RuneKeys): number => {
-
   const talisman = talismans[t]
   if (!talisman.isUnlocked()) {
     return 0
   }
-  
+
   let metaPhysicsMult = 1
   if (t === 'metaphysics') {
     metaPhysicsMult *= (talisman.effects(talisman.rarity) as TalismanTypeMap['metaphysics']).talismanEffect
@@ -798,11 +796,10 @@ export const getRuneBonusFromIndividualTalisman = (t: TalismanKeys, rune: RuneKe
   }
 
   return talisman.talismanBaseCoefficient[rune] * metaPhysicsMult * talisman.level * rarityValues[talisman.rarity]
-
 }
 
 export const getRuneBonusFromAllTalismans = (rune: RuneKeys): number => {
-  const specialMultiplier = 1//allTalismanRuneBonusStatsSum()
+  const specialMultiplier = 1 // allTalismanRuneBonusStatsSum()
   let totalBonus = 0
   for (const t of Object.keys(talismans) as TalismanKeys[]) {
     totalBonus += getRuneBonusFromIndividualTalisman(t, rune)
@@ -819,14 +816,16 @@ export const getTalismanEffects = <T extends TalismanKeys>(
 
 export const talismanToStringHTML = (t: TalismanKeys): void => {
   assert(G.currentTab === Tabs.Runes, 'Talisman updateRewardHTML called outside of Runes tab')
-    const talisman = talismans[t]
-    DOMCacheGetOrSet('talismanlevelup').style.display = 'none'
-    DOMCacheGetOrSet('talismanEffect').style.display = 'block'
+  const talisman = talismans[t]
+  DOMCacheGetOrSet('talismanlevelup').style.display = 'none'
+  DOMCacheGetOrSet('talismanEffect').style.display = 'block'
 
-    DOMCacheGetOrSet('talismanTitle').innerHTML = `${talisman.name()} - ${i18next.t(`runes.talismans.rarity.${talisman.rarity}`)}`
-    DOMCacheGetOrSet('talismanDescription').innerHTML = talisman.description()
+  DOMCacheGetOrSet('talismanTitle').innerHTML = `${talisman.name()} - ${
+    i18next.t(`runes.talismans.rarity.${talisman.rarity}`)
+  }`
+  DOMCacheGetOrSet('talismanDescription').innerHTML = talisman.description()
 
-    /*const speedHTML = DOMCacheGetOrSet('talismanSpeedEffect')
+  /*const speedHTML = DOMCacheGetOrSet('talismanSpeedEffect')
     const duplicationHTML = DOMCacheGetOrSet('talismanDupeEffect')
     const prismHTML = DOMCacheGetOrSet('talismanPrismEffect')
     const thriftHTML = DOMCacheGetOrSet('talismanThriftEffect')
@@ -835,38 +834,38 @@ export const talismanToStringHTML = (t: TalismanKeys): void => {
     const antiquitiesHTML = DOMCacheGetOrSet('talismanAntiquitiesEffect')
     const horseShoeHTML = DOMCacheGetOrSet('talismanHorseShoeEffect') */
 
-    const inscriptionHTML = DOMCacheGetOrSet('talismanInscriptionBonus')
-    const signatureHTML = DOMCacheGetOrSet('talismanSignatureBonus')
+  const inscriptionHTML = DOMCacheGetOrSet('talismanInscriptionBonus')
+  const signatureHTML = DOMCacheGetOrSet('talismanSignatureBonus')
 
-    const noResetHTML = DOMCacheGetOrSet('talismanNoResetText')
+  const noResetHTML = DOMCacheGetOrSet('talismanNoResetText')
 
-    inscriptionHTML.innerHTML = talisman.inscriptionDesc(talisman.rarity)
-    signatureHTML.style.display = talisman.rarity >= 6 ? 'block': 'none'
-    signatureHTML.innerHTML = talisman.signatureDesc(talisman.rarity)
+  inscriptionHTML.innerHTML = talisman.inscriptionDesc(talisman.rarity)
+  signatureHTML.style.display = talisman.rarity >= 6 ? 'block' : 'none'
+  signatureHTML.innerHTML = talisman.signatureDesc(talisman.rarity)
 
-    const runeLevelMult = allTalismanRuneBonusStatsSum()
-    for (const rune of Object.keys(talisman.talismanBaseCoefficient) as RuneKeys[]) {
-      const levels = getRuneBonusFromIndividualTalisman(t, rune) * runeLevelMult
-      const capitalizedRune = rune.charAt(0).toUpperCase() + rune.slice(1)
-      if (levels > 0) {
-        DOMCacheGetOrSet(`talisman${capitalizedRune}Effect`).style.display = 'block'
-        DOMCacheGetOrSet(`talisman${capitalizedRune}Effect`).innerHTML = i18next.t(`runes.talismans.bonusRuneLevels.${rune}`, {
+  const runeLevelMult = allTalismanRuneBonusStatsSum()
+  for (const rune of Object.keys(talisman.talismanBaseCoefficient) as RuneKeys[]) {
+    const levels = getRuneBonusFromIndividualTalisman(t, rune) * runeLevelMult
+    const capitalizedRune = rune.charAt(0).toUpperCase() + rune.slice(1)
+    if (levels > 0) {
+      DOMCacheGetOrSet(`talisman${capitalizedRune}Effect`).style.display = 'block'
+      DOMCacheGetOrSet(`talisman${capitalizedRune}Effect`).innerHTML = i18next.t(
+        `runes.talismans.bonusRuneLevels.${rune}`,
+        {
           x: format(levels, 0, true)
-        })
-      }
-      else {
-        DOMCacheGetOrSet(`talisman${capitalizedRune}Effect`).style.display = 'none'
-      }
+        }
+      )
+    } else {
+      DOMCacheGetOrSet(`talisman${capitalizedRune}Effect`).style.display = 'none'
     }
+  }
 
-    if (talisman.minimalResetTier === 'never') {
-      noResetHTML.style.display = 'block'
-      noResetHTML.innerHTML = i18next.t('runes.talismans.doesNotReset')
-    }
-    else {
-      noResetHTML.style.display = 'none'
-    }
-
+  if (talisman.minimalResetTier === 'never') {
+    noResetHTML.style.display = 'block'
+    noResetHTML.innerHTML = i18next.t('runes.talismans.doesNotReset')
+  } else {
+    noResetHTML.style.display = 'none'
+  }
 }
 
 export const updateTalismanCostHTML = (t: TalismanKeys) => {
@@ -960,7 +959,6 @@ export const resetSingleTalisman = (t: TalismanKeys) => {
 }
 
 export const resetTalismanData = (tier: keyof typeof resetTiers) => {
-
   for (const t of Object.keys(talismans) as TalismanKeys[]) {
     if (resetTiers[tier] >= resetTiers[talismans[t].minimalResetTier]) {
       resetSingleTalisman(t)
@@ -974,7 +972,6 @@ export const resetTalismanData = (tier: keyof typeof resetTiers) => {
   player.epicFragments = 0
   player.legendaryFragments = 0
   player.mythicalFragments = 0
-
 }
 
 export const sumOfTalismanRarities = (): number => {
@@ -991,7 +988,6 @@ export const sumOfTalismanRarities = (): number => {
  * talismans.fragmentsInvested. Should only be used in PlayerUpdateVarSchema.ts
  */
 export const updateResourcePredefinedLevel = (level: number, t: TalismanKeys): void => {
-
   talismans[t].level = Math.min(level, getTalismanLevelCap(t))
   talismans[t].fragmentsInvested = { ...noTalismanFragments }
   setTalismanRarity(t)
@@ -1004,12 +1000,11 @@ export const updateResourcePredefinedLevel = (level: number, t: TalismanKeys): v
   }
 }
 
-
 export const updateAllTalismanHTML = () => {
   for (const t of Object.keys(talismans) as TalismanKeys[]) {
     updateTalismanDisplay(t)
   }
-} 
+}
 
 export const generateTalismansHTML = () => {
   const alreadyGenerated = document.getElementsByClassName('talismanContainer').length > 0

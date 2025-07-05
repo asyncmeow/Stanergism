@@ -11,7 +11,7 @@ import { getRune, type RuneKeys } from './Runes'
 import { getGQUpgradeEffect, updateSingularityPenalties, updateSingularityPerks } from './singularity'
 import { format, formatTimeShort, /*formatTimeShort*/ player } from './Synergism'
 import { getActiveSubTab, Tabs } from './Tabs'
-import { talismans, type TalismanKeys } from './Talismans'
+import { type TalismanKeys, talismans } from './Talismans'
 import type { OneToFive, ZeroToFour, ZeroToSeven } from './types/Synergism'
 import {
   visualUpdateAchievements,

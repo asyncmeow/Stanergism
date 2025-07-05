@@ -120,12 +120,12 @@ import {
   buyTalismanLevelToMax,
   buyTalismanLevelToRarityIncrease,
   buyTalismanResources,
-  TalismanKeys,
+  type TalismanKeys,
   talismans,
   talismanToStringHTML,
   toggleTalismanBuy,
   updateTalismanCostDisplay,
-  updateTalismanCostHTML,
+  updateTalismanCostHTML
 } from './Talismans'
 import { IconSets, imgErrorHandler, toggleAnnotation, toggleIconSet, toggleTheme } from './Themes'
 import {

@@ -16,8 +16,8 @@ import { CalcECC } from './Challenges'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { firstFiveRuneEffectivenessStats, runeEffectivenessStatsSI } from './Statistics'
 import { Tabs } from './Tabs'
-import { assert } from './Utility'
 import { getRuneBonusFromAllTalismans, getTalismanEffects } from './Talismans'
+import { assert } from './Utility'
 
 export enum resetTiers {
   prestige = 1,

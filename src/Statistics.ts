@@ -112,10 +112,10 @@ import {
   goldenQuarkUpgrades
 } from './singularity'
 import { format, formatAsPercentIncrease, player } from './Synergism'
+import { getTalismanEffects, sumOfTalismanRarities, talismans } from './Talismans'
 import type { GlobalVariables } from './types/Synergism'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
-import { getTalismanEffects, sumOfTalismanRarities, talismans } from './Talismans'
 
 export interface StatLine {
   i18n: string
