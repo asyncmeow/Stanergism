@@ -89,16 +89,12 @@ import {
   updateTesseractAutoBuyAmount
 } from './Reset'
 import {
-  buyBlessingLevels,
   buySpiritLevels,
   generateRunesHTML,
-  getRuneBlessing,
   getRuneEffects,
   getRuneSpirit,
   indexToRune,
-  initRuneBlessings,
   initRuneSpirits,
-  type RuneBlessingKeys,
   RuneKeys,
   runes,
   type RuneSpiritKeys,
@@ -218,6 +214,7 @@ import {
 import { changeSubTab, changeTab, getActiveSubTab, Tabs } from './Tabs'
 import { settingAnnotation, toggleIconSet, toggleTheme } from './Themes'
 import { clearTimeout, clearTimers, setInterval, setTimeout } from './Timers'
+import { buyBlessingLevels, getRuneBlessingEffect, RuneBlessingKeys, runeBlessings, updateAllBlessingLevelsFromEXP } from './RuneBlessings'
 
 export const player: Player = {
   firstPlayed: new Date().toISOString(),
@@ -1244,6 +1241,13 @@ export const saveSynergy = (button?: boolean) => {
       return [key, new Decimal(runes[k].runeEXP)]
     })
   ) as Record<RuneKeys, Decimal>
+
+  player.runeBlessings = Object.fromEntries(
+    Object.keys(player.runeBlessings).map((key) => {
+      const k = key as RuneBlessingKeys
+      return [key, new Decimal(runeBlessings[k].runeEXP)]
+    })
+  ) as Record<RuneBlessingKeys, Decimal>
 
   const p = playerJsonSchema.parse(player)
   const save = btoa(JSON.stringify(p))
@@ -3084,7 +3088,7 @@ export const updateAllMultiplier = (): void => {
   b *= 1 + (11 * player.researches[34]) / 100
   b *= 1 + (11 * player.researches[35]) / 100
   b *= 1 + player.researches[89] / 5
-  b *= getRuneBlessing('duplication').bonus.multiplierBoosts
+  b *= getRuneBlessingEffect('duplication').multiplierBoosts
 
   G.totalMultiplierBoost = Math.pow(
     Math.floor(b) + c,
@@ -3976,7 +3980,7 @@ export const updateAntMultipliers = (): void => {
   G.globalAntMult = G.globalAntMult.times(
     Decimal.pow(
       Decimal.max(1, player.obtainium),
-      getRuneBlessing('superiorIntellect').bonus.obtToAntExponent
+      getRuneBlessingEffect('superiorIntellect').obtToAntExponent
     )
   )
 
@@ -5677,9 +5681,16 @@ export const reloadShit = (reset = false) => {
     updateAllRuneLevelsFromEXP()
   }
 
+  if (player.runeBlessings !== undefined) {
+    for (const key of Object.keys(player.runeBlessings) as RuneBlessingKeys[]) {
+      const blessingEXP = player.runeBlessings[key]
+      runeBlessings[key].runeEXP = new Decimal(blessingEXP)
+    }
+    updateAllBlessingLevelsFromEXP()
+  }
+
   setAmbrosiaUpgradeLevels()
   setRedAmbrosiaUpgradeLevels()
-  initRuneBlessings(player.runeBlessings)
   initRuneSpirits(player.runeSpirits)
   initHepteracts(player.hepteracts)
 
@@ -5817,7 +5828,6 @@ window.addEventListener('load', async () => {
   createCampaignIconHTMLS()
   generateAchievementHTMLs()
 
-  initRuneBlessings(player.runeBlessings)
   initRuneSpirits(player.runeSpirits)
   initHepteracts(player.hepteracts)
   reloadShit()

@@ -14,6 +14,7 @@ import type { resetNames } from './types/Synergism'
 import { Alert, Notification, revealStuff } from './UpdateHTML'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
+import { runeBlessings } from './RuneBlessings'
 
 export const resetAchievementCheck = (reset: resetNames) => {
   if (reset === 'prestige') {
@@ -1796,14 +1797,14 @@ export const achievements: { [index: number]: Achievement } = {
   229: { pointValue: 25, unlockCondition: () => CalcCorruptionStuff()[3] >= 1e9, group: 'ascensionScore' },
   230: { pointValue: 30, unlockCondition: () => CalcCorruptionStuff()[3] >= 5e9, group: 'ascensionScore' },
   231: { pointValue: 35, unlockCondition: () => CalcCorruptionStuff()[3] >= 2.5e10, group: 'ascensionScore' },
-  232: { pointValue: 10, unlockCondition: () => getRuneBlessing('speed').level >= 100, group: 'speedBlessing' },
+  232: { pointValue: 10, unlockCondition: () => runeBlessings.speed.level >= 100, group: 'speedBlessing' },
   233: {
     pointValue: 20,
-    unlockCondition: () => getRuneBlessing('speed').level >= 250,
+    unlockCondition: () => runeBlessings.speed.level >= 250,
     group: 'speedBlessing',
     reward: { salvage: () => 2 }
   },
-  234: { pointValue: 30, unlockCondition: () => getRuneBlessing('speed').level >= 500, group: 'speedBlessing' },
+  234: { pointValue: 30, unlockCondition: () => runeBlessings.speed.level >= 500, group: 'speedBlessing' },
   235: {
     pointValue: 10,
     unlockCondition: () => getRuneSpirit('speed').level >= 100,
@@ -1843,7 +1844,7 @@ export const achievements: { [index: number]: Achievement } = {
   // 245: High Speed Blessing
   245: {
     pointValue: 50,
-    unlockCondition: () => getRuneBlessing('speed').level >= 2222,
+    unlockCondition: () => runeBlessings.speed.level >= 2222,
     group: 'ungrouped',
     reward: { salvage: () => 3 }
   },
@@ -2137,28 +2138,28 @@ export const achievements: { [index: number]: Achievement } = {
   381: { pointValue: 120, unlockCondition: () => player.challengecompletions[14] >= 72, group: 'challenge14' },
   382: {
     pointValue: 40,
-    unlockCondition: () => getRuneBlessing('speed').level >= 1000,
+    unlockCondition: () => runeBlessings.speed.level >= 1000,
     group: 'speedBlessing',
     reward: { salvage: () => 3 }
   },
-  383: { pointValue: 50, unlockCondition: () => getRuneBlessing('speed').level >= 2000, group: 'speedBlessing' },
+  383: { pointValue: 50, unlockCondition: () => runeBlessings.speed.level >= 2000, group: 'speedBlessing' },
   384: {
     pointValue: 60,
-    unlockCondition: () => getRuneBlessing('speed').level >= 4000,
+    unlockCondition: () => runeBlessings.speed.level >= 4000,
     group: 'speedBlessing',
     reward: { salvage: () => 4 }
   },
-  385: { pointValue: 70, unlockCondition: () => getRuneBlessing('speed').level >= 6000, group: 'speedBlessing' },
+  385: { pointValue: 70, unlockCondition: () => runeBlessings.speed.level >= 6000, group: 'speedBlessing' },
   386: {
     pointValue: 80,
-    unlockCondition: () => getRuneBlessing('speed').level >= 8000,
+    unlockCondition: () => runeBlessings.speed.level >= 8000,
     group: 'speedBlessing',
     reward: { salvage: () => 5 }
   },
-  387: { pointValue: 90, unlockCondition: () => getRuneBlessing('speed').level >= 10000, group: 'speedBlessing' },
+  387: { pointValue: 90, unlockCondition: () => runeBlessings.speed.level >= 10000, group: 'speedBlessing' },
   388: {
     pointValue: 100,
-    unlockCondition: () => getRuneBlessing('speed').level >= 12500,
+    unlockCondition: () => runeBlessings.speed.level >= 12500,
     group: 'speedBlessing',
     reward: { salvage: () => 6 }
   },

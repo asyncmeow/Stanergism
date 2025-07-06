@@ -44,9 +44,7 @@ import { allDurableConsumables, type PseudoCoinConsumableNames } from './Login'
 import { getOcteractUpgradeCostTNL, type OcteractDataKeys, octeractUpgrades } from './Octeracts'
 import { getQuarkBonus, quarkHandler } from './Quark'
 import {
-  getRuneBlessing,
   getRuneSpirit,
-  type RuneBlessingKeys,
   type RuneKeys,
   type RuneSpiritKeys,
   updateRuneEffectHTML,
@@ -69,6 +67,7 @@ import { getTalismanLevelCap, type TalismanKeys, talismans, updateAllTalismanHTM
 import type { Player, ZeroToFour } from './types/Synergism'
 import { sumContents, timeReminingHours } from './Utility'
 import { Globals as G } from './Variables'
+import { RuneBlessingKeys, runeBlessings, updateRuneBlessingHTML } from './RuneBlessings'
 
 export const visualUpdateBuildings = () => {
   if (G.currentTab !== Tabs.Buildings) {
@@ -662,8 +661,8 @@ export const visualUpdateRunes = () => {
     }
     updateAllTalismanHTML()
   } else if (getActiveSubTab() === 2) {
-    for (const runeBlessing of Object.keys(player.runeBlessings)) {
-      getRuneBlessing(runeBlessing as RuneBlessingKeys).updateRuneHTML()
+    for (const bless of Object.keys(runeBlessings) as RuneBlessingKeys[]) {
+      updateRuneBlessingHTML(bless)
     }
   } else if (getActiveSubTab() === 3) {
     for (const runeSpirit of Object.keys(player.runeSpirits)) {

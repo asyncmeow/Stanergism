@@ -41,7 +41,7 @@ import { calculateHypercubeBlessings } from './Hypercubes'
 import { importSynergism } from './ImportExport'
 import { autoBuyPlatonicUpgrades, updatePlatonicUpgradeBG } from './Platonic'
 import { buyResearch, updateResearchBG } from './Research'
-import { resetOfferings, resetRuneBlessings, resetRunes, resetRuneSpirits, runes } from './Runes'
+import { resetOfferings, resetRunes, resetRuneSpirits, runes } from './Runes'
 import { playerJsonSchema } from './saves/PlayerJsonSchema'
 import { forceResetShopUpgrades, shopData } from './Shop'
 import {
@@ -64,6 +64,7 @@ import { getElementById } from './Utility'
 import { updateClassList } from './Utility'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
+import { resetRuneBlessings } from './RuneBlessings'
 
 let repeatreset: number
 
@@ -72,7 +73,8 @@ export enum resetTiers {
   transcension = 2,
   reincarnation = 3,
   ascension = 4,
-  singularity = 5
+  singularity = 5,
+  never = 6
 }
 
 export const resetrepeat = (input: resetNames) => {

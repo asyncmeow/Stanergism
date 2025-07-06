@@ -98,7 +98,6 @@ import { getQuarkBonus } from './Quark'
 import { getRedAmbrosiaUpgradeEffects } from './RedAmbrosiaUpgrades'
 import {
   firstFiveEffectiveRuneLevelMult,
-  getRuneBlessing,
   getRuneEffects,
   getRuneSpirit,
   runes,
@@ -117,6 +116,7 @@ import { getTalismanEffects, sumOfTalismanRarities, talismans } from './Talisman
 import type { GlobalVariables } from './types/Synergism'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
+import { getRuneBlessingEffect } from './RuneBlessings'
 
 export interface StatLine {
   i18n: string
@@ -1618,7 +1618,7 @@ export const antSacrificeRewardStats: StatLine[] = [
   },
   {
     i18n: 'RuneBlessing',
-    stat: () => getRuneBlessing('prism').bonus.antSacrificeMult // Rune Blessing
+    stat: () => getRuneBlessingEffect('prism').antSacrificeMult // Rune Blessing
   },
   {
     i18n: 'Challenge10',
@@ -1747,7 +1747,7 @@ export const allGlobalSpeedStats: StatLine[] = [
   {
     i18n: 'SpeedBlessing',
     // stat: () => 1 + 8 * G.effectiveRuneBlessingPower[1] // speed blessing
-    stat: () => getRuneBlessing('speed').bonus.globalSpeed // speed blessing
+    stat: () => getRuneBlessingEffect('speed').globalSpeed // speed blessing
   },
   {
     i18n: 'SpeedSpirit',

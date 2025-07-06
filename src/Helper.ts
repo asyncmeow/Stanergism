@@ -18,7 +18,6 @@ import { quarkHandler } from './Quark'
 import { getRedAmbrosiaUpgradeEffects } from './RedAmbrosiaUpgrades'
 import { Seed, seededRandom } from './RNG'
 import {
-  buyAllBlessingLevels,
   buyAllSpiritLevels,
   getNumberUnlockedRunes,
   indexToRune,
@@ -33,6 +32,7 @@ import { Tabs } from './Tabs'
 import { buyAllTalismanResources } from './Talismans'
 import { visualUpdateAmbrosia, visualUpdateOcteracts, visualUpdateResearch } from './UpdateVisuals'
 import { Globals as G } from './Variables'
+import { buyAllBlessingLevels } from './RuneBlessings'
 
 type TimerInput =
   | 'prestige'

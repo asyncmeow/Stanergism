@@ -9,6 +9,7 @@ import type { FirstToFifth, OneToFive, ZeroToFour } from './types/Synergism'
 import { crystalupgradedescriptions, upgradeupdate } from './Upgrades'
 import { smallestInc } from './Utility'
 import { Globals as G, Upgrade } from './Variables'
+import { getRuneBlessingEffect } from './RuneBlessings'
 
 export const getReductionValue = () => {
   let reduction = 1
@@ -704,12 +705,12 @@ export const boostAccelerator = (automated?: boolean) => {
         player.acceleratorBoostCost = player.acceleratorBoostCost.times(1e10).times(
           Decimal.pow(10, player.acceleratorBoostBought)
         )
-        if (player.acceleratorBoostBought > (1000 * getRuneBlessing('thrift').bonus.accelBoostCostDelay)) {
+        if (player.acceleratorBoostBought > (1000 * getRuneBlessingEffect('thrift').accelBoostCostDelay)) {
           player.acceleratorBoostCost = player.acceleratorBoostCost.times(
             Decimal.pow(
               10,
-              Math.pow(player.acceleratorBoostBought - (1000 * getRuneBlessing('thrift').bonus.accelBoostCostDelay), 2)
-                / getRuneBlessing('thrift').bonus.accelBoostCostDelay
+              Math.pow(player.acceleratorBoostBought - (1000 * getRuneBlessingEffect('thrift').accelBoostCostDelay), 2)
+                / getRuneBlessingEffect('thrift').accelBoostCostDelay
             )
           )
         }
@@ -803,7 +804,7 @@ const getAcceleratorBoostCost = (level = 1): Decimal => {
   level--
   const buymax = Math.pow(10, 15)
   const base = new Decimal(1e3)
-  const eff = getRuneBlessing('thrift').bonus.accelBoostCostDelay
+  const eff = getRuneBlessingEffect('thrift').accelBoostCostDelay
   const linSum = (n: number) => n * (n + 1) / 2
   const sqrSum = (n: number) => n * (n + 1) * (2 * n + 1) / 6
   let cost = base

@@ -53,6 +53,7 @@ import { clearInterval, setInterval } from './Timers'
 import { Alert, Prompt } from './UpdateHTML'
 import { findInsertionIndex, sumContents } from './Utility'
 import { Globals as G } from './Variables'
+import { getRuneBlessingEffect } from './RuneBlessings'
 
 const CASH_GRAB_ULTRA_QUARK = 0.08
 const CASH_GRAB_ULTRA_CUBE = 1.2
@@ -673,7 +674,7 @@ export const calculateAntSacrificeMultipliers = () => {
     + 2 * (1 - Math.pow(2, -(player.antUpgrades[11 - 1]! + G.bonusant11) / 125))
   G.upgradeMultiplier *= 1 + player.researches[103] / 20
   G.upgradeMultiplier *= 1 + player.researches[104] / 20
-  G.upgradeMultiplier *= getRuneBlessing('prism').bonus.antSacrificeMult
+  G.upgradeMultiplier *= getRuneBlessingEffect('prism').antSacrificeMult
   G.upgradeMultiplier *= 1 + (1 / 50) * CalcECC('reincarnation', player.challengecompletions[10])
   G.upgradeMultiplier *= 1 + (1 / 50) * player.researches[122]
   G.upgradeMultiplier *= 1 + (3 / 100) * player.researches[133]
