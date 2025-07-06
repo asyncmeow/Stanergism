@@ -1004,7 +1004,7 @@ export const getRuneTNL = (rune: RuneKeys) => {
 }
 
 export const levelRune = (rune: RuneKeys, timesLeveled: number, budget: Decimal) => {
-  let budgetUsed = new Decimal(0)
+  let budgetUsed: Decimal
 
   const expRequired = computeEXPLeftToLevel(rune, runes[rune].level + timesLeveled)
   const runeEXPPerOffering = getRuneEXPPerOffering(rune)
