@@ -378,8 +378,8 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
       return 5 * cached
     },
     updateValue: () => {
-      return Object.values(talismans).reduce((acc, rarity) => {
-        acc += 5 * rarity.rarity
+      return Object.values(talismans).reduce((acc, talisman) => {
+        acc += talisman.rarity
         return acc
       }, 0)
     },
@@ -441,6 +441,7 @@ export class AchievementManager {
   }
 
   updateTotalPoints () {
+    this._totalPoints = 0
     for (let i = 0; i < this.achievementMap.length; i++) {
       const unlocked = this.achievementMap[i]
       if (unlocked) {

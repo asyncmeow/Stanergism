@@ -52,7 +52,7 @@ export const runeSpirits: { [K in RuneSpiritKeys]: RuneSpiritData<K> } = {
     level: 0,
     runeEXP: new Decimal(0),
     costCoefficient: new Decimal(1e20),
-    levelsPerOOM: 12,
+    levelsPerOOM: 15,
     effects: (level) => {
       const globalSpeed = 1 + level / 1e9
       return { globalSpeed }
@@ -92,7 +92,7 @@ export const runeSpirits: { [K in RuneSpiritKeys]: RuneSpiritData<K> } = {
     level: 0,
     runeEXP: new Decimal(0),
     costCoefficient: new Decimal(1e30),
-    levelsPerOOM: 12,
+    levelsPerOOM: 9,
     effects: (level) => {
       const crystalCaps = 1 + level / 1e9
       return { crystalCaps }
@@ -112,7 +112,7 @@ export const runeSpirits: { [K in RuneSpiritKeys]: RuneSpiritData<K> } = {
     level: 0,
     runeEXP: new Decimal(0),
     costCoefficient: new Decimal(1e35),
-    levelsPerOOM: 12,
+    levelsPerOOM: 6,
     effects: (level) => {
       const offerings = 1 + level / 1e9
       return { offerings }
@@ -132,7 +132,7 @@ export const runeSpirits: { [K in RuneSpiritKeys]: RuneSpiritData<K> } = {
     level: 0,
     runeEXP: new Decimal(0),
     costCoefficient: new Decimal(1e40),
-    levelsPerOOM: 12,
+    levelsPerOOM: 3,
     effects: (level) => {
       const obtainium = 1 + level / 1e9
       return { obtainium }

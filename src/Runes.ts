@@ -397,7 +397,7 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
     level: 0,
     runeEXP: new Decimal('0'),
     costCoefficient: new Decimal(2500),
-    levelsPerOOM: 150,
+    levelsPerOOM: 120,
     levelsPerOOMIncrease: () => duplicationRuneOOMIncrease(),
     effects: (n) => {
       const multiplierBoosts = n / 5
@@ -428,7 +428,7 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
     level: 0,
     runeEXP: new Decimal('0'),
     costCoefficient: new Decimal(2.5e4),
-    levelsPerOOM: 150,
+    levelsPerOOM: 90,
     levelsPerOOMIncrease: () => prismRuneOOMIncrease(),
     effects: (level) => {
       const productionLog10 = Math.max(0, 2 * Math.log10(1 + level / 2) + (level / 2) * Math.log10(2) - Math.log10(256))
@@ -460,7 +460,7 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
     level: 0,
     runeEXP: new Decimal('0'),
     costCoefficient: new Decimal(2.5e5),
-    levelsPerOOM: 150,
+    levelsPerOOM: 60,
     levelsPerOOMIncrease: () => thriftRuneOOMIncrease(),
     effects: (level) => {
       const costDelay = Math.min(1e15, level / 125)
@@ -491,7 +491,7 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
     level: 0,
     runeEXP: new Decimal('0'),
     costCoefficient: new Decimal(2.5e7),
-    levelsPerOOM: 150,
+    levelsPerOOM: 30,
     levelsPerOOMIncrease: () => superiorIntellectOOMIncrease(),
     effects: (level) => {
       const offeringMult = 1 + level / 2000
@@ -522,7 +522,7 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
     level: 0,
     runeEXP: new Decimal('0'),
     costCoefficient: new Decimal(1e75),
-    levelsPerOOM: 0.5,
+    levelsPerOOM: 1 / 2,
     levelsPerOOMIncrease: () => infiniteAscentOOMIncrease(),
     effects: (level) => {
       const quarkMult = 1 + level / 500 + (level > 0 ? 0.1 : 0)

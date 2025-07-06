@@ -5652,6 +5652,8 @@ export const reloadShit = (reset = false) => {
   achievementManager.updateAchievements(player.achievements)
   achievementManager.updateProgressiveAchievements(player.progressiveAchievements)
 
+  console.log('progAchs: ' + JSON.stringify(achievementManager.progressiveAchievements))
+
   // Recover Sing Upgrade (now GQ upgrade) level from Player Obj
   if (player.goldenQuarkUpgrades !== undefined) {
     for (const [key, value] of Object.entries(player.goldenQuarkUpgrades)) {
