@@ -98,9 +98,10 @@ import { getQuarkBonus } from './Quark'
 import { getRedAmbrosiaUpgradeEffects } from './RedAmbrosiaUpgrades'
 import {
   firstFiveEffectiveRuneLevelMult,
-  getRune,
   getRuneBlessing,
+  getRuneEffects,
   getRuneSpirit,
+  runes,
   SIEffectiveRuneLevelMult,
   sumOfRuneLevels
 } from './Runes'
@@ -178,7 +179,7 @@ export const allCubeStats: StatLine[] = [
   },
   {
     i18n: 'InfiniteAscent',
-    stat: () => getRune('infiniteAscent').bonus.cubeMult
+    stat: () => getRuneEffects('infiniteAscent').cubeMult
   },
   {
     i18n: 'Beta',
@@ -811,7 +812,7 @@ export const allOfferingStats = [
   },
   {
     i18n: 'SuperiorIntellect',
-    stat: () => getRune('superiorIntellect').bonus.offeringMult // Superior Intellect Rune
+    stat: () => getRuneEffects('superiorIntellect').offeringMult // Superior Intellect Rune
   },
   {
     i18n: 'ReincarnationChallenge',
@@ -911,7 +912,7 @@ export const allOfferingStats = [
   },
   {
     i18n: 'Antiquities',
-    stat: () => Math.pow(10, getRune('antiquities').bonus.offeringLog10) // Antiquities Rune
+    stat: () => Math.pow(10, getRuneEffects('antiquities').offeringLog10) // Antiquities Rune
   },
   {
     i18n: 'SingularityDebuff',
@@ -1157,7 +1158,7 @@ export const allQuarkStats: StatLine[] = [
   },
   {
     i18n: 'InfiniteAscent',
-    stat: () => isIARuneUnlocked() ? getRune('infiniteAscent').bonus.quarkMult : 1
+    stat: () => isIARuneUnlocked() ? getRuneEffects('infiniteAscent').quarkMult : 1
   },
   {
     i18n: 'QuarkHepteract',
@@ -1363,7 +1364,7 @@ export const allObtainiumIgnoreDRStats: StatLine[] = [
   },
   {
     i18n: 'Antiquities',
-    stat: () => Math.pow(10, getRune('antiquities').bonus.obtainiumLog10) // Antiquities Rune
+    stat: () => Math.pow(10, getRuneEffects('antiquities').obtainiumLog10) // Antiquities Rune
   },
   {
     i18n: 'CubeUpgradeCx5',
@@ -1464,7 +1465,7 @@ export const allObtainiumStats: StatLine[] = [
   },
   {
     i18n: 'Rune5',
-    stat: () => getRune('superiorIntellect').bonus.obtainiumMult
+    stat: () => getRuneEffects('superiorIntellect').obtainiumMult
   },
   {
     i18n: 'Ant10',
@@ -1713,7 +1714,7 @@ export const allGlobalSpeedIgnoreDRStats: StatLine[] = [
 export const allGlobalSpeedStats: StatLine[] = [
   {
     i18n: 'SpeedRune',
-    stat: () => getRune('speed').bonus.globalSpeed // Speed Rune
+    stat: () => getRuneEffects('speed').globalSpeed // Speed Rune
   },
   {
     i18n: 'ObtainiumLog',
@@ -2032,7 +2033,7 @@ export const allAmbrosiaLuckStats: StatLine[] = [
   },
   {
     i18n: 'HorseShoeRune',
-    stat: () => getRune('horseShoe').bonus.ambrosiaLuck // Horseshoe Rune
+    stat: () => getRuneEffects('horseShoe').ambrosiaLuck // Horseshoe Rune
   }
 ]
 
@@ -2352,7 +2353,7 @@ export const allAddCodeTimerStats: StatLine[] = [
   },
   {
     i18n: 'InfiniteAscent',
-    stat: () => getRune('antiquities').level > 0 ? 0.8 : 1, // Infinite Ascent rune reduction (20%)
+    stat: () => getRuneEffects('antiquities').addCodeCooldownReduction, // Infinite Ascent rune reduction (20%)
     color: 'lime'
   },
   {
@@ -2443,7 +2444,7 @@ export const allLuckConversionStats: StatLine[] = [
   },
   {
     i18n: 'HorseShoeRune',
-    stat: () => getRune('horseShoe').bonus.redLuckConversion // Horseshoe Rune
+    stat: () => getRuneEffects('horseShoe').redLuckConversion // Horseshoe Rune
   }
 ]
 
@@ -2488,7 +2489,7 @@ export const allRedAmbrosiaLuckStats: StatLine[] = [
   },
   {
     i18n: 'HorseShoeRune',
-    stat: () => getRune('horseShoe').bonus.redLuck // Horseshoe Rune
+    stat: () => getRuneEffects('horseShoe').redLuck // Horseshoe Rune
   },
   {
     i18n: 'HorseShoeTalisman',
@@ -2764,7 +2765,7 @@ export const allSalvageStats: StatLine[] = [
   },
   {
     i18n: 'RuneBonus',
-    stat: () => getRune('thrift').bonus.salvage // Thrift Rune
+    stat: () => getRuneEffects('thrift').salvage // Thrift Rune
   },
   {
     i18n: 'CubeUpgrade2',
@@ -3644,7 +3645,7 @@ export const gameStages = (): Stage[] => {
       stage: 19,
       tier: 5,
       name: 'omega-singularity',
-      unlocked: player.singularityCount > 0 && getRune('antiquities').level > 0,
+      unlocked: player.singularityCount > 0 && runes.antiquities.level > 0,
       reset: player.ascensionCount > 0
     },
     {

@@ -7,7 +7,7 @@ import { getMaxChallenges } from './Challenges'
 import { revealCorruptions } from './Corruptions'
 import { initializeCart } from './purchases/CartTab'
 import { autoResearchEnabled } from './Research'
-import { getRune, type RuneKeys } from './Runes'
+import { getRuneEffects, runes, updateRuneEffectHTML, updateRuneHTML, type RuneKeys } from './Runes'
 import { getGQUpgradeEffect, updateSingularityPenalties, updateSingularityPerks } from './singularity'
 import { format, formatTimeShort, /*formatTimeShort*/ player } from './Synergism'
 import { getActiveSubTab, Tabs } from './Tabs'
@@ -165,7 +165,7 @@ export const revealStuff = () => {
   }
 
   for (const rune of Object.keys(player.runes) as RuneKeys[]) {
-    if (getRune(rune).isUnlocked) {
+    if (runes[rune].isUnlocked()) {
       DOMCacheGetOrSet(`${rune}RuneContainer`).style.display = 'flex'
       DOMCacheGetOrSet(`${rune}RunePower`).style.display = 'block'
     } else {
@@ -367,7 +367,7 @@ export const revealStuff = () => {
     ? 'flex'
     : 'none'
 
-  getRune('antiquities').level > 0 || player.highestSingularityCount > 0
+  runes.antiquities.level > 0 || player.highestSingularityCount > 0
     ? (DOMCacheGetOrSet('singularitybtn').style.display = 'block')
     : (DOMCacheGetOrSet('singularitybtn').style.display = 'none')
 
@@ -522,8 +522,8 @@ export const hideStuff = () => {
 
     for (const rune of Object.keys(player.runes)) {
       const runeKey = rune as RuneKeys
-      getRune(runeKey).updateRuneHTML()
-      getRune(runeKey).updateRuneEffectHTML()
+      updateRuneHTML(runeKey)
+      updateRuneEffectHTML(runeKey)
     }
   }
   if (G.currentTab === Tabs.Challenges) {
@@ -658,7 +658,7 @@ export const buttoncolorchange = () => {
   DOMCacheGetOrSet('ascendbtn').style.backgroundColor =
     player.autoAscend && player.challengecompletions[11] > 0 && player.cubeUpgrades[10] > 0 ? 'green' : ''
 
-  DOMCacheGetOrSet('singularitybtn').style.filter = getRune('antiquities').level > 0
+  DOMCacheGetOrSet('singularitybtn').style.filter = runes.antiquities.level > 0
     ? ''
     : 'contrast(1.25) sepia(1) grayscale(0.25)'
 
@@ -761,7 +761,7 @@ export const buttoncolorchange = () => {
       ? (player.prestigeShards.gte(
           Decimal.pow(
             10,
-            G.crystalUpgradesCost[0] - getRune('prism').bonus.costDivisorLog10
+            G.crystalUpgradesCost[0] - getRuneEffects('prism').costDivisorLog10
               + G.crystalUpgradeCostIncrement[0] * Math.floor(Math.pow(player.crystalUpgrades[0] + 0.5 - k, 2) / 2)
           )
         )
@@ -772,7 +772,7 @@ export const buttoncolorchange = () => {
       ? (player.prestigeShards.gte(
           Decimal.pow(
             10,
-            G.crystalUpgradesCost[1] - getRune('prism').bonus.costDivisorLog10
+            G.crystalUpgradesCost[1] - getRuneEffects('prism').costDivisorLog10
               + G.crystalUpgradeCostIncrement[1] * Math.floor(Math.pow(player.crystalUpgrades[1] + 0.5 - k, 2) / 2)
           )
         )
@@ -783,7 +783,7 @@ export const buttoncolorchange = () => {
       ? (player.prestigeShards.gte(
           Decimal.pow(
             10,
-            G.crystalUpgradesCost[2] - getRune('prism').bonus.costDivisorLog10
+            G.crystalUpgradesCost[2] - getRuneEffects('prism').costDivisorLog10
               + G.crystalUpgradeCostIncrement[2] * Math.floor(Math.pow(player.crystalUpgrades[2] + 0.5 - k, 2) / 2)
           )
         )
@@ -794,7 +794,7 @@ export const buttoncolorchange = () => {
       ? (player.prestigeShards.gte(
           Decimal.pow(
             10,
-            G.crystalUpgradesCost[3] - getRune('prism').bonus.costDivisorLog10
+            G.crystalUpgradesCost[3] - getRuneEffects('prism').costDivisorLog10
               + G.crystalUpgradeCostIncrement[3] * Math.floor(Math.pow(player.crystalUpgrades[3] + 0.5 - k, 2) / 2)
           )
         )
@@ -805,7 +805,7 @@ export const buttoncolorchange = () => {
       ? (player.prestigeShards.gte(
           Decimal.pow(
             10,
-            G.crystalUpgradesCost[4] - getRune('prism').bonus.costDivisorLog10
+            G.crystalUpgradesCost[4] - getRuneEffects('prism').costDivisorLog10
               + G.crystalUpgradeCostIncrement[4] * Math.floor(Math.pow(player.crystalUpgrades[4] + 0.5 - k, 2) / 2)
           )
         )

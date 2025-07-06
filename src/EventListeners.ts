@@ -84,13 +84,15 @@ import {
   buyAllBlessingLevels,
   buyAllSpiritLevels,
   buyBlessingLevels,
-  getRune,
   runeBlessingData,
   type RuneBlessingKeys,
+  RuneKeys,
+  runes,
   runeSpiritData,
   type RuneSpiritKeys,
   runeToIndex,
-  sacrificeOfferings
+  sacrificeOfferings,
+  updateFocusedRuneHTML
 } from './Runes'
 import {
   buyShopUpgrades,
@@ -462,17 +464,17 @@ export const generateEventHandlers = () => {
   // Part 1: Runes Subtab
 
   const runeStats = Object.keys(
-    player.runes
-  ) as (keyof Player['runes'])[]
+    runes
+  ) as RuneKeys[]
   for (const key of runeStats) {
     const rune = DOMCacheGetOrSet(`${key}Rune`)
-    rune.addEventListener('mouseover', () => getRune(key).updateFocusedRuneHTML())
-    rune.addEventListener('focus', () => getRune(key).updateFocusedRuneHTML())
+    rune.addEventListener('mouseover', () => updateFocusedRuneHTML(key))
+    rune.addEventListener('focus', () => updateFocusedRuneHTML(key))
     rune.addEventListener('click', () => toggleAutoSacrifice(runeToIndex[key]))
 
     const activateRune = DOMCacheGetOrSet(`${key}RuneSacrifice`)
-    activateRune.addEventListener('mouseover', () => getRune(key).updateFocusedRuneHTML())
-    activateRune.addEventListener('focus', () => getRune(key).updateFocusedRuneHTML())
+    activateRune.addEventListener('mouseover', () => updateFocusedRuneHTML(key))
+    activateRune.addEventListener('focus', () => updateFocusedRuneHTML(key))
     activateRune.addEventListener('click', () => sacrificeOfferings(key, player.offerings, false))
   }
 

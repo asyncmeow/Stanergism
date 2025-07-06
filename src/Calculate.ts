@@ -12,7 +12,7 @@ import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { quarkHandler } from './Quark'
 import { getRedAmbrosiaUpgradeEffects } from './RedAmbrosiaUpgrades'
 import { reset } from './Reset'
-import { getRuneBlessing, sumOfRuneLevels } from './Runes'
+import { sumOfRuneLevels } from './Runes'
 import { getGQUpgradeEffect } from './singularity'
 import {
   allAdditiveLuckMultStats,

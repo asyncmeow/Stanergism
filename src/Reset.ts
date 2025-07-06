@@ -41,7 +41,7 @@ import { calculateHypercubeBlessings } from './Hypercubes'
 import { importSynergism } from './ImportExport'
 import { autoBuyPlatonicUpgrades, updatePlatonicUpgradeBG } from './Platonic'
 import { buyResearch, updateResearchBG } from './Research'
-import { getRune, resetOfferings, resetRuneBlessings, resetRunes, resetRuneSpirits } from './Runes'
+import { resetOfferings, resetRuneBlessings, resetRunes, resetRuneSpirits, runes } from './Runes'
 import { playerJsonSchema } from './saves/PlayerJsonSchema'
 import { forceResetShopUpgrades, shopData } from './Shop'
 import {
@@ -1080,7 +1080,7 @@ export const updateSingularityGlobalPerks = () => {
 }
 
 export const singularity = (setSingNumber = -1) => {
-  if (getRune('antiquities').level === 0 && setSingNumber === -1) {
+  if (runes.antiquities.level === 0 && setSingNumber === -1) {
     Alert(
       'You nearly triggered a double singularity bug! Oh no! Luckily, our staff prevented this from happening.'
     )

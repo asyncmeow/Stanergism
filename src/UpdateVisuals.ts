@@ -44,9 +44,10 @@ import { allDurableConsumables, type PseudoCoinConsumableNames } from './Login'
 import { getOcteractUpgradeCostTNL, type OcteractDataKeys, octeractUpgrades } from './Octeracts'
 import { getQuarkBonus, quarkHandler } from './Quark'
 import {
-  getRune,
   getRuneBlessing,
   getRuneSpirit,
+  updateRuneEffectHTML,
+  updateRuneHTML,
   type RuneBlessingKeys,
   type RuneKeys,
   type RuneSpiritKeys
@@ -636,8 +637,8 @@ export const visualUpdateRunes = () => {
     for (const key of Object.keys(player.runes)) {
       const runeKey = key as RuneKeys
 
-      getRune(runeKey).updateRuneHTML()
-      getRune(runeKey).updateRuneEffectHTML()
+      updateRuneHTML(runeKey)
+      updateRuneEffectHTML(runeKey)
     }
 
     const calculateSalvage = calculateTotalSalvage()

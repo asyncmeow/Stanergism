@@ -3,10 +3,10 @@ import { achievementManager } from './Achievements'
 import { getAmbrosiaUpgradeEffects } from './BlueberryUpgrades'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { getOcteractUpgradeEffect } from './Octeracts'
-import { getRune } from './Runes'
 import { format, formatAsPercentIncrease, player } from './Synergism'
 import { Alert, Prompt, revealStuff } from './UpdateHTML'
 import { toOrdinal } from './Utility'
+import { runes } from './Runes'
 
 export type SingularityDataKeys =
   | 'goldenQuarks1'
@@ -189,7 +189,7 @@ export const updateSingularityPenalties = (): void => {
       })
   }
         ${
-    getRune('antiquities').level > 0
+    runes.antiquities.level > 0
       ? i18next.t('singularity.penalties.antiquitiesBought')
       : i18next.t('singularity.penalties.antiquitiesNotBought')
   }`
@@ -3218,7 +3218,7 @@ export const calculateSingularityDebuff = (
   if (singularityCount === 0) {
     return 1
   }
-  if (getRune('antiquities').level > 0) {
+  if (runes.antiquities.level > 0) {
     return 1
   }
 

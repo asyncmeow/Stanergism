@@ -5,7 +5,7 @@ import { buyAutobuyers, buyGenerator } from './Automation'
 import { buyUpgrades } from './Buy'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { calculateAnts } from './Calculate'
-import { getRune, getRuneSpirit } from './Runes'
+import { getRuneEffects, getRuneSpirit } from './Runes'
 import { format, player } from './Synergism'
 import { revealStuff } from './UpdateHTML'
 import { sumContents } from './Utility'
@@ -429,7 +429,7 @@ export const crystalupgradedescriptions = (i: number) => {
 
   const q = Decimal.pow(
     10,
-    G.crystalUpgradesCost[i - 1] - getRune('prism').bonus.costDivisorLog10
+    G.crystalUpgradesCost[i - 1] - getRuneEffects('prism').costDivisorLog10
       + G.crystalUpgradeCostIncrement[i - 1] * Math.floor(Math.pow(player.crystalUpgrades[i - 1] + 0.5 - c, 2) / 2)
   )
   DOMCacheGetOrSet('crystalupgradedescription').textContent = returnCrystalUpgDesc(i)

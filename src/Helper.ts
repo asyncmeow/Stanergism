@@ -21,9 +21,9 @@ import {
   buyAllBlessingLevels,
   buyAllSpiritLevels,
   getNumberUnlockedRunes,
-  getRune,
   indexToRune,
   type RuneKeys,
+  runes,
   sacrificeOfferings
 } from './Runes'
 import { useConsumable } from './Shop'
@@ -361,12 +361,12 @@ export const automaticTools = (input: AutoToolInput, time: number) => {
           let numUnlocked = getNumberUnlockedRunes()
 
           // Do not purchase AoAG under s50
-          if (player.highestSingularityCount < 50 && getRune('antiquities').isUnlocked) {
+          if (player.highestSingularityCount < 50 && runes.antiquities.isUnlocked()) {
             numUnlocked -= 1
           }
 
           // Do not purchase IA under s30
-          if (player.highestSingularityCount < 30 && getRune('infiniteAscent').isUnlocked) {
+          if (player.highestSingularityCount < 30 && runes.infiniteAscent.isUnlocked()) {
             numUnlocked -= 1
           }
 

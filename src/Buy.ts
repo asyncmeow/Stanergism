@@ -3,16 +3,16 @@ import Decimal from 'break_infinity.js'
 import { achievementManager } from './Achievements'
 import { CalcECC } from './Challenges'
 import { reset } from './Reset'
-import { getRune, getRuneBlessing } from './Runes'
 import { player, updateAllMultiplier, updateAllTick } from './Synergism'
 import type { FirstToFifth, OneToFive, ZeroToFour } from './types/Synergism'
 import { crystalupgradedescriptions, upgradeupdate } from './Upgrades'
 import { smallestInc } from './Utility'
 import { Globals as G, Upgrade } from './Variables'
+import { getRuneEffects } from './Runes'
 
 export const getReductionValue = () => {
   let reduction = 1
-  reduction += getRune('thrift').bonus.costDelay
+  reduction += getRuneEffects('thrift').costDelay
   reduction += (player.researches[56] + player.researches[57] + player.researches[58] + player.researches[59]
     + player.researches[60]) / 200
   reduction += CalcECC('transcend', player.challengecompletions[4]) / 200
@@ -561,7 +561,7 @@ export const buyProducer = (
   const [tag, amounttype] = buyProducerTypes[type]
   const buythisamount = autobuyer ? 500 : player[`${amounttype}buyamount` as const]
   let r = 1
-  r += getRune('thrift').bonus.costDelay
+  r += getRuneEffects('thrift').costDelay
   r += (player.researches[56] + player.researches[57] + player.researches[58] + player.researches[59]
     + player.researches[60]) / 200
   r += CalcECC('transcend', player.challengecompletions[4]) / 200
@@ -648,7 +648,7 @@ export const buyUpgrades = (type: Upgrade, pos: number, state?: boolean) => {
 export const calculateCrystalBuy = (i: number) => {
   const u = i - 1
   const exponent = Decimal.log(player.prestigeShards.add(1), 10)
-  const exponentCostReduction = getRune('prism').bonus.costDivisorLog10
+  const exponentCostReduction = getRuneEffects('prism').costDivisorLog10
   const toBuy = Math.floor(
     Math.pow(
       Math.max(
@@ -670,7 +670,7 @@ export const buyCrystalUpgrades = (i: number, auto = false) => {
     c += 10
   }
 
-  const costReduction = getRune('prism').bonus.costDivisorLog10
+  const costReduction = getRuneEffects('prism').costDivisorLog10
 
   const toBuy = calculateCrystalBuy(i)
 

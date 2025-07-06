@@ -5,7 +5,6 @@ import { CalcCorruptionStuff, calculateAscensionScore } from './Calculate'
 import { getHepteract } from './Hepteracts'
 import { octeractUpgrades } from './Octeracts'
 import { redAmbrosiaUpgrades } from './RedAmbrosiaUpgrades'
-import { getRune, getRuneBlessing, getRuneSpirit, sumOfPurchasedRuneLevels, sumOfRuneLevels } from './Runes'
 import { goldenQuarkUpgrades } from './singularity'
 import type { SingularityChallengeDataKeys } from './SingularityChallenges'
 import { format, formatAsPercentIncrease, player } from './Synergism'
@@ -14,6 +13,7 @@ import type { resetNames } from './types/Synergism'
 import { Alert, Notification, revealStuff } from './UpdateHTML'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
+import { runes, sumOfRuneLevels } from './Runes'
 
 export const resetAchievementCheck = (reset: resetNames) => {
   if (reset === 'prestige') {
@@ -256,7 +256,7 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
         + Math.min(400, Math.floor(cached / 12500))
     },
     updateValue: () => {
-      return sumOfPurchasedRuneLevels()
+      return sumOfRuneLevels()
     },
     useCachedValue: true
   },
@@ -2186,121 +2186,121 @@ export const achievements: { [index: number]: Achievement } = {
   395: { pointValue: 100, unlockCondition: () => getRuneSpirit('speed').level >= 12500, group: 'speedSpirit' },
   396: {
     pointValue: 2,
-    unlockCondition: () => getRune('speed').level >= 100,
+    unlockCondition: () => runes.speed.level >= 100,
     group: 'runeLevel',
     reward: { salvage: () => 1 }
   },
-  397: { pointValue: 4, unlockCondition: () => getRune('speed').level >= 250, group: 'runeLevel' },
+  397: { pointValue: 4, unlockCondition: () => runes.speed.level >= 250, group: 'runeLevel' },
   398: {
     pointValue: 6,
-    unlockCondition: () => getRune('speed').level >= 500,
+    unlockCondition: () => runes.speed.level >= 500,
     group: 'runeLevel',
     reward: { salvage: () => 2 }
   },
-  399: { pointValue: 8, unlockCondition: () => getRune('speed').level >= 1000, group: 'runeLevel' },
+  399: { pointValue: 8, unlockCondition: () => runes.speed.level >= 1000, group: 'runeLevel' },
   400: {
     pointValue: 10,
-    unlockCondition: () => getRune('speed').level >= 2000,
+    unlockCondition: () => runes.speed.level >= 2000,
     group: 'runeLevel',
     reward: { salvage: () => 3 }
   },
-  401: { pointValue: 12, unlockCondition: () => getRune('speed').level >= 5000, group: 'runeLevel' },
+  401: { pointValue: 12, unlockCondition: () => runes.speed.level >= 5000, group: 'runeLevel' },
   402: {
     pointValue: 14,
-    unlockCondition: () => getRune('speed').level >= 10000,
+    unlockCondition: () => runes.speed.level >= 10000,
     group: 'runeLevel',
     reward: { salvage: () => 4 }
   },
-  403: { pointValue: 16, unlockCondition: () => getRune('speed').level >= 20000, group: 'runeLevel' },
+  403: { pointValue: 16, unlockCondition: () => runes.speed.level >= 20000, group: 'runeLevel' },
   404: {
     pointValue: 18,
-    unlockCondition: () => getRune('speed').level >= 50000,
+    unlockCondition: () => runes.speed.level >= 50000,
     group: 'runeLevel',
     reward: { salvage: () => 5 }
   },
-  405: { pointValue: 20, unlockCondition: () => getRune('speed').level >= 100000, group: 'runeLevel' },
+  405: { pointValue: 20, unlockCondition: () => runes.speed.level >= 100000, group: 'runeLevel' },
   406: {
     pointValue: 22,
-    unlockCondition: () => getRune('speed').level >= 200000,
+    unlockCondition: () => runes.speed.level >= 200000,
     group: 'runeLevel',
     reward: { salvage: () => 6 }
   },
   407: {
     pointValue: 24,
-    unlockCondition: () => getRune('speed').level >= 300000,
+    unlockCondition: () => runes.speed.level >= 300000,
     group: 'runeLevel',
     reward: { salvage: () => 2 }
   },
   408: {
     pointValue: 26,
-    unlockCondition: () => getRune('speed').level >= 500000,
+    unlockCondition: () => runes.speed.level >= 500000,
     group: 'runeLevel',
     reward: { salvage: () => 7 }
   },
   409: {
     pointValue: 28,
-    unlockCondition: () => getRune('speed').level >= 750000,
+    unlockCondition: () => runes.speed.level >= 750000,
     group: 'runeLevel',
     reward: { salvage: () => 2 }
   },
   410: {
     pointValue: 30,
-    unlockCondition: () => getRune('speed').level >= 1000000,
+    unlockCondition: () => runes.speed.level >= 1000000,
     group: 'runeLevel',
     reward: { salvage: () => 8 }
   },
   411: {
     pointValue: 2,
-    unlockCondition: () => getRune('speed').freeLevels >= 50,
+    unlockCondition: () => runes.speed.freeLevels() >= 50,
     group: 'runeFreeLevel',
     reward: { salvage: () => 1 }
   },
-  412: { pointValue: 4, unlockCondition: () => getRune('speed').freeLevels >= 100, group: 'runeFreeLevel' },
+  412: { pointValue: 4, unlockCondition: () => runes.speed.freeLevels() >= 100, group: 'runeFreeLevel' },
   413: {
     pointValue: 6,
-    unlockCondition: () => getRune('speed').freeLevels >= 250,
+    unlockCondition: () => runes.speed.freeLevels() >= 250,
     group: 'runeFreeLevel',
     reward: { salvage: () => 2 }
   },
-  414: { pointValue: 8, unlockCondition: () => getRune('speed').freeLevels >= 500, group: 'runeFreeLevel' },
+  414: { pointValue: 8, unlockCondition: () => runes.speed.freeLevels() >= 500, group: 'runeFreeLevel' },
   415: {
     pointValue: 10,
-    unlockCondition: () => getRune('speed').freeLevels >= 1000,
+    unlockCondition: () => runes.speed.freeLevels() >= 1000,
     group: 'runeFreeLevel',
     reward: { salvage: () => 2 }
   },
-  416: { pointValue: 12, unlockCondition: () => getRune('speed').freeLevels >= 2500, group: 'runeFreeLevel' },
+  416: { pointValue: 12, unlockCondition: () => runes.speed.freeLevels() >= 2500, group: 'runeFreeLevel' },
   417: {
     pointValue: 14,
-    unlockCondition: () => getRune('speed').freeLevels >= 5000,
+    unlockCondition: () => runes.speed.freeLevels() >= 5000,
     group: 'runeFreeLevel',
     reward: { salvage: () => 3 }
   },
-  418: { pointValue: 16, unlockCondition: () => getRune('speed').freeLevels >= 10000, group: 'runeFreeLevel' },
+  418: { pointValue: 16, unlockCondition: () => runes.speed.freeLevels() >= 10000, group: 'runeFreeLevel' },
   419: {
     pointValue: 18,
-    unlockCondition: () => getRune('speed').freeLevels >= 20000,
+    unlockCondition: () => runes.speed.freeLevels() >= 20000,
     group: 'runeFreeLevel',
     reward: { salvage: () => 4 }
   },
-  420: { pointValue: 20, unlockCondition: () => getRune('speed').freeLevels >= 50000, group: 'runeFreeLevel' },
+  420: { pointValue: 20, unlockCondition: () => runes.speed.freeLevels() >= 50000, group: 'runeFreeLevel' },
   421: {
     pointValue: 22,
-    unlockCondition: () => getRune('speed').freeLevels >= 100000,
+    unlockCondition: () => runes.speed.freeLevels() >= 100000,
     group: 'runeFreeLevel',
     reward: { salvage: () => 5 }
   },
-  422: { pointValue: 24, unlockCondition: () => getRune('speed').freeLevels >= 200000, group: 'runeFreeLevel' },
+  422: { pointValue: 24, unlockCondition: () => runes.speed.freeLevels() >= 200000, group: 'runeFreeLevel' },
   423: {
     pointValue: 26,
-    unlockCondition: () => getRune('speed').freeLevels >= 300000,
+    unlockCondition: () => runes.speed.freeLevels() >= 300000,
     group: 'runeFreeLevel',
     reward: { salvage: () => 6 }
   },
-  424: { pointValue: 28, unlockCondition: () => getRune('speed').freeLevels >= 500000, group: 'runeFreeLevel' },
+  424: { pointValue: 28, unlockCondition: () => runes.speed.freeLevels() >= 500000, group: 'runeFreeLevel' },
   425: {
     pointValue: 30,
-    unlockCondition: () => getRune('speed').freeLevels >= 750000,
+    unlockCondition: () => runes.speed.freeLevels() >= 750000,
     group: 'runeFreeLevel',
     reward: { salvage: () => 7 }
   }

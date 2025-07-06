@@ -92,17 +92,19 @@ import {
   buyBlessingLevels,
   buySpiritLevels,
   generateRunesHTML,
-  getRune,
   getRuneBlessing,
+  getRuneEffects,
   getRuneSpirit,
   indexToRune,
   initRuneBlessings,
-  initRunes,
   initRuneSpirits,
   type RuneBlessingKeys,
+  RuneKeys,
+  runes,
   type RuneSpiritKeys,
   sacrificeOfferings,
-  sumOfRuneLevels
+  sumOfRuneLevels,
+  updateAllRuneLevelsFromEXP
 } from './Runes'
 import { c15RewardUpdate } from './Statistics'
 import {
@@ -1235,6 +1237,14 @@ export const saveSynergy = (button?: boolean) => {
       return [key, { ...talismans[k].fragmentsInvested }]
     })
   ) as Record<TalismanKeys, Record<TalismanCraftItems, number>>
+
+
+  player.runes = Object.fromEntries(
+    Object.keys(player.runes).map((key) => {
+      const k = key as RuneKeys
+      return [key, new Decimal(runes[k].runeEXP)]
+    })
+  ) as Record<RuneKeys, Decimal>
 
   const p = playerJsonSchema.parse(player)
   const save = btoa(JSON.stringify(p))
@@ -2853,7 +2863,7 @@ export const updateAllTick = (): void => {
       + (G.cubeBonusMultiplier[1] - 1))
 
   if (player.unlocks.prestige) {
-    a *= getRune('speed').bonus.multiplicativeAccelerators
+    a *= getRuneEffects('speed').multiplicativeAccelerators
   }
 
   calculateAcceleratorMultiplier()
@@ -2891,7 +2901,7 @@ export const updateAllTick = (): void => {
 
   G.acceleratorPower = Math.pow(
     1.1
-      + getRune('speed').bonus.acceleratorPower
+      + getRuneEffects('speed').acceleratorPower
       + 1 / 400 * CalcECC('transcend', player.challengecompletions[2])
       + achievementBonus
       + G.tuSevenMulti
@@ -3020,7 +3030,7 @@ export const updateAllMultiplier = (): void => {
     + (1 / 40) * player.researches[13]
     + (3 / 200) * player.researches[14]
     + (1 / 200) * player.researches[15]
-  a *= getRune('duplication').bonus.multiplicativeMultipliers
+  a *= getRuneEffects('duplication').multiplicativeMultipliers
   a *= 1 + (1 / 20) * player.researches[87]
   a *= 1 + (1 / 100) * player.researches[128]
   a *= 1 + (0.8 / 100) * player.researches[143]
@@ -3069,7 +3079,7 @@ export const updateAllMultiplier = (): void => {
   let b = 0
   const c = 0
   b += Decimal.log(player.transcendShards.add(1), 3)
-  b += getRune('duplication').bonus.multiplierBoosts
+  b += getRuneEffects('duplication').multiplierBoosts
   b += 2 * CalcECC('transcend', player.challengecompletions[1])
   b *= 1 + (11 * player.researches[33]) / 100
   b *= 1 + (11 * player.researches[34]) / 100
@@ -3327,7 +3337,7 @@ export const multipliers = (): void => {
     +achievementManager.getBonus('crystalMultiplier')
   )
   G.globalCrystalMultiplier = G.globalCrystalMultiplier.times(
-    Decimal.pow(10, getRune('prism').bonus.productionLog10)
+    Decimal.pow(10, getRuneEffects('prism').productionLog10)
   )
   if (player.upgrades[36] > 0.5) {
     G.globalCrystalMultiplier = G.globalCrystalMultiplier.times(
@@ -3929,7 +3939,7 @@ export const resourceGain = (dt: number): void => {
 
 export const updateAntMultipliers = (): void => {
   G.globalAntMult = new Decimal(1)
-  G.globalAntMult = G.globalAntMult.times(getRune('superiorIntellect').bonus.antSpeed)
+  G.globalAntMult = G.globalAntMult.times(getRuneEffects('superiorIntellect').antSpeed)
   if (player.upgrades[76] === 1) {
     G.globalAntMult = G.globalAntMult.times(5)
   }
@@ -4494,7 +4504,7 @@ export const resetCheck = async (
   }
 
   if (i === 'singularity') {
-    if (getRune('antiquities').level === 0) {
+    if (runes.antiquities.level === 0) {
       return Alert(i18next.t('main.noAntiquity'))
     }
 
@@ -5660,9 +5670,16 @@ export const reloadShit = (reset = false) => {
     }
   }
 
+  if (player.runes !== undefined) {
+    for (const key of Object.keys(player.runes) as RuneKeys[]) {
+      const runeEXP = player.runes[key]
+      runes[key].runeEXP = new Decimal(runeEXP)
+    }
+    updateAllRuneLevelsFromEXP()
+  }
+
   setAmbrosiaUpgradeLevels()
   setRedAmbrosiaUpgradeLevels()
-  initRunes(player.runes)
   initRuneBlessings(player.runeBlessings)
   initRuneSpirits(player.runeSpirits)
   initHepteracts(player.hepteracts)
@@ -5801,7 +5818,6 @@ window.addEventListener('load', async () => {
   createCampaignIconHTMLS()
   generateAchievementHTMLs()
 
-  initRunes(player.runes)
   initRuneBlessings(player.runeBlessings)
   initRuneSpirits(player.runeSpirits)
   initHepteracts(player.hepteracts)
