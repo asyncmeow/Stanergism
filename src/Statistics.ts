@@ -99,7 +99,6 @@ import { getRedAmbrosiaUpgradeEffects } from './RedAmbrosiaUpgrades'
 import {
   firstFiveEffectiveRuneLevelMult,
   getRuneEffects,
-  getRuneSpirit,
   runes,
   SIEffectiveRuneLevelMult,
   sumOfRuneLevels
@@ -117,6 +116,7 @@ import type { GlobalVariables } from './types/Synergism'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
 import { getRuneBlessingEffect } from './RuneBlessings'
+import { getRuneSpiritEffect } from './RuneSpirits'
 
 export interface StatLine {
   i18n: string
@@ -388,7 +388,7 @@ export const allWowCubeStats: StatLine[] = [
   },
   {
     i18n: 'SpiritPower',
-    stat: () => getRuneSpirit('duplication').bonus.wowCubes
+    stat: () => getRuneSpiritEffect('duplication').wowCubes
   },
   {
     i18n: 'PlatonicOpening',
@@ -880,7 +880,7 @@ export const allOfferingStats = [
   },
   {
     i18n: 'ThriftSpirit',
-    stat: () => getRuneSpirit('thrift').bonus.offerings // Thrift
+    stat: () => getRuneSpiritEffect('thrift').offerings // Thrift
   },
   {
     i18n: 'Research8x25',
@@ -1493,7 +1493,7 @@ export const allObtainiumStats: StatLine[] = [
   },
   {
     i18n: 'SpiritPower',
-    stat: () => getRuneSpirit('superiorIntellect').bonus.obtainium // Spirit Power
+    stat: () => getRuneSpiritEffect('superiorIntellect').obtainium // Spirit Power
   },
   {
     i18n: 'Research6x19',
@@ -1751,7 +1751,7 @@ export const allGlobalSpeedStats: StatLine[] = [
   },
   {
     i18n: 'SpeedSpirit',
-    stat: () => getRuneSpirit('speed').bonus.globalSpeed // speed spirit
+    stat: () => getRuneSpiritEffect('speed').globalSpeed // speed spirit
   },
   {
     i18n: 'ChronosCube',

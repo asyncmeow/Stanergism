@@ -5,11 +5,12 @@ import { buyAutobuyers, buyGenerator } from './Automation'
 import { buyUpgrades } from './Buy'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { calculateAnts } from './Calculate'
-import { getRuneEffects, getRuneSpirit } from './Runes'
+import { getRuneEffects } from './Runes'
 import { format, player } from './Synergism'
 import { revealStuff } from './UpdateHTML'
 import { sumContents } from './Utility'
 import { Globals as G, Upgrade } from './Variables'
+import { getRuneSpiritEffect } from './RuneSpirits'
 
 const crystalupgdesc: Record<number, () => Record<string, string>> = {
   3: () => ({
@@ -24,7 +25,7 @@ const crystalupgdesc: Record<number, () => Record<string, string>> = {
     max: format(
       10 + 0.05 * player.researches[129] * Math.log(player.commonFragments + 1)
           / Math.log(4)
-        + getRuneSpirit('prism').bonus.crystalCaps
+        + getRuneSpiritEffect('prism').crystalCaps
     )
   })
 }
@@ -397,7 +398,7 @@ const crystalupgeffect: Record<number, () => Record<string, string>> = {
     x: format(
       Math.min(
         10 + 0.05 * player.researches[129] * Math.log(player.commonFragments + 1) / Math.log(4)
-          + getRuneSpirit('prism').bonus.crystalCaps,
+          + getRuneSpiritEffect('prism').crystalCaps,
         0.05 * player.crystalUpgrades[3]
       ),
       2,

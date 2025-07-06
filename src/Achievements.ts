@@ -15,6 +15,7 @@ import { Alert, Notification, revealStuff } from './UpdateHTML'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
 import { runeBlessings } from './RuneBlessings'
+import { runeSpirits } from './RuneSpirits'
 
 export const resetAchievementCheck = (reset: resetNames) => {
   if (reset === 'prestige') {
@@ -1807,14 +1808,14 @@ export const achievements: { [index: number]: Achievement } = {
   234: { pointValue: 30, unlockCondition: () => runeBlessings.speed.level >= 500, group: 'speedBlessing' },
   235: {
     pointValue: 10,
-    unlockCondition: () => getRuneSpirit('speed').level >= 100,
+    unlockCondition: () => runeSpirits.speed.level >= 100,
     group: 'speedSpirit',
     reward: { salvage: () => 2 }
   },
-  236: { pointValue: 20, unlockCondition: () => getRuneSpirit('speed').level >= 250, group: 'speedSpirit' },
+  236: { pointValue: 20, unlockCondition: () => runeSpirits.speed.level >= 250, group: 'speedSpirit' },
   237: {
     pointValue: 30,
-    unlockCondition: () => getRuneSpirit('speed').level >= 500,
+    unlockCondition: () => runeSpirits.speed.level >= 500,
     group: 'speedSpirit',
     reward: { salvage: () => 3 }
   },
@@ -2163,28 +2164,28 @@ export const achievements: { [index: number]: Achievement } = {
     group: 'speedBlessing',
     reward: { salvage: () => 6 }
   },
-  389: { pointValue: 40, unlockCondition: () => getRuneSpirit('speed').level >= 1000, group: 'speedSpirit' },
+  389: { pointValue: 40, unlockCondition: () => runeSpirits.speed.level >= 1000, group: 'speedSpirit' },
   390: {
     pointValue: 50,
-    unlockCondition: () => getRuneSpirit('speed').level >= 2000,
+    unlockCondition: () => runeSpirits.speed.level >= 2000,
     group: 'speedSpirit',
     reward: { salvage: () => 4 }
   },
-  391: { pointValue: 60, unlockCondition: () => getRuneSpirit('speed').level >= 4000, group: 'speedSpirit' },
+  391: { pointValue: 60, unlockCondition: () => runeSpirits.speed.level >= 4000, group: 'speedSpirit' },
   392: {
     pointValue: 70,
-    unlockCondition: () => getRuneSpirit('speed').level >= 6000,
+    unlockCondition: () => runeSpirits.speed.level >= 6000,
     group: 'speedSpirit',
     reward: { salvage: () => 5 }
   },
-  393: { pointValue: 80, unlockCondition: () => getRuneSpirit('speed').level >= 8000, group: 'speedSpirit' },
+  393: { pointValue: 80, unlockCondition: () => runeSpirits.speed.level >= 8000, group: 'speedSpirit' },
   394: {
     pointValue: 90,
-    unlockCondition: () => getRuneSpirit('speed').level >= 10000,
+    unlockCondition: () => runeSpirits.speed.level >= 10000,
     group: 'speedSpirit',
     reward: { salvage: () => 6 }
   },
-  395: { pointValue: 100, unlockCondition: () => getRuneSpirit('speed').level >= 12500, group: 'speedSpirit' },
+  395: { pointValue: 100, unlockCondition: () => runeSpirits.speed.level >= 12500, group: 'speedSpirit' },
   396: {
     pointValue: 2,
     unlockCondition: () => runes.speed.level >= 100,

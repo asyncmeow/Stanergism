@@ -4869,7 +4869,8 @@
         "thrift": "{{effect}}x Offerings",
         "superiorIntellect": "{{effect}}x Obtainium"
       },
-      "buyUpTo": "Buy up to <<var(--orchid-text-color)|{{amount}}>> Levels per purchase, if affordable. [Input to toggle]"
+      "buyUpTo": "Buy up to <<var(--orchid-text-color)|{{amount}}>> Levels per purchase, if affordable. [Input to toggle]",
+      "increaseLevel": "Increase Level By <<lightgoldenrodyellow|{{amount}}>> [Cost: <<lightgoldenrodyellow|{{offerings}}>> Offerings]"
     },
     "perOfferingText": "+{{exp}} EXP per offering, {{x}} [{{y}}] Offerings to level up once.",
     "runeCoefficientText": "Rune Coefficient: {{x}} [+{{y}}] = {{z}}. If you multiplied this rune's EXP by 10, you would gain roughly this many levels.",

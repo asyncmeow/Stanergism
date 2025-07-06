@@ -89,15 +89,11 @@ import {
   updateTesseractAutoBuyAmount
 } from './Reset'
 import {
-  buySpiritLevels,
   generateRunesHTML,
   getRuneEffects,
-  getRuneSpirit,
   indexToRune,
-  initRuneSpirits,
   RuneKeys,
   runes,
-  type RuneSpiritKeys,
   sacrificeOfferings,
   sumOfRuneLevels,
   updateAllRuneLevelsFromEXP
@@ -215,6 +211,7 @@ import { changeSubTab, changeTab, getActiveSubTab, Tabs } from './Tabs'
 import { settingAnnotation, toggleIconSet, toggleTheme } from './Themes'
 import { clearTimeout, clearTimers, setInterval, setTimeout } from './Timers'
 import { buyBlessingLevels, getRuneBlessingEffect, RuneBlessingKeys, runeBlessings, updateAllBlessingLevelsFromEXP } from './RuneBlessings'
+import { buySpiritLevels, getRuneSpiritEffect, RuneSpiritKeys, runeSpirits, updateAllSpiritLevelsFromEXP } from './RuneSpirits'
 
 export const player: Player = {
   firstPlayed: new Date().toISOString(),
@@ -1248,6 +1245,13 @@ export const saveSynergy = (button?: boolean) => {
       return [key, new Decimal(runeBlessings[k].runeEXP)]
     })
   ) as Record<RuneBlessingKeys, Decimal>
+
+  player.runeSpirits = Object.fromEntries(
+    Object.keys(player.runeSpirits).map((key) => {
+      const k = key as RuneSpiritKeys
+      return [key, new Decimal(runeSpirits[k].runeEXP)]
+    })
+  ) as Record<RuneSpiritKeys, Decimal>
 
   const p = playerJsonSchema.parse(player)
   const save = btoa(JSON.stringify(p))
@@ -3134,7 +3138,7 @@ export const multipliers = (): void => {
     10
       + (0.05 * player.researches[129] * Math.log(player.commonFragments + 1))
         / Math.log(4)
-      + getRuneSpirit('prism').bonus.crystalCaps,
+      + getRuneSpiritEffect('prism').crystalCaps,
     0.05 * player.crystalUpgrades[3]
   )
   crystalExponent += 0.04 * CalcECC('transcend', player.challengecompletions[3])
@@ -5229,6 +5233,9 @@ export const constantIntervals = (): void => {
   setInterval(slowUpdates, 200)
   setInterval(fastUpdates, 50)
   setInterval(campaignIconHTMLUpdates, 15000)
+  setInterval(updateAllRuneLevelsFromEXP, 25)
+  setInterval(updateAllBlessingLevelsFromEXP, 25)
+  setInterval(updateAllSpiritLevelsFromEXP, 25)
 
   if (!G.timeWarp) {
     exitOffline()
@@ -5689,9 +5696,16 @@ export const reloadShit = (reset = false) => {
     updateAllBlessingLevelsFromEXP()
   }
 
+  if (player.runeSpirits !== undefined) {
+    for (const key of Object.keys(player.runeSpirits) as RuneSpiritKeys[]) {
+      const spiritEXP = player.runeSpirits[key]
+      runeSpirits[key].runeEXP = new Decimal(spiritEXP)
+    }
+    updateAllSpiritLevelsFromEXP()
+  }
+
   setAmbrosiaUpgradeLevels()
   setRedAmbrosiaUpgradeLevels()
-  initRuneSpirits(player.runeSpirits)
   initHepteracts(player.hepteracts)
 
   for (const k of Object.keys(getAchieveReward) as AchievementRewards[]) {
@@ -5828,7 +5842,6 @@ window.addEventListener('load', async () => {
   createCampaignIconHTMLS()
   generateAchievementHTMLs()
 
-  initRuneSpirits(player.runeSpirits)
   initHepteracts(player.hepteracts)
   reloadShit()
 }, { once: true })

@@ -41,7 +41,7 @@ import { calculateHypercubeBlessings } from './Hypercubes'
 import { importSynergism } from './ImportExport'
 import { autoBuyPlatonicUpgrades, updatePlatonicUpgradeBG } from './Platonic'
 import { buyResearch, updateResearchBG } from './Research'
-import { resetOfferings, resetRunes, resetRuneSpirits, runes } from './Runes'
+import { resetOfferings, resetRunes, runes } from './Runes'
 import { playerJsonSchema } from './saves/PlayerJsonSchema'
 import { forceResetShopUpgrades, shopData } from './Shop'
 import {
@@ -65,6 +65,7 @@ import { updateClassList } from './Utility'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
 import { resetRuneBlessings } from './RuneBlessings'
+import { resetRuneSpirits } from './RuneSpirits'
 
 let repeatreset: number
 

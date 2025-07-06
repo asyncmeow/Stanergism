@@ -81,11 +81,8 @@ import {
 import { buyResearch, researchDescriptions } from './Research'
 import { resetrepeat, updateAutoCubesOpens, updateAutoReset, updateTesseractAutoBuyAmount } from './Reset'
 import {
-  buyAllSpiritLevels,
   RuneKeys,
   runes,
-  runeSpiritData,
-  type RuneSpiritKeys,
   runeToIndex,
   sacrificeOfferings,
   updateFocusedRuneHTML
@@ -171,7 +168,8 @@ import {
   upgradedescriptions
 } from './Upgrades'
 import { Globals as G } from './Variables'
-import { buyAllBlessingLevels, buyBlessingLevels, runeBlessingKeys, RuneBlessingKeys, runeBlessings } from './RuneBlessings'
+import { buyAllBlessingLevels, buyBlessingLevels, runeBlessingKeys } from './RuneBlessings'
+import { buyAllSpiritLevels, buySpiritLevels, runeSpiritKeys } from './RuneSpirits'
 
 /* STYLE GUIDE */
 /*
@@ -553,10 +551,10 @@ export const generateEventHandlers = () => {
     )
   }
 
-  for (const key of Object.keys(runeSpiritData) as RuneSpiritKeys[]) {
+  for (const key of runeSpiritKeys) {
     DOMCacheGetOrSet(`${key}RuneSpiritPurchase`).addEventListener(
       'click',
-      () => buyBlessingLevels(key, player.offerings)
+      () => buySpiritLevels(key, player.offerings)
     )
   }
 
