@@ -171,7 +171,7 @@ import {
   upgradedescriptions
 } from './Upgrades'
 import { Globals as G } from './Variables'
-import { buyAllBlessingLevels, buyBlessingLevels, RuneBlessingKeys, runeBlessings } from './RuneBlessings'
+import { buyAllBlessingLevels, buyBlessingLevels, runeBlessingKeys, RuneBlessingKeys, runeBlessings } from './RuneBlessings'
 
 /* STYLE GUIDE */
 /*
@@ -546,7 +546,7 @@ export const generateEventHandlers = () => {
 
   // Part 3: Blessings and Spirits
 
-  for (const key of Object.keys(runeBlessings) as RuneBlessingKeys[]) {
+  for (const key of runeBlessingKeys) {
     DOMCacheGetOrSet(`${key}RuneBlessingPurchase`).addEventListener(
       'click',
       () => buyBlessingLevels(key, player.offerings)

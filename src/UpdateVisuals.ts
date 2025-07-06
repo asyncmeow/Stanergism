@@ -67,7 +67,7 @@ import { getTalismanLevelCap, type TalismanKeys, talismans, updateAllTalismanHTM
 import type { Player, ZeroToFour } from './types/Synergism'
 import { sumContents, timeReminingHours } from './Utility'
 import { Globals as G } from './Variables'
-import { RuneBlessingKeys, runeBlessings, updateRuneBlessingHTML } from './RuneBlessings'
+import { runeBlessingKeys, RuneBlessingKeys, runeBlessings, updateRuneBlessingHTML } from './RuneBlessings'
 
 export const visualUpdateBuildings = () => {
   if (G.currentTab !== Tabs.Buildings) {
@@ -661,7 +661,7 @@ export const visualUpdateRunes = () => {
     }
     updateAllTalismanHTML()
   } else if (getActiveSubTab() === 2) {
-    for (const bless of Object.keys(runeBlessings) as RuneBlessingKeys[]) {
+    for (const bless of runeBlessingKeys) {
       updateRuneBlessingHTML(bless)
     }
   } else if (getActiveSubTab() === 3) {

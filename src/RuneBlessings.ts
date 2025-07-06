@@ -521,6 +521,8 @@ export const runeBlessings: { [K in RuneBlessingKeys]: RuneBlessingData<K> } = {
   }
 }
 
+export const runeBlessingKeys = Object.keys(runeBlessings) as RuneBlessingKeys[]
+
 export const getRuneBlessingPower = (bless: RuneBlessingKeys): number => {
     const blessingPowerMult = runeBlessings[bless].effectiveLevelMult()
     return runeBlessings[bless].level * blessingPowerMult
@@ -562,8 +564,8 @@ export const getRuneBlessingPower = (bless: RuneBlessingKeys): number => {
   }
   
   export const buyAllBlessingLevels = (budget: Decimal) => {
-    const ratio = Object.keys(runeBlessings).length
-    for (const key of Object.keys(runeBlessings) as RuneBlessingKeys[]) {
+    const ratio = runeBlessingKeys.length
+    for (const key of runeBlessingKeys) {
       buyBlessingLevels(key, Decimal.floor(budget.div(ratio)))
     }
   }
@@ -608,7 +610,7 @@ export const getRuneBlessingPower = (bless: RuneBlessingKeys): number => {
   }
   
   export const updateAllBlessingLevelsFromEXP = () => {
-    for (const bless of Object.keys(runeBlessings) as RuneBlessingKeys[]) {
+    for (const bless of runeBlessingKeys) {
       updateLevelsFromEXP(bless)
     }
   }
@@ -646,7 +648,7 @@ export const getRuneBlessingPower = (bless: RuneBlessingKeys): number => {
     if (runeBlessings === null) {
       throw new Error('Rune Blessings not initialized. Call initRuneBlessings first.')
     }
-    for (const bless of Object.keys(runeBlessings) as RuneBlessingKeys[]) {
+    for (const bless of runeBlessingKeys) {
       if (resetTiers[tier] >= resetTiers[runeBlessings[bless].minimalResetTier]) {
         runeBlessings[bless].level = 0
         runeBlessings[bless].runeEXP = new Decimal(0)
