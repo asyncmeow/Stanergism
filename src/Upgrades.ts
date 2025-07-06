@@ -6,11 +6,11 @@ import { buyUpgrades } from './Buy'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { calculateAnts } from './Calculate'
 import { getRuneEffects } from './Runes'
+import { getRuneSpiritEffect } from './RuneSpirits'
 import { format, player } from './Synergism'
 import { revealStuff } from './UpdateHTML'
 import { sumContents } from './Utility'
 import { Globals as G, Upgrade } from './Variables'
-import { getRuneSpiritEffect } from './RuneSpirits'
 
 const crystalupgdesc: Record<number, () => Record<string, string>> = {
   3: () => ({

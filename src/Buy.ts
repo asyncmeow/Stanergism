@@ -3,13 +3,13 @@ import Decimal from 'break_infinity.js'
 import { achievementManager } from './Achievements'
 import { CalcECC } from './Challenges'
 import { reset } from './Reset'
+import { getRuneBlessingEffect } from './RuneBlessings'
 import { getRuneEffects } from './Runes'
 import { player, updateAllMultiplier, updateAllTick } from './Synergism'
 import type { FirstToFifth, OneToFive, ZeroToFour } from './types/Synergism'
 import { crystalupgradedescriptions, upgradeupdate } from './Upgrades'
 import { smallestInc } from './Utility'
 import { Globals as G, Upgrade } from './Variables'
-import { getRuneBlessingEffect } from './RuneBlessings'
 
 export const getReductionValue = () => {
   let reduction = 1

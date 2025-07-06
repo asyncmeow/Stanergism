@@ -43,11 +43,9 @@ import { getHepteract, hepteractData, type HepteractNames } from './Hepteracts'
 import { allDurableConsumables, type PseudoCoinConsumableNames } from './Login'
 import { getOcteractUpgradeCostTNL, type OcteractDataKeys, octeractUpgrades } from './Octeracts'
 import { getQuarkBonus, quarkHandler } from './Quark'
-import {
-  type RuneKeys,
-  updateRuneEffectHTML,
-  updateRuneHTML
-} from './Runes'
+import { runeBlessingKeys, updateRuneBlessingHTML } from './RuneBlessings'
+import { type RuneKeys, updateRuneEffectHTML, updateRuneHTML } from './Runes'
+import { runeSpiritKeys, updateRuneSpiritHTML } from './RuneSpirits'
 import { getShopCosts, isShopUpgradeUnlocked, shopData, shopUpgradeTypes } from './Shop'
 import {
   computeGQUpgradeFreeLevelSoftcap,
@@ -65,8 +63,6 @@ import { getTalismanLevelCap, type TalismanKeys, talismans, updateAllTalismanHTM
 import type { Player, ZeroToFour } from './types/Synergism'
 import { sumContents, timeReminingHours } from './Utility'
 import { Globals as G } from './Variables'
-import { runeBlessingKeys, updateRuneBlessingHTML } from './RuneBlessings'
-import { runeSpiritKeys, updateRuneSpiritHTML } from './RuneSpirits'
 
 export const visualUpdateBuildings = () => {
   if (G.currentTab !== Tabs.Buildings) {

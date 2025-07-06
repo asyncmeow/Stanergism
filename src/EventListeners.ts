@@ -80,13 +80,9 @@ import {
 } from './RedAmbrosiaUpgrades'
 import { buyResearch, researchDescriptions } from './Research'
 import { resetrepeat, updateAutoCubesOpens, updateAutoReset, updateTesseractAutoBuyAmount } from './Reset'
-import {
-  RuneKeys,
-  runes,
-  runeToIndex,
-  sacrificeOfferings,
-  updateFocusedRuneHTML
-} from './Runes'
+import { buyAllBlessingLevels, buyBlessingLevels, runeBlessingKeys } from './RuneBlessings'
+import { RuneKeys, runes, runeToIndex, sacrificeOfferings, updateFocusedRuneHTML } from './Runes'
+import { buyAllSpiritLevels, buySpiritLevels, runeSpiritKeys } from './RuneSpirits'
 import {
   buyShopUpgrades,
   resetShopUpgrades,
@@ -168,8 +164,6 @@ import {
   upgradedescriptions
 } from './Upgrades'
 import { Globals as G } from './Variables'
-import { buyAllBlessingLevels, buyBlessingLevels, runeBlessingKeys } from './RuneBlessings'
-import { buyAllSpiritLevels, buySpiritLevels, runeSpiritKeys } from './RuneSpirits'
 
 /* STYLE GUIDE */
 /*

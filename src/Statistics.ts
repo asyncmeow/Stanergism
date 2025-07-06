@@ -96,6 +96,7 @@ import { getOcteractUpgradeEffect, octeractUpgrades } from './Octeracts'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { getQuarkBonus } from './Quark'
 import { getRedAmbrosiaUpgradeEffects } from './RedAmbrosiaUpgrades'
+import { getRuneBlessingEffect } from './RuneBlessings'
 import {
   firstFiveEffectiveRuneLevelMult,
   getRuneEffects,
@@ -103,6 +104,7 @@ import {
   SIEffectiveRuneLevelMult,
   sumOfRuneLevels
 } from './Runes'
+import { getRuneSpiritEffect } from './RuneSpirits'
 import { shopData } from './Shop'
 import {
   calculateSingularityDebuff,
@@ -115,8 +117,6 @@ import { getTalismanEffects, sumOfTalismanRarities, talismans } from './Talisman
 import type { GlobalVariables } from './types/Synergism'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
-import { getRuneBlessingEffect } from './RuneBlessings'
-import { getRuneSpiritEffect } from './RuneSpirits'
 
 export interface StatLine {
   i18n: string

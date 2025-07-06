@@ -194,6 +194,20 @@ import {
   redAmbrosiaUpgrades,
   setRedAmbrosiaUpgradeLevels
 } from './RedAmbrosiaUpgrades'
+import {
+  buyBlessingLevels,
+  getRuneBlessingEffect,
+  RuneBlessingKeys,
+  runeBlessings,
+  updateAllBlessingLevelsFromEXP
+} from './RuneBlessings'
+import {
+  buySpiritLevels,
+  getRuneSpiritEffect,
+  RuneSpiritKeys,
+  runeSpirits,
+  updateAllSpiritLevelsFromEXP
+} from './RuneSpirits'
 import { playerJsonSchema } from './saves/PlayerJsonSchema'
 import { playerUpdateVarSchema } from './saves/PlayerUpdateVarSchema'
 import {
@@ -210,8 +224,6 @@ import {
 import { changeSubTab, changeTab, getActiveSubTab, Tabs } from './Tabs'
 import { settingAnnotation, toggleIconSet, toggleTheme } from './Themes'
 import { clearTimeout, clearTimers, setInterval, setTimeout } from './Timers'
-import { buyBlessingLevels, getRuneBlessingEffect, RuneBlessingKeys, runeBlessings, updateAllBlessingLevelsFromEXP } from './RuneBlessings'
-import { buySpiritLevels, getRuneSpiritEffect, RuneSpiritKeys, runeSpirits, updateAllSpiritLevelsFromEXP } from './RuneSpirits'
 
 export const player: Player = {
   firstPlayed: new Date().toISOString(),

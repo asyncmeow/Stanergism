@@ -12,6 +12,7 @@ import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { quarkHandler } from './Quark'
 import { getRedAmbrosiaUpgradeEffects } from './RedAmbrosiaUpgrades'
 import { reset } from './Reset'
+import { getRuneBlessingEffect } from './RuneBlessings'
 import { sumOfRuneLevels } from './Runes'
 import { getGQUpgradeEffect } from './singularity'
 import {
@@ -53,7 +54,6 @@ import { clearInterval, setInterval } from './Timers'
 import { Alert, Prompt } from './UpdateHTML'
 import { findInsertionIndex, sumContents } from './Utility'
 import { Globals as G } from './Variables'
-import { getRuneBlessingEffect } from './RuneBlessings'
 
 const CASH_GRAB_ULTRA_QUARK = 0.08
 const CASH_GRAB_ULTRA_CUBE = 1.2

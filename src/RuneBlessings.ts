@@ -1,15 +1,15 @@
-import Decimal from "break_infinity.js"
-import { resetTiers } from "./Reset"
-import { RuneKeys, runes } from "./Runes"
-import { getTalismanEffects } from "./Talismans"
-import { format, player } from "./Synergism"
-import { Globals as G } from "./Variables"
-import i18next from "i18next"
-import { calculateSalvageRuneEXPMultiplier } from "./Calculate"
-import { achievementManager } from "./Achievements"
-import { assert } from "./Utility"
-import { Tabs } from "./Tabs"
-import { DOMCacheGetOrSet } from "./Cache/DOM"
+import Decimal from 'break_infinity.js'
+import i18next from 'i18next'
+import { achievementManager } from './Achievements'
+import { DOMCacheGetOrSet } from './Cache/DOM'
+import { calculateSalvageRuneEXPMultiplier } from './Calculate'
+import { resetTiers } from './Reset'
+import { RuneKeys, runes } from './Runes'
+import { format, player } from './Synergism'
+import { Tabs } from './Tabs'
+import { getTalismanEffects } from './Talismans'
+import { assert } from './Utility'
+import { Globals as G } from './Variables'
 
 type RuneBlessingTypeMap = {
   speed: { globalSpeed: number }
@@ -34,7 +34,6 @@ export interface RuneBlessingData<K extends RuneBlessingKeys> {
   name: () => string
 }
 
-
 const blessingMultiplier = (key: RuneKeys) => {
   return (
     runes[key].level + runes[key].freeLevels()
@@ -54,10 +53,10 @@ export const runeBlessings: { [K in RuneBlessingKeys]: RuneBlessingData<K> } = {
     costCoefficient: new Decimal(1e8),
     levelsPerOOM: 25,
     effects: (level) => {
-        const globalSpeed = 1 + level / 1000000
-        return {
-          globalSpeed
-        }
+      const globalSpeed = 1 + level / 1000000
+      return {
+        globalSpeed
+      }
     },
     effectsDescription: (level) => {
       const globalSpeed = runeBlessings.speed.effects(level).globalSpeed
@@ -68,7 +67,7 @@ export const runeBlessings: { [K in RuneBlessingKeys]: RuneBlessingData<K> } = {
     effectiveLevelMult: () => blessingMultiplier('speed'),
     runeEXPPerOffering: () => calculateSalvageRuneEXPMultiplier(),
     minimalResetTier: 'singularity',
-    name: () => i18next.t('runes.blessings.speed.name'),
+    name: () => i18next.t('runes.blessings.speed.name')
   },
   duplication: {
     level: 0,
@@ -82,15 +81,15 @@ export const runeBlessings: { [K in RuneBlessingKeys]: RuneBlessingData<K> } = {
       }
     },
     effectsDescription: (level) => {
-        const multiplierBoosts = runeBlessings.duplication.effects(level).multiplierBoosts
-        return i18next.t('runes.blessings.rewards.duplication', {
-          effect: format(multiplierBoosts, 3, true)
-        })
+      const multiplierBoosts = runeBlessings.duplication.effects(level).multiplierBoosts
+      return i18next.t('runes.blessings.rewards.duplication', {
+        effect: format(multiplierBoosts, 3, true)
+      })
     },
     effectiveLevelMult: () => blessingMultiplier('duplication'),
     runeEXPPerOffering: () => calculateSalvageRuneEXPMultiplier(),
     minimalResetTier: 'singularity',
-    name: () => i18next.t('runes.blessings.duplication.name'),
+    name: () => i18next.t('runes.blessings.duplication.name')
   },
   prism: {
     level: 0,
@@ -98,10 +97,10 @@ export const runeBlessings: { [K in RuneBlessingKeys]: RuneBlessingData<K> } = {
     costCoefficient: new Decimal(1e13),
     levelsPerOOM: 25,
     effects: (level) => {
-        const antSacrificeMult = 1 + level / 1000000
-        return {
-            antSacrificeMult
-        }
+      const antSacrificeMult = 1 + level / 1000000
+      return {
+        antSacrificeMult
+      }
     },
     effectsDescription: (level) => {
       const antSacrificeMult = runeBlessings.prism.effects(level).antSacrificeMult
@@ -112,7 +111,7 @@ export const runeBlessings: { [K in RuneBlessingKeys]: RuneBlessingData<K> } = {
     effectiveLevelMult: () => blessingMultiplier('prism'),
     runeEXPPerOffering: () => calculateSalvageRuneEXPMultiplier(),
     minimalResetTier: 'singularity',
-    name: () => i18next.t('runes.blessings.prism.name'),
+    name: () => i18next.t('runes.blessings.prism.name')
   },
   thrift: {
     level: 0,
@@ -120,10 +119,10 @@ export const runeBlessings: { [K in RuneBlessingKeys]: RuneBlessingData<K> } = {
     costCoefficient: new Decimal(1e16),
     levelsPerOOM: 25,
     effects: (level) => {
-        const accelBoostCostDelay = 1 + level / 1000000
-        return {
-            accelBoostCostDelay
-        }
+      const accelBoostCostDelay = 1 + level / 1000000
+      return {
+        accelBoostCostDelay
+      }
     },
     effectsDescription: (level) => {
       const accelBoostCostDelay = runeBlessings.thrift.effects(level).accelBoostCostDelay
@@ -134,7 +133,7 @@ export const runeBlessings: { [K in RuneBlessingKeys]: RuneBlessingData<K> } = {
     effectiveLevelMult: () => blessingMultiplier('thrift'),
     runeEXPPerOffering: () => calculateSalvageRuneEXPMultiplier(),
     minimalResetTier: 'singularity',
-    name: () => i18next.t('runes.blessings.thrift.name'),
+    name: () => i18next.t('runes.blessings.thrift.name')
   },
   superiorIntellect: {
     level: 0,
@@ -148,11 +147,11 @@ export const runeBlessings: { [K in RuneBlessingKeys]: RuneBlessingData<K> } = {
       }
     },
     effectsDescription: (level) => {
-        const obtToAntExponent = runeBlessings.superiorIntellect.effects(level).obtToAntExponent
-        return i18next.t('runes.blessings.rewards.superiorIntellect', {
-          effect: format(obtToAntExponent, 3, true),
-          effect2: format(Decimal.pow(player.obtainium, obtToAntExponent), 2, false)
-        })
+      const obtToAntExponent = runeBlessings.superiorIntellect.effects(level).obtToAntExponent
+      return i18next.t('runes.blessings.rewards.superiorIntellect', {
+        effect: format(obtToAntExponent, 3, true),
+        effect2: format(Decimal.pow(player.obtainium, obtToAntExponent), 2, false)
+      })
     },
     effectiveLevelMult: () => blessingMultiplier('superiorIntellect'),
     runeEXPPerOffering: () => calculateSalvageRuneEXPMultiplier(),
@@ -164,131 +163,137 @@ export const runeBlessings: { [K in RuneBlessingKeys]: RuneBlessingData<K> } = {
 export const runeBlessingKeys = Object.keys(runeBlessings) as RuneBlessingKeys[]
 
 export const getRuneBlessingPower = (bless: RuneBlessingKeys): number => {
-    const blessingPowerMult = runeBlessings[bless].effectiveLevelMult()
-    return runeBlessings[bless].level * blessingPowerMult
+  const blessingPowerMult = runeBlessings[bless].effectiveLevelMult()
+  return runeBlessings[bless].level * blessingPowerMult
 }
-  
-  export const getRuneBlessingEffect = <T extends RuneBlessingKeys>(bless: T): RuneBlessingTypeMap[T] => {
-    return runeBlessings[bless].effects(getRuneBlessingPower(bless))
-  }
-  
-  export const getRuneBlessingEXPPerOffering = (bless: RuneBlessingKeys): Decimal => {
-    return runeBlessings[bless].runeEXPPerOffering()
-  }
-  
-  const computeEXPToLevel = (bless: RuneBlessingKeys, level: number) => {
-    const levelPerOOM = runeBlessings[bless].levelsPerOOM
-    return runeBlessings[bless].costCoefficient.times(Decimal.pow(10, level / levelPerOOM).minus(1))
-  }
-  
-  const computeEXPLeftToLevel = (bless: RuneBlessingKeys, level: number) => {
-    return Decimal.max(0, computeEXPToLevel(bless, level).minus(runeBlessings[bless].runeEXP))
-  }
-  
-  const computeOfferingsToLevel = (bless: RuneBlessingKeys, level: number) => {
-    return Decimal.max(1, computeEXPLeftToLevel(bless, level).div(getRuneBlessingEXPPerOffering(bless)).ceil())
-  }
-  
-  export const getRuneBlessingTNL = (bless: RuneBlessingKeys) => {
-    return computeEXPLeftToLevel(bless, runeBlessings[bless].level + 1)
-  }
-  
-  export const buyBlessingLevels = (blessing: RuneBlessingKeys, budget: Decimal) => {
-    if (!achievementManager.getBonus('blessingUnlock')) {
-      return
-    }
-  
-    const levelsToAdd = player.runeBlessingBuyAmount
-  
-    levelBlessing(blessing, levelsToAdd, budget)
-  }
-  
-  export const buyAllBlessingLevels = (budget: Decimal) => {
-    const ratio = runeBlessingKeys.length
-    for (const key of runeBlessingKeys) {
-      buyBlessingLevels(key, Decimal.floor(budget.div(ratio)))
-    }
+
+export const getRuneBlessingEffect = <T extends RuneBlessingKeys>(bless: T): RuneBlessingTypeMap[T] => {
+  return runeBlessings[bless].effects(getRuneBlessingPower(bless))
+}
+
+export const getRuneBlessingEXPPerOffering = (bless: RuneBlessingKeys): Decimal => {
+  return runeBlessings[bless].runeEXPPerOffering()
+}
+
+const computeEXPToLevel = (bless: RuneBlessingKeys, level: number) => {
+  const levelPerOOM = runeBlessings[bless].levelsPerOOM
+  return runeBlessings[bless].costCoefficient.times(Decimal.pow(10, level / levelPerOOM).minus(1))
+}
+
+const computeEXPLeftToLevel = (bless: RuneBlessingKeys, level: number) => {
+  return Decimal.max(0, computeEXPToLevel(bless, level).minus(runeBlessings[bless].runeEXP))
+}
+
+const computeOfferingsToLevel = (bless: RuneBlessingKeys, level: number) => {
+  return Decimal.max(1, computeEXPLeftToLevel(bless, level).div(getRuneBlessingEXPPerOffering(bless)).ceil())
+}
+
+export const getRuneBlessingTNL = (bless: RuneBlessingKeys) => {
+  return computeEXPLeftToLevel(bless, runeBlessings[bless].level + 1)
+}
+
+export const buyBlessingLevels = (blessing: RuneBlessingKeys, budget: Decimal) => {
+  if (!achievementManager.getBonus('blessingUnlock')) {
+    return
   }
 
-  export const levelBlessing = (bless: RuneBlessingKeys, timesLeveled: number, budget: Decimal) => {
-    let budgetUsed: Decimal
-  
-    const expRequired = computeEXPLeftToLevel(bless, runeBlessings[bless].level + timesLeveled)
-    const runeEXPPerOffering = getRuneBlessingEXPPerOffering(bless)
-    const offeringsRequired = Decimal.max(1, expRequired.div(runeEXPPerOffering).ceil())
-  
-    if (offeringsRequired.gt(budget)) {
-      runeBlessings[bless].runeEXP = runeBlessings[bless].runeEXP.add(budget.times(runeEXPPerOffering))
-      budgetUsed = budget
-    } else {
-      runeBlessings[bless].runeEXP = runeBlessings[bless].runeEXP.add(offeringsRequired.times(runeEXPPerOffering))
-      budgetUsed = offeringsRequired
-    }
-  
-    player.offerings = player.offerings.sub(budgetUsed)
-  
-    // this.updatePlayerEXP()
-    // this.updateRuneEffectHTML()
+  const levelsToAdd = player.runeBlessingBuyAmount
+
+  levelBlessing(blessing, levelsToAdd, budget)
+}
+
+export const buyAllBlessingLevels = (budget: Decimal) => {
+  const ratio = runeBlessingKeys.length
+  for (const key of runeBlessingKeys) {
+    buyBlessingLevels(key, Decimal.floor(budget.div(ratio)))
   }
-  
-  export const setBlessingLevel = (bless: RuneBlessingKeys, level: number) => {
-    const exp = computeEXPToLevel(bless, level)
-    runeBlessings[bless].level = level
-    runeBlessings[bless].runeEXP = exp
-  }
-  
-  const updateLevelsFromEXP = (bless: RuneBlessingKeys) => {
-    const levelsPerOOM = runeBlessings[bless].levelsPerOOM
-    const levels = Math.floor(levelsPerOOM * Decimal.log10(runeBlessings[bless].runeEXP.div(runeBlessings[bless].costCoefficient).plus(1)))
-    runeBlessings[bless].level = levels
+}
+
+export const levelBlessing = (bless: RuneBlessingKeys, timesLeveled: number, budget: Decimal) => {
+  let budgetUsed: Decimal
+
+  const expRequired = computeEXPLeftToLevel(bless, runeBlessings[bless].level + timesLeveled)
+  const runeEXPPerOffering = getRuneBlessingEXPPerOffering(bless)
+  const offeringsRequired = Decimal.max(1, expRequired.div(runeEXPPerOffering).ceil())
+
+  if (offeringsRequired.gt(budget)) {
+    runeBlessings[bless].runeEXP = runeBlessings[bless].runeEXP.add(budget.times(runeEXPPerOffering))
+    budgetUsed = budget
+  } else {
+    runeBlessings[bless].runeEXP = runeBlessings[bless].runeEXP.add(offeringsRequired.times(runeEXPPerOffering))
+    budgetUsed = offeringsRequired
   }
 
-  const getLevelEstimate = (bless: RuneBlessingKeys, offerings: Decimal) => {
-    const runeEXPPerOffering = getRuneBlessingEXPPerOffering(bless)
-    const totalEXP = runeBlessings[bless].runeEXP.plus(offerings.times(runeEXPPerOffering))
-    return Math.floor(runeBlessings[bless].levelsPerOOM * Decimal.log10(totalEXP.div(runeBlessings[bless].costCoefficient).plus(1)))
+  player.offerings = player.offerings.sub(budgetUsed)
+
+  // this.updatePlayerEXP()
+  // this.updateRuneEffectHTML()
+}
+
+export const setBlessingLevel = (bless: RuneBlessingKeys, level: number) => {
+  const exp = computeEXPToLevel(bless, level)
+  runeBlessings[bless].level = level
+  runeBlessings[bless].runeEXP = exp
+}
+
+const updateLevelsFromEXP = (bless: RuneBlessingKeys) => {
+  const levelsPerOOM = runeBlessings[bless].levelsPerOOM
+  const levels = Math.floor(
+    levelsPerOOM * Decimal.log10(runeBlessings[bless].runeEXP.div(runeBlessings[bless].costCoefficient).plus(1))
+  )
+  runeBlessings[bless].level = levels
+}
+
+const getLevelEstimate = (bless: RuneBlessingKeys, offerings: Decimal) => {
+  const runeEXPPerOffering = getRuneBlessingEXPPerOffering(bless)
+  const totalEXP = runeBlessings[bless].runeEXP.plus(offerings.times(runeEXPPerOffering))
+  return Math.floor(
+    runeBlessings[bless].levelsPerOOM * Decimal.log10(totalEXP.div(runeBlessings[bless].costCoefficient).plus(1))
+  )
+}
+
+export const updateAllBlessingLevelsFromEXP = () => {
+  for (const bless of runeBlessingKeys) {
+    updateLevelsFromEXP(bless)
   }
-  
-  export const updateAllBlessingLevelsFromEXP = () => {
-    for (const bless of runeBlessingKeys) {
-      updateLevelsFromEXP(bless)
-    }
-  }
-  
-  export const updateRuneBlessingHTML = (bless: RuneBlessingKeys) => {
-    assert(G.currentTab === Tabs.Runes, 'current tab is not Runes')
-    const levelsToDisplay = Math.min(
-      player.runeBlessingBuyAmount,
-      Math.max(1, getLevelEstimate(bless, player.offerings) - runeBlessings[bless].level)
+}
+
+export const updateRuneBlessingHTML = (bless: RuneBlessingKeys) => {
+  assert(G.currentTab === Tabs.Runes, 'current tab is not Runes')
+  const levelsToDisplay = Math.min(
+    player.runeBlessingBuyAmount,
+    Math.max(1, getLevelEstimate(bless, player.offerings) - runeBlessings[bless].level)
+  )
+
+  DOMCacheGetOrSet(`${bless}RuneBlessingLevel`).innerHTML = `${
+    i18next.t('runes.blessings.blessingLevel', {
+      amount: format(runeBlessings[bless].level, 0, true)
+    })
+  } <br> ${i18next.t('runes.offeringInvested', { amount: format(runeBlessings[bless].runeEXP, 0, false) })}`
+  DOMCacheGetOrSet(`${bless}RuneBlessingPurchase`).innerHTML = i18next.t('runes.blessings.increaseLevel', {
+    amount: format(levelsToDisplay, 0, true),
+    offerings: format(computeOfferingsToLevel(bless, runeBlessings[bless].level + levelsToDisplay), 0, false)
+  })
+  const blessingPower = getRuneBlessingPower(bless)
+  DOMCacheGetOrSet(`${bless}RuneBlessingPower`).innerHTML = i18next.t('runes.blessings.blessingPower', {
+    value: format(blessingPower, 0, true),
+    desc: runeBlessings[bless].effectsDescription(blessingPower)
+  })
+}
+
+export const updateRuneEffectHTML = (bless: RuneBlessingKeys) => {
+  if (G.currentTab === Tabs.Runes) {
+    DOMCacheGetOrSet(`${bless}RuneBlessingPower`).innerHTML = runeBlessings[bless].effectsDescription(
+      getRuneBlessingPower(bless)
     )
-
-    DOMCacheGetOrSet(`${bless}RuneBlessingLevel`).innerHTML = `${
-      i18next.t('runes.blessings.blessingLevel', {
-        amount: format(runeBlessings[bless].level, 0, true)
-      })
-    } <br> ${i18next.t('runes.offeringInvested', { amount: format(runeBlessings[bless].runeEXP, 0, false) })}`
-    DOMCacheGetOrSet(`${bless}RuneBlessingPurchase`).innerHTML = i18next.t('runes.blessings.increaseLevel', {
-      amount: format(levelsToDisplay, 0, true),
-      offerings: format(computeOfferingsToLevel(bless, runeBlessings[bless].level + levelsToDisplay), 0, false)
-    })
-    const blessingPower = getRuneBlessingPower(bless)
-    DOMCacheGetOrSet(`${bless}RuneBlessingPower`).innerHTML = i18next.t('runes.blessings.blessingPower', {
-      value: format(blessingPower, 0, true),
-      desc: runeBlessings[bless].effectsDescription(blessingPower)
-    })
   }
-  
-  export const updateRuneEffectHTML = (bless: RuneBlessingKeys) => {
-    if (G.currentTab === Tabs.Runes) {
-      DOMCacheGetOrSet(`${bless}RuneBlessingPower`).innerHTML = runeBlessings[bless].effectsDescription(getRuneBlessingPower(bless))
+}
+
+export function resetRuneBlessings (tier: keyof typeof resetTiers) {
+  for (const bless of runeBlessingKeys) {
+    if (resetTiers[tier] >= resetTiers[runeBlessings[bless].minimalResetTier]) {
+      runeBlessings[bless].level = 0
+      runeBlessings[bless].runeEXP = new Decimal(0)
     }
   }
-
-  export function resetRuneBlessings (tier: keyof typeof resetTiers) {
-    for (const bless of runeBlessingKeys) {
-      if (resetTiers[tier] >= resetTiers[runeBlessings[bless].minimalResetTier]) {
-        runeBlessings[bless].level = 0
-        runeBlessings[bless].runeEXP = new Decimal(0)
-      }
-    }
-  }
+}
