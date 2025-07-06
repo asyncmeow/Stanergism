@@ -3,10 +3,10 @@ import { achievementManager } from './Achievements'
 import { getAmbrosiaUpgradeEffects } from './BlueberryUpgrades'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { getOcteractUpgradeEffect } from './Octeracts'
+import { runes } from './Runes'
 import { format, formatAsPercentIncrease, player } from './Synergism'
 import { Alert, Prompt, revealStuff } from './UpdateHTML'
 import { toOrdinal } from './Utility'
-import { runes } from './Runes'
 
 export type SingularityDataKeys =
   | 'goldenQuarks1'

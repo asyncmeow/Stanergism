@@ -3,12 +3,12 @@ import Decimal from 'break_infinity.js'
 import { achievementManager } from './Achievements'
 import { CalcECC } from './Challenges'
 import { reset } from './Reset'
+import { getRuneEffects } from './Runes'
 import { player, updateAllMultiplier, updateAllTick } from './Synergism'
 import type { FirstToFifth, OneToFive, ZeroToFour } from './types/Synergism'
 import { crystalupgradedescriptions, upgradeupdate } from './Upgrades'
 import { smallestInc } from './Utility'
 import { Globals as G, Upgrade } from './Variables'
-import { getRuneEffects } from './Runes'
 
 export const getReductionValue = () => {
   let reduction = 1

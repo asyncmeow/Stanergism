@@ -46,11 +46,11 @@ import { getQuarkBonus, quarkHandler } from './Quark'
 import {
   getRuneBlessing,
   getRuneSpirit,
-  updateRuneEffectHTML,
-  updateRuneHTML,
   type RuneBlessingKeys,
   type RuneKeys,
-  type RuneSpiritKeys
+  type RuneSpiritKeys,
+  updateRuneEffectHTML,
+  updateRuneHTML
 } from './Runes'
 import { getShopCosts, isShopUpgradeUnlocked, shopData, shopUpgradeTypes } from './Shop'
 import {

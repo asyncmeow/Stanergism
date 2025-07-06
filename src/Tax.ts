@@ -5,8 +5,8 @@ import { Globals as G } from './Variables'
 import Decimal from 'break_infinity.js'
 import { achievementManager, ungroupedNameMap } from './Achievements'
 import { CalcECC } from './Challenges'
-import { getTalismanEffects } from './Talismans'
 import { getRuneEffects } from './Runes'
+import { getTalismanEffects } from './Talismans'
 
 export const calculatetax = () => {
   let exp = 1

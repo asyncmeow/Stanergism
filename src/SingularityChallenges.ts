@@ -2,11 +2,11 @@ import i18next from 'i18next'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { calculateGoldenQuarks } from './Calculate'
 import { singularity } from './Reset'
+import { runes } from './Runes'
 import { player } from './Synergism'
 import { Alert, Confirm } from './UpdateHTML'
 import { toOrdinal } from './Utility'
 import { Globals as G } from './Variables'
-import { runes } from './Runes'
 
 export interface ISingularityChallengeData {
   baseReq: number

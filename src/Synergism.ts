@@ -1238,7 +1238,6 @@ export const saveSynergy = (button?: boolean) => {
     })
   ) as Record<TalismanKeys, Record<TalismanCraftItems, number>>
 
-
   player.runes = Object.fromEntries(
     Object.keys(player.runes).map((key) => {
       const k = key as RuneKeys

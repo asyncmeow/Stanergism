@@ -5,6 +5,7 @@ import { CalcCorruptionStuff, calculateAscensionScore } from './Calculate'
 import { getHepteract } from './Hepteracts'
 import { octeractUpgrades } from './Octeracts'
 import { redAmbrosiaUpgrades } from './RedAmbrosiaUpgrades'
+import { runes, sumOfRuneLevels } from './Runes'
 import { goldenQuarkUpgrades } from './singularity'
 import type { SingularityChallengeDataKeys } from './SingularityChallenges'
 import { format, formatAsPercentIncrease, player } from './Synergism'
@@ -13,7 +14,6 @@ import type { resetNames } from './types/Synergism'
 import { Alert, Notification, revealStuff } from './UpdateHTML'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
-import { runes, sumOfRuneLevels } from './Runes'
 
 export const resetAchievementCheck = (reset: resetNames) => {
   if (reset === 'prestige') {

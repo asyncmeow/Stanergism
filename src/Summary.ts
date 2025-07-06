@@ -24,7 +24,7 @@ import {
   octeractUpgrades
 } from './Octeracts'
 import { redAmbrosiaUpgrades } from './RedAmbrosiaUpgrades'
-import { runes, type RuneKeys } from './Runes'
+import { type RuneKeys, runes } from './Runes'
 import { friendlyShopName, isShopUpgradeUnlocked, shopData, shopUpgradeTypes } from './Shop'
 import {
   actualGQUpgradeTotalLevels,

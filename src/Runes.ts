@@ -103,7 +103,6 @@ export interface RuneData<K extends RuneKeys> {
   valueText: () => string
 }
 
-
 /*
 abstract class AbstractRune<K extends string> {
   readonly name: string
@@ -482,7 +481,7 @@ export const bonusRuneLevelsSpeed = () => {
         )
       )
   )
-} 
+}
 
 export const bonusRuneLevelsDuplication = () => {
   return (
@@ -735,11 +734,12 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
         globalSpeed: globalSpeed
       }
     },
-    effectsDescription: (n) => i18next.t('runes.speed.effect', {
-      val: format(100 * (0.0002 * n), 2, true),
-      val2: formatAsPercentIncrease(1 + n / 400, 2),
-      val3: formatAsPercentIncrease(2 - Math.exp(-Math.cbrt(n) / 100), 2)
-    }),
+    effectsDescription: (n) =>
+      i18next.t('runes.speed.effect', {
+        val: format(100 * (0.0002 * n), 2, true),
+        val2: formatAsPercentIncrease(1 + n / 400, 2),
+        val3: formatAsPercentIncrease(2 - Math.exp(-Math.cbrt(n) / 100), 2)
+      }),
     effectiveLevelMult: () => firstFiveEffectiveRuneLevelMult(),
     freeLevels: () => firstFiveFreeLevels() + bonusRuneLevelsSpeed(),
     runeEXPPerOffering: (purchasedLevels) => universalRuneEXPMult(purchasedLevels).times(speedEXPMult()),
@@ -765,11 +765,12 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
         taxReduction: taxReduction
       }
     },
-    effectsDescription: (n) => i18next.t('runes.duplication.effect', {
-      val: format(n / 5, 2, true),
-      val2: formatAsPercentIncrease(1 + n / 400, 2),
-      val3: format(100 * (1 - (0.001 + .999 * Math.exp(-Math.cbrt(n) / 10))), 3, true)
-    }),
+    effectsDescription: (n) =>
+      i18next.t('runes.duplication.effect', {
+        val: format(n / 5, 2, true),
+        val2: formatAsPercentIncrease(1 + n / 400, 2),
+        val3: format(100 * (1 - (0.001 + .999 * Math.exp(-Math.cbrt(n) / 10))), 3, true)
+      }),
     effectiveLevelMult: () => firstFiveEffectiveRuneLevelMult(),
     freeLevels: () => firstFiveFreeLevels() + bonusRuneLevelsDuplication(),
     runeEXPPerOffering: (purchasedLevels) => universalRuneEXPMult(purchasedLevels).times(duplicationEXPMult()),
@@ -790,13 +791,18 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
       const costDivisorLog10 = Math.floor(level / 10)
       return {
         productionLog10: productionLog10,
-        costDivisorLog10: costDivisorLog10,
+        costDivisorLog10: costDivisorLog10
       }
     },
-    effectsDescription: (level) => i18next.t('runes.prism.effect', {
-      val: format(Decimal.pow(10, Math.max(0, 2 * Math.log10(1 + level / 2) + (level / 2) * Math.log10(2) - Math.log10(256))), 2, true),
-      val2: format(Decimal.pow(10, Math.floor(level / 10)), 2, true)
-    }),
+    effectsDescription: (level) =>
+      i18next.t('runes.prism.effect', {
+        val: format(
+          Decimal.pow(10, Math.max(0, 2 * Math.log10(1 + level / 2) + (level / 2) * Math.log10(2) - Math.log10(256))),
+          2,
+          true
+        ),
+        val2: format(Decimal.pow(10, Math.floor(level / 10)), 2, true)
+      }),
     effectiveLevelMult: () => firstFiveEffectiveRuneLevelMult(),
     freeLevels: () => firstFiveFreeLevels() + bonusRuneLevelsPrism(),
     runeEXPPerOffering: (purchasedLevels) => universalRuneEXPMult(purchasedLevels).times(prismEXPMult()),
@@ -822,11 +828,12 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
         taxReduction: taxReduction
       }
     },
-    effectsDescription: (level) => i18next.t('runes.thrift.effect', {
-      val: format(Math.min(1e15, level / 125), 2, true),
-      val2: format(200 * (1 - Math.exp(-Math.sqrt(level) / 100)), 2, true),
-      val3: format(100 * (1 - (0.01 + 0.99 * Math.exp(-Math.cbrt(level) / 20))), 2, true)
-    }),
+    effectsDescription: (level) =>
+      i18next.t('runes.thrift.effect', {
+        val: format(Math.min(1e15, level / 125), 2, true),
+        val2: format(200 * (1 - Math.exp(-Math.sqrt(level) / 100)), 2, true),
+        val3: format(100 * (1 - (0.01 + 0.99 * Math.exp(-Math.cbrt(level) / 20))), 2, true)
+      }),
     effectiveLevelMult: () => firstFiveEffectiveRuneLevelMult(),
     freeLevels: () => firstFiveFreeLevels() + bonusRuneLevelsThrift(),
     runeEXPPerOffering: (purchasedLevels) => universalRuneEXPMult(purchasedLevels).times(thriftEXPMult()),
@@ -852,11 +859,12 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
         antSpeed: antSpeed
       }
     },
-    effectsDescription: (level) => i18next.t('runes.superiorIntellect.effect', {
-      val: format(1 + level / 2000, 3, true),
-      val2: format(1 + level / 200, 3, true),
-      val3: format(1 + Math.pow(level, 2) / 2500, 3, true)
-    }),
+    effectsDescription: (level) =>
+      i18next.t('runes.superiorIntellect.effect', {
+        val: format(1 + level / 2000, 3, true),
+        val2: format(1 + level / 200, 3, true),
+        val3: format(1 + Math.pow(level, 2) / 2500, 3, true)
+      }),
     effectiveLevelMult: () => firstFiveEffectiveRuneLevelMult() * SIEffectiveRuneLevelMult(),
     freeLevels: () => firstFiveFreeLevels() + bonusRuneLevelsSI(),
     runeEXPPerOffering: (purchasedLevels) => universalRuneEXPMult(purchasedLevels).times(superiorIntellectEXPMult()),
@@ -880,10 +888,11 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
         cubeMult: cubeMult
       }
     },
-    effectsDescription: (level) => i18next.t('runes.infiniteAscent.effect', {
-      val: formatAsPercentIncrease(1 + level / 500 + (level > 0 ? 0.1 : 0), 2),
-      val2: formatAsPercentIncrease(1 + level / 100, 2)
-    }),
+    effectsDescription: (level) =>
+      i18next.t('runes.infiniteAscent.effect', {
+        val: formatAsPercentIncrease(1 + level / 500 + (level > 0 ? 0.1 : 0), 2),
+        val2: formatAsPercentIncrease(1 + level / 100, 2)
+      }),
     effectiveLevelMult: () => 1,
     freeLevels: () => bonusRuneLevelsIA(),
     runeEXPPerOffering: (purchasedLevels) => universalRuneEXPMult(purchasedLevels).times(infiniteAscentEXPMult()),
@@ -909,11 +918,12 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
         obtainiumLog10: obtainiumLog10
       }
     },
-    effectsDescription: (level) => i18next.t('runes.antiquities.effect', {
-      val: format(Decimal.pow(10, level), 0, true),
-      val2: format(Decimal.pow(10, level), 0, true),
-      val3: format(100 * (level > 0 ? 0.8 - 0.3 * (level - 1) / (level + 10) : 1), 2, true)
-    }),
+    effectsDescription: (level) =>
+      i18next.t('runes.antiquities.effect', {
+        val: format(Decimal.pow(10, level), 0, true),
+        val2: format(Decimal.pow(10, level), 0, true),
+        val3: format(100 * (level > 0 ? 0.8 - 0.3 * (level - 1) / (level + 10) : 1), 2, true)
+      }),
     effectiveLevelMult: () => 1,
     freeLevels: () => bonusRuneLevelsAntiquities(),
     runeEXPPerOffering: (purchasedLevels) => universalRuneEXPMult(purchasedLevels).times(antiquitiesEXPMult()),
@@ -939,11 +949,12 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
         redLuckConversion: redLuckConversion
       }
     },
-    effectsDescription: (level) => i18next.t('runes.horseShoe.effect', {
-      val: format(5 * level, 0, true),
-      val2: format(level, 0, true),
-      val3: format(-0.5 * level / (level + 50), 3, false)
-    }),
+    effectsDescription: (level) =>
+      i18next.t('runes.horseShoe.effect', {
+        val: format(5 * level, 0, true),
+        val2: format(level, 0, true),
+        val3: format(-0.5 * level / (level + 50), 3, false)
+      }),
     effectiveLevelMult: () => 1,
     freeLevels: () => bonusRuneLevelsHorseShoe(),
     runeEXPPerOffering: (purchasedLevels) => universalRuneEXPMult(purchasedLevels),
@@ -1009,8 +1020,8 @@ export const levelRune = (rune: RuneKeys, timesLeveled: number, budget: Decimal)
 
   player.offerings = player.offerings.sub(budgetUsed)
 
-  //this.updatePlayerEXP()
-  //this.updateRuneEffectHTML()
+  // this.updatePlayerEXP()
+  // this.updateRuneEffectHTML()
 }
 
 export const setRuneLevel = (rune: RuneKeys, level: number) => {
