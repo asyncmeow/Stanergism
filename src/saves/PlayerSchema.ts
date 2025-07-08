@@ -37,7 +37,9 @@ const arrayExtend = <
   return array
 }
 
-const buyAmount = z.number().refine((arg) => arg === 1 || arg === 10 || arg === 100 || arg === 1000).default(1)
+const buyAmount = z.number().refine((arg) =>
+  arg === 1 || arg === 10 || arg === 100 || arg === 1000 || arg === 10_000 || arg === 100_000
+).default(1)
 
 const ascendBuildingSchema = z.object({
   cost: z.number(),

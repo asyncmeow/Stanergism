@@ -59,7 +59,7 @@ import { calculateTesseractBlessings } from './Tesseracts'
 import { IconSets } from './Themes'
 import { clearInterval, setInterval } from './Timers'
 import { toggleAutoChallengeModeText } from './Toggles'
-import type { OneToFive, Player, resetNames } from './types/Synergism'
+import type { BuyAmount, OneToFive, Player, resetNames } from './types/Synergism'
 import { Alert, revealStuff, updateChallengeDisplay } from './UpdateHTML'
 import { upgradeupdate } from './Upgrades'
 import { getElementById } from './Utility'
@@ -814,7 +814,7 @@ export const reset = (input: resetNames, fast = false, from = 'unknown') => {
         const buyFrom = ownedBuildings[i - 1]
         const buyTo = buyToBuildings[i - 1]
         if (buyFrom !== null && buyTo !== null && buyTo !== buyFrom) {
-          buyTesseractBuilding(i as OneToFive, buyTo - buyFrom)
+          buyTesseractBuilding(i as OneToFive, buyTo - buyFrom as BuyAmount)
         }
       }
     }

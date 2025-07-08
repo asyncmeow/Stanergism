@@ -9,7 +9,7 @@ import { reset, resetrepeat } from './Reset'
 import { indexToRune } from './Runes'
 import { format, player, resetCheck } from './Synergism'
 import { getActiveSubTab, subTabsInMainTab, Tabs } from './Tabs'
-import type { BuildingSubtab, Player } from './types/Synergism'
+import type { BuildingSubtab, BuyAmount, Player } from './types/Synergism'
 import { Alert, Prompt, showCorruptionStatsLoadouts, updateChallengeDisplay } from './UpdateHTML'
 import { visualUpdateAmbrosia, visualUpdateCubes, visualUpdateOcteracts } from './UpdateVisuals'
 import { Globals as G } from './Variables'
@@ -102,7 +102,7 @@ export const toggleChallenges = (i: number, auto = false) => {
 
 type ToggleBuy = 'coin' | 'crystal' | 'mythos' | 'particle' | 'offering' | 'tesseract'
 
-export const toggleBuyAmount = (quantity: 1 | 10 | 100 | 1000 | 10000 | 100000, type: ToggleBuy) => {
+export const toggleBuyAmount = (quantity: BuyAmount, type: ToggleBuy) => {
   player[`${type}buyamount` as const] = quantity
   const a = ['one', 'ten', 'hundred', 'thousand', '10k', '100k'][quantity.toString().length - 1]
 

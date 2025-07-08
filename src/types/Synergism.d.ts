@@ -29,6 +29,8 @@ import type { TalismanCraftItems, TalismanKeys } from '../Talismans'
 
 type ArrayStartingWithNull<T> = [null, ...T[]]
 
+export type BuyAmount = 1 | 10 | 100 | 1000 | 10_000 | 100_000
+
 export interface Player {
   firstPlayed: string
   worlds: QuarkHandler
@@ -317,12 +319,12 @@ export interface Player {
   tesseractAutoBuyerToggle: number
   tesseractAutoBuyerAmount: number
 
-  coinbuyamount: number
-  crystalbuyamount: number
-  mythosbuyamount: number
-  particlebuyamount: number
-  offeringbuyamount: number
-  tesseractbuyamount: number
+  coinbuyamount: BuyAmount
+  crystalbuyamount: BuyAmount
+  mythosbuyamount: BuyAmount
+  particlebuyamount: BuyAmount
+  offeringbuyamount: BuyAmount
+  tesseractbuyamount: BuyAmount
 
   shoptoggles: {
     coin: boolean
