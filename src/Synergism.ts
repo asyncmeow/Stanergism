@@ -1390,221 +1390,13 @@ const loadSynergy = () => {
       player.loaded10101 = false
     }
 
-    if (
-      !data.loaded1009
-      || data.shopUpgrades?.offeringPotion === undefined
-    ) {
-      player.firstOwnedParticles = 0
-      player.secondOwnedParticles = 0
-      player.thirdOwnedParticles = 0
-      player.fourthOwnedParticles = 0
-      player.fifthOwnedParticles = 0
-      player.firstCostParticles = new Decimal('1')
-      player.secondCostParticles = new Decimal('1e2')
-      player.thirdCostParticles = new Decimal('1e4')
-      player.fourthCostParticles = new Decimal('1e8')
-      player.fifthCostParticles = new Decimal('1e16')
-      player.autoSacrificeToggle = false
-      player.autoResearchToggle = false
-      player.autoResearchMode = 'manual'
-      player.autoResearch = 0
-      player.autoSacrifice = 0
-      player.sacrificeTimer = 0
-      player.loaded1009 = true
-      player.codes.set(18, false)
-    }
-    if (!data.loaded1009hotfix1) {
-      player.loaded1009hotfix1 = true
-      player.codes.set(19, true)
-      player.firstOwnedParticles = 0
-      player.secondOwnedParticles = 0
-      player.thirdOwnedParticles = 0
-      player.fourthOwnedParticles = 0
-      player.fifthOwnedParticles = 0
-      player.firstCostParticles = new Decimal('1')
-      player.secondCostParticles = new Decimal('1e2')
-      player.thirdCostParticles = new Decimal('1e4')
-      player.fourthCostParticles = new Decimal('1e8')
-      player.fifthCostParticles = new Decimal('1e16')
-    }
-    if (
-      data.loaded10091 === undefined
-      || !data.loaded10091
-      || player.researches[86] > 100
-      || player.researches[87] > 100
-      || player.researches[88] > 100
-      || player.researches[89] > 100
-      || player.researches[90] > 10
-    ) {
-      player.loaded10091 = true
-      player.researches[86] = 0
-      player.researches[87] = 0
-      player.researches[88] = 0
-      player.researches[89] = 0
-      player.researches[90] = 0
-      player.researches[91] = 0
-      player.researches[92] = 0
-    }
-
-    // const shop = data.shopUpgrades as LegacyShopUpgrades & Player['shopUpgrades'];
-    if (
-      data.achievements?.[169] === undefined
-      || data.loaded1010 === undefined
-      || data.loaded1010 === false
-    ) {
-      player.loaded1010 = true
-      player.codes.set(21, false)
-
-      player.firstOwnedAnts = 0
-      player.firstGeneratedAnts = new Decimal('0')
-      player.firstCostAnts = new Decimal('1e700')
-      player.firstProduceAnts = 0.0001
-
-      player.secondOwnedAnts = 0
-      player.secondGeneratedAnts = new Decimal('0')
-      player.secondCostAnts = new Decimal('3')
-      player.secondProduceAnts = 0.00005
-
-      player.thirdOwnedAnts = 0
-      player.thirdGeneratedAnts = new Decimal('0')
-      player.thirdCostAnts = new Decimal('100')
-      player.thirdProduceAnts = 0.00002
-
-      player.fourthOwnedAnts = 0
-      player.fourthGeneratedAnts = new Decimal('0')
-      player.fourthCostAnts = new Decimal('1e4')
-      player.fourthProduceAnts = 0.00001
-
-      player.fifthOwnedAnts = 0
-      player.fifthGeneratedAnts = new Decimal('0')
-      player.fifthCostAnts = new Decimal('1e12')
-      player.fifthProduceAnts = 0.000005
-
-      player.sixthOwnedAnts = 0
-      player.sixthGeneratedAnts = new Decimal('0')
-      player.sixthCostAnts = new Decimal('1e36')
-      player.sixthProduceAnts = 0.000002
-
-      player.seventhOwnedAnts = 0
-      player.seventhGeneratedAnts = new Decimal('0')
-      player.seventhCostAnts = new Decimal('1e100')
-      player.seventhProduceAnts = 0.000001
-
-      player.eighthOwnedAnts = 0
-      player.eighthGeneratedAnts = new Decimal('0')
-      player.eighthCostAnts = new Decimal('1e300')
-      player.eighthProduceAnts = 0.00000001
-
-      player.antPoints = new Decimal('1')
-
-      player.upgrades[38] = 0
-      player.upgrades[39] = 0
-      player.upgrades[40] = 0
-
-      player.upgrades[76] = 0
-      player.upgrades[77] = 0
-      player.upgrades[78] = 0
-      player.upgrades[79] = 0
-      player.upgrades[80] = 0
-
-      //    player.shopUpgrades.antSpeed = 0;
-      //    player.shopUpgrades.shopTalisman = 0;
-
-      player.antUpgrades = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
-      player.unlocks.rrow4 = false
-      player.researches[50] = 0
-      player.researches[96] = 0
-      player.researches[97] = 0
-      player.researches[98] = 0
-      player.researches.push(
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      )
-
-      player.talismanShards = 0
-      player.commonFragments = 0
-      player.uncommonFragments = 0
-      player.rareFragments = 0
-      player.epicFragments = 0
-      player.legendaryFragments = 0
-      player.mythicalFragments = 0
-      player.buyTalismanShardPercent = 10
-
-      player.antSacrificePoints = 0
-      player.antSacrificeTimer = 0
-    }
-
-    if (data.loaded10101 === undefined || data.loaded10101 === false) {
-      player.loaded10101 = true
-
-      player.autoAntSacrifice = false
-      player.antMax = false
-    }
 
     if (player.firstOwnedAnts < 1 && player.firstCostAnts.gte('1e1200')) {
       player.firstCostAnts = new Decimal('1e700')
       player.firstOwnedAnts = 0
     }
 
-    // checkVariablesOnLoad(data)
-
-    if (player.ascensionCount === 0) {
-      if (player.prestigeCount > 0) {
-        player.ascensionCounter = 86400 * 90
-      }
-      /*player.cubeUpgrades = [null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,];*/
-
-      if (player.singularityCount === 0) {
-        player.cubeUpgrades = [...blankSave.cubeUpgrades]
-      }
-      player.wowCubes = new WowCubes(0)
-      player.wowTesseracts = new WowTesseracts(0)
-      player.wowHypercubes = new WowHypercubes(0)
-      player.wowPlatonicCubes = new WowPlatonicCubes(0)
-      player.cubeBlessings = {
-        accelerator: 0,
-        multiplier: 0,
-        offering: 0,
-        runeExp: 0,
-        obtainium: 0,
-        antSpeed: 0,
-        antSacrifice: 0,
-        antELO: 0,
-        talismanBonus: 0,
-        globalSpeed: 0
-      }
-    }
-
+    // Does this need to be kept here?
     if (player.transcendCount < 0) {
       player.transcendCount = 0
     }
@@ -1618,41 +1410,17 @@ const loadSynergy = () => {
       player.obtainium = new Decimal(0)
     }
 
-    if (player.resettoggle1 === 0) {
-      player.resettoggle1 = 1
-      player.resettoggle2 = 1
-      player.resettoggle3 = 1
-      player.resettoggle4 = 1
-    }
-    if (player.tesseractAutoBuyerToggle === 0) {
-      player.tesseractAutoBuyerToggle = 1
-    }
-    if (player.reincarnationCount < 0.5 && player.unlocks.rrow4) {
-      player.unlocks = {
-        coinone: false,
-        cointwo: false,
-        cointhree: false,
-        coinfour: false,
-        prestige: false,
-        generation: false,
-        transcend: false,
-        reincarnate: false,
-        rrow1: false,
-        rrow2: false,
-        rrow3: false,
-        rrow4: false
-      }
-    }
-
     if (!player.dayCheck) {
       player.dayCheck = new Date()
     }
+
     if (typeof player.dayCheck === 'string') {
       player.dayCheck = new Date(player.dayCheck)
       if (isNaN(player.dayCheck.getTime())) {
         player.dayCheck = new Date()
       }
     }
+    // Why was this made?
     // Measures for people who play the past
     let updatedLast = lastUpdated
     if (!isNaN(updatedLast.getTime())) {
@@ -1674,16 +1442,11 @@ const loadSynergy = () => {
       player.dayCheck.getDate()
     )
 
+    // Probably want to remove Corruptions from Player Object...
     player.corruptions.used = new CorruptionLoadout(player.corruptions.used.loadout)
     // This is needed to fix saves that had issues with not resetting corruption at the singularity
     player.corruptions.used.setCorruptionLevelsWithChallengeRequirement(player.corruptions.used.loadout)
 
-    for (let i = 1; i <= 5; i++) {
-      const ascendBuildingI = `ascendBuilding${i as OneToFive}` as const
-      player[ascendBuildingI].generated = new Decimal(
-        player[ascendBuildingI].generated
-      )
-    }
 
     for (let j = 1; j < 126; j++) {
       upgradeupdate(j, true)
@@ -1700,6 +1463,7 @@ const loadSynergy = () => {
       updatePlatonicUpgradeBG(j)
     }
 
+    // WHY
     const q = [
       'coin',
       'crystal',
@@ -2154,17 +1918,6 @@ const loadSynergy = () => {
       )
       DOMCacheGetOrSet('toggleautofortify').style.border = '2px solid red'
     }
-    /*if (player.autoEnhanceToggle) {
-      DOMCacheGetOrSet('toggleautoenhance').textContent = i18next.t(
-        'runes.autoEnhanceOn'
-      )
-      DOMCacheGetOrSet('toggleautoenhance').style.border = '2px solid green'
-    } else {
-      DOMCacheGetOrSet('toggleautoenhance').textContent = i18next.t(
-        'runes.autoEnhanceOff'
-      )
-      DOMCacheGetOrSet('toggleautoenhance').style.border = '2px solid red'
-    }*/
     player.saveOfferingToggle = false // Lint doesnt like it being inside if
     DOMCacheGetOrSet('saveOffToggle').textContent = i18next.t(
       'toggles.saveOfferingsOff'
