@@ -126,7 +126,7 @@ import {
   updateAutoChallenge,
   updateRuneBlessingBuyAmount
 } from './Toggles'
-import type { BuyAmount, OneToFive, Player, resetNames, ZeroToFour } from './types/Synergism'
+import type { OneToFive, Player, resetNames, ZeroToFour } from './types/Synergism'
 import {
   Alert,
   buttoncolorchange,
@@ -4929,7 +4929,7 @@ export const updateAll = (): void => {
       const buyFrom = ownedBuildings[i - 1]
       const buyTo = buyToBuildings[i - 1]
       if (buyFrom !== null && buyTo !== null && buyTo !== buyFrom) {
-        buyTesseractBuilding(i as OneToFive, buyTo - buyFrom as BuyAmount)
+        buyTesseractBuilding(i as OneToFive, buyTo - buyFrom)
       }
     }
   }

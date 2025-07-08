@@ -1151,7 +1151,7 @@ export const getTesseractCost = (
   return [actualBuy, actualCost]
 }
 
-export const buyTesseractBuilding = (index: OneToFive, amount = player.tesseractbuyamount) => {
+export const buyTesseractBuilding = (index: OneToFive, amount: number = player.tesseractbuyamount) => {
   const intCost = tesseractBuildingCosts[index - 1]
   const ascendBuildingIndex = `ascendBuilding${index}` as const
   // Destructuring FTW!
