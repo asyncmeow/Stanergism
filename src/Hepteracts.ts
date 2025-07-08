@@ -10,23 +10,23 @@ import {
 } from './Calculate'
 import { Cube } from './CubeExperimental'
 import { getOcteractUpgradeEffect } from './Octeracts'
+import { resetTiers } from './Reset'
 import { calculateSingularityDebuff, getGQUpgradeEffect } from './singularity'
 import { format, formatAsPercentIncrease, player } from './Synergism'
 import type { Player } from './types/Synergism'
 import { Alert, Confirm, Prompt } from './UpdateHTML'
 import { isDecimal } from './Utility'
 import { Globals } from './Variables'
-import { resetTiers } from './Reset'
 
 type HepteractTypeMap = {
   chronos: { ascensionSpeed: number }
   hyperrealism: { hypercubeMultiplier: number }
   quark: { quarkMultiplier: number }
-  challenge: { c15ScoreMultiplier : number }
+  challenge: { c15ScoreMultiplier: number }
   abyss: { salvage: number }
-  accelerator: { accelerators: number, acceleratorMultiplier: number }
+  accelerator: { accelerators: number; acceleratorMultiplier: number }
   acceleratorBoost: { acceleratorBoostMultiplier: number }
-  multiplier: { multiplier: number, multiplierMultiplier: number }
+  multiplier: { multiplier: number; multiplierMultiplier: number }
 }
 
 export type HepteractKeys = keyof HepteractTypeMap
@@ -68,7 +68,7 @@ export const hepteracts: { [K in HepteractKeys]: HepteractData<K> } = {
     UNLOCKED: () => true,
     EFFECTS: (hept) => {
       return {
-        ascensionSpeed: 1 + 6 * hept / 10000,
+        ascensionSpeed: 1 + 6 * hept / 10000
       }
     },
     EFFECTSDESCRIPTION: (hept) => {
@@ -93,7 +93,7 @@ export const hepteracts: { [K in HepteractKeys]: HepteractData<K> } = {
     UNLOCKED: () => true,
     EFFECTS: (hept) => {
       return {
-        hypercubeMultiplier: 1 + 6 * hept / 10000,
+        hypercubeMultiplier: 1 + 6 * hept / 10000
       }
     },
     EFFECTSDESCRIPTION: (hept) => {
@@ -120,11 +120,11 @@ export const hepteracts: { [K in HepteractKeys]: HepteractData<K> } = {
       const exponent = hepteracts.quark.DR + hepteracts.quark.DR_INCREASE()
       if (hept <= hepteracts.quark.LIMIT) {
         return {
-          quarkMultiplier: Math.pow(1 + 5 * hept / 10000, exponent),
+          quarkMultiplier: Math.pow(1 + 5 * hept / 10000, exponent)
         }
       }
       return {
-        quarkMultiplier: Math.pow(1.5 + 0.2 * Math.log2(hept / 1000), exponent),
+        quarkMultiplier: Math.pow(1.5 + 0.2 * Math.log2(hept / 1000), exponent)
       }
     },
     EFFECTSDESCRIPTION: (hept) => {
@@ -139,14 +139,14 @@ export const hepteracts: { [K in HepteractKeys]: HepteractData<K> } = {
     DR: 1,
     DR_INCREASE: () => {
       return getGQUpgradeEffect('singQuarkHepteract')
-      + getGQUpgradeEffect('singQuarkHepteract2')
-      + getGQUpgradeEffect('singQuarkHepteract3')
-       + getOcteractUpgradeEffect('octeractImprovedQuarkHept')
-       + player.shopUpgrades.improveQuarkHept / 100
-       + player.shopUpgrades.improveQuarkHept2 / 100
-       + player.shopUpgrades.improveQuarkHept3 / 100
-       + player.shopUpgrades.improveQuarkHept4 / 100
-       + player.shopUpgrades.improveQuarkHept5 / 5000
+        + getGQUpgradeEffect('singQuarkHepteract2')
+        + getGQUpgradeEffect('singQuarkHepteract3')
+        + getOcteractUpgradeEffect('octeractImprovedQuarkHept')
+        + player.shopUpgrades.improveQuarkHept / 100
+        + player.shopUpgrades.improveQuarkHept2 / 100
+        + player.shopUpgrades.improveQuarkHept3 / 100
+        + player.shopUpgrades.improveQuarkHept4 / 100
+        + player.shopUpgrades.improveQuarkHept5 / 5000
     }
   },
   challenge: {
@@ -162,7 +162,7 @@ export const hepteracts: { [K in HepteractKeys]: HepteractData<K> } = {
     },
     EFFECTS: (hept) => {
       return {
-        c15ScoreMultiplier: 1 + 5 * hept / 10000,
+        c15ScoreMultiplier: 1 + 5 * hept / 10000
       }
     },
     EFFECTSDESCRIPTION: (hept) => {
@@ -190,7 +190,7 @@ export const hepteracts: { [K in HepteractKeys]: HepteractData<K> } = {
     },
     EFFECTS: (hept) => {
       return {
-        salvage: 0.1 * Math.floor(10 * Math.log2(Math.max(1, hept * 2))),
+        salvage: 0.1 * Math.floor(10 * Math.log2(Math.max(1, hept * 2)))
       }
     },
     EFFECTSDESCRIPTION: (hept) => {
@@ -219,7 +219,7 @@ export const hepteracts: { [K in HepteractKeys]: HepteractData<K> } = {
     EFFECTS: (hept) => {
       return {
         accelerators: 2000 * hept,
-        acceleratorMultiplier: 1 + 3 * hept / 10000,
+        acceleratorMultiplier: 1 + 3 * hept / 10000
       }
     },
     EFFECTSDESCRIPTION: (hept) => {
@@ -248,7 +248,7 @@ export const hepteracts: { [K in HepteractKeys]: HepteractData<K> } = {
     },
     EFFECTS: (hept) => {
       return {
-        acceleratorBoostMultiplier: 1 + hept / 1000,
+        acceleratorBoostMultiplier: 1 + hept / 1000
       }
     },
     EFFECTSDESCRIPTION: (hept) => {
@@ -277,7 +277,7 @@ export const hepteracts: { [K in HepteractKeys]: HepteractData<K> } = {
     EFFECTS: (hept) => {
       return {
         multiplier: 1000 * hept,
-        multiplierMultiplier: 1 + 3 * hept / 10000,
+        multiplierMultiplier: 1 + 3 * hept / 10000
       }
     },
     EFFECTSDESCRIPTION: (hept) => {
@@ -586,7 +586,6 @@ export const resetHepteracts = (tier: keyof typeof resetTiers) => {
   }
 }
 
-
 export const hepteractEffective = (hept: HepteractKeys) => {
   // Quark Hept now uses a custom (nonpolynomial) formula, so just return val
   if (hept === 'quark') {
@@ -596,7 +595,6 @@ export const hepteractEffective = (hept: HepteractKeys) => {
   let rawHeptAmount = hepteracts[hept].BAL
   let effectiveValue = Math.min(rawHeptAmount, hepteracts[hept].LIMIT)
   let exponent = hepteracts[hept].DR + hepteracts[hept].DR_INCREASE()
-  
 
   // Save in case I go back to this - Platonic
   /*

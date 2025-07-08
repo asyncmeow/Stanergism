@@ -1,9 +1,9 @@
 import i18next from 'i18next'
 import { DOMCacheGetOrSet } from './Cache/DOM'
+import { hepteracts } from './Hepteracts'
 import { calculateSingularityDebuff } from './singularity'
 import { format, player } from './Synergism'
 import { Alert, revealStuff } from './UpdateHTML'
-import { hepteracts } from './Hepteracts'
 
 export interface IPlatBaseCost {
   obtainium: number
@@ -447,7 +447,7 @@ export const buyPlatonicUpgrades = (index: number, auto = false) => {
       player.wowTesseracts.sub(Math.floor(platUpgradeBaseCosts[index].tesseracts * priceMultiplier))
       player.wowHypercubes.sub(Math.floor(platUpgradeBaseCosts[index].hypercubes * priceMultiplier))
       player.wowPlatonicCubes.sub(Math.floor(platUpgradeBaseCosts[index].platonics * priceMultiplier))
-      hepteracts.abyss.BAL -= (Math.floor(platUpgradeBaseCosts[index].abyssals * priceMultiplier))
+      hepteracts.abyss.BAL -= Math.floor(platUpgradeBaseCosts[index].abyssals * priceMultiplier)
 
       if (index === 20 && !auto && player.singularityCount === 0) {
         void Alert(

@@ -3,6 +3,7 @@ import { z, type ZodNumber, type ZodType } from 'zod'
 import { CampaignManager, type ICampaignManagerData } from '../Campaign'
 import { CorruptionLoadout, CorruptionSaves } from '../Corruptions'
 import { WowCubes, WowHypercubes, WowPlatonicCubes, WowTesseracts } from '../CubeExperimental'
+import { HepteractKeys, hepteracts } from '../Hepteracts'
 import { QuarkHandler } from '../Quark'
 import {
   SingularityChallenge,
@@ -13,7 +14,6 @@ import { blankSave, deepClone } from '../Synergism'
 import { noTalismanFragments } from '../Talismans'
 import type { Player } from '../types/Synergism'
 import { padArray } from '../Utility'
-import { HepteractKeys, hepteracts } from '../Hepteracts'
 
 const decimalSchema = z.custom<DecimalSource>((value) => {
   try {

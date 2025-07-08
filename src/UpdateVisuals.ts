@@ -39,6 +39,7 @@ import { CalcECC } from './Challenges'
 import { version } from './Config'
 import type { IMultiBuy } from './Cubes'
 import { BuffType, consumableEventBuff, eventBuffType, getEvent, getEventBuff } from './Event'
+import { getFinalHepteractCap, HepteractKeys, hepteractKeys, hepteracts } from './Hepteracts'
 import { allDurableConsumables, type PseudoCoinConsumableNames } from './Login'
 import { getOcteractUpgradeCostTNL, type OcteractDataKeys, octeractUpgrades } from './Octeracts'
 import { getQuarkBonus, quarkHandler } from './Quark'
@@ -62,7 +63,6 @@ import { getTalismanLevelCap, type TalismanKeys, talismans, updateAllTalismanHTM
 import type { Player, ZeroToFour } from './types/Synergism'
 import { sumContents, timeReminingHours } from './Utility'
 import { Globals as G } from './Variables'
-import { getFinalHepteractCap, HepteractKeys, hepteractKeys, hepteracts } from './Hepteracts'
 
 export const visualUpdateBuildings = () => {
   if (G.currentTab !== Tabs.Buildings) {

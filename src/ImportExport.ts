@@ -6,6 +6,7 @@ import { DOMCacheGetOrSet } from './Cache/DOM'
 import { calculateOcteractMultiplier } from './Calculate'
 import { testing, version } from './Config'
 import { addTimers } from './Helper'
+import { getFinalHepteractCap, hepteracts } from './Hepteracts'
 import { getOcteractUpgradeEffect, octeractUpgrades } from './Octeracts'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { getQuarkBonus, quarkHandler } from './Quark'
@@ -26,7 +27,6 @@ import { Alert, Confirm, Prompt } from './UpdateHTML'
 import { cleanString, getElementById } from './Utility'
 import { btoa } from './Utility'
 import { Globals as G } from './Variables'
-import { getFinalHepteractCap, hepteracts } from './Hepteracts'
 
 const format24 = new Intl.DateTimeFormat('EN-GB', {
   year: 'numeric',
@@ -444,7 +444,6 @@ export const promocodes = async (input: string | null, amount?: number) => {
       x: player.worlds.applyBonus(quarks)
     })
   } else if (input === 'alonso bribe' && !player.codes.get(47)) {
-
     if (!hepteracts.quark.UNLOCKED()) {
       return Alert(i18next.t('importexport.promocodes.bribe.notUnlocked'))
     }

@@ -15,6 +15,7 @@ import {
 } from './Calculate'
 import { getMaxChallenges } from './Challenges'
 import { version } from './Config'
+import { getFinalHepteractCap, hepteractKeys, hepteracts } from './Hepteracts'
 import { saveFilename } from './ImportExport'
 import {
   actualOcteractUpgradeTotalLevels,
@@ -38,7 +39,6 @@ import type { Player } from './types/Synergism'
 import { Alert } from './UpdateHTML'
 import { formatS, sumContents } from './Utility'
 import { Globals as G } from './Variables'
-import { getFinalHepteractCap, hepteractKeys, hepteracts } from './Hepteracts'
 
 export const generateExportSummary = async (): Promise<void> => {
   const titleText = '===== SUMMARY STATS ====='

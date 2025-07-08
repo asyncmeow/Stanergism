@@ -1185,8 +1185,7 @@ export const deepClone = () =>
       [WowTesseracts, (o: WowTesseracts) => new WowTesseracts(o.valueOf())],
       [WowHypercubes, (o: WowHypercubes) => new WowHypercubes(o.valueOf())],
       [WowPlatonicCubes, (o: WowPlatonicCubes) => new WowPlatonicCubes(o.valueOf())],
-      [CorruptionLoadout, (o: CorruptionLoadout) =>
-        new CorruptionLoadout(o.loadout)],
+      [CorruptionLoadout, (o: CorruptionLoadout) => new CorruptionLoadout(o.loadout)],
       [CorruptionSaves, (o: CorruptionSaves) => new CorruptionSaves(o.corrSaveData)],
       [CampaignManager, (o: CampaignManager) => new CampaignManager(o.campaignManagerData)],
       [SingularityChallenge, (o: SingularityChallenge) => new SingularityChallenge(o.valueOf(), o.key())]
@@ -1266,10 +1265,13 @@ export const saveSynergy = (button?: boolean) => {
   player.hepteracts = Object.fromEntries(
     Object.keys(player.hepteracts).map((key) => {
       const k = key as HepteractKeys
-      return [key, { BAL: hepteracts[k].BAL, TIMES_CAP_EXTENDED: hepteracts[k].TIMES_CAP_EXTENDED, AUTO: hepteracts[k].AUTO }]
+      return [key, {
+        BAL: hepteracts[k].BAL,
+        TIMES_CAP_EXTENDED: hepteracts[k].TIMES_CAP_EXTENDED,
+        AUTO: hepteracts[k].AUTO
+      }]
     })
   ) as Record<HepteractKeys, HepteractValues>
-
 
   const p = playerJsonSchema.parse(player)
   const save = btoa(JSON.stringify(p))
@@ -5728,7 +5730,8 @@ export const reloadShit = (reset = false) => {
     for (const key of Object.keys(player.hepteracts) as HepteractKeys[]) {
       hepteracts[key].BAL = player.hepteracts[key].BAL ?? hepteracts[key].BAL
       hepteracts[key].AUTO = player.hepteracts[key].AUTO ?? hepteracts[key].AUTO
-      hepteracts[key].TIMES_CAP_EXTENDED = player.hepteracts[key].TIMES_CAP_EXTENDED ?? hepteracts[key].TIMES_CAP_EXTENDED
+      hepteracts[key].TIMES_CAP_EXTENDED = player.hepteracts[key].TIMES_CAP_EXTENDED
+        ?? hepteracts[key].TIMES_CAP_EXTENDED
     }
   }
 
