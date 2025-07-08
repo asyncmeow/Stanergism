@@ -14,7 +14,7 @@ import {
   highestChallengeRewards,
   runChallengeSweep
 } from './Challenges'
-import { btoa, cleanString, isDecimal, sortWithIndices, sumContents } from './Utility'
+import { btoa, isDecimal, sortWithIndices, sumContents } from './Utility'
 import { blankGlobals, Globals as G } from './Variables'
 
 import {
@@ -1374,10 +1374,6 @@ const loadSynergy = () => {
       }
     }
 
-    if (!('rngCode' in data)) {
-      player.rngCode = 0
-    }
-
     if (data.loaded1009 === undefined || !data.loaded1009) {
       player.loaded1009 = false
     }
@@ -1394,41 +1390,8 @@ const loadSynergy = () => {
       player.loaded10101 = false
     }
 
-    if (typeof player.researches[76] === 'undefined') {
-      player.codes.set(13, false)
-      player.researches.push(
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      )
-      player.researches[50] = 0
-    }
-
     if (
       !data.loaded1009
-      || data.loaded1009hotfix1 === null
       || data.shopUpgrades?.offeringPotion === undefined
     ) {
       player.firstOwnedParticles = 0
@@ -1486,9 +1449,6 @@ const loadSynergy = () => {
     // const shop = data.shopUpgrades as LegacyShopUpgrades & Player['shopUpgrades'];
     if (
       data.achievements?.[169] === undefined
-      || typeof player.achievements[169] === 'undefined'
-      //    (shop.antSpeed === undefined && shop.antSpeedLevel === undefined) ||
-      //    (shop.antSpeed === undefined && typeof shop.antSpeedLevel === 'undefined') ||
       || data.loaded1010 === undefined
       || data.loaded1010 === false
     ) {
@@ -1684,19 +1644,6 @@ const loadSynergy = () => {
       }
     }
 
-    if (!Number.isInteger(player.ascendBuilding1.cost)) {
-      player.ascendBuilding1.cost = 1
-      player.ascendBuilding1.owned = 0
-      player.ascendBuilding2.cost = 10
-      player.ascendBuilding2.owned = 0
-      player.ascendBuilding3.cost = 100
-      player.ascendBuilding3.owned = 0
-      player.ascendBuilding4.cost = 1000
-      player.ascendBuilding4.owned = 0
-      player.ascendBuilding5.cost = 10000
-      player.ascendBuilding5.owned = 0
-    }
-
     if (!player.dayCheck) {
       player.dayCheck = new Date()
     }
@@ -1737,23 +1684,6 @@ const loadSynergy = () => {
         player[ascendBuildingI].generated
       )
     }
-
-    while (typeof player.researches[200] === 'undefined') {
-      player.researches.push(0)
-    }
-    while (typeof player.upgrades[140] === 'undefined') {
-      player.upgrades.push(0)
-    }
-
-    if (
-      player.saveString === ''
-      || player.saveString === 'Synergism-v1011Test.txt'
-    ) {
-      player.saveString = player.singularityCount === 0
-        ? 'Synergism-$VERSION$-$TIME$.txt'
-        : 'Synergism-$VERSION$-$TIME$-$SING$.txt'
-    }
-    ;(DOMCacheGetOrSet('saveStringInput') as HTMLInputElement).value = cleanString(player.saveString)
 
     for (let j = 1; j < 126; j++) {
       upgradeupdate(j, true)
