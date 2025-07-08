@@ -92,7 +92,7 @@ import {
   generateRunesHTML,
   getRuneEffects,
   indexToRune,
-  RuneKeys,
+  type RuneKeys,
   runes,
   sacrificeOfferings,
   sumOfRuneLevels,
@@ -171,9 +171,9 @@ import { eventCheck } from './Event'
 import {
   defaultHepteractValues,
   getHepteractEffects,
-  HepteractKeys,
+  type HepteractKeys,
   hepteracts,
-  HepteractValues,
+  type HepteractValues,
   toggleAutoBuyOrbs
 } from './Hepteracts'
 import { disableHotkeys } from './Hotkeys'
@@ -197,14 +197,14 @@ import {
 import {
   buyBlessingLevels,
   getRuneBlessingEffect,
-  RuneBlessingKeys,
+  type RuneBlessingKeys,
   runeBlessings,
   updateAllBlessingLevelsFromEXP
 } from './RuneBlessings'
 import {
   buySpiritLevels,
   getRuneSpiritEffect,
-  RuneSpiritKeys,
+  type RuneSpiritKeys,
   runeSpirits,
   updateAllSpiritLevelsFromEXP
 } from './RuneSpirits'
@@ -5659,8 +5659,6 @@ export const reloadShit = (reset = false) => {
 
   achievementManager.updateAchievements(player.achievements)
   achievementManager.updateProgressiveAchievements(player.progressiveAchievements)
-
-  console.log('progAchs: ' + JSON.stringify(achievementManager.progressiveAchievements))
 
   // Recover Sing Upgrade (now GQ upgrade) level from Player Obj
   if (player.goldenQuarkUpgrades !== undefined) {

@@ -513,13 +513,13 @@ export const autoCraftHepteracts = (hept: HepteractKeys, heptAmount: number) => 
 
   // Create an array of how many we can craft using our conversion limits for additional items
   const itemLimits: number[] = []
-  for (const item in hepteracts[hept].OTHER_CONVERSIONS) {
+  const quarks = hepteracts[hept].OTHER_CONVERSIONS.worlds
+
+  if (typeof quarks === 'number') {
     // When Auto is turned on, only Quarks and hepteracts are consumed.
-    if (item === 'worlds') {
-      itemLimits.push(
-        Math.floor((player[item as keyof Player] as number) / hepteracts[hept].OTHER_CONVERSIONS[item as keyof Player]!)
-      )
-    }
+    itemLimits.push(
+      Math.floor(player.worlds.valueOf() / quarks)
+    )
   }
 
   // Get the smallest of the array we created [If Empty, this will be infinite]
@@ -547,18 +547,14 @@ export const autoCraftHepteracts = (hept: HepteractKeys, heptAmount: number) => 
     baseCap *= 2
   }
 
-  for (const item in hepteracts[hept].OTHER_CONVERSIONS) {
-    if (item === 'worlds') {
-      player.worlds.sub(amountCrafted * hepteracts[hept].OTHER_CONVERSIONS[item]!)
-    }
+  if (typeof quarks === 'number') {
+    player.worlds.sub(amountCrafted * quarks)
   }
 
   player.wowAbyssals -= amountCrafted * craftCostMulti * hepteracts[hept].HEPTERACT_CONVERSION
   if (player.wowAbyssals < 0) {
     player.wowAbyssals = 0
   }
-
-  return this
 }
 
 export const toggleAutomaticHepteracts = (hept: HepteractKeys, newValue?: boolean) => {
@@ -592,9 +588,9 @@ export const hepteractEffective = (hept: HepteractKeys) => {
     return hepteracts[hept].BAL
   }
 
-  let rawHeptAmount = hepteracts[hept].BAL
+  const rawHeptAmount = hepteracts[hept].BAL
   let effectiveValue = Math.min(rawHeptAmount, hepteracts[hept].LIMIT)
-  let exponent = hepteracts[hept].DR + hepteracts[hept].DR_INCREASE()
+  const exponent = hepteracts[hept].DR + hepteracts[hept].DR_INCREASE()
 
   // Save in case I go back to this - Platonic
   /*

@@ -82,7 +82,7 @@ import {
 import { buyResearch, researchDescriptions } from './Research'
 import { resetrepeat, updateAutoCubesOpens, updateAutoReset, updateTesseractAutoBuyAmount } from './Reset'
 import { buyAllBlessingLevels, buyBlessingLevels, runeBlessingKeys } from './RuneBlessings'
-import { RuneKeys, runes, runeToIndex, sacrificeOfferings, updateFocusedRuneHTML } from './Runes'
+import { type RuneKeys, runes, runeToIndex, sacrificeOfferings, updateFocusedRuneHTML } from './Runes'
 import { buyAllSpiritLevels, buySpiritLevels, runeSpiritKeys } from './RuneSpirits'
 import {
   buyShopUpgrades,
