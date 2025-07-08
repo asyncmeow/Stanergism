@@ -1,9 +1,9 @@
 import i18next from 'i18next'
 import { DOMCacheGetOrSet } from './Cache/DOM'
-import { getHepteract } from './Hepteracts'
 import { calculateSingularityDebuff } from './singularity'
 import { format, player } from './Synergism'
 import { Alert, revealStuff } from './UpdateHTML'
+import { hepteracts } from './Hepteracts'
 
 export interface IPlatBaseCost {
   obtainium: number
@@ -275,7 +275,7 @@ const checkPlatonicUpgrade = (
   }
 
   if (
-    getHepteract('abyss').BAL >= Math.floor(platUpgradeBaseCosts[index].abyssals * priceMultiplier)
+    hepteracts.abyss.BAL >= Math.floor(platUpgradeBaseCosts[index].abyssals * priceMultiplier)
     || platUpgradeBaseCosts[index].abyssals === 0
   ) {
     checksum++
@@ -353,7 +353,7 @@ export const createPlatonicDescription = (index: number) => {
   DOMCacheGetOrSet('platonicHepteractCost').textContent = i18next.t(
     'wowCubes.platonicUpgrades.descriptionBox.hepteractCost',
     {
-      a: format(getHepteract('abyss').BAL, 0, true),
+      a: format(hepteracts.abyss.BAL, 0, true),
       b: format(Math.floor(platUpgradeBaseCosts[index].abyssals * priceMultiplier), 0, true)
     }
   )
@@ -447,7 +447,7 @@ export const buyPlatonicUpgrades = (index: number, auto = false) => {
       player.wowTesseracts.sub(Math.floor(platUpgradeBaseCosts[index].tesseracts * priceMultiplier))
       player.wowHypercubes.sub(Math.floor(platUpgradeBaseCosts[index].hypercubes * priceMultiplier))
       player.wowPlatonicCubes.sub(Math.floor(platUpgradeBaseCosts[index].platonics * priceMultiplier))
-      getHepteract('abyss').spend(Math.floor(platUpgradeBaseCosts[index].abyssals * priceMultiplier))
+      hepteracts.abyss.BAL -= (Math.floor(platUpgradeBaseCosts[index].abyssals * priceMultiplier))
 
       if (index === 20 && !auto && player.singularityCount === 0) {
         void Alert(

@@ -1,12 +1,12 @@
 import Decimal from 'break_infinity.js'
 import { type AmbrosiaUpgradeNames, ambrosiaUpgrades } from '../BlueberryUpgrades'
 import { CorruptionLoadout, type Corruptions, CorruptionSaves } from '../Corruptions'
-import { getHepteract, type HepteractNames } from '../Hepteracts'
 import { type OcteractDataKeys, octeractUpgrades } from '../Octeracts'
 import { goldenQuarkUpgrades, type SingularityDataKeys } from '../singularity'
 import { updateResourcePredefinedLevel } from '../Talismans'
 import { convertArrayToCorruption } from './PlayerJsonSchema'
 import { playerSchema } from './PlayerSchema'
+import { HepteractKeys, hepteracts } from '../Hepteracts'
 
 export const playerUpdateVarSchema = playerSchema.transform((player) => {
   if (player.usedCorruptions !== undefined) {
@@ -109,18 +109,16 @@ export const playerUpdateVarSchema = playerSchema.transform((player) => {
 
   if (player.hepteractCrafts !== undefined) {
     for (const [key, value] of Object.entries(player.hepteractCrafts)) {
-      const k = key as HepteractNames
+      const k = key as HepteractKeys
       if (value !== undefined) {
         const BAL = value.BAL ?? 0
         const TIMES_CAP_EXTENDED = Math.round(Math.log2(value.CAP / value.BASE_CAP)) ?? 0
         const AUTO = value.AUTO ?? false
 
         player.hepteracts[k] = { BAL, TIMES_CAP_EXTENDED, AUTO }
-        getHepteract(k).updateVals({
-          BAL,
-          TIMES_CAP_EXTENDED,
-          AUTO
-        })
+        hepteracts[k].BAL = BAL
+        hepteracts[k].TIMES_CAP_EXTENDED = TIMES_CAP_EXTENDED
+        hepteracts[k].AUTO = AUTO
       }
     }
   }

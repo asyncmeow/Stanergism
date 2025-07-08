@@ -3,7 +3,6 @@ import { z, type ZodNumber, type ZodType } from 'zod'
 import { CampaignManager, type ICampaignManagerData } from '../Campaign'
 import { CorruptionLoadout, CorruptionSaves } from '../Corruptions'
 import { WowCubes, WowHypercubes, WowPlatonicCubes, WowTesseracts } from '../CubeExperimental'
-import { hepteractData, type HepteractNames } from '../Hepteracts'
 import { QuarkHandler } from '../Quark'
 import {
   SingularityChallenge,
@@ -14,6 +13,7 @@ import { blankSave, deepClone } from '../Synergism'
 import { noTalismanFragments } from '../Talismans'
 import type { Player } from '../types/Synergism'
 import { padArray } from '../Utility'
+import { HepteractKeys, hepteracts } from '../Hepteracts'
 
 const decimalSchema = z.custom<DecimalSource>((value) => {
   try {
@@ -75,11 +75,11 @@ const decimalStringSchema = z.string().regex(/^|-?\d+(\.\d{1,2})?$/)
 const integerStringSchema = z.string().regex(/^\d+$/)
 
 // TODO: FUCK THIS SHIT.
-const hepteractCraftSchema = (k: HepteractNames) =>
+const hepteractCraftSchema = (k: HepteractKeys) =>
   z.object({
     AUTO: z.boolean().default(() => blankSave.hepteracts[k].AUTO),
     BAL: z.number().default(() => blankSave.hepteracts[k].BAL),
-    BASE_CAP: z.number().default(() => hepteractData[k].BASE_CAP),
+    BASE_CAP: z.number().default(() => hepteracts[k].BASE_CAP),
     CAP: z.number().default(() => 1000),
     DISCOUNT: z.number().default(() => 0),
     HEPTERACT_CONVERSION: z.number(),

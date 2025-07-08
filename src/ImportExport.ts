@@ -6,7 +6,6 @@ import { DOMCacheGetOrSet } from './Cache/DOM'
 import { calculateOcteractMultiplier } from './Calculate'
 import { testing, version } from './Config'
 import { addTimers } from './Helper'
-import { getHepteract } from './Hepteracts'
 import { getOcteractUpgradeEffect, octeractUpgrades } from './Octeracts'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { getQuarkBonus, quarkHandler } from './Quark'
@@ -27,6 +26,7 @@ import { Alert, Confirm, Prompt } from './UpdateHTML'
 import { cleanString, getElementById } from './Utility'
 import { btoa } from './Utility'
 import { Globals as G } from './Variables'
+import { getFinalHepteractCap, hepteracts } from './Hepteracts'
 
 const format24 = new Intl.DateTimeFormat('EN-GB', {
   year: 'numeric',
@@ -444,20 +444,19 @@ export const promocodes = async (input: string | null, amount?: number) => {
       x: player.worlds.applyBonus(quarks)
     })
   } else if (input === 'alonso bribe' && !player.codes.get(47)) {
-    const craft = getHepteract('quark')
 
-    if (!craft.UNLOCKED()) {
+    if (!hepteracts.quark.UNLOCKED()) {
       return Alert(i18next.t('importexport.promocodes.bribe.notUnlocked'))
     }
 
-    const cap = craft.computeActualCap()
+    const cap = getFinalHepteractCap('quark')
 
     if (cap >= 1e300) {
       return Alert(i18next.t('importexport.promocodes.bribe.overCapacity'))
     }
 
     player.codes.set(47, true)
-    craft.TIMES_CAP_EXTENDED += 1
+    hepteracts.quark.TIMES_CAP_EXTENDED += 1
 
     return Alert(i18next.t('importexport.promocodes.bribe.thanks'))
   } else if (input.toLowerCase() === 'daily' && !player.dailyCodeUsed) {

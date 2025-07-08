@@ -170,10 +170,10 @@ import { WowCubes, WowHypercubes, WowPlatonicCubes, WowTesseracts } from './Cube
 import { eventCheck } from './Event'
 import {
   defaultHepteractValues,
-  HepteractCraft,
-  hepteractData,
-  hepteractEffective,
-  initHepteracts,
+  getHepteractEffects,
+  HepteractKeys,
+  hepteracts,
+  HepteractValues,
   toggleAutoBuyOrbs
 } from './Hepteracts'
 import { disableHotkeys } from './Hotkeys'
@@ -1185,8 +1185,6 @@ export const deepClone = () =>
       [WowTesseracts, (o: WowTesseracts) => new WowTesseracts(o.valueOf())],
       [WowHypercubes, (o: WowHypercubes) => new WowHypercubes(o.valueOf())],
       [WowPlatonicCubes, (o: WowPlatonicCubes) => new WowPlatonicCubes(o.valueOf())],
-      [HepteractCraft, (o: HepteractCraft) =>
-        new HepteractCraft({ ...o.valueOf(), ...hepteractData[o.keyOf()] }, o.keyOf())],
       [CorruptionLoadout, (o: CorruptionLoadout) =>
         new CorruptionLoadout(o.loadout)],
       [CorruptionSaves, (o: CorruptionSaves) => new CorruptionSaves(o.corrSaveData)],
@@ -1264,6 +1262,14 @@ export const saveSynergy = (button?: boolean) => {
       return [key, new Decimal(runeSpirits[k].runeEXP)]
     })
   ) as Record<RuneSpiritKeys, Decimal>
+
+  player.hepteracts = Object.fromEntries(
+    Object.keys(player.hepteracts).map((key) => {
+      const k = key as HepteractKeys
+      return [key, { BAL: hepteracts[k].BAL, TIMES_CAP_EXTENDED: hepteracts[k].TIMES_CAP_EXTENDED, AUTO: hepteracts[k].AUTO }]
+    })
+  ) as Record<HepteractKeys, HepteractValues>
+
 
   const p = playerJsonSchema.parse(player)
   const save = btoa(JSON.stringify(p))
@@ -2895,9 +2901,9 @@ export const updateAllTick = (): void => {
         * G.viscosityPower[player.corruptions.used.viscosity]
     )
   )
-  a += 2000 * hepteractEffective('accelerator')
+  a += getHepteractEffects('accelerator').accelerators
   a *= G.challenge15Rewards.accelerator.value
-  a *= 1 + (3 / 10000) * hepteractEffective('accelerator')
+  a *= getHepteractEffects('accelerator').acceleratorMultiplier
   a = Math.floor(Math.min(1e100, a))
 
   if (player.corruptions.used.viscosity >= 15) {
@@ -3078,9 +3084,9 @@ export const updateAllMultiplier = (): void => {
         * G.viscosityPower[player.corruptions.used.viscosity]
     )
   )
-  a += 1000 * hepteractEffective('multiplier')
+  a += getHepteractEffects('multiplier').multiplier
   a *= G.challenge15Rewards.multiplier.value
-  a *= 1 + (3 / 10000) * hepteractEffective('multiplier')
+  a *= getHepteractEffects('multiplier').multiplierMultiplier
   a = Math.floor(Math.min(1e100, a))
 
   if (player.corruptions.used.viscosity >= 15) {
@@ -5718,9 +5724,16 @@ export const reloadShit = (reset = false) => {
     updateAllSpiritLevelsFromEXP()
   }
 
+  if (player.hepteracts !== undefined) {
+    for (const key of Object.keys(player.hepteracts) as HepteractKeys[]) {
+      hepteracts[key].BAL = player.hepteracts[key].BAL ?? hepteracts[key].BAL
+      hepteracts[key].AUTO = player.hepteracts[key].AUTO ?? hepteracts[key].AUTO
+      hepteracts[key].TIMES_CAP_EXTENDED = player.hepteracts[key].TIMES_CAP_EXTENDED ?? hepteracts[key].TIMES_CAP_EXTENDED
+    }
+  }
+
   setAmbrosiaUpgradeLevels()
   setRedAmbrosiaUpgradeLevels()
-  initHepteracts(player.hepteracts)
 
   for (const k of Object.keys(getAchieveReward) as AchievementRewards[]) {
     console.log(`Applying reward ${k}: `, achievementManager.getBonus(k))
@@ -5856,7 +5869,6 @@ window.addEventListener('load', async () => {
   createCampaignIconHTMLS()
   generateAchievementHTMLs()
 
-  initHepteracts(player.hepteracts)
   reloadShit()
 }, { once: true })
 

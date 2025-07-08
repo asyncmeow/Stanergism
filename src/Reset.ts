@@ -28,7 +28,7 @@ import { challengeRequirement } from './Challenges'
 import { c15Corruptions, CorruptionLoadout, corruptionStatsUpdate, type SavedCorruption } from './Corruptions'
 import { WowCubes } from './CubeExperimental'
 import { autoBuyCubeUpgrades, awardAutosCookieUpgrade, updateCubeUpgradeBG } from './Cubes'
-import { getAutoHepteractCrafts, getHepteract, resetHepteracts } from './Hepteracts'
+import { autoCraftHepteracts, hepteractKeys, hepteracts, resetHepteracts } from './Hepteracts'
 import {
   resetHistoryAdd,
   type ResetHistoryEntryAscend,
@@ -770,15 +770,17 @@ export const reset = (input: resetNames, fast = false, from = 'unknown') => {
 
   if (input === 'ascension' || input === 'ascensionChallenge') {
     // Hepteract Autocraft
-    const autoHepteractCrafts = getAutoHepteractCrafts()
-    const numberOfAutoCraftsAndOrbs = autoHepteractCrafts.length + (player.overfluxOrbsAutoBuy ? 1 : 0)
+    const numberOfAutoCraftsAndOrbs = Object.values(hepteracts).filter((v) => v.AUTO).length + (player.overfluxOrbsAutoBuy ? 1 : 0)
     if (player.highestSingularityCount >= 1 && numberOfAutoCraftsAndOrbs > 0) {
       // Computes the max number of Hepteracts to spend on each auto Hepteract craft
       const heptAutoSpend = Math.floor(
         (player.wowAbyssals / numberOfAutoCraftsAndOrbs) * (player.hepteractAutoCraftPercentage / 100)
       )
-      for (const craft of autoHepteractCrafts) {
-        craft.autoCraft(heptAutoSpend)
+
+      for (const hept of hepteractKeys) {
+        if (player.hepteracts[hept].AUTO) {
+          autoCraftHepteracts(hept, heptAutoSpend)
+        }
       }
 
       if (player.overfluxOrbsAutoBuy) {
@@ -1110,7 +1112,7 @@ export const singularity = (setSingNumber = -1) => {
       hyperTribs: sumContents(hypercubeArray),
       platTribs: sumContents(platonicArray),
       octeracts: player.totalWowOcteracts,
-      quarkHept: getHepteract('quark').BAL,
+      quarkHept: hepteracts.quark.BAL,
       kind: 'singularity'
     }
     resetHistoryAdd('singularity', historyEntry)
@@ -1270,7 +1272,7 @@ export const singularity = (setSingNumber = -1) => {
   ) as Player['singularityChallenges']
   hold.iconSet = player.iconSet
 
-  resetHepteracts()
+  resetHepteracts('singularity')
   // Hold hepteract data needed in player after resetHepteracts (preserving AUTO and Quark ValueOf)
   hold.hepteracts = player.hepteracts
 

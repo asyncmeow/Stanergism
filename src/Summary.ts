@@ -15,7 +15,6 @@ import {
 } from './Calculate'
 import { getMaxChallenges } from './Challenges'
 import { version } from './Config'
-import { getHepteract, type HepteractNames } from './Hepteracts'
 import { saveFilename } from './ImportExport'
 import {
   actualOcteractUpgradeTotalLevels,
@@ -39,6 +38,7 @@ import type { Player } from './types/Synergism'
 import { Alert } from './UpdateHTML'
 import { formatS, sumContents } from './Utility'
 import { Globals as G } from './Variables'
+import { getFinalHepteractCap, hepteractKeys, hepteracts } from './Hepteracts'
 
 export const generateExportSummary = async (): Promise<void> => {
   const titleText = '===== SUMMARY STATS ====='
@@ -197,9 +197,9 @@ export const generateExportSummary = async (): Promise<void> => {
     ) {
       ascension = `${ascension}----- HEPTERACTS -----\n`
 
-      for (const key of Object.keys(player.hepteracts) as HepteractNames[]) {
-        const bal = getHepteract(key).BAL
-        const cap = getHepteract(key).computeActualCap()
+      for (const key of hepteractKeys) {
+        const bal = hepteracts[key].BAL
+        const cap = getFinalHepteractCap(key)
         ascension = `${ascension}${key.toUpperCase()} HEPTERACT: ${format(bal, 0, true)}/${format(cap, 0, true)}\n`
       }
 

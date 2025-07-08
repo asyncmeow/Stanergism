@@ -40,14 +40,15 @@ import { testing } from './Config'
 import { corruptionCleanseConfirm, corruptionDisplay } from './Corruptions'
 import { buyCubeUpgrades, cubeUpgradeDesc } from './Cubes'
 import {
-  getHepteract,
-  hepteractData,
+  craftHepteracts,
+  expandHepteracts,
   hepteractDescriptions,
-  type HepteractNames,
+  hepteractKeys,
   hepteractToOverfluxOrbDescription,
   overfluxPowderDescription,
   overfluxPowderWarp,
   toggleAutoBuyOrbs,
+  toggleAutomaticHepteracts,
   tradeHepteractToOverfluxOrb
 } from './Hepteracts'
 import { resetHistoryTogglePerSecond } from './History'
@@ -765,22 +766,22 @@ export const generateEventHandlers = () => {
 
   // Part 4: Hepteract Subtab
 
-  for (const key of Object.keys(hepteractData) as HepteractNames[]) {
+  for (const key of hepteractKeys) {
     const moused = DOMCacheGetOrSet(`${key}Hepteract`)
     moused.addEventListener('mouseover', () => hepteractDescriptions(key))
     moused.addEventListener('focus', () => hepteractDescriptions(key))
 
     const craft = DOMCacheGetOrSet(`${key}HepteractCraft`)
-    craft.addEventListener('click', () => getHepteract(key).craft())
+    craft.addEventListener('click', () => craftHepteracts(key))
 
     const craftMax = DOMCacheGetOrSet(`${key}HepteractCraftMax`)
-    craftMax.addEventListener('click', () => getHepteract(key).craft(true))
+    craftMax.addEventListener('click', () => craftHepteracts(key, true))
 
     const cap = DOMCacheGetOrSet(`${key}HepteractCap`)
-    cap.addEventListener('click', () => getHepteract(key).expand())
+    cap.addEventListener('click', () => expandHepteracts(key))
 
     const auto = DOMCacheGetOrSet(`${key}HepteractAuto`)
-    auto.addEventListener('click', () => getHepteract(key).toggleAutomatic())
+    auto.addEventListener('click', () => toggleAutomaticHepteracts(key))
   }
 
   DOMCacheGetOrSet('hepteractToQuark').addEventListener('mouseover', () => hepteractToOverfluxOrbDescription())

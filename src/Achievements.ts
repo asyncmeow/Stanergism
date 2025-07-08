@@ -2,7 +2,6 @@ import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { CalcCorruptionStuff, calculateAscensionScore } from './Calculate'
-import { getHepteract } from './Hepteracts'
 import { octeractUpgrades } from './Octeracts'
 import { redAmbrosiaUpgrades } from './RedAmbrosiaUpgrades'
 import { runeBlessings } from './RuneBlessings'
@@ -16,6 +15,7 @@ import type { resetNames } from './types/Synergism'
 import { Alert, Notification, revealStuff } from './UpdateHTML'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
+import { hepteracts } from './Hepteracts'
 
 export const resetAchievementCheck = (reset: resetNames) => {
   if (reset === 'prestige') {
@@ -1928,7 +1928,7 @@ export const achievements: { [index: number]: Achievement } = {
     pointValue: 70,
     unlockCondition: () => CalcCorruptionStuff()[3] >= 1e23,
     group: 'ascensionScore',
-    reward: { ascensionScore: () => Math.pow(1.01, getHepteract('abyss').TIMES_CAP_EXTENDED) }
+    reward: { ascensionScore: () => Math.pow(1.01, hepteracts.abyss.TIMES_CAP_EXTENDED) }
   },
   260: {
     pointValue: 40,

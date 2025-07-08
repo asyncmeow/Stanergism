@@ -11,7 +11,7 @@ import type { CampaignManager } from '../Campaign'
 import type { Challenge15RewardObject, Challenge15Rewards } from '../Challenges'
 import type { CorruptionLoadout, Corruptions, CorruptionSaves } from '../Corruptions'
 import type { WowCubes, WowHypercubes, WowPlatonicCubes, WowTesseracts } from '../CubeExperimental'
-import type { HepteractCraft, HepteractNames, HepteractValues } from '../Hepteracts'
+import type { HepteractCraft, HepteractKeys, HepteractNames, HepteractValues } from '../Hepteracts'
 import type { Category, ResetHistoryEntryUnion } from '../History'
 import type { OcteractDataKeys, OcteractUpgrade } from '../Octeracts'
 import type { IPlatBaseCost } from '../Platonic'
@@ -606,7 +606,7 @@ export interface Player {
     time: number
   }
 
-  hepteracts: Record<HepteractNames, HepteractValues>
+  hepteracts: Record<HepteractKeys, HepteractValues>
 
   /*hepteractCrafts: {
     chronos: HepteractCraft

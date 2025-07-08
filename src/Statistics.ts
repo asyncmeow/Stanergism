@@ -83,7 +83,7 @@ import {
 } from './Calculate'
 import { CalcECC, type Challenge15Rewards, challenge15ScoreMultiplier } from './Challenges'
 import { BuffType } from './Event'
-import { getHepteract, hepteractEffective } from './Hepteracts'
+import { getHepteractEffects, hepteracts } from './Hepteracts'
 import {
   addCodeBonuses,
   addCodeInterval,
@@ -484,7 +484,7 @@ export const allHypercubeStats: StatLine[] = [
   },
   {
     i18n: 'HyperrealHepteract',
-    stat: () => 1 + (0.6 / 1000) * hepteractEffective('hyperrealism')
+    stat: () => getHepteractEffects('hyperrealism').hypercubeMultiplier
   }
 ]
 
@@ -1164,7 +1164,7 @@ export const allQuarkStats: StatLine[] = [
     i18n: 'QuarkHepteract',
     stat: () =>
       player.challenge15Exponent >= G.challenge15Rewards.hepteractsUnlocked.requirement
-        ? 1 + 5 / 10000 * hepteractEffective('quark')
+        ? getHepteractEffects('quark').quarkMultiplier
         : 1
   },
   {
@@ -1205,7 +1205,7 @@ export const allQuarkStats: StatLine[] = [
       1
       + (1 / 10000) * Math.floor(octeractUpgrades.octeractQuarkGain.level / 111)
         * octeractUpgrades.octeractQuarkGain2.level
-        * Math.floor(1 + Math.log10(Math.max(1, getHepteract('quark').BAL)))
+        * Math.floor(1 + Math.log10(Math.max(1, hepteracts.quark.BAL)))
   },
   {
     i18n: 'SingularityPacks',
@@ -1819,7 +1819,7 @@ export const allAscensionSpeedStats: StatLine[] = [
   },
   {
     i18n: 'ChronosHepteract',
-    stat: () => 1 + (0.6 / 1000) * hepteractEffective('chronos') // Chronos Hepteract
+    stat: () => getHepteractEffects('chronos').ascensionSpeed // Chronos Hepteract
   },
   {
     i18n: 'PlatonicOMEGA',
@@ -2770,6 +2770,10 @@ export const allSalvageStats: StatLine[] = [
   {
     i18n: 'CubeUpgrade2',
     stat: () => 0.5 * player.cubeUpgrades[2] // Cube Upgrade 2
+  },
+  {
+    i18n: 'AbyssHepteract',
+    stat: () => getHepteractEffects('abyss').salvage // Abyss Hepteract
   }
 ]
 

@@ -39,7 +39,6 @@ import { CalcECC } from './Challenges'
 import { version } from './Config'
 import type { IMultiBuy } from './Cubes'
 import { BuffType, consumableEventBuff, eventBuffType, getEvent, getEventBuff } from './Event'
-import { getHepteract, hepteractData, type HepteractNames } from './Hepteracts'
 import { allDurableConsumables, type PseudoCoinConsumableNames } from './Login'
 import { getOcteractUpgradeCostTNL, type OcteractDataKeys, octeractUpgrades } from './Octeracts'
 import { getQuarkBonus, quarkHandler } from './Quark'
@@ -63,6 +62,7 @@ import { getTalismanLevelCap, type TalismanKeys, talismans, updateAllTalismanHTM
 import type { Player, ZeroToFour } from './types/Synergism'
 import { sumContents, timeReminingHours } from './Utility'
 import { Globals as G } from './Variables'
+import { getFinalHepteractCap, HepteractKeys, hepteractKeys, hepteracts } from './Hepteracts'
 
 export const visualUpdateBuildings = () => {
   if (G.currentTab !== Tabs.Buildings) {
@@ -1113,7 +1113,7 @@ export const visualUpdateCubes = () => {
       )
 
       // Update the grid
-      for (const key of Object.keys(hepteractData) as HepteractNames[]) {
+      for (const key of hepteractKeys) {
         UpdateHeptGridValues(key)
       }
 
@@ -1142,20 +1142,20 @@ export const visualUpdateCubes = () => {
   }
 }
 
-const UpdateHeptGridValues = (type: HepteractNames) => {
-  const text = `${type}ProgressBarText`
-  const bar = `${type}ProgressBar`
+const UpdateHeptGridValues = (hept: HepteractKeys) => {
+  const text = `${hept}ProgressBarText`
+  const bar = `${hept}ProgressBar`
   const textEl = DOMCacheGetOrSet(text)
   const barEl = DOMCacheGetOrSet(bar)
-  const unlocked = getHepteract(type).UNLOCKED()
+  const unlocked = hepteracts[hept].UNLOCKED()
 
   if (!unlocked) {
     textEl.textContent = 'LOCKED'
     barEl.style.width = '100%'
     barEl.style.backgroundColor = 'var(--hepteract-bar-red)'
   } else {
-    const balance = getHepteract(type).BAL
-    const cap = getHepteract(type).computeActualCap()
+    const balance = hepteracts[hept].BAL
+    const cap = getFinalHepteractCap(hept)
     const barWidth = Math.round((balance / cap) * 100)
 
     let barColor = ''
