@@ -1778,54 +1778,7 @@ const loadSynergy = () => {
       'offering',
       'tesseract'
     ] as const
-    if (
-      player.coinbuyamount !== 1
-      && player.coinbuyamount !== 10
-      && player.coinbuyamount !== 100
-      && player.coinbuyamount !== 1000
-    ) {
-      player.coinbuyamount = 1
-    }
-    if (
-      player.crystalbuyamount !== 1
-      && player.crystalbuyamount !== 10
-      && player.crystalbuyamount !== 100
-      && player.crystalbuyamount !== 1000
-    ) {
-      player.crystalbuyamount = 1
-    }
-    if (
-      player.mythosbuyamount !== 1
-      && player.mythosbuyamount !== 10
-      && player.mythosbuyamount !== 100
-      && player.mythosbuyamount !== 1000
-    ) {
-      player.mythosbuyamount = 1
-    }
-    if (
-      player.particlebuyamount !== 1
-      && player.particlebuyamount !== 10
-      && player.particlebuyamount !== 100
-      && player.particlebuyamount !== 1000
-    ) {
-      player.particlebuyamount = 1
-    }
-    if (
-      player.offeringbuyamount !== 1
-      && player.offeringbuyamount !== 10
-      && player.offeringbuyamount !== 100
-      && player.offeringbuyamount !== 1000
-    ) {
-      player.offeringbuyamount = 1
-    }
-    if (
-      player.tesseractbuyamount !== 1
-      && player.tesseractbuyamount !== 10
-      && player.tesseractbuyamount !== 100
-      && player.tesseractbuyamount !== 1000
-    ) {
-      player.tesseractbuyamount = 1
-    }
+
     for (let j = 0; j <= 5; j++) {
       for (let k = 0; k < 4; k++) {
         let d = ''

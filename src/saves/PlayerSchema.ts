@@ -37,6 +37,8 @@ const arrayExtend = <
   return array
 }
 
+const buyAmount = z.number().refine((arg) => arg === 1 || arg === 10 || arg === 100 || arg === 1000).default(1)
+
 const ascendBuildingSchema = z.object({
   cost: z.number(),
   owned: z.number(),
@@ -481,12 +483,12 @@ export const playerSchema = z.object({
   tesseractAutoBuyerToggle: z.number().default(() => blankSave.tesseractAutoBuyerToggle),
   tesseractAutoBuyerAmount: z.number().default(() => blankSave.tesseractAutoBuyerAmount),
 
-  coinbuyamount: z.number(),
-  crystalbuyamount: z.number(),
-  mythosbuyamount: z.number(),
-  particlebuyamount: z.number(),
-  offeringbuyamount: z.number(),
-  tesseractbuyamount: z.number().default(() => blankSave.tesseractbuyamount),
+  coinbuyamount: buyAmount,
+  crystalbuyamount: buyAmount,
+  mythosbuyamount: buyAmount,
+  particlebuyamount: buyAmount,
+  offeringbuyamount: buyAmount,
+  tesseractbuyamount: buyAmount,
 
   shoptoggles: z.record(z.string(), z.boolean()),
   tabnumber: z.any().optional(),
