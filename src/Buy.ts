@@ -318,9 +318,7 @@ const known_log10s = (() => {
   // constructing all logs
   const obj: Record<number, number> = {}
   for (const need of needed) {
-    if (typeof obj[need] === 'undefined') {
-      obj[need] = Math.log10(need)
-    }
+    obj[need] ??= Math.log10(need)
   }
   return obj
 })()

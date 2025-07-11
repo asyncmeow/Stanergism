@@ -3313,12 +3313,12 @@ export const calculateSingularityDebuff = (
       ? Math.sqrt(effectiveSingularities) + 1
       : Math.pow(effectiveSingularities, 2 / 3) / 400
   } else if (debuff === 'Salvage') {
-    return -(5 * constitutiveSingularityCount +
-           5 * Math.max(0, constitutiveSingularityCount - 100) +
-           5 * Math.max(0, constitutiveSingularityCount - 200) +
-           5 * Math.max(0, constitutiveSingularityCount - 250) +
-           5 * Math.max(0, constitutiveSingularityCount - 270) +
-           5 * Math.max(0, constitutiveSingularityCount - 280))
+    return -(5 * constitutiveSingularityCount
+      + 5 * Math.max(0, constitutiveSingularityCount - 100)
+      + 5 * Math.max(0, constitutiveSingularityCount - 200)
+      + 5 * Math.max(0, constitutiveSingularityCount - 250)
+      + 5 * Math.max(0, constitutiveSingularityCount - 270)
+      + 5 * Math.max(0, constitutiveSingularityCount - 280))
   } else if (debuff === 'Global Speed') {
     return 1 + Math.sqrt(effectiveSingularities) / 4
   } else if (debuff === 'Obtainium') {

@@ -616,7 +616,8 @@ export const htmlInserts = () => {
     'obtainiumDisplay'
   ] as const
   for (let i = 0; i < playerRequirements.length; i++) {
-    const text = format(player[`${playerRequirements[i]}` as const])
+    const value = player[`${playerRequirements[i]}` as const]
+    const text = format(value instanceof Decimal ? value : value.valueOf())
     const dom = DOMCacheGetOrSet(`${domRequirements[i]}` as const)
     if (dom.textContent !== text) {
       dom.textContent = text

@@ -2500,7 +2500,6 @@ export interface ProgressiveAchievement {
   pointsAwarded: (cached: number) => number
   updateValue: () => number // Number to compare to existing caches
   useCachedValue: boolean
-  i18nParams?: Record<string, () => number>
 }
 
 export type ProgressiveAchievements =
@@ -3085,13 +3084,7 @@ export const generateProgressiveAchievementDescription = (name: ProgressiveAchie
     x: format(achievementManager.progressiveAchievements[name].cached, 0, true)
   })
 
-  const i18nParams = ach.i18nParams !== undefined
-    ? Object.fromEntries(
-      Object.entries(ach.i18nParams).map(([key, fn]) => [key, fn()])
-    )
-    : {}
-
-  const achAPSourceText = i18next.t(`achievements.progressiveAchievements.${name}.apSource`, i18nParams)
+  const achAPSourceText = i18next.t(`achievements.progressiveAchievements.${name}.apSource`)
 
   let APText = ''
 

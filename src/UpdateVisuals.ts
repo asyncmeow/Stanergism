@@ -543,7 +543,7 @@ export const visualUpdateBuildings = () => {
     DOMCacheGetOrSet('tesseractInfo').textContent = i18next.t(
       'buildings.tesseractsYouHave',
       {
-        tesseracts: format(player.wowTesseracts)
+        tesseracts: format(player.wowTesseracts.valueOf())
       }
     )
 
@@ -640,7 +640,7 @@ export const visualUpdateRunes = () => {
 
     if (calculateSalvage >= 0) {
       DOMCacheGetOrSet('offeringRecycleInfo').textContent = i18next.t(
-      'runes.recycleChance',
+        'runes.recycleChance',
         {
           amount: format(calculateSalvage, 1, true),
           mult: format(calculateRecycle, 2, true)
@@ -648,15 +648,13 @@ export const visualUpdateRunes = () => {
       )
     } else {
       DOMCacheGetOrSet('offeringRecycleInfo').textContent = i18next.t(
-      'runes.recycleChanceDividedBy',
+        'runes.recycleChanceDividedBy',
         {
           amount: format(calculateSalvage, 1, true),
           div: format(Decimal.pow(calculateRecycle, -1), 2, true)
-        },
+        }
       )
     }
-
-
   }
 
   if (getActiveSubTab() === 1) {
@@ -849,7 +847,7 @@ export const visualUpdateCubes = () => {
       DOMCacheGetOrSet('cubeQuantity').innerHTML = i18next.t(
         'wowCubes.cubes.inventory',
         {
-          amount: format(player.wowCubes, 0, true)
+          amount: format(player.wowCubes.valueOf(), 0, true)
         }
       )
       const cubeArray = [
@@ -921,7 +919,7 @@ export const visualUpdateCubes = () => {
       DOMCacheGetOrSet('tesseractQuantity').innerHTML = i18next.t(
         'wowCubes.tesseracts.inventory',
         {
-          amount: format(player.wowTesseracts, 0, true)
+          amount: format(player.wowTesseracts.valueOf(), 0, true)
         }
       )
       const tesseractArray = [
@@ -993,7 +991,7 @@ export const visualUpdateCubes = () => {
       DOMCacheGetOrSet('hypercubeQuantity').innerHTML = i18next.t(
         'wowCubes.hypercubes.inventory',
         {
-          amount: format(player.wowHypercubes, 0, true)
+          amount: format(player.wowHypercubes.valueOf(), 0, true)
         }
       )
       const hypercubeArray = [
@@ -1065,7 +1063,7 @@ export const visualUpdateCubes = () => {
       DOMCacheGetOrSet('platonicQuantity').innerHTML = i18next.t(
         'wowCubes.platonics.inventory',
         {
-          amount: format(player.wowPlatonicCubes, 0, true)
+          amount: format(player.wowPlatonicCubes.valueOf(), 0, true)
         }
       )
       const platonicArray = [
@@ -1108,7 +1106,7 @@ export const visualUpdateCubes = () => {
     case 4:
       DOMCacheGetOrSet('cubeAmount2').textContent = `You have ${
         format(
-          player.wowCubes,
+          player.wowCubes.valueOf(),
           0,
           true
         )
@@ -1686,7 +1684,7 @@ export const visualUpdateShop = () => {
   }
   DOMCacheGetOrSet('quarkamount').textContent = i18next.t(
     'shop.youHaveQuarks',
-    { x: format(player.worlds, 0, true) }
+    { x: format(player.worlds.valueOf(), 0, true) }
   )
   DOMCacheGetOrSet('offeringpotionowned').textContent = format(
     player.shopUpgrades.offeringPotion,

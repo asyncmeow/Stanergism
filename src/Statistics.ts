@@ -2788,7 +2788,9 @@ export const positiveSalvageStats: StatLine[] = [
   {
     i18n: 'InfiniteAscentRune',
     stat: () => getRuneEffects('infiniteAscent').salvage, // Infinite Ascent Rune
-    displayCriterion: () => { return player.highestSingularityCount >= 30 }
+    displayCriterion: () => {
+      return player.highestSingularityCount >= 30
+    }
   },
   {
     i18n: 'RedAmbrosiaYinYang',
@@ -3458,7 +3460,6 @@ export const loadTalismanRuneBonusMultiplierStats = () => {
   )
 }
 
-
 export const loadSalvageStats = () => {
   loadPositiveSalvageStats()
   loadNegativeSalvageStats()
@@ -3468,7 +3469,7 @@ export const loadSalvageStats = () => {
     'salvageStats',
     'statSalv',
     'SalvageStat',
-    calculateTotalSalvage,
+    calculateTotalSalvage
   )
 
   DOMCacheGetOrSet('salvageExtra').innerHTML = i18next.t('statistics.salvageStats.extraInfo')
@@ -3483,13 +3484,13 @@ export const loadPositiveSalvageStats = () => {
     calculateRawPositiveSalvage
   )
   loadStatistics(
-    [{i18n: 'PositiveMultiplier', stat: () => calculatePositiveSalvageMultiplier()}],
+    [{ i18n: 'PositiveMultiplier', stat: () => calculatePositiveSalvageMultiplier() }],
     'salvagePositive',
     'statSalvPos2',
     'SalvageStatPositive2',
     calculatePositiveSalvage,
     'Total2'
-  )  
+  )
 }
 
 export const loadNegativeSalvageStats = () => {
@@ -3501,7 +3502,7 @@ export const loadNegativeSalvageStats = () => {
     calculateRawNegativeSalvage
   )
   loadStatistics(
-    [{i18n: 'NegativeMultiplier', stat: () => calculateNegativeSalvageMultiplier()}],
+    [{ i18n: 'NegativeMultiplier', stat: () => calculateNegativeSalvageMultiplier() }],
     'salvageNegative',
     'statSalvNeg2',
     'SalvageStatNegative2',

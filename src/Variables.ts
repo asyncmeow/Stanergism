@@ -388,7 +388,7 @@ export const Globals: GlobalVariables = {
     -4_000,
     -8_000,
     -12_000,
-    -16_000,
+    -16_000
   ],
   /*
   droughtMultiplier: [

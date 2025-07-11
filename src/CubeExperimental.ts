@@ -90,7 +90,7 @@ export abstract class Cube {
   async openCustom () {
     // TODO: Replace this with `this`?
     const thisInPlayer = player[this.key] as Cube
-    const amount = await Prompt(i18next.t('cubes.howManyCubesOpen', { x: format(thisInPlayer, 0, true) }))
+    const amount = await Prompt(i18next.t('cubes.howManyCubesOpen', { x: format(thisInPlayer.valueOf(), 0, true) }))
 
     if (amount === null) {
       return Alert(i18next.t('cubes.noCubesOpened'))
