@@ -640,7 +640,7 @@ export const visualUpdateRunes = () => {
 
     if (calculateSalvage >= 0) {
       DOMCacheGetOrSet('offeringRecycleInfo').textContent = i18next.t(
-      'runes.recycleChance',
+        'runes.recycleChance',
         {
           amount: format(calculateSalvage, 1, true),
           mult: format(calculateRecycle, 2, true)
@@ -648,15 +648,13 @@ export const visualUpdateRunes = () => {
       )
     } else {
       DOMCacheGetOrSet('offeringRecycleInfo').textContent = i18next.t(
-      'runes.recycleChanceDividedBy',
+        'runes.recycleChanceDividedBy',
         {
           amount: format(calculateSalvage, 1, true),
           div: format(Decimal.pow(calculateRecycle, -1), 2, true)
-        },
+        }
       )
     }
-
-
   }
 
   if (getActiveSubTab() === 1) {

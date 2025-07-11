@@ -320,32 +320,32 @@ export const universalRuneEXPMult = (purchasedLevels: number): Decimal => {
 
 export const speedEXPMult = () => {
   return [
-    1 + CalcECC('reincarnation', player.challengecompletions[7]) / 10,
+    1 + CalcECC('reincarnation', player.challengecompletions[7]) / 10
   ].reduce((x, y) => x.times(y), new Decimal('1'))
 }
 
 export const duplicationEXPMult = () => {
   return [
-    1 + CalcECC('reincarnation', player.challengecompletions[7]) / 10,
+    1 + CalcECC('reincarnation', player.challengecompletions[7]) / 10
   ].reduce((x, y) => x.times(y), new Decimal('1'))
 }
 
 export const prismEXPMult = () => {
   return [
-    1 + CalcECC('reincarnation', player.challengecompletions[8]) / 5,
+    1 + CalcECC('reincarnation', player.challengecompletions[8]) / 5
   ].reduce((x, y) => x.times(y), new Decimal('1'))
 }
 
 export const thriftEXPMult = () => {
   return [
-    1 + CalcECC('reincarnation', player.challengecompletions[6]) / 10,
+    1 + CalcECC('reincarnation', player.challengecompletions[6]) / 10
   ].reduce((x, y) => x.times(y), new Decimal('1'))
 }
 
 export const superiorIntellectEXPMult = () => {
   return [
     1 + CalcECC('reincarnation', player.challengecompletions[9]) / 5,
-    1 + 1 / 20 * player.researches[83],
+    1 + 1 / 20 * player.researches[83]
   ].reduce((x, y) => x.times(y), new Decimal('1'))
 }
 
@@ -534,7 +534,7 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
         salvage: salvage
       }
     },
-    effectsDescription: (level) =>{
+    effectsDescription: (level) => {
       const effectValues = runes.infiniteAscent.effects(level)
       let text = ''
       text += i18next.t('runes.infiniteAscent.effect', {
@@ -542,9 +542,11 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
         val2: formatAsPercentIncrease(effectValues.cubeMult)
       })
       if (player.highestSingularityCount >= 30) {
-        text += ` ${i18next.t('runes.infiniteAscent.bonusEffect', {
-          val3: format(effectValues.salvage, 2, true)
-        })}`
+        text += ` ${
+          i18next.t('runes.infiniteAscent.bonusEffect', {
+            val3: format(effectValues.salvage, 2, true)
+          })
+        }`
       }
       return text
     },

@@ -1390,7 +1390,6 @@ const loadSynergy = () => {
       player.loaded10101 = false
     }
 
-
     if (player.firstOwnedAnts < 1 && player.firstCostAnts.gte('1e1200')) {
       player.firstCostAnts = new Decimal('1e700')
       player.firstOwnedAnts = 0
@@ -1446,7 +1445,6 @@ const loadSynergy = () => {
     player.corruptions.used = new CorruptionLoadout(player.corruptions.used.loadout)
     // This is needed to fix saves that had issues with not resetting corruption at the singularity
     player.corruptions.used.setCorruptionLevelsWithChallengeRequirement(player.corruptions.used.loadout)
-
 
     for (let j = 1; j < 126; j++) {
       upgradeupdate(j, true)
@@ -2249,6 +2247,7 @@ export const format = (
   }
 
   // NaN check
+  // biome-ignore lint/suspicious/noSelfCompare: NaN !== NaN
   if (input !== input) {
     return '0 [NaN]'
   }

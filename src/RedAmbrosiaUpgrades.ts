@@ -27,7 +27,7 @@ type RedAmbrosiaUpgradeRewards = {
   redAmbrosiaAccelerator: { ambrosiaTimePerRedAmbrosia: number }
   regularLuck2: { ambrosiaLuck: number }
   blueberryGenerationSpeed2: { blueberryGenerationSpeed: number }
-  salvageYinYang: { positiveSalvage: number, negativeSalvage: number }
+  salvageYinYang: { positiveSalvage: number; negativeSalvage: number }
 }
 
 export type RedAmbrosiaNames = keyof RedAmbrosiaUpgradeRewards
@@ -500,12 +500,12 @@ export const redAmbrosiaUpgrades: { [K in RedAmbrosiaNames]: RedAmbrosiaUpgrade<
     },
     effects: (n: number) => {
       return {
-        positiveSalvage: 10*n,
-        negativeSalvage: -10*n
+        positiveSalvage: 10 * n,
+        negativeSalvage: -10 * n
       }
     },
     effectsDescription: (n: number) => {
-      return i18next.t('redAmbrosia.data.salvageYinYang.effect', { amount: 10*n })
+      return i18next.t('redAmbrosia.data.salvageYinYang.effect', { amount: 10 * n })
     },
     maxLevel: 100,
     costPerLevel: 200,
