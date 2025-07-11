@@ -47,6 +47,8 @@ import {
   calculateHypercubeMultiplier,
   calculateLimitedAscensionsDebuff,
   calculateLuckConversion,
+  calculateNegativeSalvage,
+  calculateNegativeSalvageMultiplier,
   calculateNumberOfThresholds,
   calculateObtainium,
   calculateObtainiumDecimal,
@@ -57,10 +59,14 @@ import {
   calculateOfferings,
   calculateOfferingsDecimal,
   calculatePlatonicMultiplier,
+  calculatePositiveSalvage,
+  calculatePositiveSalvageMultiplier,
   calculatePowderConversion,
   calculateQuarkMultFromPowder,
   calculateQuarkMultiplier,
   calculateRawAscensionSpeedMult,
+  calculateRawNegativeSalvage,
+  calculateRawPositiveSalvage,
   calculateRedAmbrosiaCubes,
   calculateRedAmbrosiaGenerationSpeed,
   calculateRedAmbrosiaLuck,
@@ -2750,7 +2756,7 @@ export const allTalismanRuneBonusStats: StatLine[] = [
   }
 ]
 
-export const allSalvageStats: StatLine[] = [
+export const positiveSalvageStats: StatLine[] = [
   {
     i18n: 'AchievementBonus',
     stat: () => +achievementManager.getBonus('salvage')
@@ -2774,6 +2780,36 @@ export const allSalvageStats: StatLine[] = [
   {
     i18n: 'AbyssHepteract',
     stat: () => getHepteractEffects('abyss').salvage // Abyss Hepteract
+  },
+  {
+    i18n: 'SingularityPerk',
+    stat: () => Math.min(50, 5 * player.highestSingularityCount)
+  },
+  {
+    i18n: 'InfiniteAscentRune',
+    stat: () => getRuneEffects('infiniteAscent').salvage, // Infinite Ascent Rune
+    displayCriterion: () => { return player.highestSingularityCount >= 30 }
+  },
+  {
+    i18n: 'RedAmbrosiaYinYang',
+    stat: () => getRedAmbrosiaUpgradeEffects('salvageYinYang').positiveSalvage // Red Ambrosia Upgrade: Yin Yang
+  }
+]
+
+export const negativeSalvageStats: StatLine[] = [
+  {
+    i18n: 'DroughtCorruption',
+    stat: () => player.corruptions.used.corruptionEffects('drought'),
+    color: 'red'
+  },
+  {
+    i18n: 'SingularityDebuff',
+    stat: () => calculateSingularityDebuff('Salvage'), // Singularity Debuff
+    color: 'red'
+  },
+  {
+    i18n: 'RedAmbrosiaYinYang',
+    stat: () => getRedAmbrosiaUpgradeEffects('salvageYinYang').negativeSalvage // Red Ambrosia Upgrade: Yin Yang
   }
 ]
 
@@ -3061,7 +3097,10 @@ export const loadStatistics = (
   const statTotalHTMLName = `${statLinePrefix}T`
   const statNumTotalHTMLName = `${statLinePrefix}NT`
 
-  if (numStatLines === 0 && hasSummative) {
+  // Query that an element with name statTotalHTMLName Exists
+  const totalElm = document.getElementById(statTotalHTMLName)
+
+  if (totalElm === null && hasSummative) {
     const statTotal = document.createElement('p')
     statTotal.id = statTotalHTMLName
     statTotal.className = 'statPortion'
@@ -3419,16 +3458,56 @@ export const loadTalismanRuneBonusMultiplierStats = () => {
   )
 }
 
+
 export const loadSalvageStats = () => {
+  loadPositiveSalvageStats()
+  loadNegativeSalvageStats()
+
   loadStatistics(
-    allSalvageStats,
+    [],
     'salvageStats',
     'statSalv',
     'SalvageStat',
-    calculateTotalSalvage
+    calculateTotalSalvage,
   )
 
   DOMCacheGetOrSet('salvageExtra').innerHTML = i18next.t('statistics.salvageStats.extraInfo')
+}
+
+export const loadPositiveSalvageStats = () => {
+  loadStatistics(
+    positiveSalvageStats,
+    'salvagePositive',
+    'statSalvPos',
+    'SalvageStatPositive',
+    calculateRawPositiveSalvage
+  )
+  loadStatistics(
+    [{i18n: 'PositiveMultiplier', stat: () => calculatePositiveSalvageMultiplier()}],
+    'salvagePositive',
+    'statSalvPos2',
+    'SalvageStatPositive2',
+    calculatePositiveSalvage,
+    'Total2'
+  )  
+}
+
+export const loadNegativeSalvageStats = () => {
+  loadStatistics(
+    negativeSalvageStats,
+    'salvageNegative',
+    'statSalvNeg',
+    'SalvageStatNegative',
+    calculateRawNegativeSalvage
+  )
+  loadStatistics(
+    [{i18n: 'NegativeMultiplier', stat: () => calculateNegativeSalvageMultiplier()}],
+    'salvageNegative',
+    'statSalvNeg2',
+    'SalvageStatNegative2',
+    calculateNegativeSalvage,
+    'Total2'
+  )
 }
 
 export const c15RewardUpdate = () => {

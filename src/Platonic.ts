@@ -304,7 +304,7 @@ export const createPlatonicDescription = (index: number) => {
   }
   priceMultiplier *= calculateSingularityDebuff('Platonic Costs')
 
-  DOMCacheGetOrSet('platonicUpgradeDescription').textContent = i18next.t(
+  DOMCacheGetOrSet('platonicUpgradeDescription').innerHTML = i18next.t(
     `wowCubes.platonicUpgrades.descriptions.${index}`
   )
   DOMCacheGetOrSet('platonicUpgradeLevel').textContent = i18next.t(translationKey, {

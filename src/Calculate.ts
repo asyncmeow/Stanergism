@@ -40,13 +40,14 @@ import {
   allQuarkStats,
   allRedAmbrosiaGenerationSpeedStats,
   allRedAmbrosiaLuckStats,
-  allSalvageStats,
   allShopTablets,
   allTesseractStats,
   allWowCubeStats,
   antSacrificeRewardStats,
   antSacrificeTimeStats,
-  offeringObtainiumTimeModifiers
+  negativeSalvageStats,
+  offeringObtainiumTimeModifiers,
+  positiveSalvageStats
 } from './Statistics'
 import { format, getTimePinnedToLoadDate, player, resourceGain, saveSynergy, updateAll } from './Synergism'
 import { getTalismanEffects, toggleTalismanBuy, updateTalismanInventory } from './Talismans'
@@ -488,13 +489,48 @@ export const calculateAcceleratorMultiplier = () => {
   }
 }
 
-export const calculateTotalSalvage = () => {
-  return allSalvageStats.reduce((a, b) => a + b.stat(), 0)
+export const calculatePositiveSalvageMultiplier = () => {
+  const posSalvagePerkSings = [230, 245, 260, 275, 290]
+  const multiplier = 1 + posSalvagePerkSings.filter((x) => x <= player.highestSingularityCount).length / 100
+  return multiplier
 }
 
-export const calculateSalvageRuneEXPMultiplier = (): Decimal => {
+export const calculateRawPositiveSalvage = () => {
+  return positiveSalvageStats.reduce((a, b) => a + b.stat(), 0)
+}
+
+export const calculatePositiveSalvage = () => {
+  return calculateRawPositiveSalvage() * calculatePositiveSalvageMultiplier()
+}
+
+export const calculateNegativeSalvageMultiplier = () => {
+  const negSalvagePerkSings = [75, 85, 105, 125, 155, 185, 215, 245, 260, 275]
+  const multiplier = 1 - negSalvagePerkSings.filter((x) => x <= player.highestSingularityCount).length / 100
+  return multiplier
+}
+
+export const calculateRawNegativeSalvage = () => {
+  return negativeSalvageStats.reduce((a, b) => a + b.stat(), 0)
+}
+
+export const calculateNegativeSalvage = () => {
+  return calculateRawNegativeSalvage() * calculateNegativeSalvageMultiplier()
+}
+
+export const calculateTotalSalvage = () => {
+  return calculatePositiveSalvage() + calculateNegativeSalvage()
+}
+
+export const calculateSalvageRuneEXPMultiplier = (salvageVal: number | undefined = undefined): Decimal => {
+  let salvage = salvageVal
   // Factors where Salvage comes from
-  const salvage = calculateTotalSalvage()
+  if (salvage === undefined) {
+    salvage = calculateTotalSalvage()
+    // If negative salvage, multiplier is the reciproval of the positive.
+    if (salvage < 0) {
+      return new Decimal(1).div(calculateSalvageRuneEXPMultiplier(-salvage))
+    }
+  }
 
   if (salvage < 90) {
     return new Decimal(1 / (1 - salvage / 100))

@@ -70,6 +70,7 @@ type RuneTypeMap = {
   infiniteAscent: {
     quarkMult: number
     cubeMult: number
+    salvage: number
   }
   antiquities: {
     addCodeCooldownReduction: number
@@ -320,28 +321,24 @@ export const universalRuneEXPMult = (purchasedLevels: number): Decimal => {
 export const speedEXPMult = () => {
   return [
     1 + CalcECC('reincarnation', player.challengecompletions[7]) / 10,
-    player.corruptions.used.corruptionEffects('drought')
   ].reduce((x, y) => x.times(y), new Decimal('1'))
 }
 
 export const duplicationEXPMult = () => {
   return [
     1 + CalcECC('reincarnation', player.challengecompletions[7]) / 10,
-    player.corruptions.used.corruptionEffects('drought')
   ].reduce((x, y) => x.times(y), new Decimal('1'))
 }
 
 export const prismEXPMult = () => {
   return [
     1 + CalcECC('reincarnation', player.challengecompletions[8]) / 5,
-    player.corruptions.used.corruptionEffects('drought')
   ].reduce((x, y) => x.times(y), new Decimal('1'))
 }
 
 export const thriftEXPMult = () => {
   return [
     1 + CalcECC('reincarnation', player.challengecompletions[6]) / 10,
-    player.corruptions.used.corruptionEffects('drought')
   ].reduce((x, y) => x.times(y), new Decimal('1'))
 }
 
@@ -349,7 +346,6 @@ export const superiorIntellectEXPMult = () => {
   return [
     1 + CalcECC('reincarnation', player.challengecompletions[9]) / 5,
     1 + 1 / 20 * player.researches[83],
-    player.corruptions.used.corruptionEffects('drought')
   ].reduce((x, y) => x.times(y), new Decimal('1'))
 }
 
@@ -527,16 +523,31 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
     effects: (level) => {
       const quarkMult = 1 + level / 500 + (level > 0 ? 0.1 : 0)
       const cubeMult = 1 + level / 100
+
+      const salvagePerkLevels = [30, 40, 55, 70, 90, 110, 130, 160, 190, 235, 260]
+      const salvageCoefficient = 0.025 * salvagePerkLevels.filter((x) => x <= player.highestSingularityCount).length
+      const salvage = salvageCoefficient * level
+
       return {
         quarkMult: quarkMult,
-        cubeMult: cubeMult
+        cubeMult: cubeMult,
+        salvage: salvage
       }
     },
-    effectsDescription: (level) =>
-      i18next.t('runes.infiniteAscent.effect', {
-        val: formatAsPercentIncrease(1 + level / 500 + (level > 0 ? 0.1 : 0), 2),
-        val2: formatAsPercentIncrease(1 + level / 100, 2)
-      }),
+    effectsDescription: (level) =>{
+      const effectValues = runes.infiniteAscent.effects(level)
+      let text = ''
+      text += i18next.t('runes.infiniteAscent.effect', {
+        val: formatAsPercentIncrease(effectValues.quarkMult),
+        val2: formatAsPercentIncrease(effectValues.cubeMult)
+      })
+      if (player.highestSingularityCount >= 30) {
+        text += ` ${i18next.t('runes.infiniteAscent.bonusEffect', {
+          val3: format(effectValues.salvage, 2, true)
+        })}`
+      }
+      return text
+    },
     effectiveLevelMult: () => 1,
     freeLevels: () => bonusRuneLevelsIA(),
     runeEXPPerOffering: (purchasedLevels) => universalRuneEXPMult(purchasedLevels).times(infiniteAscentEXPMult()),

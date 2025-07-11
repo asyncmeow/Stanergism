@@ -326,6 +326,11 @@
         "name": "The Sands of Time II",
         "description": "This gives +0.1% Ambrosia Bar Point gain per level, but you can purchase a ton of levels of this!",
         "effect": "This upgrade increases Ambrosia Bar Point gain by {{amount}}!"
+      },
+      "salvageYinYang": {
+        "name": "Yin and Yang: ♻ Salvage Edition",
+        "description": "This upgrade, oddly enough, increases both your Positive and Negative ♻ Salvage by 10 per level!",
+        "effect": "Your Positive and Negative ♻ Salvage are both increased by {{amount}}."
       }
     }
   },
@@ -2978,6 +2983,22 @@
       "taxReduction": {
         "name": "Accountants Clicking at Your Desktop",
         "default": "Reduce your taxes by 50%!"
+      },
+      "recycledContent": {
+        "name": "... Recycled Content?",
+        "default": "Increase your <<green|♲ Salvage>> by 5 per tier! Currently: +{{amount}}"
+      },
+      "infiniteRecycling": {
+        "name": "Infinite Recycling",
+        "default": "Your Infinite Ascent Rune gains a third perk: +0.025 <<green|♲ Salvage>> per level, per tier! Currently: +{{salvage}}"
+      },
+      "recyclistsDesktop": {
+        "name": "Recyclists Clicking at Your Desktop",
+        "default": "For all sources of <<crimson|Negative ♲ Salvage>>, they reduce it by {{i}}% less!"
+      },
+      "demeterHarvest": {
+        "name": "Demeter's Harvest",
+        "default": "For all sources of <<lime|Positive ♲ Salvage>>, they increase it by {{i}}% more!"
       }
     },
     "toString": {
@@ -3412,6 +3433,7 @@
     "penalties": {
       "globalSpeed": "<<royalblue|Global Speed>> is divided by <<royalblue|{{divisor}}>>.",
       "ascensionSpeed": "<<orange|Ascension Speed>> is divided by <<orange|{{divisor}}>>.",
+      "salvage": "<<green|♲ Salvage>> is reduced by <<green|{{amount}}>>",
       "offeringGain": "<<gold|Offering Gain>> is divided by <<gold|{{divisor}}>>.",
       "obtainiumGain": "<<steelblue|Obtainium Gain>> is divided by <<steelblue|{{divisor}}>>.",
       "cubeGain": "<<yellow|Cube Gain>> is divided by <<yellow|{{divisor}}>>.",
@@ -4072,7 +4094,7 @@
       "illiteracy": "Obtainium gain ^{{ effect }}",
       "deflation": "Diamond gain ^{{ effect }}",
       "extinction": "Ant Production ^{{ effect }}",
-      "drought": "Offering EXP divided by {{ effect }}",
+      "drought": "♲ Salvage {{ effect }}",
       "recession": "Coin Gain ^{{ effect }}"
     },
     "corruptionStats": {
@@ -4131,7 +4153,7 @@
       "illiteracy": "Maybe Albert wouldn't have theorized Dilation after all.",
       "deflation": "Diamond Mine destroyed... no more monopolies!",
       "extinction": "It killed the dinosaurs too, ya Dingus.",
-      "drought": "More like California, am I right?",
+      "drought": "Your farmland is <i>unsalvagable!</i>",
       "recession": "Yet another 2025 catastrophe."
     },
     "currentLevel": {
@@ -4141,7 +4163,7 @@
       "illiteracy": "On this Ascension, this corruption is level {{ level }}. Effect: Obtainium gain ^{{ effect }}",
       "deflation": "On this Ascension, this corruption is level {{ level }}. Effect: Diamond gain ^{{ effect }}",
       "extinction": "On this Ascension, this corruption is level {{ level }}. Effect: Ant Production ^{{ effect }}",
-      "drought": "On this Ascension, this corruption is level {{ level }}. Effect: Offering EXP is multiplied by {{ effect }}",
+      "drought": "On this Ascension, this corruption is level {{ level }}. Effect: ♲ Salvage {{ effect }}",
       "recession": "On this Ascension, this corruption is level {{ level }}. Effect: Coin Gain ^{{ effect }}"
     },
     "prototypeLevel": {
@@ -4151,7 +4173,7 @@
       "illiteracy": "On next Ascension, this corruption will be level {{ level }}. Effect: Obtainium gain ^{{ effect }}",
       "deflation": "On next Ascension, this corruption will be level {{ level }}. Effect: Diamond gain ^{{ effect }}",
       "extinction": "On next Ascension, this corruption will be level {{ level }}. Effect: Ant Production ^{{ effect }}",
-      "drought": "On next Ascension, this corruption will be level {{ level }}. Effect: Offering EXP is multiplied by {{ effect }}",
+      "drought": "On next Ascension, this corruption will be level {{ level }}. Effect: ♲ Salvage {{ effect }}",
       "recession": "On next Ascension, this corruption will be level {{ level }}. Effect: Coin Gain ^{{ effect }}"
     },
     "scoreMultiplier": "Current Score Multiplier: {{ curr }} / Next Ascension Score Multiplier: {{ next }}",
@@ -4624,6 +4646,7 @@
     "offeringsYouHave": "You have {{offerings}} Offerings.",
     "gainExp": "Gain {{amount}}x EXP per offering sacrificed.",
     "recycleChance": "You have {{amount}} ♲ Salvage. This multiplies EXP gain by {{mult}}!",
+    "recycleChanceDividedBy": "You have {{amount}} ♲ Salvage. This divides EXP gain by {{div}}.",
     "hover": "Hey, hover over a rune icon to get details on what each one does and what benefits they're giving you!",
     "thanksResearches": "The effect of the first five Runes is increased by {{percent}}%",
     "offeringInvested": "<<orange | Invested <b>{{amount}}</b> Offerings>>",
@@ -4661,7 +4684,8 @@
       "name": "Infinite Ascent",
       "description": "A staircase you can only climb facing backwards, how weird is that?",
       "values": "+0.2% Quarks, +1% all Cube types per level! Start with +10% Quarks.",
-      "effect": "IA Rune Bonus: Quark Gain +{{val}}, Ascensions give +{{val2}} more of all cube types."
+      "effect": "IA Rune Bonus: Quark Gain +{{val}}, Ascensions give +{{val2}} more Cubes.",
+      "bonusEffect": "PLUS, ♲ Salvage +{{val3}} (Infinite Recycling bonus)"
     },
     "antiquities": {
       "name": "Antiquities of Ant God",
@@ -5829,14 +5853,32 @@
     },
     "salvageStats": {
       "title": "Offering ♲ Salvage",
+      "Total": "Total ♲ Salvage:",
+      "extraInfo": "If your ♲ Salvage is less than 90, your Rune EXP is multiplied by <br> <<yellow|1 / (1 - Salvage / 100)>> <br> Otherwise, your Rune EXP is multiplied by <br> <<yellow |10^((Salvage - 90)/25 + 1)>> <br> <<crimson|If your ♲ Salvage is negative, your Rune EXP is instead divided by these values.>>"
+    },
+    "salvagePositive": {
+      "title": "Positive ♲ Salvage",
       "AchievementBonus": "Salvage from Achievements:",
       "SynergismLevel": "Synergism Level:",
       "UpgradeBonus": "Transcension Upgrade 1:",
       "RuneBonus": "Thrift Rune:",
       "CubeUpgrade2": "Cube Upgrade 2:",
       "AbyssHepteract": "Abyss Hepteract Bonus:",
-      "Total": "Total ♲ Salvage:",
-      "extraInfo": "If your ♲ Salvage is less than 90, your Rune EXP is multiplied by <br> <<yellow|1 / (1 - Salvage / 100)>> <br> Otherwise, your Rune EXP is multiplied by <br> <<yellow |10 * e^(0.1 * (Salvage - 90)>> <br>"
+      "SingularityPerk": "'...Recycled Content?' Perk:",
+      "InfiniteAscentRune": "Infinite Ascent - Hidden Bonus:",
+      "RedAmbrosiaYinYang": "Red Ambrosia: Yin:",
+      "Total": "Positive ♲ Salvage:",
+      "PositiveMultiplier": "'Demeter's Harvest' Perk Multiplier:",
+      "Total2": "Total Positive ♲ Salvage:"
+    },
+    "salvageNegative": {
+      "title": "Negative ♲ Salvage",
+      "DroughtCorruption": "'Less Fruitful Harvests' Corruption",
+      "SingularityDebuff": "Singularity Debuff:",
+      "RedAmbrosiaYinYang": "Red Ambrosia: Yang:",
+      "Total": "Negative ♲ Salvage:",
+      "NegativeMultiplier": "'Recyclists clicking at your Desktop' Perk Multiplier",
+      "Total2": "Total Negative ♲ Salvage:"
     },
     "gameStage": "Current Game Stage: {{stage}}"
   },
@@ -6009,7 +6051,7 @@
         "10": "C10 Exponent: 1.0375 --> 1.04, Constant tax exponent +0.20, 10x faster Constant production, 1.10x Quarks, +10 Reincarnation Challenge Cap, +5 Ascension Challenge Cap, 3.5x Immaculate Obtainium and Offerings, 2x All Cubes, ^1.25 ant exponent in C15, +1 Corruption Cap Level again!",
         "11": "If Crystal Mine Collapse is set to level 11 or higher, Reincarnations will also give Diamonds based on Particle gain!",
         "12": "Gain an incorruptible x(1 + level/100) Ant multiplier per Challenge completion!",
-        "13": "The effect of Less Fruitful Harvests is raised to ^0.5.",
+        "13": "'Less Fruitful Harvests' reduces your <<green|♻ Salvage>> by 50% less!",
         "14": "Multiply Great Depression II's coin exponent by 1.55, but only in Challenge 15.",
         "15": "You begin to find the start of the abyss. Coin Exponent +0.10 in Challenge 15, Challenge 15 Score +25%, Ascension Speed +0.2% per Corruption Level (Max: 20%), +1% all Cube types per C9 Completion (Multiplicative), 1.15x Quarks, 1e250x Tesseract Building Multiplier, 2x Ascension Count, +30 Reincarnation Challenge Cap, +20 Ascension Challenge Cap, 6x Immaculate Obtainium and Offerings! Talk about a deep dive.",
         "16": "Increase powder conversion rate by 1% per level, gain +2% Ascension count per level and gain up to 2% more Ascension count per level based on powder, up to 100,000. This will also multiply Tesseract Building production by (Powder + 1)^(10 * level), uncapped.",

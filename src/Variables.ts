@@ -370,6 +370,27 @@ export const Globals: GlobalVariables = {
     0
   ],
   extinctionMultiplier: [1, 0.92, 0.86, 0.8, 0.74, 0.65, 0.55, 0.5, 0.45, 0.4, 0.35, 0.3, 0.1, 0, 0, 0, 0],
+
+  droughtSalvage: [
+    0,
+    -25,
+    -50,
+    -75,
+    -100,
+    -200,
+    -300,
+    -400,
+    -600,
+    -800,
+    -1_000,
+    -1_250,
+    -2_000,
+    -4_000,
+    -8_000,
+    -12_000,
+    -16_000,
+  ],
+  /*
   droughtMultiplier: [
     1,
     1 / 5,
@@ -388,7 +409,8 @@ export const Globals: GlobalVariables = {
     1 / 1e177,
     1 / 1e200,
     1 / 1e250
-  ],
+  ],*/
+
   recessionPower: [
     1,
     0.9,

@@ -2267,15 +2267,28 @@ export const format = (
     && input > 0 // don't handle negative numbers, probably could be removed
   ) {
     return input.toExponential(accuracy)
+  } else if (
+    typeof input === 'number'
+    && player.notation === 'Default'
+    && -input < (!fractional ? 1e-3 : 1e-15) // arbitrary number, don't change 1e-3
+    && -input > 0
+  ) {
+    return `-${(-input).toExponential(accuracy)}`
   }
 
   let power!: number
   let mantissa!: number
   if (isDecimal(input)) {
+    if (input.lessThan(0)) {
+      return `-${format(input.negated(), accuracy, long, truncate, fractional)}`
+    }
     // Gets power and mantissa if input is of type decimal
     power = input.e
     mantissa = input.mantissa
   } else if (typeof input === 'number') {
+    if (input < 0) {
+      return `-${format(-input, accuracy, long, truncate, fractional)}`
+    }
     if (input === 0) {
       return '0'
     }

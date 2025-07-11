@@ -638,13 +638,25 @@ export const visualUpdateRunes = () => {
     const calculateSalvage = calculateTotalSalvage()
     const calculateRecycle = calculateSalvageRuneEXPMultiplier()
 
-    DOMCacheGetOrSet('offeringRecycleInfo').textContent = i18next.t(
+    if (calculateSalvage >= 0) {
+      DOMCacheGetOrSet('offeringRecycleInfo').textContent = i18next.t(
       'runes.recycleChance',
-      {
-        amount: format(calculateSalvage, 0, true),
-        mult: format(calculateRecycle, 2, true)
-      }
-    )
+        {
+          amount: format(calculateSalvage, 1, true),
+          mult: format(calculateRecycle, 2, true)
+        }
+      )
+    } else {
+      DOMCacheGetOrSet('offeringRecycleInfo').textContent = i18next.t(
+      'runes.recycleChanceDividedBy',
+        {
+          amount: format(calculateSalvage, 1, true),
+          div: format(Decimal.pow(calculateRecycle, -1), 2, true)
+        },
+      )
+    }
+
+
   }
 
   if (getActiveSubTab() === 1) {

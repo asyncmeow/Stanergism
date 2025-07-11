@@ -140,6 +140,15 @@ export const updateSingularityPenalties = (): void => {
     })
   }
         ${
+    i18next.t('singularity.penalties.salvage', {
+      amount: format(
+        -calculateSingularityDebuff('Salvage', singularityCount),
+        0,
+        true
+      )
+    })
+  }
+        ${
     i18next.t('singularity.penalties.obtainiumGain', {
       divisor: format(
         calculateSingularityDebuff('Obtainium', singularityCount),
@@ -2220,6 +2229,19 @@ export const singularityPerks: SingularityPerk[] = [
   },
   {
     name: () => {
+      return i18next.t('singularity.perks.recycledContent.name')
+    },
+    levels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    description: (n: number, _levels: number[]) => {
+      const salvageBonus = Math.min(50, 5 * n)
+      return i18next.t('singularity.perks.recycledContent.default', {
+        amount: salvageBonus
+      })
+    },
+    ID: 'recycledContent'
+  },
+  {
+    name: () => {
       return i18next.t('singularity.perks.antGodsCornucopia.name')
     },
     levels: [1, 30, 70, 100],
@@ -2550,6 +2572,24 @@ export const singularityPerks: SingularityPerk[] = [
   },
   {
     name: () => {
+      return i18next.t('singularity.perks.infiniteRecycling.name')
+    },
+    levels: [30, 40, 55, 70, 90, 110, 130, 160, 190, 235, 260],
+    description: (n: number, levels: number[]) => {
+      for (let i = levels.length - 1; i >= 0; i--) {
+        if (n >= levels[i]) {
+          const salvage = 0.025 * (i + 1) * (runes.infiniteAscent.level + runes.infiniteAscent.freeLevels())
+          return i18next.t('singularity.perks.infiniteRecycling.default', {
+            salvage: format(salvage, 3, true)
+          })
+        }
+      }
+      return i18next.t('singularity.perks.evenMoreQuarks.bug')
+    },
+    ID: 'infiniteRecycling'
+  },
+  {
+    name: () => {
       return i18next.t('singularity.perks.irishAnt.name')
     },
     levels: [35, 42, 49, 56, 63, 70, 77, 135, 142, 149, 156, 163, 170, 177],
@@ -2643,6 +2683,24 @@ export const singularityPerks: SingularityPerk[] = [
       return i18next.t('singularity.perks.lastClearTokens.default')
     },
     ID: 'lastClearTokens'
+  },
+  {
+    name: () => {
+      return i18next.t('singularity.perks.recyclistsDesktop.name')
+    },
+    levels: [75, 85, 105, 125, 155, 185, 215, 245, 260, 275],
+    description: (n: number, levels: number[]) => {
+      for (let i = levels.length - 1; i >= 0; i--) {
+        if (n >= levels[i]) {
+          return i18next.t('singularity.perks.recyclistsDesktop.default', {
+            i: i + 1
+          })
+        }
+      }
+
+      return i18next.t('singularity.perks.evenMoreQuarks.bug')
+    },
+    ID: 'recyclistsDesktop'
   },
   {
     name: () => {
@@ -2816,6 +2874,24 @@ export const singularityPerks: SingularityPerk[] = [
       return i18next.t('singularity.perks.skrauQ.default', { amt })
     },
     ID: 'skrauQ'
+  },
+  {
+    name: () => {
+      return i18next.t('singularity.perks.demeterHarvest.name')
+    },
+    levels: [230, 245, 260, 275, 290],
+    description: (n: number, levels: number[]) => {
+      for (let i = levels.length - 1; i >= 0; i--) {
+        if (n >= levels[i]) {
+          return i18next.t('singularity.perks.demeterHarvest.default', {
+            i: i + 1
+          })
+        }
+      }
+
+      return i18next.t('singularity.perks.evenMoreQuarks.bug')
+    },
+    ID: 'demeterHarvest'
   },
   {
     name: () => {
@@ -3111,6 +3187,7 @@ export async function buyGoldenQuarks (): Promise<void> {
 export type SingularityDebuffs =
   | 'Offering'
   | 'Obtainium'
+  | 'Salvage'
   | 'Global Speed'
   | 'Researches'
   | 'Ascension Speed'
@@ -3219,7 +3296,7 @@ export const calculateSingularityDebuff = (
     return 1
   }
   if (runes.antiquities.level > 0) {
-    return 1
+    return (debuff === 'Salvage') ? 0 : 1
   }
 
   const constitutiveSingularityCount = singularityCount - calculateSingularityReductions()
@@ -3235,6 +3312,13 @@ export const calculateSingularityDebuff = (
     return constitutiveSingularityCount < 150
       ? Math.sqrt(effectiveSingularities) + 1
       : Math.pow(effectiveSingularities, 2 / 3) / 400
+  } else if (debuff === 'Salvage') {
+    return -(5 * constitutiveSingularityCount +
+           5 * Math.max(0, constitutiveSingularityCount - 100) +
+           5 * Math.max(0, constitutiveSingularityCount - 200) +
+           5 * Math.max(0, constitutiveSingularityCount - 250) +
+           5 * Math.max(0, constitutiveSingularityCount - 270) +
+           5 * Math.max(0, constitutiveSingularityCount - 280))
   } else if (debuff === 'Global Speed') {
     return 1 + Math.sqrt(effectiveSingularities) / 4
   } else if (debuff === 'Obtainium') {

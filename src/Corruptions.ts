@@ -172,7 +172,11 @@ export class CorruptionLoadout {
   }
 
   #droughtEffect () {
-    return Math.pow(G.droughtMultiplier[this.#levels.drought], 1 - 1 / 2 * player.platonicUpgrades[13])
+    let baseSalvageReduction = G.droughtSalvage[this.#levels.drought]
+    if (player.platonicUpgrades[13] > 0) {
+      baseSalvageReduction *= 0.5
+    }
+    return baseSalvageReduction
   }
 
   #deflationEffect () {
@@ -485,7 +489,7 @@ export const corruptionDisplay = (corr: keyof Corruptions | 'exit') => {
   }
 
   DOMCacheGetOrSet('corruptionName').textContent = text.name
-  DOMCacheGetOrSet('corruptionDescription').textContent = text.description
+  DOMCacheGetOrSet('corruptionDescription').innerHTML = text.description
   DOMCacheGetOrSet('corruptionLevelCurrent').textContent = text.current
   DOMCacheGetOrSet('corruptionLevelPlanned').textContent = text.planned
   DOMCacheGetOrSet('corruptionMultiplierContribution').textContent = text.multiplier

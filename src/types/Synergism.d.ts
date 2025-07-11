@@ -914,7 +914,7 @@ export interface GlobalVariables {
   illiteracyPower: number[]
   deflationMultiplier: number[]
   extinctionMultiplier: number[]
-  droughtMultiplier: number[]
+  droughtSalvage: number[]
   recessionPower: number[]
 
   corruptionPointMultipliers: number[]
