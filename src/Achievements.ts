@@ -523,10 +523,7 @@ export class AchievementManager {
   resetAchievements () {
     this._totalPoints = 0
 
-    Object.keys(achievements).forEach((idx) => {
-      const index = Number(idx)
-      const achievement = achievements[index]
-
+    achievements.forEach((achievement, index) => {
       if (achievement.checkReset?.()) {
         // Do not reset if checkReset returns true
         return
@@ -1672,7 +1669,7 @@ export const achievements: Achievement[] = [
     group: 'challenge12',
     reward: { ascensionRewardScaling: () => 1, spiritUnlock: () => 1 }
   },
- {
+  {
     pointValue: 20,
     unlockCondition: () => player.challengecompletions[12] >= 2,
     group: 'challenge12',
@@ -2520,13 +2517,13 @@ export const emptyProgressiveCaches: Record<ProgressiveAchievements, number> = O
 
 export type ungroupedName = keyof typeof ungroupedNameMap
 
-export const numAchievements = Object.keys(achievements).length
-export const maxAchievementPoints = Object.values(achievements).reduce((sum, ach) => sum + ach.pointValue, 0)
+export const numAchievements = achievements.length
+export const maxAchievementPoints = achievements.reduce((sum, ach) => sum + ach.pointValue, 0)
   + Object.values(progressiveAchievements)
     .reduce((sum, ach) => sum + (ach.maxPointValue !== -1 ? ach.maxPointValue : 0), 0)
 
-export const achievementsByGroup: Record<AchievementGroups, number[]> = Object.entries(achievements)
-  .reduce((groups, [index, achievement]) => {
+export const achievementsByGroup: Record<AchievementGroups, number[]> = achievements
+  .reduce((groups, achievement, index) => {
     if (achievement.group) {
       if (!groups[achievement.group]) {
         groups[achievement.group] = []
@@ -2536,12 +2533,8 @@ export const achievementsByGroup: Record<AchievementGroups, number[]> = Object.e
     return groups
   }, {} as Record<AchievementGroups, number[]>)
 
-console.log(achievementsByGroup)
-
-// From achievements, I want to create an object whose keys are AchievementRewards and whose values are arrays of achievement numbers
-// Corresponding to indices. I want to create it using `achievement` object.
-export const achievementsByReward: Record<AchievementRewards, number[]> = Object.entries(achievements)
-  .reduce((rewards, [index, achievement]) => {
+export const achievementsByReward: Record<AchievementRewards, number[]> = achievements
+  .reduce((rewards, achievement, index) => {
     if (achievement.reward) {
       for (const rewardType of Object.keys(achievement.reward) as AchievementRewards[]) {
         if (!rewards[rewardType]) {
