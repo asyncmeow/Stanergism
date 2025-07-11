@@ -1130,10 +1130,6 @@ export const checkAmbrosiaUpgradePrerequisites = (upgradeKey: AmbrosiaUpgradeNam
   const upgrade = ambrosiaUpgrades[upgradeKey]
   const prerequisites = upgrade.prerequisites
 
-  if (Object.keys(prerequisites).length === 0) {
-    return true
-  }
-
   for (const [prereq, val] of Object.entries(prerequisites)) {
     const k = prereq as AmbrosiaUpgradeNames
     if (ambrosiaUpgrades[k].level < val!) {
