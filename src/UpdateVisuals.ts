@@ -543,7 +543,7 @@ export const visualUpdateBuildings = () => {
     DOMCacheGetOrSet('tesseractInfo').textContent = i18next.t(
       'buildings.tesseractsYouHave',
       {
-        tesseracts: format(player.wowTesseracts)
+        tesseracts: format(player.wowTesseracts.valueOf())
       }
     )
 
@@ -849,7 +849,7 @@ export const visualUpdateCubes = () => {
       DOMCacheGetOrSet('cubeQuantity').innerHTML = i18next.t(
         'wowCubes.cubes.inventory',
         {
-          amount: format(player.wowCubes, 0, true)
+          amount: format(player.wowCubes.valueOf(), 0, true)
         }
       )
       const cubeArray = [
@@ -921,7 +921,7 @@ export const visualUpdateCubes = () => {
       DOMCacheGetOrSet('tesseractQuantity').innerHTML = i18next.t(
         'wowCubes.tesseracts.inventory',
         {
-          amount: format(player.wowTesseracts, 0, true)
+          amount: format(player.wowTesseracts.valueOf(), 0, true)
         }
       )
       const tesseractArray = [
@@ -993,7 +993,7 @@ export const visualUpdateCubes = () => {
       DOMCacheGetOrSet('hypercubeQuantity').innerHTML = i18next.t(
         'wowCubes.hypercubes.inventory',
         {
-          amount: format(player.wowHypercubes, 0, true)
+          amount: format(player.wowHypercubes.valueOf(), 0, true)
         }
       )
       const hypercubeArray = [
@@ -1065,7 +1065,7 @@ export const visualUpdateCubes = () => {
       DOMCacheGetOrSet('platonicQuantity').innerHTML = i18next.t(
         'wowCubes.platonics.inventory',
         {
-          amount: format(player.wowPlatonicCubes, 0, true)
+          amount: format(player.wowPlatonicCubes.valueOf(), 0, true)
         }
       )
       const platonicArray = [
@@ -1108,7 +1108,7 @@ export const visualUpdateCubes = () => {
     case 4:
       DOMCacheGetOrSet('cubeAmount2').textContent = `You have ${
         format(
-          player.wowCubes,
+          player.wowCubes.valueOf(),
           0,
           true
         )
@@ -1686,7 +1686,7 @@ export const visualUpdateShop = () => {
   }
   DOMCacheGetOrSet('quarkamount').textContent = i18next.t(
     'shop.youHaveQuarks',
-    { x: format(player.worlds, 0, true) }
+    { x: format(player.worlds.valueOf(), 0, true) }
   )
   DOMCacheGetOrSet('offeringpotionowned').textContent = format(
     player.shopUpgrades.offeringPotion,

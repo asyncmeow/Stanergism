@@ -14,7 +14,7 @@ import {
   highestChallengeRewards,
   runChallengeSweep
 } from './Challenges'
-import { btoa, isDecimal, sortWithIndices, sumContents } from './Utility'
+import { btoa, sortWithIndices, sumContents } from './Utility'
 import { blankGlobals, Globals as G } from './Variables'
 
 import {
@@ -2217,7 +2217,7 @@ const padEvery = (str: string, places = 3) => {
     }
   }
   // re-add decimal places
-  if (typeof strParts[1] !== 'undefined') {
+  if (strParts[1] !== undefined) {
     newStr += dec + strParts[1]
   } // see https://www.npmjs.com/package/flatstr
 
@@ -2237,7 +2237,6 @@ export const format = (
   input:
     | Decimal
     | number
-    | { [Symbol.toPrimitive]: unknown }
     | null
     | undefined,
   accuracy = 0,
@@ -2249,44 +2248,34 @@ export const format = (
     return '0 [null]'
   }
 
-  if (typeof input === 'object' && Symbol.toPrimitive in input) {
-    input = Number(input)
+  // NaN check
+  if (input !== input) {
+    return '0 [NaN]'
   }
 
+  const inputType = typeof input
+
   if (
-    // invalid parameter
-    (!(input instanceof Decimal) && typeof input !== 'number')
-    || isNaN(input as number)
-  ) {
-    return isNaN(input as number) ? '0 [NaN]' : '0 [und.]'
-  } else if (
     // this case handles numbers less than 1e-6 and greater than 0
-    typeof input === 'number'
+    inputType === 'number'
     && player.notation === 'Default'
-    && input < (!fractional ? 1e-3 : 1e-15) // arbitrary number, don't change 1e-3
-    && input > 0 // don't handle negative numbers, probably could be removed
+    && (input as number) < (!fractional ? 1e-3 : 1e-15) // arbitrary number, don't change 1e-3
+    && (input as number) > 0 // don't handle negative numbers, probably could be removed
   ) {
     return input.toExponential(accuracy)
   } else if (
-    typeof input === 'number'
+    inputType === 'number'
     && player.notation === 'Default'
-    && -input < (!fractional ? 1e-3 : 1e-15) // arbitrary number, don't change 1e-3
-    && -input > 0
+    && -(input as number) < (!fractional ? 1e-3 : 1e-15) // arbitrary number, don't change 1e-3
+    && -(input as number) > 0
   ) {
     return `-${(-input).toExponential(accuracy)}`
   }
 
   let power!: number
   let mantissa!: number
-  if (isDecimal(input)) {
-    if (input.lessThan(0)) {
-      return `-${format(input.negated(), accuracy, long, truncate, fractional)}`
-    }
-    // Gets power and mantissa if input is of type decimal
-    power = input.e
-    mantissa = input.mantissa
-  } else if (typeof input === 'number') {
-    if (input < 0) {
+  if (inputType === 'number') {
+    if ((input as number) < 0) {
       return `-${format(-input, accuracy, long, truncate, fractional)}`
     }
     if (input === 0) {
@@ -2294,8 +2283,15 @@ export const format = (
     }
 
     // Gets power and mantissa if input is of type number and isn't 0
-    power = Math.floor(Math.log10(Math.abs(input)))
-    mantissa = input / Math.pow(10, power)
+    power = Math.floor(Math.log10(Math.abs(input as number)))
+    mantissa = (input as number) / Math.pow(10, power)
+  } else if (input instanceof Decimal) {
+    if (input.lessThan(0)) {
+      return `-${format(input.negated(), accuracy, long, truncate, fractional)}`
+    }
+    // Gets power and mantissa if input is of type decimal
+    power = input.e
+    mantissa = input.mantissa
   }
 
   // This prevents numbers from jittering between two different powers by rounding errors
@@ -2317,8 +2313,7 @@ export const format = (
     const powerOver = power % 3 < 0 ? 3 + (power % 3) : power % 3
     power = power - powerOver
     mantissa = mantissa * Math.pow(10, powerOver)
-  }
-  if (
+  } else if (
     player.notation === 'Pure Scientific'
     || player.notation === 'Pure Engineering'
   ) {
@@ -2352,7 +2347,7 @@ export const format = (
     return `${mantissaLook}`
   }
   // If the power is negative, then we will want to address that separately.
-  if (power < 0 && !isDecimal(input) && fractional) {
+  if (power < 0 && inputType === 'number' && fractional) {
     if (power <= -15) {
       return `${format(mantissa, accuracy, long)} / ${
         Math.pow(
@@ -2459,9 +2454,9 @@ export const format = (
 
     // If it doesn't fit a notation then default to mantissa e power
     return `e${power.toExponential(2)}`
-  } else {
-    return '0 [und.]'
   }
+
+  return '0 [und.]'
 }
 
 export const formatTimeShort = (

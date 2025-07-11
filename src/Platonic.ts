@@ -326,27 +326,27 @@ export const createPlatonicDescription = (index: number) => {
     }
   )
   DOMCacheGetOrSet('platonicCubeCost').textContent = i18next.t('wowCubes.platonicUpgrades.descriptionBox.cubeCost', {
-    a: format(player.wowCubes),
+    a: format(player.wowCubes.valueOf()),
     b: format(platUpgradeBaseCosts[index].cubes * priceMultiplier)
   })
   DOMCacheGetOrSet('platonicTesseractCost').textContent = i18next.t(
     'wowCubes.platonicUpgrades.descriptionBox.tesseractCost',
     {
-      a: format(player.wowTesseracts),
+      a: format(player.wowTesseracts.valueOf()),
       b: format(platUpgradeBaseCosts[index].tesseracts * priceMultiplier)
     }
   )
   DOMCacheGetOrSet('platonicHypercubeCost').textContent = i18next.t(
     'wowCubes.platonicUpgrades.descriptionBox.hypercubeCost',
     {
-      a: format(player.wowHypercubes),
+      a: format(player.wowHypercubes.valueOf()),
       b: format(platUpgradeBaseCosts[index].hypercubes * priceMultiplier)
     }
   )
   DOMCacheGetOrSet('platonicPlatonicCost').textContent = i18next.t(
     'wowCubes.platonicUpgrades.descriptionBox.platonicCost',
     {
-      a: format(player.wowPlatonicCubes),
+      a: format(player.wowPlatonicCubes.valueOf()),
       b: format(platUpgradeBaseCosts[index].platonics * priceMultiplier)
     }
   )
