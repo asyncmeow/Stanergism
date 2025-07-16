@@ -9,7 +9,6 @@ import { Globals as G } from './Variables'
 
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
-import { achievementManager } from './Achievements'
 import { getAmbrosiaUpgradeEffects } from './BlueberryUpgrades'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { CalcECC } from './Challenges'
@@ -18,6 +17,7 @@ import { firstFiveRuneEffectivenessStats, runeEffectivenessStatsSI } from './Sta
 import { Tabs } from './Tabs'
 import { getRuneBonusFromAllTalismans, getTalismanEffects } from './Talismans'
 import { assert } from './Utility'
+import { awardAchievementGroup, getAchievementReward } from './Achievements'
 
 export enum resetTiers {
   prestige = 1,
@@ -414,7 +414,7 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
     effectiveLevelMult: () => firstFiveEffectiveRuneLevelMult(),
     freeLevels: () => firstFiveFreeLevels() + bonusRuneLevelsDuplication(),
     runeEXPPerOffering: (purchasedLevels) => universalRuneEXPMult(purchasedLevels).times(duplicationEXPMult()),
-    isUnlocked: () => Boolean(achievementManager.getBonus('duplicationRuneUnlock')),
+    isUnlocked: () => Boolean(getAchievementReward('duplicationRuneUnlock')),
     minimalResetTier: 'ascension',
     name: () => i18next.t('runes.duplication.name'),
     description: () => i18next.t('runes.duplication.description'),
@@ -446,7 +446,7 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
     effectiveLevelMult: () => firstFiveEffectiveRuneLevelMult(),
     freeLevels: () => firstFiveFreeLevels() + bonusRuneLevelsPrism(),
     runeEXPPerOffering: (purchasedLevels) => universalRuneEXPMult(purchasedLevels).times(prismEXPMult()),
-    isUnlocked: () => Boolean(achievementManager.getBonus('prismRuneUnlock')),
+    isUnlocked: () => Boolean(getAchievementReward('prismRuneUnlock')),
     minimalResetTier: 'ascension',
     name: () => i18next.t('runes.prism.name'),
     description: () => i18next.t('runes.prism.description'),
@@ -477,7 +477,7 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
     effectiveLevelMult: () => firstFiveEffectiveRuneLevelMult(),
     freeLevels: () => firstFiveFreeLevels() + bonusRuneLevelsThrift(),
     runeEXPPerOffering: (purchasedLevels) => universalRuneEXPMult(purchasedLevels).times(thriftEXPMult()),
-    isUnlocked: () => Boolean(achievementManager.getBonus('thriftRuneUnlock')),
+    isUnlocked: () => Boolean(getAchievementReward('thriftRuneUnlock')),
     minimalResetTier: 'ascension',
     name: () => i18next.t('runes.thrift.name'),
     description: () => i18next.t('runes.thrift.description'),
@@ -697,6 +697,7 @@ export const updateAllRuneLevelsFromEXP = () => {
   for (const rune of Object.keys(runes) as RuneKeys[]) {
     updateLevelsFromEXP(rune)
   }
+  awardAchievementGroup('runeLevel')
 }
 
 export const updateRuneHTML = (rune: RuneKeys) => {

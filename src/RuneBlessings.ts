@@ -1,6 +1,5 @@
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
-import { achievementManager } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { calculateSalvageRuneEXPMultiplier } from './Calculate'
 import { resetTiers } from './Reset'
@@ -10,6 +9,7 @@ import { Tabs } from './Tabs'
 import { getTalismanEffects } from './Talismans'
 import { assert } from './Utility'
 import { Globals as G } from './Variables'
+import { getAchievementReward } from './Achievements'
 
 type RuneBlessingTypeMap = {
   speed: { globalSpeed: number }
@@ -193,7 +193,7 @@ export const getRuneBlessingTNL = (bless: RuneBlessingKeys) => {
 }
 
 export const buyBlessingLevels = (blessing: RuneBlessingKeys, budget: Decimal) => {
-  if (!achievementManager.getBonus('blessingUnlock')) {
+  if (!getAchievementReward('blessingUnlock')) {
     return
   }
 

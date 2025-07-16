@@ -1,5 +1,5 @@
 import Decimal from 'break_infinity.js'
-import { achievementManager, ungroupedNameMap } from './Achievements'
+import { awardAchievement, getAchievementReward, ungroupedNameMap } from './Achievements'
 import { buyUpgrades } from './Buy'
 import { player } from './Synergism'
 import { clickUpgrades, upgradeupdate } from './Upgrades'
@@ -20,10 +20,10 @@ export const buyGenerator = (i: number, state: boolean) => {
   const cost = Decimal.pow(10, G.upgradeCosts[q])
 
   if (player.upgrades[q] === 0 && player[type].gte(cost)) {
-    achievementManager.tryUnlock(ungroupedNameMap.generationAch1)
-    achievementManager.tryUnlock(ungroupedNameMap.generationAch2)
-    achievementManager.tryUnlock(ungroupedNameMap.generationAch3)
-    achievementManager.tryUnlock(ungroupedNameMap.generationAch4)
+    awardAchievement(ungroupedNameMap.generationAch1)
+    awardAchievement(ungroupedNameMap.generationAch2)
+    awardAchievement(ungroupedNameMap.generationAch3)
+    awardAchievement(ungroupedNameMap.generationAch4)
 
     player[type] = player[type].sub(cost)
     player.upgrades[q] = 1
@@ -97,19 +97,19 @@ export const autoUpgrades = () => {
     }
     if (
       player.upgrades[38] === 0 && player.prestigePoints.gte(Decimal.pow(10, 50000)) && player.shoptoggles.prestige
-      && achievementManager.getBonus('diamondUpgrade18')
+      && getAchievementReward('diamondUpgrade18')
     ) {
       buyUpgrades(Upgrade.prestige, 38, true)
     }
     if (
       player.upgrades[39] === 0 && player.prestigePoints.gte(Decimal.pow(10, 100000)) && player.shoptoggles.prestige
-      && achievementManager.getBonus('diamondUpgrade19')
+      && getAchievementReward('diamondUpgrade19')
     ) {
       buyUpgrades(Upgrade.prestige, 39, true)
     }
     if (
       player.upgrades[40] === 0 && player.prestigePoints.gte(Decimal.pow(10, 200000)) && player.shoptoggles.prestige
-      && achievementManager.getBonus('diamondUpgrade20')
+      && getAchievementReward('diamondUpgrade20')
     ) {
       buyUpgrades(Upgrade.prestige, 40, true)
     }

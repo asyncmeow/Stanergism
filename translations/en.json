@@ -3808,6 +3808,10 @@
       "particle": "Particle Buildings",
       "tesseract": "Tesseract Buildings"
     },
+    "achievements": {
+      "achievements": "Achievements",
+      "rewards": "Rewards"
+    },
     "runes": {
       "runes": "Runes",
       "talismans": "Talismans",

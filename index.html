@@ -1016,24 +1016,28 @@
                 </div>
             </div>
         </div>
-        <div id="achievements">
-            <div id="tieredAchievementsTable">
+        <div id="achievementsToggle">
+            <button id="toggleAchievementSubTab1" class="active-subtab" style="border: 2px solid gold" i18n="tabs.achievements.achievements"></button>
+            <button id="toggleAchievementSubTab2" style="border: 2px solid silver" i18n="tabs.achievements.rewards"></button>
+        </div>
+        <div id="achievementContainer1">
+            <div id="achievements">
+                <div id="tieredAchievementsTable">
 
-            </div>
-            <div id="ungroupedAchievementsTable">
+                </div>
+                <div id="ungroupedAchievementsTable">
 
+                </div>
+                <div id="progressiveAchievementsTable">
+                    
+                </div>
             </div>
-            <div id="progressiveAchievementsTable">
-                
+            <div id="achievementInfos" aria-live="polite">
+                <p id="achievementMultiLine"></p>
             </div>
         </div>
-        <div id="achievementInfos" aria-live="polite">
-            <p id="achievementMultiLine"></p>
-        </div>
-        <div id="achievementinfo" aria-live="polite">
-            <p class="mainText" i18n="achievements.hover"></p>
-            <p id="achievementdescription"></p>
-            <p id="achievementreward"></p>
+        <div id="achievementContainer2" style="display: none">
+
         </div>
     </div>
 

@@ -11,7 +11,7 @@ import { Globals as G } from './Variables'
 import type { DecimalSource } from 'break_infinity.js'
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
-import { achievementManager, ungroupedNameMap } from './Achievements'
+import { awardAchievement, awardAchievementGroup, getAchievementReward, ungroupedNameMap } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { resetHistoryAdd, type ResetHistoryEntryAntSacrifice } from './History'
 import { buyResearch } from './Research'
@@ -198,7 +198,7 @@ export const buyAntProducers = (pos: FirstToEighth, originalCost: DecimalSource,
   }
   calculateAntSacrificeELO()
 
-  achievementManager.tryUnlockByGroup('sacMult')
+  awardAchievementGroup('sacMult')
 
   if (player.firstOwnedAnts > 6.9e7) {
     player.firstOwnedAnts = 6.9e7
@@ -398,7 +398,7 @@ export const sacrificeAnts = async (auto = false) => {
   }
 
   if (player.mythicalFragments >= 1e11 && player.currentChallenge.ascension === 14) {
-    achievementManager.tryUnlock(ungroupedNameMap.seeingRedNoBlue)
+    awardAchievement(ungroupedNameMap.seeingRedNoBlue)
   }
 }
 
@@ -411,7 +411,7 @@ export const autoBuyAnts = () => {
   const cost = ['100', '100', '1000', '1000', '1e5', '1e6', '1e8', '1e11', '1e15', '1e20', '1e40', '1e100']
   if (player.currentChallenge.ascension !== 11) {
     for (let i = 1; i <= 12; i++) {
-      const check = i === 12 ? player.researches[145] > 0 : +achievementManager.getBonus('antUpgradeAutobuyers') >= i
+      const check = i === 12 ? player.researches[145] > 0 : +getAchievementReward('antUpgradeAutobuyers') >= i
       if (check && canAffordUpgrade(i, 2)) {
         buyAntUpgrade(cost[i - 1], true, i)
       }
@@ -423,7 +423,7 @@ export const autoBuyAnts = () => {
     const res = i === 1 ? player.reincarnationPoints : player.antPoints
     const m = i === 1 ? 1 : 2 // no multiplier on the first ant cost because it costs particles
     if (
-      +achievementManager.getBonus('antAutobuyers') >= i
+      +getAchievementReward('antAutobuyers') >= i
       && res.gte(player[`${G.ordinals[i - 1 as ZeroToSeven]}CostAnts` as const].times(m))
     ) {
       buyAntProducers(

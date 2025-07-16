@@ -1,6 +1,6 @@
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
-import { achievementManager, challengeAchievementCheck } from './Achievements'
+import { awardAchievementGroup, challengeAchievementCheck, getAchievementReward } from './Achievements'
 import type { BlueberryLoadoutMode } from './BlueberryUpgrades'
 import { buyTesseractBuilding, calculateTessBuildingsInBudget } from './Buy'
 import type { TesseractBuildings } from './Buy'
@@ -455,41 +455,41 @@ export const reset = (input: resetNames, fast = false, from = 'unknown') => {
 
     G.transcendPointGain = new Decimal('0')
 
-    if (achievementManager.getBonus('refineryAutobuy')) {
+    if (getAchievementReward('refineryAutobuy')) {
       player.firstOwnedDiamonds += 1
     }
-    if (achievementManager.getBonus('coalPlantAutobuy')) {
+    if (getAchievementReward('coalPlantAutobuy')) {
       player.secondOwnedDiamonds += 1
     }
-    if (achievementManager.getBonus('coalRigAutobuy')) {
+    if (getAchievementReward('coalRigAutobuy')) {
       player.thirdOwnedDiamonds += 1
     }
-    if (achievementManager.getBonus('pickaxeAutobuy')) {
+    if (getAchievementReward('pickaxeAutobuy')) {
       player.fourthOwnedDiamonds += 1
     }
-    if (achievementManager.getBonus('pandorasBoxAutobuy')) {
+    if (getAchievementReward('pandorasBoxAutobuy')) {
       player.fifthOwnedDiamonds += 1
     }
 
-    if (achievementManager.getBonus('workerAutobuyer')) {
+    if (getAchievementReward('workerAutobuyer')) {
       player.upgrades[81] = 1
     }
-    if (achievementManager.getBonus('investmentAutobuyer')) {
+    if (getAchievementReward('investmentAutobuyer')) {
       player.upgrades[82] = 1
     }
-    if (achievementManager.getBonus('printerAutobuyer')) {
+    if (getAchievementReward('printerAutobuyer')) {
       player.upgrades[83] = 1
     }
-    if (achievementManager.getBonus('mintAutobuyer')) {
+    if (getAchievementReward('mintAutobuyer')) {
       player.upgrades[84] = 1
     }
-    if (achievementManager.getBonus('alchemyAutobuyer')) {
+    if (getAchievementReward('alchemyAutobuyer')) {
       player.upgrades[85] = 1
     }
-    if (achievementManager.getBonus('accelAutobuyer')) {
+    if (getAchievementReward('accelAutobuyer')) {
       player.upgrades[86] = 1
     }
-    if (achievementManager.getBonus('multAutobuyer')) {
+    if (getAchievementReward('multAutobuyer')) {
       player.upgrades[87] = 1
     }
 
@@ -513,7 +513,7 @@ export const reset = (input: resetNames, fast = false, from = 'unknown') => {
   ) {
     // Fail safe if for some reason ascension achievement isn't awarded. hacky solution but am too tired to fix right now
 
-    achievementManager.tryUnlockByGroup('ascensionCount')
+    awardAchievementGroup('ascensionCount')
 
     player.obtainium = player.obtainium.add(obtainiumToGain)
 
@@ -583,7 +583,7 @@ export const reset = (input: resetNames, fast = false, from = 'unknown') => {
   if (input === 'ascension' || input === 'ascensionChallenge' || input === 'singularity') {
     const metaData = CalcCorruptionStuff()
     if (player.challengecompletions[10] > 0) {
-      achievementManager.tryUnlockByGroup('ascensionScore')
+      awardAchievementGroup('ascensionScore')
     }
     // reset auto challenges
     player.currentChallenge.transcension = 0
@@ -700,7 +700,7 @@ export const reset = (input: resetNames, fast = false, from = 'unknown') => {
     calculateAnts()
     calculateAntSacrificeELO()
     calculateObtainium()
-    achievementManager.tryUnlockByGroup('ascensionCount')
+    awardAchievementGroup('ascensionCount')
 
     player.ascensionCounter = 0
     player.ascensionCounterReal = 0
@@ -909,7 +909,7 @@ export const reset = (input: resetNames, fast = false, from = 'unknown') => {
  * Computes which achievements in 274-280 are achievable given current singularity number
  */
 export const updateSingularityAchievements = (): void => {
-  achievementManager.tryUnlockByGroup('singularityCount')
+  awardAchievementGroup('singularityCount')
 }
 
 export const updateSingularityMilestoneAwards = (singularityReset = true): void => {
@@ -1123,7 +1123,6 @@ export const singularity = (setSingNumber = -1) => {
   resetRuneBlessings('singularity')
   resetRuneSpirits('singularity')
   resetTalismanData('singularity')
-  achievementManager.resetAchievements()
 
   player.goldenQuarks += calculateGoldenQuarks()
 
@@ -1160,6 +1159,7 @@ export const singularity = (setSingNumber = -1) => {
   changeSubTab(Tabs.Settings, { page: 0 }) // set 'statistics main'
 
   hold.achievements = [...player.achievements]
+  hold.progressiveAchievements = { ...player.progressiveAchievements }
 
   hold.history.singularity = player.history.singularity
   hold.totalQuarksEver = player.totalQuarksEver
@@ -1370,25 +1370,25 @@ const resetUpgrades = (i: number) => {
   }
 
   if (i > 1.5) {
-    if (!achievementManager.getBonus('workerAutobuyer')) {
+    if (!getAchievementReward('workerAutobuyer')) {
       player.upgrades[81] = 0
     }
-    if (!achievementManager.getBonus('investmentAutobuyer')) {
+    if (!getAchievementReward('investmentAutobuyer')) {
       player.upgrades[82] = 0
     }
-    if (!achievementManager.getBonus('printerAutobuyer')) {
+    if (!getAchievementReward('printerAutobuyer')) {
       player.upgrades[83] = 0
     }
-    if (!achievementManager.getBonus('mintAutobuyer')) {
+    if (!getAchievementReward('mintAutobuyer')) {
       player.upgrades[84] = 0
     }
-    if (!achievementManager.getBonus('alchemyAutobuyer')) {
+    if (!getAchievementReward('alchemyAutobuyer')) {
       player.upgrades[85] = 0
     }
-    if (!achievementManager.getBonus('accelAutobuyer')) {
+    if (!getAchievementReward('accelAutobuyer')) {
       player.upgrades[86] = 0
     }
-    if (!achievementManager.getBonus('multAutobuyer')) {
+    if (!getAchievementReward('multAutobuyer')) {
       player.upgrades[87] = 0
     }
     player.upgrades[101] = 0

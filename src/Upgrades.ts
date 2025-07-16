@@ -1,6 +1,5 @@
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
-import { achievementManager } from './Achievements'
 import { buyAutobuyers, buyGenerator } from './Automation'
 import { buyUpgrades } from './Buy'
 import { DOMCacheGetOrSet } from './Cache/DOM'
@@ -11,6 +10,7 @@ import { format, player } from './Synergism'
 import { revealStuff } from './UpdateHTML'
 import { sumContents } from './Utility'
 import { Globals as G, Upgrade } from './Variables'
+import { getAchievementReward } from './Achievements'
 
 const crystalupgdesc: Record<number, () => Record<string, string>> = {
   3: () => ({
@@ -33,14 +33,14 @@ const crystalupgdesc: Record<number, () => Record<string, string>> = {
 const constantUpgDesc: Record<number, () => Record<string, string>> = {
   1: () => ({
     level: format(
-      5 + 100 * +achievementManager.getBonus('constUpgrade1Buff') + 0.1 * player.platonicUpgrades[18],
+      5 + 100 * +getAchievementReward('constUpgrade1Buff') + 0.1 * player.platonicUpgrades[18],
       1,
       true
     )
   }),
   2: () => ({
     max: format(
-      10 + 100 * +achievementManager.getBonus('constUpgrade2Buff') + player.shopUpgrades.constantEX + 100
+      10 + 100 * +getAchievementReward('constUpgrade2Buff') + player.shopUpgrades.constantEX + 100
           * (G.challenge15Rewards.exponent.value - 1)
         + 0.3 * player.platonicUpgrades[18],
       2,
@@ -482,7 +482,7 @@ const constUpgEffect: Record<number, () => Record<string, string>> = {
   1: () => ({
     x: format(
       Decimal.pow(
-        1.05 + +achievementManager.getBonus('constUpgrade1Buff') + 0.001 * player.platonicUpgrades[18],
+        1.05 + +getAchievementReward('constUpgrade1Buff') + 0.001 * player.platonicUpgrades[18],
         player.constantUpgrades[1]
       ),
       2,
@@ -495,7 +495,7 @@ const constUpgEffect: Record<number, () => Record<string, string>> = {
         1
           + 0.001
             * Math.min(
-              100 + 1000 * +achievementManager.getBonus('constUpgrade2Buff') + 10 * player.shopUpgrades.constantEX
+              100 + 1000 * +getAchievementReward('constUpgrade2Buff') + 10 * player.shopUpgrades.constantEX
                 + 3 * player.platonicUpgrades[18] + 1000 * (G.challenge15Rewards.exponent.value - 1),
               player.constantUpgrades[2]
             ),

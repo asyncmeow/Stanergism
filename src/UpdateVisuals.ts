@@ -1,6 +1,5 @@
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
-import { achievementManager } from './Achievements'
 import { showSacrifice } from './Ants'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import {
@@ -63,6 +62,7 @@ import { getTalismanLevelCap, type TalismanKeys, talismans, updateAllTalismanHTM
 import type { Player, ZeroToFour } from './types/Synergism'
 import { sumContents, timeReminingHours } from './Utility'
 import { Globals as G } from './Variables'
+import { achievementLevel, achievementPoints, getAchievementReward, toNextAchievementLevelEXP } from './Achievements'
 
 export const visualUpdateBuildings = () => {
   if (G.currentTab !== Tabs.Buildings) {
@@ -593,25 +593,26 @@ export const visualUpdateAchievements = () => {
     return
   }
 
+  const tnl = toNextAchievementLevelEXP()
+
   DOMCacheGetOrSet('achievementprogress').textContent = i18next.t('achievements.achievementPoints', {
-    x: format(achievementManager.totalPoints, 0, true)
+    x: format(achievementPoints, 0, true)
   })
   DOMCacheGetOrSet('achievementQuarkBonus').innerHTML = i18next.t('achievements.achievementLevel', {
-    level: format(achievementManager.level)
+    level: format(achievementLevel)
   })
   DOMCacheGetOrSet('achievementTNLText').innerHTML = i18next.t('achievements.achievementToNextLevel', {
-    level: format(achievementManager.level + 1),
-    AP: format(achievementManager.toNextLevel)
+    level: format(achievementLevel + 1),
+    AP: format(tnl, 0, true)
   })
 
-  const totalAchPoints = achievementManager.totalPoints
-  if (totalAchPoints < 2500) {
+  if (achievementPoints < 2500) {
     DOMCacheGetOrSet('achievementProgressFill').style.width = `${
-      Math.floor(100 * (50 - achievementManager.toNextLevel) / 50)
+      Math.floor(100 * (50 - tnl) / 50)
     }%`
   } else {
     DOMCacheGetOrSet('achievementProgressFill').style.width = `${
-      Math.floor(100 * (100 - achievementManager.toNextLevel) / 100)
+      Math.floor(100 * (100 - tnl) / 100)
     }%`
   }
 }
@@ -747,7 +748,7 @@ export const visualUpdateAnts = () => {
     }
   )
 
-  if (achievementManager.getBonus('antSacrificeUnlock')) {
+  if (getAchievementReward('antSacrificeUnlock')) {
     DOMCacheGetOrSet('antSacrificeTimer').textContent = formatTimeShort(
       player.antSacrificeTimer
     )

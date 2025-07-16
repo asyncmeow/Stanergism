@@ -1,6 +1,6 @@
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
-import { achievementManager, ungroupedNameMap } from './Achievements'
+import { awardAchievement, getAchievementReward, ungroupedNameMap } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { CalcECC } from './Challenges'
 import { BuffType, calculateEventSourceBuff } from './Event'
@@ -313,11 +313,11 @@ export const calculateGlobalSpeedMult = () => {
   // Achievement Stuffs
   // One second in 100 years
   if (totalTimeMultiplier < 1 / (3600 * 24 * 365 * 100)) {
-    achievementManager.tryUnlock(ungroupedNameMap.verySlow)
+    awardAchievement(ungroupedNameMap.verySlow)
   }
   // One hour in a second
   if (totalTimeMultiplier > 3600) {
-    achievementManager.tryUnlock(ungroupedNameMap.veryFast)
+    awardAchievement(ungroupedNameMap.veryFast)
   }
 
   return totalTimeMultiplier
@@ -414,7 +414,7 @@ export const calculateTotalAcceleratorBoost = () => {
   if (player.upgrades[31] > 0.5) {
     b += (Math.floor(G.totalCoinOwned / 2000) * 100) / 100
   }
-  b += +achievementManager.getBonus('accelBoosts')
+  b += +getAchievementReward('accelBoosts')
 
   b += player.researches[93]
     * Math.floor(
@@ -672,8 +672,8 @@ export const calculateAntSacrificeELO = () => {
     G.antELO += 4 * player.seventhOwnedAnts
     G.antELO += 8 * player.eighthOwnedAnts
     G.antELO += 666 * player.researches[178]
-    G.antELO += +achievementManager.getBonus('antELOAdditive')
-    G.antELO *= +achievementManager.getBonus('antELOMultiplicative')
+    G.antELO += +getAchievementReward('antELOAdditive')
+    G.antELO *= +getAchievementReward('antELOMultiplicative')
     G.antELO *= 1 + player.researches[110] / 100
     G.antELO *= 1 + (2.5 * player.researches[148]) / 100
     G.antELO *= getTalismanEffects('mortuus').antBonus
@@ -950,7 +950,7 @@ export const calculateOffline = (forceTime = 0, fromTips = false) => {
     }
 
     // Auto Ant Sacrifice Stuff
-    if (achievementManager.getBonus('antSacrificeUnlock')) {
+    if (getAchievementReward('antSacrificeUnlock')) {
       automaticTools('antSacrifice', timeTick)
     }
 
@@ -1449,7 +1449,7 @@ export const computeAscensionScoreBonusMultiplier = () => {
   if (player.cubeUpgrades[41] > 0) {
     multiplier *= 1 + 0.05 * player.cubeUpgrades[41]
   }
-  multiplier *= +achievementManager.getBonus('ascensionScore')
+  multiplier *= +getAchievementReward('ascensionScore')
   if (G.isEvent) {
     multiplier *= 1 + calculateEventBuff(BuffType.AscensionScore)
   }
@@ -1645,8 +1645,8 @@ export const calcAscensionCount = () => {
     return ascCount
   }
 
-  ascCount += +achievementManager.getBonus('ascensionCountAdditive')
-  ascCount *= +achievementManager.getBonus('ascensionCountMultiplier')
+  ascCount += +getAchievementReward('ascensionCountAdditive')
+  ascCount *= +getAchievementReward('ascensionCountMultiplier')
   ascCount *= G.challenge15Rewards.ascensions.value
   ascCount *= player.platonicUpgrades[15] > 0 ? 2 : 1
   ascCount *= 1 + 0.02 * player.platonicUpgrades[16]

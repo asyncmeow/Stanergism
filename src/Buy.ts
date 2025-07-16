@@ -1,6 +1,5 @@
 import type { DecimalSource } from 'break_infinity.js'
 import Decimal from 'break_infinity.js'
-import { achievementManager } from './Achievements'
 import { CalcECC } from './Challenges'
 import { reset } from './Reset'
 import { getRuneBlessingEffect } from './RuneBlessings'
@@ -10,6 +9,7 @@ import type { FirstToFifth, OneToFive, ZeroToFour } from './types/Synergism'
 import { crystalupgradedescriptions, upgradeupdate } from './Upgrades'
 import { smallestInc } from './Utility'
 import { Globals as G, Upgrade } from './Variables'
+import { awardAchievementGroup } from './Achievements'
 
 export const getReductionValue = () => {
   let reduction = 1
@@ -144,7 +144,7 @@ export const buyAccelerator = (autobuyer?: boolean) => {
   player.transcendnoaccelerator = false
   player.reincarnatenoaccelerator = false
   updateAllTick()
-  achievementManager.tryUnlockByGroup('accelerators')
+  awardAchievementGroup('accelerators')
 }
 
 const getCostMultiplier = (buyingTo: number): Decimal => {
@@ -267,7 +267,7 @@ export const buyMultiplier = (autobuyer?: boolean) => {
   player.transcendnomultiplier = false
   player.reincarnatenomultiplier = false
   updateAllMultiplier()
-  achievementManager.tryUnlockByGroup('multipliers')
+  awardAchievementGroup('multipliers')
 }
 
 /*
@@ -794,7 +794,7 @@ export const boostAccelerator = (automated?: boolean) => {
   }
 
   G.ticker = 0
-  achievementManager.tryUnlockByGroup('acceleratorBoosts')
+  awardAchievementGroup('acceleratorBoosts')
 }
 
 const getAcceleratorBoostCost = (level = 1): Decimal => {

@@ -1,5 +1,5 @@
 import i18next from 'i18next'
-import { achievementManager, ungroupedNameMap } from './Achievements'
+import { awardAchievement, getAchievementReward, ungroupedNameMap } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { getChallengeConditions } from './Challenges'
 import { corruptionDisplay, corruptionLoadoutTableUpdate, type Corruptions } from './Corruptions'
@@ -73,7 +73,7 @@ export const toggleChallenges = (i: number, auto = false) => {
   if (
     (i >= 11 && i <= 15)
     && (i === 11
-      ? Boolean(achievementManager.getBonus('ascensionUnlock'))
+      ? Boolean(getAchievementReward('ascensionUnlock'))
       : player.highestchallengecompletions[i - 1] > 0)
     && ((!auto && !player.toggles[31]) || player.challengecompletions[10] > 0
       || (player.currentChallenge.transcension === 0 && player.currentChallenge.reincarnation === 0
@@ -96,7 +96,7 @@ export const toggleChallenges = (i: number, auto = false) => {
     player.currentChallenge.transcension !== 0 && player.currentChallenge.reincarnation !== 0
     && player.currentChallenge.ascension !== 0
   ) {
-    achievementManager.tryUnlock(ungroupedNameMap.metaChallenged)
+    awardAchievement(ungroupedNameMap.metaChallenged)
   }
 }
 
@@ -377,6 +377,23 @@ export const toggleBuildingScreen = (input: string) => {
   }
   DOMCacheGetOrSet(screen[G.buildingSubTab].screen).style.display = 'flex'
   // player.subtabNumber = screen[G.buildingSubTab].subtabNumber
+}
+
+export const toggleAchievementScreen = (indexStr: string) => {
+  const index = Number(indexStr)
+
+  for (let i = 1; i <= 2; i++) {
+    const a = DOMCacheGetOrSet(`toggleAchievementSubTab${i}`)
+    const b = DOMCacheGetOrSet(`achievementContainer${i}`)
+    if (i === index) {
+      a.style.border = '2px solid gold'
+      b.style.display = 'flex'
+    } else {
+      a.style.border = '2px solid silver'
+      b.style.display = 'none'
+    }
+  }
+
 }
 
 export const toggleRuneScreen = (indexStr: string) => {

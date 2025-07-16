@@ -1,6 +1,5 @@
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
-import { achievementManager } from './Achievements'
 import { getAmbrosiaUpgradeEffects } from './BlueberryUpgrades'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import {
@@ -123,6 +122,7 @@ import { getTalismanEffects, sumOfTalismanRarities, talismans } from './Talisman
 import type { GlobalVariables } from './types/Synergism'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
+import { getAchievementReward } from './Achievements'
 
 export interface StatLine {
   i18n: string
@@ -144,7 +144,7 @@ export const allCubeStats: StatLine[] = [
     stat: () => {
       const ascensionCounter = player.ascensionCounter
       const resetThreshold = resetTimeThreshold()
-      const scale = achievementManager.getBonus('ascensionRewardScaling')
+      const scale = getAchievementReward('ascensionRewardScaling')
 
       if (scale) {
         return Math.pow(Math.min(1, ascensionCounter / resetThreshold), 2)
@@ -157,12 +157,12 @@ export const allCubeStats: StatLine[] = [
   },
   {
     i18n: 'AchievementBonus',
-    stat: () => +achievementManager.getBonus('allCubeGain')
+    stat: () => +getAchievementReward('allCubeGain')
   },
-  {
+  /*{
     i18n: 'SynergismLevel',
     stat: () => achievementManager.cubeBonus
-  },
+  },*/
   {
     i18n: 'CampaignTutorial',
     stat: () => player.campaigns.tutorialBonus.cubeBonus,
@@ -350,7 +350,7 @@ export const allWowCubeStats: StatLine[] = [
   },
   {
     i18n: 'AchievementBonus',
-    stat: () => +achievementManager.getBonus('wowCubeGain')
+    stat: () => +getAchievementReward('wowCubeGain')
   },
   {
     i18n: 'SeasonPass1',
@@ -427,7 +427,7 @@ export const allTesseractStats: StatLine[] = [
   },
   {
     i18n: 'AchievementBonus',
-    stat: () => +achievementManager.getBonus('wowTesseractGain')
+    stat: () => +getAchievementReward('wowTesseractGain')
   },
   {
     i18n: 'SeasonPass1',
@@ -470,7 +470,7 @@ export const allHypercubeStats: StatLine[] = [
   },
   {
     i18n: 'AchievementBonus',
-    stat: () => +achievementManager.getBonus('wowHypercubeGain')
+    stat: () => +getAchievementReward('wowHypercubeGain')
   },
   {
     i18n: 'SeasonPass2',
@@ -505,7 +505,7 @@ export const allPlatonicCubeStats: StatLine[] = [
   },
   {
     i18n: 'AchievementBonus',
-    stat: () => +achievementManager.getBonus('wowPlatonicGain')
+    stat: () => +getAchievementReward('wowPlatonicGain')
   },
   {
     i18n: 'SeasonPass2',
@@ -536,7 +536,7 @@ export const allHepteractCubeStats: StatLine[] = [
   },
   {
     i18n: 'AchievementBonus',
-    stat: () => +achievementManager.getBonus('wowHepteractGain')
+    stat: () => +getAchievementReward('wowHepteractGain')
   },
   {
     i18n: 'SeasonPass3',
@@ -810,12 +810,12 @@ export const allOfferingStats = [
   },
   {
     i18n: 'AchievementBonus',
-    stat: () => +achievementManager.getBonus('multiplicativeOffering') // Achievement Bonus
+    stat: () => +getAchievementReward('multiplicativeOffering') // Achievement Bonus
   },
-  {
+  /*{
     i18n: 'SynergismLevel',
     stat: () => achievementManager.offeringBonus // Synergism Level
-  },
+  },*/
   {
     i18n: 'SuperiorIntellect',
     stat: () => getRuneEffects('superiorIntellect').offeringMult // Superior Intellect Rune
@@ -1131,12 +1131,12 @@ export const runeEffectivenessStatsSI: StatLine[] = [
 export const allQuarkStats: StatLine[] = [
   {
     i18n: 'AchievementBonus',
-    stat: () => +achievementManager.getBonus('quarkGain')
+    stat: () => +getAchievementReward('quarkGain')
   },
-  {
+  /*{
     i18n: 'SynergismLevel',
     stat: () => achievementManager.quarkBonus
-  },
+  },*/
   {
     i18n: 'PlasticTalisman',
     stat: () => getTalismanEffects('plastic').quarkBonus
@@ -1420,12 +1420,12 @@ export const allObtainiumStats: StatLine[] = [
   },
   {
     i18n: 'AchievementBonus',
-    stat: () => +achievementManager.getBonus('multiplicativeObtainium') // Achievement Bonus
+    stat: () => +getAchievementReward('multiplicativeObtainium') // Achievement Bonus
   },
-  {
+  /*{
     i18n: 'SynergismLevel',
     stat: () => achievementManager.obtainiumBonus // Synergism Level
-  },
+  },*/
   {
     i18n: 'ReincarnationUpgrade9',
     stat: () =>
@@ -1608,7 +1608,7 @@ export const offeringObtainiumTimeModifiers = (time: number, timeMultCheck: bool
 export const antSacrificeRewardStats: StatLine[] = [
   {
     i18n: 'AchievementBonus',
-    stat: () => +achievementManager.getBonus('sacrificeMult')
+    stat: () => +getAchievementReward('sacrificeMult')
   },
   {
     i18n: 'AntUpgrade11',
@@ -2149,7 +2149,7 @@ export const allPowderMultiplierStats: StatLine[] = [
   },
   {
     i18n: 'AchievementBonus',
-    stat: () => +achievementManager.getBonus('overfluxConversionRate') // Achievement Bonus
+    stat: () => +getAchievementReward('overfluxConversionRate') // Achievement Bonus
   },
   {
     i18n: 'Challenge15',
@@ -2250,10 +2250,10 @@ export const allGoldenQuarkPurchaseCostStats: StatLine[] = [
     stat: () => 1 / (1 + getQuarkBonus() / 100),
     color: 'gold'
   },
-  {
+  /*{
     i18n: 'SynergismLevel',
     stat: () => achievementManager.goldQuarkDiscountMultiplier // Synergism Level Bonus
-  },
+  },*/
   {
     i18n: 'CubeUpgrade6x10',
     stat: () => 1 - (0.3 * player.cubeUpgrades[60]) / 10000
@@ -2608,7 +2608,7 @@ export const allShopTablets: StatLine[] = [
 export const allTalismanRuneBonusStatsSum = () => {
   return (
     1
-    + +achievementManager.getBonus('talismanPower')
+    + +getAchievementReward('talismanPower')
     + (player.researches[106] / 1000)
     + (player.researches[107] / 1000)
     + (player.researches[116] / 1000)
@@ -2640,7 +2640,7 @@ export const allTalismanRuneBonusStats: StatLine[] = [
   },
   {
     i18n: 'AchievementBonus',
-    stat: () => +achievementManager.getBonus('talismanPower'),
+    stat: () => +getAchievementReward('talismanPower'),
     displayCriterion: () => {
       const chal9 = player.highestchallengecompletions[9] >= 1
       return chal9
@@ -2759,12 +2759,12 @@ export const allTalismanRuneBonusStats: StatLine[] = [
 export const positiveSalvageStats: StatLine[] = [
   {
     i18n: 'AchievementBonus',
-    stat: () => +achievementManager.getBonus('salvage')
+    stat: () => +getAchievementReward('salvage')
   },
-  {
+  /*{
     i18n: 'SynergismLevel',
     stat: () => achievementManager.salvageBonus
-  },
+  },*/
   {
     i18n: 'UpgradeBonus',
     stat: () => 5 * player.upgrades[61] // Upgrade 61
@@ -3631,7 +3631,7 @@ export const gameStages = (): Stage[] => {
       stage: 5,
       tier: 4,
       name: 'ant-sacrifice',
-      unlocked: Boolean(achievementManager.getBonus('antSacrificeUnlock')),
+      unlocked: Boolean(getAchievementReward('antSacrificeUnlock')),
       reset: player.unlocks.reincarnate
     },
     {

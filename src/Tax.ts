@@ -3,7 +3,7 @@ import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
 
 import Decimal from 'break_infinity.js'
-import { achievementManager, ungroupedNameMap } from './Achievements'
+import { awardAchievement, getAchievementReward, ungroupedNameMap } from './Achievements'
 import { CalcECC } from './Challenges'
 import { getRuneEffects } from './Runes'
 import { getTalismanEffects } from './Talismans'
@@ -81,7 +81,7 @@ export const calculatetax = () => {
   exponent *= exp
   exponent *= 1 - 1 / 20 * player.researches[51] - 1 / 40 * player.researches[52] - 1 / 80 * player.researches[53]
     - 1 / 160 * player.researches[54] - 1 / 320 * player.researches[55]
-  exponent *= +achievementManager.getBonus('taxReduction')
+  exponent *= +getAchievementReward('taxReduction')
   exponent *= Math.pow(0.965, CalcECC('reincarnation', player.challengecompletions[6]))
   exponent *= getRuneEffects('duplication').taxReduction
   exponent *= getRuneEffects('thrift').taxReduction
@@ -123,7 +123,7 @@ export const calculatetax = () => {
     // as soon as the challenge is opened you don't have enough tax reducers to have max exponent above 100000
     // so for the achievement description to make sense i think it should require at least 1 challenge completion || Dorijanko
     if (c13effcompletions >= 1) {
-      achievementManager.tryUnlock(ungroupedNameMap.overtaxed)
+      awardAchievement(ungroupedNameMap.overtaxed)
     }
   }
 

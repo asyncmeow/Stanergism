@@ -439,6 +439,13 @@ export const generateEventHandlers = () => {
   DOMCacheGetOrSet('showAchievementProgress').addEventListener('focus', () => displayAchievementProgress())
   DOMCacheGetOrSet('showAchievementProgress').addEventListener('mouseout', () => resetAchievementProgressDisplay())
 
+  for (let index = 0; index < 2; index++) {
+    DOMCacheGetOrSet(`toggleAchievementSubTab${index + 1}`).addEventListener(
+      'click',
+      () => changeSubTab(Tabs.Achievements, { page: index })
+    )
+  }
+
   // RUNES TAB [And all corresponding subtabs]
   // Part 0: Upper UI portion
   // Auto sacrifice toggle button

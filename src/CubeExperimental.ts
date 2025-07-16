@@ -7,7 +7,7 @@ want, though!
 Thank you! */
 
 import i18next from 'i18next'
-import { achievementManager, ungroupedNameMap } from './Achievements'
+import { awardAchievement, getAchievementReward, ungroupedNameMap } from './Achievements'
 import { calculateCubeBlessings } from './Calculate'
 import { CalcECC } from './Challenges'
 import { calculateHypercubeBlessings } from './Hypercubes'
@@ -178,7 +178,7 @@ export class WowCubes extends Cube {
     let toSpend = max ? Number(this) : (free ? value : Math.min(Number(this), value))
 
     if (value === 1 && player.cubeBlessings.accelerator >= 2e11) {
-      achievementManager.tryUnlock(ungroupedNameMap.oneCubeOfMany)
+      awardAchievement(ungroupedNameMap.oneCubeOfMany)
     }
 
     if (!free) {
@@ -382,7 +382,7 @@ export class WowPlatonicCubes extends Cube {
     }
     calculatePlatonicBlessings()
 
-    const hyperCubesPerPlatonic = +achievementManager.getBonus('platonicToHypercubes')
+    const hyperCubesPerPlatonic = +getAchievementReward('platonicToHypercubes')
     if (hyperCubesPerPlatonic > 0) {
       const extraHypercubes = Math.floor(
         toSpend * hyperCubesPerPlatonic

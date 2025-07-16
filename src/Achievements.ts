@@ -6,7 +6,7 @@ import { hepteracts } from './Hepteracts'
 import { octeractUpgrades } from './Octeracts'
 import { redAmbrosiaUpgrades } from './RedAmbrosiaUpgrades'
 import { runeBlessings } from './RuneBlessings'
-import { runes, sumOfRuneLevels } from './Runes'
+import { runes, sumOfFreeRuneLevels, sumOfRuneLevels } from './Runes'
 import { runeSpirits } from './RuneSpirits'
 import { goldenQuarkUpgrades } from './singularity'
 import type { SingularityChallengeDataKeys } from './SingularityChallenges'
@@ -16,95 +16,96 @@ import type { resetNames } from './types/Synergism'
 import { Alert, Notification, revealStuff } from './UpdateHTML'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
+import { Tabs } from './Tabs'
 
 export const resetAchievementCheck = (reset: resetNames) => {
   if (reset === 'prestige') {
-    achievementManager.tryUnlock(ungroupedNameMap.prestigeNoAccelerator)
-    achievementManager.tryUnlock(ungroupedNameMap.prestigeNoMult)
-    achievementManager.tryUnlock(ungroupedNameMap.prestigeNoCoinUpgrade)
-    achievementManager.tryUnlockByGroup('prestigePointGain')
+    awardAchievement(ungroupedNameMap.prestigeNoAccelerator)
+    awardAchievement(ungroupedNameMap.prestigeNoMult)
+    awardAchievement(ungroupedNameMap.prestigeNoCoinUpgrade)
+    awardAchievementGroup('prestigePointGain')
   }
   if (reset === 'transcension') {
-    achievementManager.tryUnlock(ungroupedNameMap.transcendNoAccelerator)
-    achievementManager.tryUnlock(ungroupedNameMap.transcendNoMult)
-    achievementManager.tryUnlock(ungroupedNameMap.transcendNoCoinUpgrade)
-    achievementManager.tryUnlock(ungroupedNameMap.transcendNoCoinDiamondUpgrade)
-    achievementManager.tryUnlockByGroup('transcendPointGain')
+    awardAchievement(ungroupedNameMap.transcendNoAccelerator)
+    awardAchievement(ungroupedNameMap.transcendNoMult)
+    awardAchievement(ungroupedNameMap.transcendNoCoinUpgrade)
+    awardAchievement(ungroupedNameMap.transcendNoCoinDiamondUpgrade)
+    awardAchievementGroup('transcendPointGain')
   }
   if (reset === 'reincarnation') {
-    achievementManager.tryUnlock(ungroupedNameMap.reincarnationNoAccelerator)
-    achievementManager.tryUnlock(ungroupedNameMap.reincarnationNoMult)
-    achievementManager.tryUnlock(ungroupedNameMap.reincarnationNoCoinUpgrade)
-    achievementManager.tryUnlock(ungroupedNameMap.reincarnationNoCoinDiamondUpgrade)
-    achievementManager.tryUnlock(ungroupedNameMap.reincarnationNoCoinDiamondMythosUpgrade)
-    achievementManager.tryUnlock(ungroupedNameMap.reincarnationMinimumUpgrades)
-    achievementManager.tryUnlockByGroup('reincarnationPointGain')
+    awardAchievement(ungroupedNameMap.reincarnationNoAccelerator)
+    awardAchievement(ungroupedNameMap.reincarnationNoMult)
+    awardAchievement(ungroupedNameMap.reincarnationNoCoinUpgrade)
+    awardAchievement(ungroupedNameMap.reincarnationNoCoinDiamondUpgrade)
+    awardAchievement(ungroupedNameMap.reincarnationNoCoinDiamondMythosUpgrade)
+    awardAchievement(ungroupedNameMap.reincarnationMinimumUpgrades)
+    awardAchievementGroup('reincarnationPointGain')
   }
 }
 
 export const challengeAchievementCheck = (i: number) => {
   switch (i) {
     case 1:
-      achievementManager.tryUnlockByGroup('challenge1')
-      achievementManager.tryUnlock(ungroupedNameMap.chal1NoGen)
+      awardAchievementGroup('challenge1')
+      awardAchievement(ungroupedNameMap.chal1NoGen)
       break
     case 2:
-      achievementManager.tryUnlockByGroup('challenge2')
-      achievementManager.tryUnlock(ungroupedNameMap.chal2NoGen)
+      awardAchievementGroup('challenge2')
+      awardAchievement(ungroupedNameMap.chal2NoGen)
       break
     case 3:
-      achievementManager.tryUnlockByGroup('challenge3')
-      achievementManager.tryUnlock(ungroupedNameMap.chal3NoGen)
+      awardAchievementGroup('challenge3')
+      awardAchievement(ungroupedNameMap.chal3NoGen)
       break
     case 4:
-      achievementManager.tryUnlockByGroup('challenge4')
+      awardAchievementGroup('challenge4')
       break
     case 5:
-      achievementManager.tryUnlockByGroup('challenge5')
-      achievementManager.tryUnlock(ungroupedNameMap.diamondSearch)
+      awardAchievementGroup('challenge5')
+      awardAchievement(ungroupedNameMap.diamondSearch)
       break
     case 6:
-      achievementManager.tryUnlockByGroup('challenge6')
+      awardAchievementGroup('challenge6')
       break
     case 7:
-      achievementManager.tryUnlockByGroup('challenge7')
+      awardAchievementGroup('challenge7')
       break
     case 8:
-      achievementManager.tryUnlockByGroup('challenge8')
+      awardAchievementGroup('challenge8')
       break
     case 9:
-      achievementManager.tryUnlockByGroup('challenge9')
+      awardAchievementGroup('challenge9')
       break
     case 10:
-      achievementManager.tryUnlockByGroup('challenge10')
+      awardAchievementGroup('challenge10')
       break
     case 11:
-      achievementManager.tryUnlockByGroup('challenge11')
+      awardAchievementGroup('challenge11')
       if (player.challengecompletions[10] > 50 && player.corruptions.used.extinction >= 5) {
-        achievementManager.tryUnlock(ungroupedNameMap.extraChallenging)
+        awardAchievement(ungroupedNameMap.extraChallenging)
       }
       break
     case 12:
-      achievementManager.tryUnlockByGroup('challenge12')
+      awardAchievementGroup('challenge12')
       break
     case 13:
-      achievementManager.tryUnlockByGroup('challenge13')
+      awardAchievementGroup('challenge13')
       break
     case 14:
-      achievementManager.tryUnlockByGroup('challenge14')
+      awardAchievementGroup('challenge14')
       break
     case 15:
-      achievementManager.tryUnlock(ungroupedNameMap.sadisticAch)
+      awardAchievement(ungroupedNameMap.sadisticAch)
       break
   }
 }
 
 export const buildingAchievementCheck = () => {
-  achievementManager.tryUnlockByGroup('firstOwnedCoin')
-  achievementManager.tryUnlockByGroup('secondOwnedCoin')
-  achievementManager.tryUnlockByGroup('thirdOwnedCoin')
-  achievementManager.tryUnlockByGroup('fourthOwnedCoin')
-  achievementManager.tryUnlockByGroup('fifthOwnedCoin')
+  awardAchievementGroup('firstOwnedCoin')
+  awardAchievementGroup('secondOwnedCoin')
+  awardAchievementGroup('thirdOwnedCoin')
+  awardAchievementGroup('fourthOwnedCoin')
+  awardAchievementGroup('fifthOwnedCoin')
 }
 
 export const getAchievementQuarks = (i: number) => {
@@ -250,6 +251,14 @@ export interface ProgressiveAchievementsObject {
   rewardedAP: number
 }
 
+export interface ProgressiveAchievement {
+  maxPointValue: number
+  pointsAwarded: (cached: number) => number
+  updateValue: () => number // Number to compare to existing caches
+  useCachedValue: boolean
+  rewardedAP: number // Updating achievementPoints: pointsAwarded() - rewardedAP
+}
+
 export const progressiveAchievements: Record<ProgressiveAchievements, ProgressiveAchievement> = {
   runeLevel: {
     maxPointValue: 1000,
@@ -260,7 +269,8 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
     updateValue: () => {
       return sumOfRuneLevels()
     },
-    useCachedValue: true
+    useCachedValue: true,
+    rewardedAP: 0
   },
   freeRuneLevel: {
     maxPointValue: 1000,
@@ -269,9 +279,10 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
         + Math.min(400, Math.floor(cached / 10000))
     },
     updateValue: () => {
-      return 0 // sumOfFreeRuneLevels()
+      return sumOfFreeRuneLevels()
     },
-    useCachedValue: true
+    useCachedValue: true,
+    rewardedAP: 0
   },
   singularityCount: {
     maxPointValue: 900,
@@ -283,7 +294,8 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
     updateValue: () => {
       return player.highestSingularityCount
     },
-    useCachedValue: true
+    useCachedValue: true,
+    rewardedAP: 0
   },
   ambrosiaCount: {
     maxPointValue: 800,
@@ -295,7 +307,8 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
     updateValue: () => {
       return player.lifetimeAmbrosia
     },
-    useCachedValue: true
+    useCachedValue: true,
+    rewardedAP: 0
   },
   redAmbrosiaCount: {
     maxPointValue: 800,
@@ -307,7 +320,8 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
     updateValue: () => {
       return player.lifetimeRedAmbrosia
     },
-    useCachedValue: true
+    useCachedValue: true,
+    rewardedAP: 0
   },
   exalts: {
     maxPointValue: -1,
@@ -321,7 +335,8 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
     updateValue: () => {
       return 0
     },
-    useCachedValue: false
+    useCachedValue: false,
+    rewardedAP: 0
   },
   singularityUpgrades: {
     maxPointValue: -1,
@@ -338,7 +353,8 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
     updateValue: () => {
       return 0
     },
-    useCachedValue: false
+    useCachedValue: false,
+    rewardedAP: 0
   },
   octeractUpgrades: {
     maxPointValue: -1,
@@ -355,7 +371,8 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
     updateValue: () => {
       return 0
     },
-    useCachedValue: false
+    useCachedValue: false,
+    rewardedAP: 0
   },
   redAmbrosiaUpgrades: {
     maxPointValue: -1,
@@ -370,7 +387,8 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
     updateValue: () => {
       return 0
     },
-    useCachedValue: false
+    useCachedValue: false,
+    rewardedAP: 0
   },
   talismanRarities: {
     maxPointValue: -1,
@@ -383,7 +401,8 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
         return acc
       }, 0)
     },
-    useCachedValue: true
+    useCachedValue: true,
+    rewardedAP: 0,
   }
 }
 
@@ -391,249 +410,6 @@ export const emptyProgressiveAchievements = Object
   .fromEntries(
     (Object.keys(progressiveAchievements)).map((key) => [key, { cached: 0, rewardedAP: 0 }])
   ) as Record<ProgressiveAchievements, ProgressiveAchievementsObject>
-
-export class AchievementManager {
-  achievementMap: boolean[] = []
-
-  progressiveAchievements = {
-    ...emptyProgressiveAchievements
-  }
-
-  _totalPoints: number
-
-  constructor (achievements: number[], progAchCache: Record<ProgressiveAchievements, number>) {
-    achievements.forEach((val, index) => {
-      this.achievementMap[index] = val > 0
-    })
-
-    for (const k of Object.keys(this.progressiveAchievements) as ProgressiveAchievements[]) {
-      this.progressiveAchievements[k].cached = progAchCache[k] || 0
-      if (progressiveAchievements[k].useCachedValue) {
-        this.updateProgressiveAchievementValue(k)
-      }
-    }
-
-    this._totalPoints = 0
-    this.updateTotalPoints()
-  }
-
-  updateProgressiveAchievementValue (key: ProgressiveAchievements) {
-    const cachedValue = this.progressiveAchievements[key].cached
-    const oldAP = this.progressiveAchievements[key].rewardedAP
-    this.progressiveAchievements[key].rewardedAP = progressiveAchievements[key].pointsAwarded(cachedValue)
-
-    this._totalPoints += this.progressiveAchievements[key].rewardedAP - oldAP
-  }
-
-  updateProgressiveAchievementCache (key: ProgressiveAchievements) {
-    // exalt progressive achievement does not use cache. More to be added later
-    const usesCache = progressiveAchievements[key].useCachedValue
-    if (!usesCache) {
-      this.updateProgressiveAchievementValue(key)
-      return
-    }
-
-    const oldCache = this.progressiveAchievements[key].cached
-    this.progressiveAchievements[key].cached = Math.max(oldCache, progressiveAchievements[key].updateValue())
-    if (this.progressiveAchievements[key].cached !== oldCache) {
-      this.updateProgressiveAchievementValue(key)
-    }
-  }
-
-  updateTotalPoints () {
-    this._totalPoints = 0
-    for (let i = 0; i < this.achievementMap.length; i++) {
-      const unlocked = this.achievementMap[i]
-      if (unlocked) {
-        this._totalPoints += achievements[i].pointValue
-      }
-    }
-
-    this._totalPoints += sumContents(Object.values(this.progressiveAchievements).map((v) => v.rewardedAP))
-  }
-
-  updateAchievements (achievements: number[]) {
-    achievements.forEach((val, index) => {
-      this.achievementMap[index] = val > 0
-    })
-
-    this.updateTotalPoints()
-    updateGroupedAchievementProgress()
-    updateUngroupedAchievementProgress()
-  }
-
-  updateProgressiveAchievements (progAchCache: Record<ProgressiveAchievements, number>) {
-    for (const k of Object.keys(this.progressiveAchievements) as ProgressiveAchievements[]) {
-      this.progressiveAchievements[k].cached = progAchCache[k] || 0
-      this.updateProgressiveAchievementValue(k)
-    }
-    this.updateTotalPoints()
-    updateProgressiveAchievementProgress()
-  }
-
-  updateProgressiveAchievementCaches () {
-    for (const k of Object.keys(this.progressiveAchievements) as ProgressiveAchievements[]) {
-      if (progressiveAchievements[k].useCachedValue) {
-        this.updateProgressiveAchievementCache(k)
-      }
-    }
-  }
-
-  get totalPoints () {
-    return this._totalPoints
-  }
-
-  tryUnlock (i: number) {
-    if (this.achievementMap[i]) {
-      return // Already unlocked
-    }
-
-    const achievement = achievements[i]
-    if (achievement?.unlockCondition()) {
-      if (player.toggles[34]) {
-        const description = i18next.t(`achievements.descriptions.${i}`)
-        void Notification(i18next.t('achievements.notification', { m: description }))
-      }
-      this.achievementMap[i] = true
-      player.achievements[i] = 1 // This marks it as unlocked
-      this._totalPoints += achievement.pointValue
-      player.worlds.add(getAchievementQuarks(i), false)
-      revealStuff()
-    }
-  }
-
-  tryUnlockByGroup (group: AchievementGroups) {
-    if (group === 'ungrouped') {
-      throw new Error('We do not support unlocking by Ungrouped for now!')
-    }
-
-    if (!achievementsByGroup[group]) {
-      throw new Error(`Achievement group ${group} has no members!`)
-    }
-
-    for (const idx of achievementsByGroup[group]) {
-      this.tryUnlock(idx)
-    }
-  }
-
-  getBonus (reward: AchievementRewards) {
-    return getAchieveReward[reward](this.achievementMap)
-  }
-
-  resetAchievements () {
-    this._totalPoints = 0
-
-    achievements.forEach((achievement, index) => {
-      if (achievement.checkReset?.()) {
-        // Do not reset if checkReset returns true
-        return
-      }
-
-      this.achievementMap[index] = false // Reset the achievement
-      player.achievements[index] = 0
-    })
-
-    this.updateTotalPoints() // Update total points after resetting
-  }
-
-  // Convert achievementMap to an array of numbers, where 1 means unlocked and 0 means not unlocked
-  // Used when saving with the player schema
-  get achArray (): number[] {
-    return this.achievementMap.map((val) => (val ? 1 : 0))
-  }
-
-  // Convert progressiveAchievements to an object with keys as the progressive achievement names
-  // and values as the cached values
-  get progAchCache (): Record<ProgressiveAchievements, number> {
-    const cache = emptyProgressiveCaches
-    for (const key of Object.keys(this.progressiveAchievements) as ProgressiveAchievements[]) {
-      cache[key] = this.progressiveAchievements[key].cached
-    }
-    return cache
-  }
-
-  get level (): number {
-    if (this.totalPoints < 2500) {
-      return Math.floor(this.totalPoints / 50)
-    } else {
-      return 50 + Math.floor((this.totalPoints - 2500) / 100)
-    }
-  }
-
-  get toNextLevel (): number {
-    if (this.totalPoints < 2500) {
-      return 50 - (this.totalPoints % 50)
-    } else {
-      return 100 - (this.totalPoints % 100)
-    }
-  }
-
-  // Unlocks with level 0 (Default perk)
-  get offeringBonus (): number {
-    let percentage = 0
-    const level = this.level
-    percentage += 2 * level
-    percentage += 2 * Math.max(0, level - 50)
-    percentage += 2 * Math.max(0, level - 100)
-    percentage += 2 * Math.max(0, level - 150)
-    percentage += 2 * Math.max(0, level - 200)
-    percentage *= Math.pow(1.01, Math.max(0, level - 250))
-
-    return 1 + (percentage / 100)
-  }
-
-  // Unlocks with level 0 (Default perk)
-  get salvageBonus (): number {
-    return this.level
-  }
-
-  // Unlocks with level 5
-  get obtainiumBonus (): number {
-    let percentage = 0
-    const level = this.level - 5
-    percentage += 2 * level
-    percentage += 2 * Math.max(0, level - 45)
-    percentage += 2 * Math.max(0, level - 95)
-    percentage += 2 * Math.max(0, level - 145)
-    percentage += 2 * Math.max(0, level - 195)
-    percentage *= Math.pow(1.01, Math.max(0, level - 245))
-
-    return 1 + (percentage / 100)
-  }
-
-  // Unlocks with level 50
-  get quarkBonus (): number {
-    if (this.level < 50) {
-      return 1
-    }
-    return 1 + 0.01 * Math.floor((this.level - 50) / 5)
-  }
-
-  // Unlocks with level 10
-  get cubeBonus (): number {
-    if (this.getBonus('ascensionUnlock')) {
-      return 1 + 0.01 * Math.max(0, this.level - 10)
-    } else {
-      return 1
-    }
-  }
-
-  // Unlocks with level 100
-  get goldQuarkDiscountMultiplier (): number {
-    if (this.level < 100) {
-      return 1
-    }
-    return Math.pow(0.99, Math.floor(this.level - 100))
-  }
-
-  // Unlocks at level 100
-  get ambrosiaLuck (): number {
-    if (this.level < 100) {
-      return 1
-    }
-    return 3 * Math.max(0, this.level - 100) + 2 * Math.max(0, this.level - 200)
-  }
-}
 
 export const achievements: Achievement[] = [
   { pointValue: 5, unlockCondition: () => true, group: 'ungrouped' }, // Free Achievement Perhaps?
@@ -2492,13 +2268,6 @@ export const ungroupedNameMap = {
   'sadisticAch': 252
 }
 
-export interface ProgressiveAchievement {
-  maxPointValue: number
-  pointsAwarded: (cached: number) => number
-  updateValue: () => number // Number to compare to existing caches
-  useCachedValue: boolean
-}
-
 export type ProgressiveAchievements =
   | 'runeLevel'
   | 'freeRuneLevel'
@@ -2546,353 +2315,450 @@ export const achievementsByReward: Record<AchievementRewards, number[]> = achiev
     return rewards
   }, {} as Record<AchievementRewards, number[]>)
 
-export const getAchieveReward: Record<AchievementRewards, (ach: boolean[]) => number | boolean> = {
-  acceleratorPower: (ach): number => {
+export const achRewards: Record<AchievementRewards, () => number | boolean> = {
+  acceleratorPower: (): number => {
     return achievementsByReward.acceleratorPower.reduce(
-      (sum, index) => sum + (ach[index] ? achievements[index].reward!.acceleratorPower!() : 0),
+      (sum, index) => sum + (player.achievements[index] ? achievements[index].reward!.acceleratorPower!() : 0),
       0
     )
   },
-  accelerators: (ach): number => {
+  accelerators: (): number => {
     return achievementsByReward.accelerators.reduce(
-      (sum, index) => sum + (ach[index] ? achievements[index].reward!.accelerators!() : 0),
+      (sum, index) => sum + (player.achievements[index] ? achievements[index].reward!.accelerators!() : 0),
       0
     )
   },
-  multipliers: (ach): number => {
+  multipliers: (): number => {
     return achievementsByReward.multipliers.reduce(
-      (sum, index) => sum + (ach[index] ? achievements[index].reward!.multipliers!() : 0),
+      (sum, index) => sum + (player.achievements[index] ? achievements[index].reward!.multipliers!() : 0),
       0
     )
   },
-  accelBoosts: (ach): number => {
+  accelBoosts: (): number => {
     return achievementsByReward.accelBoosts.reduce(
-      (sum, index) => sum + (ach[index] ? achievements[index].reward!.accelBoosts!() : 0),
+      (sum, index) => sum + (player.achievements[index] ? achievements[index].reward!.accelBoosts!() : 0),
       0
     )
   },
-  workerAutobuyer: (ach): boolean => {
-    return ach[achievementsByReward.workerAutobuyer[0]]
+  workerAutobuyer: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.workerAutobuyer[0]])
   },
-  investmentAutobuyer: (ach): boolean => {
-    return ach[achievementsByReward.investmentAutobuyer[0]]
+  investmentAutobuyer: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.investmentAutobuyer[0]])
   },
-  printerAutobuyer: (ach): boolean => {
-    return ach[achievementsByReward.printerAutobuyer[0]]
+  printerAutobuyer: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.printerAutobuyer[0]])
   },
-  mintAutobuyer: (ach): boolean => {
-    return ach[achievementsByReward.mintAutobuyer[0]]
+  mintAutobuyer: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.mintAutobuyer[0]])
   },
-  alchemyAutobuyer: (ach): boolean => {
-    return ach[achievementsByReward.alchemyAutobuyer[0]]
+  alchemyAutobuyer: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.alchemyAutobuyer[0]])
   },
-  multAutobuyer: (ach): boolean => {
-    return ach[achievementsByReward.multAutobuyer[0]]
+  multAutobuyer: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.multAutobuyer[0]])
   },
-  accelAutobuyer: (ach): boolean => {
-    return ach[achievementsByReward.accelAutobuyer[0]]
+  accelAutobuyer: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.accelAutobuyer[0]])
   },
-  offeringPrestigeTimer: (ach): boolean => {
-    return ach[achievementsByReward.offeringPrestigeTimer[0]]
+  offeringPrestigeTimer: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.offeringPrestigeTimer[0]])
   },
-  crystalMultiplier: (ach): number => {
+  crystalMultiplier: (): number => {
     return achievementsByReward.crystalMultiplier.reduce(
-      (prod, index) => prod * (ach[index] ? achievements[index].reward!.crystalMultiplier!() : 1),
+      (prod, index) => prod * (player.achievements[index] ? achievements[index].reward!.crystalMultiplier!() : 1),
       1
     )
   },
-  duplicationRuneUnlock: (ach): boolean => {
-    return ach[achievementsByReward.duplicationRuneUnlock[0]]
+  duplicationRuneUnlock: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.duplicationRuneUnlock[0]])
   },
-  quarkGain: (ach): number => {
+  quarkGain: (): number => {
     return achievementsByReward.quarkGain.reduce(
-      (prod, index) => prod * (ach[index] ? achievements[index].reward!.quarkGain!() : 1),
+      (prod, index) => prod * (player.achievements[index] ? achievements[index].reward!.quarkGain!() : 1),
       1
     )
   },
-  autoPrestigeFeature: (ach): boolean => {
-    return ach[achievementsByReward.autoPrestigeFeature[0]]
+  autoPrestigeFeature: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.autoPrestigeFeature[0]])
   },
-  prismRuneUnlock: (ach): boolean => {
-    return ach[achievementsByReward.prismRuneUnlock[0]]
+  prismRuneUnlock: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.prismRuneUnlock[0]])
   },
-  taxReduction: (ach): number => {
+  taxReduction: (): number => {
     return achievementsByReward.taxReduction.reduce(
-      (prod, index) => prod * (ach[index] ? achievements[index].reward!.taxReduction!() : 1),
+      (prod, index) => prod * (player.achievements[index] ? achievements[index].reward!.taxReduction!() : 1),
       1
     )
   },
-  particleGain: (ach): number => {
+  particleGain: (): number => {
     return achievementsByReward.particleGain.reduce(
-      (prod, index) => prod * (ach[index] ? achievements[index].reward!.particleGain!() : 1),
+      (prod, index) => prod * (player.achievements[index] ? achievements[index].reward!.particleGain!() : 1),
       1
     )
   },
-  multiplicativeObtainium: (ach): number => {
+  multiplicativeObtainium: (): number => {
     return achievementsByReward.multiplicativeObtainium.reduce(
-      (prod, index) => prod * (ach[index] ? achievements[index].reward!.multiplicativeObtainium!() : 1),
+      (prod, index) => prod * (player.achievements[index] ? achievements[index].reward!.multiplicativeObtainium!() : 1),
       1
     )
   },
-  multiplicativeOffering: (ach): number => {
+  multiplicativeOffering: (): number => {
     return achievementsByReward.multiplicativeOffering.reduce(
-      (prod, index) => prod * (ach[index] ? achievements[index].reward!.multiplicativeOffering!() : 1),
+      (prod, index) => prod * (player.achievements[index] ? achievements[index].reward!.multiplicativeOffering!() : 1),
       1
     )
   },
-  refineryAutobuy: (ach): boolean => {
-    return ach[achievementsByReward.refineryAutobuy[0]]
+  refineryAutobuy: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.refineryAutobuy[0]])
   },
-  coalPlantAutobuy: (ach): boolean => {
-    return ach[achievementsByReward.coalPlantAutobuy[0]]
+  coalPlantAutobuy: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.coalPlantAutobuy[0]])
   },
-  coalRigAutobuy: (ach): boolean => {
-    return ach[achievementsByReward.coalRigAutobuy[0]]
+  coalRigAutobuy: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.coalRigAutobuy[0]])
   },
-  pickaxeAutobuy: (ach): boolean => {
-    return ach[achievementsByReward.pickaxeAutobuy[0]]
+  pickaxeAutobuy: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.pickaxeAutobuy[0]])
   },
-  pandorasBoxAutobuy: (ach): boolean => {
-    return ach[achievementsByReward.pandorasBoxAutobuy[0]]
+  pandorasBoxAutobuy: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.pandorasBoxAutobuy[0]])
   },
-  crystalUpgrade1Autobuy: (ach): boolean => {
-    return ach[achievementsByReward.crystalUpgrade1Autobuy[0]]
+  crystalUpgrade1Autobuy: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.crystalUpgrade1Autobuy[0]])
   },
-  crystalUpgrade2Autobuy: (ach): boolean => {
-    return ach[achievementsByReward.crystalUpgrade2Autobuy[0]]
+  crystalUpgrade2Autobuy: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.crystalUpgrade2Autobuy[0]])
   },
-  crystalUpgrade3Autobuy: (ach): boolean => {
-    return ach[achievementsByReward.crystalUpgrade3Autobuy[0]]
+  crystalUpgrade3Autobuy: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.crystalUpgrade3Autobuy[0]])
   },
-  crystalUpgrade4Autobuy: (ach): boolean => {
-    return ach[achievementsByReward.crystalUpgrade4Autobuy[0]]
+  crystalUpgrade4Autobuy: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.crystalUpgrade4Autobuy[0]])
   },
-  crystalUpgrade5Autobuy: (ach): boolean => {
-    return ach[achievementsByReward.crystalUpgrade5Autobuy[0]]
+  crystalUpgrade5Autobuy: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.crystalUpgrade5Autobuy[0]])
   },
-  salvage: (ach): number => {
+  salvage: (): number => {
     return achievementsByReward.salvage.reduce(
-      (sum, index) => sum + (ach[index] ? achievements[index].reward!.salvage!() : 0),
+      (sum, index) => sum + (player.achievements[index] ? achievements[index].reward!.salvage!() : 0),
       0
     )
   },
-  exemptionTalisman: (ach): boolean => {
-    return ach[achievementsByReward.exemptionTalisman[0]]
+  exemptionTalisman: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.exemptionTalisman[0]])
   },
-  chronosTalisman: (ach): boolean => {
-    return ach[achievementsByReward.chronosTalisman[0]]
+  chronosTalisman: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.chronosTalisman[0]])
   },
-  midasTalisman: (ach): boolean => {
-    return ach[achievementsByReward.midasTalisman[0]]
+  midasTalisman: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.midasTalisman[0]])
   },
-  metaphysicsTalisman: (ach): boolean => {
-    return ach[achievementsByReward.metaphysicsTalisman[0]]
+  metaphysicsTalisman: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.metaphysicsTalisman[0]])
   },
-  polymathTalisman: (ach): boolean => {
-    return ach[achievementsByReward.polymathTalisman[0]]
+  polymathTalisman: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.polymathTalisman[0]])
   },
-  wowSquareTalisman: (ach): boolean => {
-    return ach[achievementsByReward.wowSquareTalisman[0]]
+  wowSquareTalisman: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.wowSquareTalisman[0]])
   },
-  conversionExponent: (ach): number => {
+  conversionExponent: (): number => {
     return achievementsByReward.conversionExponent.reduce(
-      (sum, index) => sum + (ach[index] ? achievements[index].reward!.conversionExponent!() : 0),
+      (sum, index) => sum + (player.achievements[index] ? achievements[index].reward!.conversionExponent!() : 0),
       0
     )
   },
-  chal7Researches: (ach): boolean => {
-    return ach[achievementsByReward.chal7Researches[0]]
+  chal7Researches: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.chal7Researches[0]])
   },
-  chal8Researches: (ach): boolean => {
-    return ach[achievementsByReward.chal8Researches[0]]
+  chal8Researches: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.chal8Researches[0]])
   },
-  chal9Researches: (ach): boolean => {
-    return ach[achievementsByReward.chal9Researches[0]]
+  chal9Researches: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.chal9Researches[0]])
   },
-  talismanPower: (ach): number => {
+  talismanPower: (): number => {
     return achievementsByReward.talismanPower.reduce(
-      (sum, index) => sum + (ach[index] ? achievements[index].reward!.talismanPower!() : 0),
+      (sum, index) => sum + (player.achievements[index] ? achievements[index].reward!.talismanPower!() : 0),
       0
     )
   },
-  sacrificeMult: (ach): number => {
+  sacrificeMult: (): number => {
     return achievementsByReward.sacrificeMult.reduce(
-      (prod, index) => prod * (ach[index] ? achievements[index].reward!.sacrificeMult!() : 1),
+      (prod, index) => prod * (player.achievements[index] ? achievements[index].reward!.sacrificeMult!() : 1),
       1
     )
   },
-  ascensionUnlock: (ach): boolean => {
-    return ach[achievementsByReward.ascensionUnlock[0]]
+  ascensionUnlock: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.ascensionUnlock[0]])
   },
-  antSpeed: (ach): number => {
+  antSpeed: (): number => {
     return achievementsByReward.antSpeed.reduce(
-      (prod, index) => prod * (ach[index] ? achievements[index].reward!.antSpeed!() : 1),
+      (prod, index) => prod * (player.achievements[index] ? achievements[index].reward!.antSpeed!() : 1),
       1
     )
   },
-  antSacrificeUnlock: (ach): boolean => {
-    return ach[achievementsByReward.antSacrificeUnlock[0]]
+  antSacrificeUnlock: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.antSacrificeUnlock[0]])
   },
-  antAutobuyers: (ach): number => {
+  antAutobuyers: (): number => {
     return achievementsByReward.antAutobuyers.reduce(
-      (sum, index) => sum + (ach[index] ? achievements[index].reward!.antAutobuyers!() : 0),
+      (sum, index) => sum + (player.achievements[index] ? achievements[index].reward!.antAutobuyers!() : 0),
       0
     )
   },
-  antUpgradeAutobuyers: (ach): number => {
+  antUpgradeAutobuyers: (): number => {
     return achievementsByReward.antUpgradeAutobuyers.reduce(
-      (sum, index) => sum + (ach[index] ? achievements[index].reward!.antUpgradeAutobuyers!() : 0),
+      (sum, index) => sum + (player.achievements[index] ? achievements[index].reward!.antUpgradeAutobuyers!() : 0),
       0
     )
   },
-  antELOAdditive: (_ach): number => {
+  antELOAdditive: (): number => {
     return 0
     /*
     return achievementsByReward.antELOAdditive.reduce(
-      (sum, index) => sum + (ach[index] ? achievements[index].reward!.antELOAdditive!() : 0),
+      (sum, index) => sum + (player.achievements[index] ? achievements[index].reward!.antELOAdditive!() : 0),
       0
     )*/
   },
-  antELOMultiplicative: (_ach): number => {
+  antELOMultiplicative: (): number => {
     return 1
     /*
     return achievementsByReward.antELOMultiplicative.reduce(
-      (prod, index) => prod * (ach[index] ? achievements[index].reward!.antELOMultiplicative!() : 1),
+      (prod, index) => prod * (player.achievements[index] ? achievements[index].reward!.antELOMultiplicative!() : 1),
       1
     )*/
   },
-  ascensionCountMultiplier: (ach): number => {
+  ascensionCountMultiplier: (): number => {
     return achievementsByReward.ascensionCountMultiplier.reduce(
-      (prod, index) => prod * (ach[index] ? achievements[index].reward!.ascensionCountMultiplier!() : 1),
+      (prod, index) => prod * (player.achievements[index] ? achievements[index].reward!.ascensionCountMultiplier!() : 1),
       1
     )
   },
-  ascensionCountAdditive: (ach): number => {
+  ascensionCountAdditive: (): number => {
     return achievementsByReward.ascensionCountAdditive.reduce(
-      (sum, index) => sum + (ach[index] ? achievements[index].reward!.ascensionCountAdditive!() : 0),
+      (sum, index) => sum + (player.achievements[index] ? achievements[index].reward!.ascensionCountAdditive!() : 0),
       0
     )
   },
-  allCubeGain: (ach): number => {
+  allCubeGain: (): number => {
     return achievementsByReward.allCubeGain.reduce(
-      (prod, index) => prod * (ach[index] ? achievements[index].reward!.allCubeGain!() : 1),
+      (prod, index) => prod * (player.achievements[index] ? achievements[index].reward!.allCubeGain!() : 1),
       1
     )
   },
-  wowCubeGain: (ach): number => {
+  wowCubeGain: (): number => {
     return achievementsByReward.wowCubeGain.reduce(
-      (prod, index) => prod * (ach[index] ? achievements[index].reward!.wowCubeGain!() : 1),
+      (prod, index) => prod * (player.achievements[index] ? achievements[index].reward!.wowCubeGain!() : 1),
       1
     )
   },
-  wowTesseractGain: (ach): number => {
+  wowTesseractGain: (): number => {
     return achievementsByReward.wowTesseractGain.reduce(
-      (prod, index) => prod * (ach[index] ? achievements[index].reward!.wowTesseractGain!() : 1),
+      (prod, index) => prod * (player.achievements[index] ? achievements[index].reward!.wowTesseractGain!() : 1),
       1
     )
   },
-  wowHypercubeGain: (ach): number => {
+  wowHypercubeGain: (): number => {
     return achievementsByReward.wowHypercubeGain.reduce(
-      (prod, index) => prod * (ach[index] ? achievements[index].reward!.wowHypercubeGain!() : 1),
+      (prod, index) => prod * (player.achievements[index] ? achievements[index].reward!.wowHypercubeGain!() : 1),
       1
     )
   },
-  wowPlatonicGain: (ach): number => {
+  wowPlatonicGain: (): number => {
     return achievementsByReward.wowPlatonicGain.reduce(
-      (prod, index) => prod * (ach[index] ? achievements[index].reward!.wowPlatonicGain!() : 1),
+      (prod, index) => prod * (player.achievements[index] ? achievements[index].reward!.wowPlatonicGain!() : 1),
       1
     )
   },
-  wowHepteractGain: (ach): number => {
+  wowHepteractGain: (): number => {
     return achievementsByReward.wowHepteractGain.reduce(
-      (prod, index) => prod * (ach[index] ? achievements[index].reward!.wowHepteractGain!() : 1),
+      (prod, index) => prod * (player.achievements[index] ? achievements[index].reward!.wowHepteractGain!() : 1),
       1
     )
   },
-  ascensionScore: (ach): number => {
+  ascensionScore: (): number => {
     return achievementsByReward.ascensionScore.reduce(
-      (sum, index) => sum + (ach[index] ? achievements[index].reward!.ascensionScore!() : 0),
+      (sum, index) => sum + (player.achievements[index] ? achievements[index].reward!.ascensionScore!() : 0),
       0
     )
   },
-  ascensionRewardScaling: (ach): boolean => {
-    return ach[achievementsByReward.ascensionRewardScaling[0]]
+  ascensionRewardScaling: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.ascensionRewardScaling[0]])
   },
-  constUpgrade1Buff: (ach): number => {
+  constUpgrade1Buff: (): number => {
     return achievementsByReward.constUpgrade1Buff.reduce(
-      (sum, index) => sum + (ach[index] ? achievements[index].reward!.constUpgrade1Buff!() : 0),
+      (sum, index) => sum + (player.achievements[index] ? achievements[index].reward!.constUpgrade1Buff!() : 0),
       0
     )
   },
-  constUpgrade2Buff: (ach): number => {
+  constUpgrade2Buff: (): number => {
     return achievementsByReward.constUpgrade2Buff.reduce(
-      (sum, index) => sum + (ach[index] ? achievements[index].reward!.constUpgrade2Buff!() : 0),
+      (sum, index) => sum + (player.achievements[index] ? achievements[index].reward!.constUpgrade2Buff!() : 0),
       0
     )
   },
-  platonicToHypercubes: (ach): number => {
+  platonicToHypercubes: (): number => {
     return achievementsByReward.platonicToHypercubes.reduce(
-      (sum, index) => sum + (ach[index] ? achievements[index].reward!.platonicToHypercubes!() : 0),
+      (sum, index) => sum + (player.achievements[index] ? achievements[index].reward!.platonicToHypercubes!() : 0),
       0
     )
   },
-  statTracker: (ach): boolean => {
-    return ach[achievementsByReward.statTracker[0]]
+  statTracker: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.statTracker[0]])
   },
-  overfluxConversionRate: (ach): number => {
+  overfluxConversionRate: (): number => {
     return achievementsByReward.overfluxConversionRate.reduce(
-      (prod, index) => prod * (ach[index] ? achievements[index].reward!.overfluxConversionRate!() : 1),
+      (prod, index) => prod * (player.achievements[index] ? achievements[index].reward!.overfluxConversionRate!() : 1),
       1
     )
   },
-  diamondUpgrade18: (ach): boolean => {
-    return ach[achievementsByReward.diamondUpgrade18[0]]
+  diamondUpgrade18: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.diamondUpgrade18[0]])
   },
-  diamondUpgrade19: (ach): boolean => {
-    return ach[achievementsByReward.diamondUpgrade19[0]]
+  diamondUpgrade19: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.diamondUpgrade19[0]])
   },
-  diamondUpgrade20: (ach): boolean => {
-    return ach[achievementsByReward.diamondUpgrade20[0]]
+  diamondUpgrade20: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.diamondUpgrade20[0]])
   },
-  thriftRuneUnlock: (ach): boolean => {
-    return ach[achievementsByReward.thriftRuneUnlock[0]]
+  thriftRuneUnlock: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.thriftRuneUnlock[0]])
   },
-  blessingUnlock: (ach): boolean => {
-    return ach[achievementsByReward.blessingUnlock[0]]
+  blessingUnlock: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.blessingUnlock[0]])
   },
-  talismanUnlock: (ach): boolean => {
-    return ach[achievementsByReward.talismanUnlock[0]]
+  talismanUnlock: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.talismanUnlock[0]])
   },
-  spiritUnlock: (ach): boolean => {
-    return ach[achievementsByReward.spiritUnlock[0]]
+  spiritUnlock: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.spiritUnlock[0]])
   },
-  tesseractUnlock: (ach): boolean => {
-    return ach[achievementsByReward.tesseractUnlock[0]]
+  tesseractUnlock: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.tesseractUnlock[0]])
   },
-  hypercubeUnlock: (ach): boolean => {
-    return ach[achievementsByReward.hypercubeUnlock[0]]
+  hypercubeUnlock: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.hypercubeUnlock[0]])
   },
-  platonicUnlock: (ach): boolean => {
-    return ach[achievementsByReward.platonicUnlock[0]]
+  platonicUnlock: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.platonicUnlock[0]])
   },
-  antHillUnlock: (ach): boolean => {
-    return ach[achievementsByReward.antHillUnlock[0]]
+  antHillUnlock: (): boolean => {
+    return Boolean(player.achievements[achievementsByReward.antHillUnlock[0]])
   }
 }
 
-export const achievementManager = new AchievementManager(
-  Array(numAchievements).fill(0) as number[],
-  emptyProgressiveCaches
-)
+export let achievementPoints = 0
+export let achievementLevel = 0
+
+export const updateAchievementPoints = () => {
+  achievementPoints = 0
+
+  achievementPoints += achievements.reduce((sum, ach, index) => {
+    return sum + (player.achievements[index] ? ach.pointValue : 0)
+  }, 0)
+
+  for (const k of Object.keys(progressiveAchievements) as ProgressiveAchievements[]) {
+    const pointsAwarded = progressiveAchievements[k].pointsAwarded(player.progressiveAchievements[k])
+    achievementPoints += pointsAwarded
+    progressiveAchievements[k].rewardedAP = pointsAwarded
+  }
+
+  updateAchievementLevel()
+}
+
+export const awardAchievement = (index: number) => {
+  if (player.achievements[index] === 1) {
+    return false
+  }
+  if (achievements[index].unlockCondition()) {
+    player.achievements[index] = 1
+    achievementPoints += achievements[index].pointValue
+    updateAchievementLevel()
+    if (player.toggles[34]) {
+      const description = i18next.t(`achievements.descriptions.${index}`)
+      void Notification(i18next.t('achievements.notification', { m: description }))
+    }
+    player.worlds.add(getAchievementQuarks(index), false)
+    revealStuff()
+
+    // Update displays if we are on Achievements Tab
+    if (G.currentTab === Tabs.Achievements) {
+      if (achievements[index].group === 'ungrouped') {
+        updateUngroupedAchievementProgress(index)
+      }
+      else {
+        updateGroupedAchievementProgress(achievements[index].group)
+      }
+    }
+  }
+}
+
+export const awardAchievementGroup = (group: AchievementGroups) => {
+  if (group === 'ungrouped') {
+    throw new Error('Cannot award ungrouped achievements')
+  }
+
+  // If not displayed, we probably do not want to award the achievement early!
+  if (!groupedAchievementData[group].displayCondition()) {
+    return
+  }
+
+  for (const index of achievementsByGroup[group]) {
+    awardAchievement(index)
+  }
+}
+
+
+export const updateProgressiveAP = (ach: ProgressiveAchievements) => {
+  const oldPoints = progressiveAchievements[ach].rewardedAP
+  const pointsAwarded = progressiveAchievements[ach].pointsAwarded(player.progressiveAchievements[ach])
+  achievementPoints += pointsAwarded - progressiveAchievements[ach].rewardedAP
+  progressiveAchievements[ach].rewardedAP = pointsAwarded
+
+  if (oldPoints !== pointsAwarded) {
+    updateProgressiveAchievementProgress(ach)
+    updateAchievementLevel()
+  }
+}
+
+export const updateProgressiveCache = (ach: ProgressiveAchievements) => {
+  const oldVal = player.progressiveAchievements[ach]
+  player.progressiveAchievements[ach] = Math.max(player.progressiveAchievements[ach], progressiveAchievements[ach].updateValue())
+  if (oldVal !== player.progressiveAchievements[ach]) {
+    updateProgressiveAP(ach)
+  }
+}
+
+export const updateAchievementLevel = () => {
+  if (achievementPoints < 2500) {
+    achievementLevel = Math.floor(achievementPoints / 50)
+  } else {
+    achievementLevel =  50 + Math.floor((achievementPoints - 2500) / 100)
+  }
+}
+
+export const toNextAchievementLevelEXP = () => {
+  if (achievementPoints < 2500) {
+    return 50 - (achievementPoints % 50)
+  } else {
+    return 100 - (achievementPoints % 100)
+  }
+}
+
+export const getAchievementReward = (rewardType: AchievementRewards): number | boolean => {
+  return achRewards[rewardType]()
+}
 
 export const generateAchievementRewardSummary = () => {
   const intro = i18next.t('achievements.rewardTypes.title')
   let numericalTexts = ''
   let booleanTexts = ''
 
-  for (const [rewardType, rewardFunction] of Object.entries(getAchieveReward)) {
+  for (const [rewardType, rewardFunction] of Object.entries(achRewards)) {
     const typeKey = rewardType as AchievementRewards
-    const reward = rewardFunction(achievementManager.achievementMap)
+    const reward = rewardFunction()
     if (typeof reward === 'number') {
       if (typeKey === 'acceleratorPower') {
         numericalTexts += `${
@@ -2941,7 +2807,7 @@ export const createGroupedAchievementDescription = (group: AchievementGroups) =>
   let possibleAP = 0
   for (const index of achievementsByGroup[group]) {
     const ach = achievements[index]
-    const hasAch = achievementManager.achievementMap[index]
+    const hasAch = player.achievements[index]
     const AP = ach.pointValue
     possibleAP += AP
     if (hasAch) {
@@ -2955,7 +2821,7 @@ export const createGroupedAchievementDescription = (group: AchievementGroups) =>
       }
       for (const [rewardType, rewardFunction] of Object.entries(ach.reward)) {
         const rewardGroup = rewardType as AchievementRewards
-        const rewardValue = getAchieveReward[rewardGroup](achievementManager.achievementMap)
+        const rewardValue = achRewards[rewardGroup]()
 
         if (typeof rewardValue === 'boolean') {
           extraBonuses += `<span style="color:${hasAch ? 'green' : 'crimson'}">Tier ${currTier + 1} • ${
@@ -3032,7 +2898,7 @@ export const generateUngroupedDescription = (name: ungroupedName) => {
   const value = achievements[ach].pointValue
   let earnedValue = 0
 
-  const hasAch = achievementManager.achievementMap[ach]
+  const hasAch = player.achievements[ach]
   if (hasAch) {
     achName = `<span class='rainbowText'>${achName} - COMPLETE!</span>`
     earnedValue = value
@@ -3045,7 +2911,7 @@ export const generateUngroupedDescription = (name: ungroupedName) => {
     extraText = 'This Achievement also gives the following bonus!<br>'
     for (const [rewardType, rewardFunction] of Object.entries(achievements[ach].reward)) {
       const rewardGroup = rewardType as AchievementRewards
-      const rewardValue = getAchieveReward[rewardGroup](achievementManager.achievementMap)
+      const rewardValue = achRewards[rewardGroup]()
 
       if (typeof rewardValue === 'boolean') {
         extraText += `<span style="color:${hasAch ? 'green' : 'maroon'}">${
@@ -3074,7 +2940,7 @@ export const generateProgressiveAchievementDescription = (name: ProgressiveAchie
   const ach = progressiveAchievements[name]
   let achTitle = i18next.t(`achievements.progressiveAchievements.${name}.name`)
   const achText = i18next.t(`achievements.progressiveAchievements.${name}.description`, {
-    x: format(achievementManager.progressiveAchievements[name].cached, 0, true)
+    x: format(player.progressiveAchievements[name], 0, true)
   })
 
   const achAPSourceText = i18next.t(`achievements.progressiveAchievements.${name}.apSource`)
@@ -3082,12 +2948,12 @@ export const generateProgressiveAchievementDescription = (name: ProgressiveAchie
   let APText = ''
 
   if (ach.maxPointValue === -1) {
-    APText = `${achievementManager.progressiveAchievements[name].rewardedAP} AP`
+    APText = `${ach.rewardedAP} AP`
   } else {
-    APText = `${achievementManager.progressiveAchievements[name].rewardedAP}/${ach.maxPointValue} AP`
+    APText = `${ach.rewardedAP}/${ach.maxPointValue} AP`
   }
 
-  if (achievementManager.progressiveAchievements[name].rewardedAP === ach.maxPointValue) {
+  if (ach.rewardedAP === ach.maxPointValue) {
     achTitle = `<span class='rainbowText'>${achTitle}</span>`
   }
 
@@ -3205,66 +3071,79 @@ export const generateAchievementHTMLs = () => {
   }
 }
 
-export const updateGroupedAchievementProgress = () => {
+export const updateGroupedAchievementProgress = (group: AchievementGroups) => {
+  if (group === 'ungrouped') {
+    throw new Error('Cannot update progress for ungrouped achievements in updateGroupedAchievementProgress')
+  }
+  
+  const capitalizedName = group.charAt(0).toUpperCase() + group.slice(1)
+  const img = DOMCacheGetOrSet(`achievementGroup${capitalizedName}`) as HTMLElement
+
+  if (img) {
+    const totalAchievements = achievementsByGroup[group].length
+    const completedAchievements = achievementsByGroup[group].filter((id) => player.achievements[id] === 1).length
+    img.classList.remove('green-background', 'purple-background')
+    img.style.setProperty('border', 'none')
+
+    // Optional: Add visual styling based on completion
+    img.classList.remove('green-background')
+    if (completedAchievements === totalAchievements) {
+      img.classList.add('green-background')
+    }
+
+    img.style.setProperty('--pct', `${completedAchievements}/${totalAchievements}`)
+  }
+
+}
+
+
+export const updateAllGroupedAchievementProgress = () => {
   for (const k of Object.keys(achievementsByGroup) as AchievementGroups[]) {
     if (k === 'ungrouped') {
       continue
     }
+    updateGroupedAchievementProgress(k)
+  }
+}
 
-    const capitalizedName = k.charAt(0).toUpperCase() + k.slice(1)
-    const img = DOMCacheGetOrSet(`achievementGroup${capitalizedName}`) as HTMLElement
+export const updateUngroupedAchievementProgress = (id: number) => {
+  const capitalizedName = Object.keys(ungroupedNameMap).find((k) => ungroupedNameMap[k as ungroupedName] === id)
+  if (!capitalizedName) {
+    throw new Error(`Ungrouped achievement with ID ${id} not found`)
+  }
 
-    if (img) {
-      const totalAchievements = achievementsByGroup[k].length
-      const completedAchievements = achievementsByGroup[k].filter((id) => achievementManager.achievementMap[id]).length
-      img.classList.remove('green-background', 'purple-background')
-      img.style.setProperty('border', 'none')
+  const img = DOMCacheGetOrSet(`ungroupedAchievement${capitalizedName.charAt(0).toUpperCase() + capitalizedName.slice(1)}`) as HTMLElement
 
-      // Optional: Add visual styling based on completion
-      img.classList.remove('green-background')
-      if (completedAchievements === totalAchievements) {
-        img.classList.add('green-background')
-      }
+  if (img) {
+    const isCompleted = player.achievements[id] === 1
+    img.classList.remove('green-background')
 
-      img.style.setProperty('--pct', `${completedAchievements}/${totalAchievements}`)
+    if (isCompleted) {
+      img.classList.add('green-background')
     }
   }
 }
 
-export const updateUngroupedAchievementProgress = () => {
-  for (const k of Object.keys(ungroupedNameMap)) {
-    const capitalizedName = k.charAt(0).toUpperCase() + k.slice(1)
-    const img = DOMCacheGetOrSet(`ungroupedAchievement${capitalizedName}`) as HTMLElement
-
-    if (img) {
-      const achievementId = ungroupedNameMap[k as ungroupedName]
-      const isCompleted = achievementManager.achievementMap[achievementId]
-
-      img.classList.remove('green-background')
-
-      if (isCompleted) {
-        img.classList.add('green-background')
-      }
-    }
+export const updateAllUngroupedAchievementProgress = () => {
+  for (const idx of Object.values(ungroupedNameMap)) {
+    updateUngroupedAchievementProgress(idx)
   }
 }
 
-export const updateProgressiveAchievementProgress = () => {
-  for (const k of Object.keys(progressiveAchievements) as ProgressiveAchievements[]) {
-    const capitalizedName = k.charAt(0).toUpperCase() + k.slice(1)
+export const updateProgressiveAchievementProgress = (progAch: ProgressiveAchievements) => {
+  const capitalizedName = progAch.charAt(0).toUpperCase() + progAch.slice(1)
     const img = DOMCacheGetOrSet(`progressiveAchievement${capitalizedName}`) as HTMLElement
 
     if (img) {
-      const achData = progressiveAchievements[k]
+      const achData = progressiveAchievements[progAch]
 
       // Infinite progression implies we cannot define a percentage
       if (achData.maxPointValue === -1) {
-        continue
+        return
       }
 
-      const currentAP = achievementManager.progressiveAchievements[k].rewardedAP
+      const currentAP = progressiveAchievements[progAch].rewardedAP
       const maxAP = achData.maxPointValue
-      console.log(img)
 
       img.classList.remove('green-background')
 
@@ -3276,6 +3155,11 @@ export const updateProgressiveAchievementProgress = () => {
       // Set progress percentage
       img.style.setProperty('--pct', `${currentAP}/${maxAP}`)
     }
+}
+
+export const updateAllProgressiveAchievementProgress = () => {
+  for (const k of Object.keys(progressiveAchievements) as ProgressiveAchievements[]) {
+    updateProgressiveAchievementProgress(k)
   }
 }
 
@@ -3298,7 +3182,7 @@ export const displayAchievementProgress = () => {
       for (const achievementId of achievementsByGroup[k]) {
         const pointValue = achievements[achievementId].pointValue
         totalAP += pointValue
-        if (achievementManager.achievementMap[achievementId]) {
+        if (player.achievements[achievementId]) {
           earnedAP += pointValue
         }
       }
@@ -3344,7 +3228,7 @@ export const displayAchievementProgress = () => {
 
     if (img) {
       const achievementId = ungroupedNameMap[k as ungroupedName]
-      const isCompleted = achievementManager.achievementMap[achievementId]
+      const isCompleted = player.achievements[achievementId] === 1
       const pointValue = achievements[achievementId].pointValue
       const earnedAP = isCompleted ? pointValue : 0
 
@@ -3380,7 +3264,7 @@ export const displayAchievementProgress = () => {
 
     if (img) {
       const achData = progressiveAchievements[k]
-      const currentAP = achievementManager.progressiveAchievements[k].rewardedAP
+      const currentAP = achData.rewardedAP
       const maxAP = achData.maxPointValue
 
       img.classList.add('dimmed')

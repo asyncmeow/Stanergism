@@ -1,5 +1,4 @@
 import i18next from 'i18next'
-import { achievementManager } from './Achievements'
 import { getAmbrosiaUpgradeEffects } from './BlueberryUpgrades'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { getOcteractUpgradeEffect } from './Octeracts'
@@ -3099,7 +3098,7 @@ export const getGoldenQuarkCost = (): {
 
   let costReduction = 10000 // We will construct our cost reduction by subtracting 10000 - this value.
 
-  costReduction *= achievementManager.goldQuarkDiscountMultiplier
+  //costReduction *= achievementManager.goldQuarkDiscountMultiplier
   costReduction *= 1 - (0.3 * player.cubeUpgrades[60]) / 10000
   costReduction *= getGQUpgradeEffect('goldenQuarks2')
   costReduction *= getOcteractUpgradeEffect('octeractGQCostReduce')
