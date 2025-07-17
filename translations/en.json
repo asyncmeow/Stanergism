@@ -1689,6 +1689,70 @@
       "diamondUpgrade20": "• Diamond Upgrade 4x5 {{unlock}}",
       "overfluxConversionRate": "• Overflux Powder Conversion Rate x{{val}}"
     },
+    "levelRewards": {
+      "minLevel": "Minimum Level Required: {{level}}",
+      "noLevelReq": "Unlocked by Default!",
+      "salvage": {
+        "name": "♻ Salvage",
+        "description": "Gain +1 ♻ Salvage per Synergism level!",
+        "effect": "Current Effect: +{{salvage}} ♻ Salvage"
+      },
+      "quarks": {
+        "name": "Quark Multiplier",
+        "description": "Every 20 Synergism levels, multiply your Quark gain by 1.01(!)",
+        "effect": "Current Effect: +{{mult}} Quark Gain"
+      },
+      "offerings": {
+        "name": "Offering Multiplier",
+        "description": "Every level, multiply your Offering gain by 1.01. After level 100, multiply it by another 1.02 per level!",
+        "effect": "Current Effect: +{{mult}} Offering Gain"
+      },
+      "obtainium": {
+        "name": "Obtainium Multiplier",
+        "description": "For each level past 14, multiply your Obtainium gain by 1.01. After level 100, multiply it by another 1.02 per level!",
+        "effect": "Current Effect: +{{mult}} Obtainium Gain"
+      },
+      "wowCubes": {
+        "name": "Wow! Cube Production",
+        "description": "For each level past 19, gain +5% more Wow! Cubes.",
+        "effect": "Current Effect: +{{mult}} Wow! Cube Gain"
+      },
+      "wowTesseracts": {
+        "name": "Wow! Tesseract Production",
+        "description": "For each level past 29, gain +5% more Wow! Tesseracts.",
+        "effect": "Current Effect: +{{mult}} Wow! Tesseract Gain"
+      },
+      "wowHyperCubes": {
+        "name": "Wow! Hypercube Production",
+        "description": "For each level past 39, gain +5% more Wow! Hypercubes.",
+        "effect": "Current Effect: +{{mult}} Wow! Hypercube Gain"
+      },
+      "wowPlatonicCubes": {
+        "name": "Wow! Platonic Cube Production",
+        "description": "For each level past 49, gain +5% more Wow! Platonic Cubes.",
+        "effect": "Current Effect: +{{mult}} Wow! Platonic Cube Gain"
+      },
+      "wowHepteractCubes": {
+        "name": "Wow! Hepteract Production",
+        "description": "For each level past 69 (lol), gain +5% more Wow! Hepteracts.",
+        "effect": "Current Effect: +{{mult}} Wow! Hepteract Gain"
+      },
+      "wowOcteracts": {
+        "name": "Wow! Octeracts!... Wait, what?",
+        "description": "For each level past 149, gain +5% more Wow! Octeracts. What's more, multiply this by 1.02 per level as well!",
+        "effect": "Current Effect: +{{mult}} Wow! Octeract Gain"
+      },
+      "ambrosiaLuck": {
+        "name": "☘ Ambrosia luck",
+        "description": "For each level past 199, gain +4 ☘ Ambrosia Luck! I like stats with symbols next to them.",
+        "effect": "Current Effect: +{{luck}} ☘ Ambrosia Luck"
+      },
+      "redAmbrosiaLuck": {
+        "name": "&#9861 Red Ambrosia luck",
+        "description": "For each level past 249, gain +1 &#9861 Red Ambrosia Luck! I like stats with symbols next to them.",
+        "effect": "Current Effect: +{{luck}} &#9861 Red Ambrosia Luck"
+      }
+    },
     "progressiveAchievements": {
       "runeLevel": {
         "name": "Progressive Achievement - Purchased Rune Levels",

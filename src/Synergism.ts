@@ -233,6 +233,7 @@ import {
 import { changeSubTab, changeTab, getActiveSubTab, Tabs } from './Tabs'
 import { settingAnnotation, toggleIconSet, toggleTheme } from './Themes'
 import { clearTimeout, clearTimers, setInterval, setTimeout } from './Timers'
+import { generateLevelRewardHTMLs } from './Levels'
 
 export const player: Player = {
   firstPlayed: new Date().toISOString(),
@@ -5537,6 +5538,7 @@ window.addEventListener('load', async () => {
   corruptionLoadoutTableCreate()
   createCampaignIconHTMLS()
   generateAchievementHTMLs()
+  generateLevelRewardHTMLs()
 
   reloadShit()
 }, { once: true })

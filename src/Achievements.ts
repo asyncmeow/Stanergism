@@ -412,7 +412,7 @@ export const emptyProgressiveAchievements = Object
   ) as Record<ProgressiveAchievements, ProgressiveAchievementsObject>
 
 export const achievements: Achievement[] = [
-  { pointValue: 5, unlockCondition: () => true, group: 'ungrouped' }, // Free Achievement Perhaps?
+  { pointValue: 17777, unlockCondition: () => true, group: 'ungrouped' }, // Free Achievement Perhaps?
   { pointValue: 5, unlockCondition: () => player.firstOwnedCoin >= 1, group: 'firstOwnedCoin' },
   { pointValue: 10, unlockCondition: () => player.firstOwnedCoin >= 10, group: 'firstOwnedCoin' },
   {
@@ -650,7 +650,7 @@ export const achievements: Achievement[] = [
     pointValue: 20,
     unlockCondition: () => G.reincarnationPointGain.gte(1e200),
     group: 'reincarnationPointGain',
-    reward: { multiplicativeObtainium: () => 1 / 800 * sumOfRuneLevels() }
+    reward: { multiplicativeObtainium: () => (1 + 1 / 800 * sumOfRuneLevels()) }
   },
   {
     pointValue: 25,

@@ -123,6 +123,7 @@ import type { GlobalVariables } from './types/Synergism'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
 import { getAchievementReward } from './Achievements'
+import { getLevelReward } from './Levels'
 
 export interface StatLine {
   i18n: string
@@ -159,10 +160,6 @@ export const allCubeStats: StatLine[] = [
     i18n: 'AchievementBonus',
     stat: () => +getAchievementReward('allCubeGain')
   },
-  /*{
-    i18n: 'SynergismLevel',
-    stat: () => achievementManager.cubeBonus
-  },*/
   {
     i18n: 'CampaignTutorial',
     stat: () => player.campaigns.tutorialBonus.cubeBonus,
@@ -349,6 +346,11 @@ export const allWowCubeStats: StatLine[] = [
     stat: () => calculateAllCubeMultiplier()
   },
   {
+    i18n: 'SynergismLevel',
+    stat: () => getLevelReward('wowCubes'),
+    color: 'green'
+  },
+  {
     i18n: 'AchievementBonus',
     stat: () => +getAchievementReward('wowCubeGain')
   },
@@ -426,6 +428,11 @@ export const allTesseractStats: StatLine[] = [
     stat: () => calculateAllCubeMultiplier()
   },
   {
+    i18n: 'SynergismLevel',
+    stat: () => getLevelReward('wowTesseracts'),
+    color: 'green'
+  },
+  {
     i18n: 'AchievementBonus',
     stat: () => +getAchievementReward('wowTesseractGain')
   },
@@ -469,6 +476,11 @@ export const allHypercubeStats: StatLine[] = [
     stat: () => calculateAllCubeMultiplier()
   },
   {
+    i18n: 'SynergismLevel',
+    stat: () => getLevelReward('wowHyperCubes'),
+    color: 'green'
+  },
+  {
     i18n: 'AchievementBonus',
     stat: () => +getAchievementReward('wowHypercubeGain')
   },
@@ -504,6 +516,11 @@ export const allPlatonicCubeStats: StatLine[] = [
     stat: () => calculateAllCubeMultiplier()
   },
   {
+    i18n: 'SynergismLevel',
+    stat: () => getLevelReward('wowPlatonicCubes'),
+    color: 'green'
+  },
+  {
     i18n: 'AchievementBonus',
     stat: () => +getAchievementReward('wowPlatonicGain')
   },
@@ -533,6 +550,11 @@ export const allHepteractCubeStats: StatLine[] = [
   {
     i18n: 'GlobalCube',
     stat: () => calculateAllCubeMultiplier()
+  },
+  {
+    i18n: 'SynergismLevel',
+    stat: () => getLevelReward('wowHepteractCubes'),
+    color: 'green'
   },
   {
     i18n: 'AchievementBonus',
@@ -565,6 +587,11 @@ export const allOcteractCubeStats: StatLine[] = [
     i18n: 'PseudoCoins',
     stat: () => PCoinUpgradeEffects.CUBE_BUFF,
     color: 'gold'
+  },
+  {
+    i18n: 'SynergismLevel',
+    stat: () => getLevelReward('wowOcteracts'),
+    color: 'green'
   },
   {
     i18n: 'Campaign',
@@ -812,10 +839,10 @@ export const allOfferingStats = [
     i18n: 'AchievementBonus',
     stat: () => +getAchievementReward('multiplicativeOffering') // Achievement Bonus
   },
-  /*{
+  {
     i18n: 'SynergismLevel',
-    stat: () => achievementManager.offeringBonus // Synergism Level
-  },*/
+    stat: () => getLevelReward('offerings') // Synergism Level
+  },
   {
     i18n: 'SuperiorIntellect',
     stat: () => getRuneEffects('superiorIntellect').offeringMult // Superior Intellect Rune
@@ -1133,10 +1160,10 @@ export const allQuarkStats: StatLine[] = [
     i18n: 'AchievementBonus',
     stat: () => +getAchievementReward('quarkGain')
   },
-  /*{
+  {
     i18n: 'SynergismLevel',
-    stat: () => achievementManager.quarkBonus
-  },*/
+    stat: () => getLevelReward('quarks')
+  },
   {
     i18n: 'PlasticTalisman',
     stat: () => getTalismanEffects('plastic').quarkBonus
@@ -1422,10 +1449,10 @@ export const allObtainiumStats: StatLine[] = [
     i18n: 'AchievementBonus',
     stat: () => +getAchievementReward('multiplicativeObtainium') // Achievement Bonus
   },
-  /*{
+  {
     i18n: 'SynergismLevel',
-    stat: () => achievementManager.obtainiumBonus // Synergism Level
-  },*/
+    stat: () => getLevelReward('obtainium') // Synergism Level
+  },
   {
     i18n: 'ReincarnationUpgrade9',
     stat: () =>
@@ -1956,6 +1983,11 @@ export const allAmbrosiaLuckStats: StatLine[] = [
     color: 'gold'
   },
   {
+    i18n: 'SynergismLevel',
+    stat: () => getLevelReward('ambrosiaLuck'), // Synergism Level
+    color: 'green'
+  },
+  {
     i18n: 'Campaign',
     stat: () => player.campaigns.ambrosiaLuckBonus // Campaign Bonus
   },
@@ -2250,10 +2282,6 @@ export const allGoldenQuarkPurchaseCostStats: StatLine[] = [
     stat: () => 1 / (1 + getQuarkBonus() / 100),
     color: 'gold'
   },
-  /*{
-    i18n: 'SynergismLevel',
-    stat: () => achievementManager.goldQuarkDiscountMultiplier // Synergism Level Bonus
-  },*/
   {
     i18n: 'CubeUpgrade6x10',
     stat: () => 1 - (0.3 * player.cubeUpgrades[60]) / 10000
@@ -2463,6 +2491,11 @@ export const allRedAmbrosiaLuckStats: StatLine[] = [
     i18n: 'PseudoCoins',
     stat: () => PCoinUpgradeEffects.RED_LUCK_BUFF, // PseudoCoin Upgrade
     color: 'gold'
+  },
+  {
+    i18n: 'SynergismLevel',
+    stat: () => getLevelReward('redAmbrosiaLuck'), // Synergism Level
+    color: 'green'
   },
   {
     i18n: 'LuckConversion',
@@ -2761,10 +2794,10 @@ export const positiveSalvageStats: StatLine[] = [
     i18n: 'AchievementBonus',
     stat: () => +getAchievementReward('salvage')
   },
-  /*{
+  {
     i18n: 'SynergismLevel',
-    stat: () => achievementManager.salvageBonus
-  },*/
+    stat: () => getLevelReward('salvage')
+  },
   {
     i18n: 'UpgradeBonus',
     stat: () => 5 * player.upgrades[61] // Upgrade 61

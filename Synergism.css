@@ -1223,7 +1223,8 @@ p#promocodeinfo {
 }
 
 .tieredAchievementType > img,
-.progressiveAchievementType > img {
+.progressiveAchievementType > img,
+.synergismLevelRewardType > img {
     width: 48px;
     height: 48px;
 }
@@ -1291,11 +1292,24 @@ p#promocodeinfo {
     border: 2px solid orange;
 }
 
-#achievementContainer1 {
+#achievementContainer1,
+#achievementContainer2 {
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
+}
+
+#synergismLevelRewardsTable {
+    display: grid;
+    grid-template-columns: repeat(12, 48px);
+    grid-template-rows: repeat(1, 48px);
+    gap: 2px 2px;
+}
+
+#synergismLevelRewardsTable > div {
+    width: 48px;
+    height: 48px;
 }
 
 #buyamountoffering {
