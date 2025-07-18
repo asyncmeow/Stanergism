@@ -1,5 +1,5 @@
 import i18next from 'i18next'
-import { awardAchievement, getAchievementReward, ungroupedNameMap } from './Achievements'
+import { awardAchievement, ungroupedNameMap } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { getChallengeConditions } from './Challenges'
 import { corruptionDisplay, corruptionLoadoutTableUpdate, type Corruptions } from './Corruptions'
@@ -73,7 +73,7 @@ export const toggleChallenges = (i: number, auto = false) => {
   if (
     (i >= 11 && i <= 15)
     && (i === 11
-      ? Boolean(getAchievementReward('ascensionUnlock'))
+      ? player.unlocks.ascensions
       : player.highestchallengecompletions[i - 1] > 0)
     && ((!auto && !player.toggles[31]) || player.challengecompletions[10] > 0
       || (player.currentChallenge.transcension === 0 && player.currentChallenge.reincarnation === 0

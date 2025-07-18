@@ -268,6 +268,15 @@ export interface Player {
     rrow2: boolean
     rrow3: boolean
     rrow4: boolean
+    anthill: boolean
+    blessings: boolean
+    spirits: boolean
+    talismans: boolean
+    ascensions: boolean
+    tesseracts: boolean
+    hypercubes: boolean
+    platonics: boolean
+    hepteracts: boolean
   }
   achievements: number[]
   progressiveAchievements: Record<ProgressiveAchievements, number>

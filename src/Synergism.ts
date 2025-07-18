@@ -233,7 +233,7 @@ import {
 import { changeSubTab, changeTab, getActiveSubTab, Tabs } from './Tabs'
 import { settingAnnotation, toggleIconSet, toggleTheme } from './Themes'
 import { clearTimeout, clearTimers, setInterval, setTimeout } from './Timers'
-import { generateLevelRewardHTMLs } from './Levels'
+import { generateLevelMilestoneHTMLS, generateLevelRewardHTMLs, getLevelMilestone } from './Levels'
 
 export const player: Player = {
   firstPlayed: new Date().toISOString(),
@@ -526,7 +526,16 @@ export const player: Player = {
     rrow1: false,
     rrow2: false,
     rrow3: false,
-    rrow4: false
+    rrow4: false,
+    anthill: false,
+    blessings: false,
+    spirits: false,
+    talismans: false,
+    ascensions: false,
+    tesseracts: false,
+    hypercubes: false,
+    platonics: false,
+    hepteracts: false,
   },
   achievements: Array(numAchievements).fill(0) as number[],
   progressiveAchievements: {
@@ -759,6 +768,7 @@ export const player: Player = {
     mortuus: noTalismanFragments,
     plastic: noTalismanFragments,
     wowSquare: noTalismanFragments,
+    achievement: noTalismanFragments,
     cookieGrandma: noTalismanFragments,
     horseShoe: noTalismanFragments
   },
@@ -4076,6 +4086,16 @@ export const resetCheck = async (
       calculateCubeBlessings()
     }
     challengeAchievementCheck(q)
+    if (player.highestchallengecompletions[8] > 0) {
+      player.unlocks.anthill = true
+    }
+    if (player.highestchallengecompletions[9] > 0) {
+      player.unlocks.talismans = true
+      player.unlocks.blessings = true
+    }
+    if (player.highestchallengecompletions[10] > 0) {
+      player.unlocks.ascensions = true
+    }
     if (
       !player.retrychallenges
       || manual
@@ -4100,7 +4120,7 @@ export const resetCheck = async (
 
   if (i === 'ascension') {
     if (
-      Boolean(getAchievementReward('ascensionUnlock'))
+      player.unlocks.ascensions
       && (!player.toggles[31] || player.challengecompletions[10] > 0)
     ) {
       if (manual) {
@@ -4137,6 +4157,18 @@ export const resetCheck = async (
         challengeDisplay(a, false)
       }
       challengeAchievementCheck(a)
+      if (player.highestchallengecompletions[11] > 0) {
+        player.unlocks.tesseracts = true
+      }
+      if (player.highestchallengecompletions[12] > 0) {
+        player.unlocks.spirits = true
+      }
+      if (player.highestchallengecompletions[13] > 0) {
+        player.unlocks.hypercubes = true
+      }
+      if (player.highestchallengecompletions[14] > 0) {
+        player.unlocks.platonics = true
+      }
     }
     if (a === 15) {
       const c15SM = challenge15ScoreMultiplier()
@@ -4159,6 +4191,9 @@ export const resetCheck = async (
           player.challenge15Exponent = Decimal.log(player.coins.add(1), 10) * c15SM
           c15RewardUpdate()
         }
+      }
+      if (player.challenge15Exponent >= 1e15) {
+        player.unlocks.hepteracts = true
       }
     }
 
@@ -4422,35 +4457,35 @@ export const updateAll = (): void => {
 
   if (
     player.toggles[10]
-    && Boolean(getAchievementReward('refineryAutobuy'))
+    && getLevelMilestone('tier1CrystalAutobuy') === 1
     && player.prestigePoints.gte(player.firstCostDiamonds)
   ) {
     buyMax(1, 'Diamonds')
   }
   if (
     player.toggles[11]
-    && Boolean(getAchievementReward('coalPlantAutobuy'))
+    && getLevelMilestone('tier2CrystalAutobuy') === 1
     && player.prestigePoints.gte(player.secondCostDiamonds)
   ) {
     buyMax(2, 'Diamonds')
   }
   if (
     player.toggles[12]
-    && Boolean(getAchievementReward('coalRigAutobuy'))
+    && getLevelMilestone('tier3CrystalAutobuy') === 1
     && player.prestigePoints.gte(player.thirdCostDiamonds)
   ) {
     buyMax(3, 'Diamonds')
   }
   if (
     player.toggles[13]
-    && Boolean(getAchievementReward('pickaxeAutobuy'))
+    && getLevelMilestone('tier4CrystalAutobuy') === 1
     && player.prestigePoints.gte(player.fourthCostDiamonds)
   ) {
     buyMax(4, 'Diamonds')
   }
   if (
     player.toggles[14]
-    && Boolean(getAchievementReward('pandorasBoxAutobuy'))
+    && getLevelMilestone('tier5CrystalAutobuy') === 1
     && player.prestigePoints.gte(player.fifthCostDiamonds)
   ) {
     buyMax(5, 'Diamonds')
@@ -4466,7 +4501,7 @@ export const updateAll = (): void => {
     c += 10
   }
   if (
-    Boolean(getAchievementReward('crystalUpgrade1Autobuy'))
+    getLevelMilestone('tier1CrystalAutobuy') === 1
     && player.prestigeShards.gte(
       Decimal.pow(
         10,
@@ -4479,7 +4514,7 @@ export const updateAll = (): void => {
     buyCrystalUpgrades(1, true)
   }
   if (
-    Boolean(getAchievementReward('crystalUpgrade2Autobuy'))
+    getLevelMilestone('tier2CrystalAutobuy') === 1
     && player.prestigeShards.gte(
       Decimal.pow(
         10,
@@ -4492,7 +4527,7 @@ export const updateAll = (): void => {
     buyCrystalUpgrades(2, true)
   }
   if (
-    Boolean(getAchievementReward('crystalUpgrade3Autobuy'))
+    getLevelMilestone('tier3CrystalAutobuy') === 1
     && player.prestigeShards.gte(
       Decimal.pow(
         10,
@@ -4505,7 +4540,7 @@ export const updateAll = (): void => {
     buyCrystalUpgrades(3, true)
   }
   if (
-    Boolean(getAchievementReward('crystalUpgrade4Autobuy'))
+    getLevelMilestone('tier4CrystalAutobuy') === 1
     && player.prestigeShards.gte(
       Decimal.pow(
         10,
@@ -4518,7 +4553,7 @@ export const updateAll = (): void => {
     buyCrystalUpgrades(4, true)
   }
   if (
-    Boolean(getAchievementReward('crystalUpgrade5Autobuy'))
+    getLevelMilestone('tier5CrystalAutobuy') === 1
     && player.prestigeShards.gte(
       Decimal.pow(
         10,
@@ -5049,7 +5084,7 @@ const tack = (dt: number) => {
   if (player.resettoggle1 === 1 || player.resettoggle1 === 0) {
     if (
       player.toggles[15]
-      && Boolean(getAchievementReward('autoPrestigeFeature'))
+      && getLevelMilestone('autoPrestige') === 1
       && G.prestigePointGain.gte(
         player.prestigePoints.times(Decimal.pow(10, player.prestigeamount))
       )
@@ -5064,7 +5099,7 @@ const tack = (dt: number) => {
     const time = Math.max(0.01, player.prestigeamount)
     if (
       player.toggles[15]
-      && Boolean(getAchievementReward('autoPrestigeFeature'))
+      && getLevelMilestone('autoPrestige') === 1
       && G.autoResetTimers.prestige >= time
       && player.coinsThisPrestige.gte(1e16)
     ) {
@@ -5539,6 +5574,7 @@ window.addEventListener('load', async () => {
   createCampaignIconHTMLS()
   generateAchievementHTMLs()
   generateLevelRewardHTMLs()
+  generateLevelMilestoneHTMLS()
 
   reloadShit()
 }, { once: true })

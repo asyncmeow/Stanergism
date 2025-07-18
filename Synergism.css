@@ -1229,7 +1229,8 @@ p#promocodeinfo {
     height: 48px;
 }
 
-.ungroupedAchievementType > img {
+.ungroupedAchievementType > img,
+.synergismLevelMilestoneType > img {
     width: 32px;
     height: 32px;
 }
@@ -1310,6 +1311,18 @@ p#promocodeinfo {
 #synergismLevelRewardsTable > div {
     width: 48px;
     height: 48px;
+}
+
+#synergismLevelMilestonesTable {
+    display: grid;
+    grid-template-columns: repeat(12, 32px);
+    grid-template-rows: repeat(4, 32px);
+    gap: 2px 2px;
+}
+
+#synergismLevelMilestonesTable > div {
+    width: 32px;
+    height: 32px;
 }
 
 #buyamountoffering {

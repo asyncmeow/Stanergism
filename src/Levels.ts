@@ -1,7 +1,8 @@
 import i18next from "i18next"
-import { format, formatAsPercentIncrease } from "./Synergism"
+import { format, formatAsPercentIncrease, player } from "./Synergism"
 import { achievementLevel } from "./Achievements"
 import { DOMCacheGetOrSet } from "./Cache/DOM"
+import { resetTimeThreshold } from "./Calculate"
 
 export type SynergismLevelReward = 'quarks' | 'salvage' | 'obtainium' | 'offerings' | 'wowCubes' | 'wowTesseracts' | 'wowHyperCubes' |
 'wowPlatonicCubes' | 'wowHepteractCubes' | 'wowOcteracts' |
@@ -21,7 +22,18 @@ export const synergismLevelRewards: Record<SynergismLevelReward, SynergismLevelR
     salvage: {
         name: () => i18next.t('achievements.levelRewards.salvage.name'),
         description: () => i18next.t('achievements.levelRewards.salvage.description'),
-        effect: (lv: number) => lv,
+        effect: (lv: number) => {
+            let salvage = 0
+            let salavePerLevel = 1
+            let remainingLevels = lv
+            while (remainingLevels >= 100) {
+                salvage += salavePerLevel * 100
+                remainingLevels -= 100
+                salavePerLevel += 1
+            }
+            salvage += salavePerLevel * remainingLevels
+            return salvage
+        },
         effectDescription: () => {
             const salvage = getLevelReward('salvage')
             return i18next.t('achievements.levelRewards.salvage.effect', {
@@ -243,6 +255,251 @@ export const generateLevelRewardHTMLs = () => {
         }
         img.focus = () => {
             getLevelRewardDescription(reward)
+        }
+        div.appendChild(img)
+        rewardTable.appendChild(div)
+    }
+}
+
+export type SynergismLevelMilestones = 'offeringTimerScaling' | 'duplicationRune' | 'prismRune' | 'thriftRune' | 'autoPrestige' |
+'tier1CrystalAutobuy' | 'tier2CrystalAutobuy' | 'tier3CrystalAutobuy' | 'tier4CrystalAutobuy' | 'tier5CrystalAutobuy' |
+'achievementTalismanUnlock' | 'achievementTalismanEnhancement'
+
+interface SynergismLevelMilestoneData {
+    name: () => string
+    description: () => string
+    effect: () => number
+    defaultValue: number // If level is not reached.
+    effectDescription: () => string
+    levelReq: number
+    displayOrder: number
+}
+
+export const synergismLevelMilestones: Record<SynergismLevelMilestones, SynergismLevelMilestoneData> = {
+    offeringTimerScaling: {
+        name: () => i18next.t('achievements.levelMilestones.offeringTimerScaling.name'),
+        description: () => i18next.t('achievements.levelMilestones.offeringTimerScaling.description'),
+        effect: () => 1,
+        defaultValue: 0,
+        effectDescription: () => {
+            const mult = getLevelMilestone('offeringTimerScaling') === 1 ?
+                Math.max(1, player.prestigecounter / resetTimeThreshold()) :
+                1
+            return i18next.t('achievements.levelMilestones.offeringTimerScaling.effect', {
+                mult: formatAsPercentIncrease(mult, 2)
+            })
+        },
+        levelReq: 5,
+        displayOrder: 1
+    },
+    autoPrestige: {
+        name: () => i18next.t('achievements.levelMilestones.autoPrestige.name'),
+        description: () => i18next.t('achievements.levelMilestones.autoPrestige.description'),
+        effect: () => 1,
+        defaultValue: 0,
+        effectDescription: () => {
+            const autoPrestige = getLevelMilestone('autoPrestige') === 1
+            return i18next.t('achievements.levelMilestones.autoPrestige.effect', {
+                autoPrestige: autoPrestige ? i18next.t('achievements.rewardTypes.unlocked') : i18next.t('achievements.rewardTypes.locked')
+            })
+        },
+        levelReq: 10,
+        displayOrder: 2
+    },
+    duplicationRune: {
+        name: () => i18next.t('achievements.levelMilestones.duplicationRune.name'),
+        description: () => i18next.t('achievements.levelMilestones.duplicationRune.description'),
+        effect: () => 1,
+        defaultValue: 0,
+        effectDescription: () => {
+            const duplicationRune = getLevelMilestone('duplicationRune') === 1
+            return i18next.t('achievements.levelMilestones.duplicationRune.effect', {
+                duplicationRune: duplicationRune ? i18next.t('achievements.rewardTypes.unlocked') : i18next.t('achievements.rewardTypes.locked')
+            })
+        },
+        levelReq: 10,
+        displayOrder: 3
+    },
+    prismRune: {
+        name: () => i18next.t('achievements.levelMilestones.prismRune.name'),
+        description: () => i18next.t('achievements.levelMilestones.prismRune.description'),
+        effect: () => 1,
+        defaultValue: 0,
+        effectDescription: () => {
+            const prismRune = getLevelMilestone('prismRune') === 1
+            return i18next.t('achievements.levelMilestones.prismRune.effect', {
+                prismRune: prismRune ? i18next.t('achievements.rewardTypes.unlocked') : i18next.t('achievements.rewardTypes.locked')
+            })
+        },
+        levelReq: 20,
+        displayOrder: 4
+    },
+    thriftRune: {
+        name: () => i18next.t('achievements.levelMilestones.thriftRune.name'),
+        description: () => i18next.t('achievements.levelMilestones.thriftRune.description'),
+        effect: () => 1,
+        defaultValue: 0,
+        effectDescription: () => {
+            const thriftRune = getLevelMilestone('thriftRune') === 1
+            return i18next.t('achievements.levelMilestones.thriftRune.effect', {
+                thriftRune: thriftRune ? i18next.t('achievements.rewardTypes.unlocked') : i18next.t('achievements.rewardTypes.locked')
+            })
+        },
+        levelReq: 30,
+        displayOrder: 5
+    },
+    tier1CrystalAutobuy: {
+        name: () => i18next.t('achievements.levelMilestones.tier1CrystalAutobuy.name'),
+        description: () => i18next.t('achievements.levelMilestones.tier1CrystalAutobuy.description'),
+        effect: () => 1,
+        defaultValue: 0,
+        effectDescription: () => {
+            const autobuy = getLevelMilestone('tier1CrystalAutobuy') === 1
+            return i18next.t('achievements.levelMilestones.tier1CrystalAutobuy.effect', {
+                autobuy: autobuy ? i18next.t('achievements.rewardTypes.unlocked') : i18next.t('achievements.rewardTypes.locked')
+            })
+        },
+        levelReq: 6,
+        displayOrder: 6
+    },
+    tier2CrystalAutobuy: {
+        name: () => i18next.t('achievements.levelMilestones.tier2CrystalAutobuy.name'),
+        description: () => i18next.t('achievements.levelMilestones.tier2CrystalAutobuy.description'),
+        effect: () => 1,
+        defaultValue: 0,
+        effectDescription: () => {
+            const autobuy = getLevelMilestone('tier2CrystalAutobuy') === 1
+            return i18next.t('achievements.levelMilestones.tier2CrystalAutobuy.effect', {
+                autobuy: autobuy ? i18next.t('achievements.rewardTypes.unlocked') : i18next.t('achievements.rewardTypes.locked')
+            })
+        },
+        levelReq: 9,
+        displayOrder: 7
+    },
+    tier3CrystalAutobuy: {
+        name: () => i18next.t('achievements.levelMilestones.tier3CrystalAutobuy.name'),
+        description: () => i18next.t('achievements.levelMilestones.tier3CrystalAutobuy.description'),
+        effect: () => 1,
+        defaultValue: 0,
+        effectDescription: () => {
+            const autobuy = getLevelMilestone('tier3CrystalAutobuy') === 1
+            return i18next.t('achievements.levelMilestones.tier3CrystalAutobuy.effect', {
+                autobuy: autobuy ? i18next.t('achievements.rewardTypes.unlocked') : i18next.t('achievements.rewardTypes.locked')
+            })
+        },
+        levelReq: 12,
+        displayOrder: 8
+    },
+    tier4CrystalAutobuy: {
+        name: () => i18next.t('achievements.levelMilestones.tier4CrystalAutobuy.name'),
+        description: () => i18next.t('achievements.levelMilestones.tier4CrystalAutobuy.description'),
+        effect: () => 1,
+        defaultValue: 0,
+        effectDescription: () => {
+            const autobuy = getLevelMilestone('tier4CrystalAutobuy') === 1
+            return i18next.t('achievements.levelMilestones.tier4CrystalAutobuy.effect', {
+                autobuy: autobuy ? i18next.t('achievements.rewardTypes.unlocked') : i18next.t('achievements.rewardTypes.locked')
+            })
+        },
+        levelReq: 15,
+        displayOrder: 9
+    },
+    tier5CrystalAutobuy: {
+        name: () => i18next.t('achievements.levelMilestones.tier5CrystalAutobuy.name'),
+        description: () => i18next.t('achievements.levelMilestones.tier5CrystalAutobuy.description'),
+        effect: () => 1,
+        defaultValue: 0,
+        effectDescription: () => {
+            const autobuy = getLevelMilestone('tier5CrystalAutobuy') === 1
+            return i18next.t('achievements.levelMilestones.tier5CrystalAutobuy.effect', {
+                autobuy: autobuy ? i18next.t('achievements.rewardTypes.unlocked') : i18next.t('achievements.rewardTypes.locked')
+            })
+        },
+        levelReq: 20,
+        displayOrder: 10
+    },
+    achievementTalismanUnlock: {
+        name: () => i18next.t('achievements.levelMilestones.achievementTalismanUnlock.name'),
+        description: () => i18next.t('achievements.levelMilestones.achievementTalismanUnlock.description'),
+        effect: () => 1,
+        defaultValue: 0,
+        effectDescription: () => {
+            const unlocked = getLevelMilestone('achievementTalismanUnlock') === 1
+            return i18next.t('achievements.levelMilestones.achievementTalismanUnlock.effect', {
+                unlocked: unlocked ? i18next.t('achievements.rewardTypes.unlocked') : i18next.t('achievements.rewardTypes.locked')
+            })
+        },
+        levelReq: 100,
+        displayOrder: 11
+    },
+    achievementTalismanEnhancement: {
+        name: () => i18next.t('achievements.levelMilestones.achievementTalismanEnhancement.name'),
+        description: () => i18next.t('achievements.levelMilestones.achievementTalismanEnhancement.description'),
+        effect: () => achievementLevel,
+        defaultValue: 0,
+        effectDescription: () => {
+            const level = getLevelMilestone('achievementTalismanEnhancement')
+            return i18next.t('achievements.levelMilestones.achievementTalismanEnhancement.effect', {
+                level: format(level, 0, true)
+            })
+        },
+        levelReq: 160,
+        displayOrder: 12
+    }
+}
+
+export const synergismLevelMilestone = Object.keys(synergismLevelMilestones) as SynergismLevelMilestones[]
+
+export const getLevelMilestone = (milestone: SynergismLevelMilestones): number => {
+    if (achievementLevel >= synergismLevelMilestones[milestone].levelReq) {
+        return synergismLevelMilestones[milestone].effect()
+    } else {
+        return synergismLevelMilestones[milestone].defaultValue
+    }
+}
+
+export const getLevelMilestoneDescription = (milestone: SynergismLevelMilestones) => {
+    const name = synergismLevelMilestones[milestone].name()
+    const description = synergismLevelMilestones[milestone].description()
+    const effectDesc = synergismLevelMilestones[milestone].effectDescription()
+    const minimumLevel = i18next.t('achievements.levelRewards.minLevel', {
+        level: synergismLevelMilestones[milestone].levelReq
+    })
+
+    DOMCacheGetOrSet('synergismLevelMultiLine').innerHTML = `
+        <span style="color:lightblue">${name}</span><br>
+        ${minimumLevel}<br>
+        ${description}<br>
+        ${effectDesc}
+    `
+}
+
+export const generateLevelMilestoneHTMLS = () => {
+    const alreadyGenerated = document.getElementsByClassName('synergismLevelMilestoneType').length > 0
+    if (alreadyGenerated) {
+        return
+    }
+    const rewardTable = DOMCacheGetOrSet('synergismLevelMilestonesTable')
+    for (const milestone of synergismLevelMilestone) {
+        const capitalizedName = milestone.charAt(0).toUpperCase() + milestone.slice(1)
+        
+        const div = document.createElement('div')
+        div.classList.add('synergismLevelMilestoneType')
+
+        const img = document.createElement('img')
+        img.id = `synergismLevelMilestone${capitalizedName}`
+        img.src = `Pictures/Achievements/Rewards/${capitalizedName}.png`
+        img.alt = synergismLevelMilestones[milestone].name()
+        img.style.cursor = 'pointer'
+  
+        img.onclick = () => {
+          getLevelMilestoneDescription(milestone)
+        }
+        img.onmouseover = () => {
+            getLevelMilestoneDescription(milestone)
+        }
+        img.focus = () => {
+            getLevelMilestoneDescription(milestone)
         }
         div.appendChild(img)
         rewardTable.appendChild(div)

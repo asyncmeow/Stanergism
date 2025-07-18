@@ -55,6 +55,7 @@ import { clearInterval, setInterval } from './Timers'
 import { Alert, Prompt } from './UpdateHTML'
 import { findInsertionIndex, sumContents } from './Utility'
 import { Globals as G } from './Variables'
+import { getLevelMilestone } from './Levels'
 
 const CASH_GRAB_ULTRA_QUARK = 0.08
 const CASH_GRAB_ULTRA_CUBE = 1.2
@@ -104,7 +105,7 @@ export const calculateBaseOfferings = () => {
 export const calculateOfferings = (timeMultUsed = true) => {
   const baseOfferings = calculateBaseOfferings()
   const timeMultiplier = timeMultUsed
-    ? offeringObtainiumTimeModifiers(player.prestigecounter, player.prestigeCount > 0).reduce(
+    ? offeringObtainiumTimeModifiers(player.prestigecounter, getLevelMilestone('offeringTimerScaling') === 1).reduce(
       (a, b) => a * b.stat(),
       1
     )
@@ -491,7 +492,8 @@ export const calculateAcceleratorMultiplier = () => {
 
 export const calculatePositiveSalvageMultiplier = () => {
   const posSalvagePerkSings = [230, 245, 260, 275, 290]
-  const multiplier = 1 + posSalvagePerkSings.filter((x) => x <= player.highestSingularityCount).length / 100
+  let multiplier = 1 + posSalvagePerkSings.filter((x) => x <= player.highestSingularityCount).length / 100
+  multiplier += getTalismanEffects('achievement').positiveSalvageMult
   return multiplier
 }
 
@@ -505,7 +507,8 @@ export const calculatePositiveSalvage = () => {
 
 export const calculateNegativeSalvageMultiplier = () => {
   const negSalvagePerkSings = [75, 85, 105, 125, 155, 185, 215, 245, 260, 275]
-  const multiplier = 1 - negSalvagePerkSings.filter((x) => x <= player.highestSingularityCount).length / 100
+  let multiplier = 1 - negSalvagePerkSings.filter((x) => x <= player.highestSingularityCount).length / 100
+  multiplier += getTalismanEffects('achievement').negativeSalvageMult
   return multiplier
 }
 
@@ -526,17 +529,9 @@ export const calculateSalvageRuneEXPMultiplier = (salvageVal: number | undefined
   // Factors where Salvage comes from
   if (salvage === undefined) {
     salvage = calculateTotalSalvage()
-    // If negative salvage, multiplier is the reciproval of the positive.
-    if (salvage < 0) {
-      return new Decimal(1).div(calculateSalvageRuneEXPMultiplier(-salvage))
-    }
   }
 
-  if (salvage < 90) {
-    return new Decimal(1 / (1 - salvage / 100))
-  } else {
-    return Decimal.exp(1 / 10 * (salvage - 90)).times(10)
-  }
+  return Decimal.pow(10, salvage / 30)
 }
 
 export const calculateAnts = () => {

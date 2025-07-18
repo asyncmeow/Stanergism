@@ -32,6 +32,7 @@ import {
 import { createDeferredPromise } from './Utility'
 import { Globals as G } from './Variables'
 import { achievementLevel, achievementPoints, getAchievementReward, toNextAchievementLevelEXP, updateAllGroupedAchievementProgress, updateAllProgressiveAchievementProgress, updateAllUngroupedAchievementProgress } from './Achievements'
+import { getLevelMilestone } from './Levels'
 
 export const revealStuff = () => {
   document.documentElement.dataset.coinOne = player.unlocks.coinone ? 'true' : 'false'
@@ -96,17 +97,17 @@ export const revealStuff = () => {
   for (let i = 0; i < example17.length; i++) {
     const parent = example17[i].parentElement!
     if (parent.classList.contains('offlineStats')) {
-      example17[i].style.display = getAchievementReward('antHillUnlock') ? 'flex' : 'none'
-      example17[i].setAttribute('aria-disabled', `${!getAchievementReward('antHillUnlock')}`)
+      example17[i].style.display = player.unlocks.anthill ? 'flex' : 'none'
+      example17[i].setAttribute('aria-disabled', `${!player.unlocks.anthill}`)
     } else {
-      example17[i].style.display = getAchievementReward('antHillUnlock') ? 'block' : 'none'
-      example17[i].setAttribute('aria-disabled', `${!getAchievementReward('antHillUnlock')}`)
+      example17[i].style.display = player.unlocks.anthill ? 'block' : 'none'
+      example17[i].setAttribute('aria-disabled', `${!player.unlocks.anthill}`)
     }
   }
 
-  document.documentElement.dataset.chal9 = getAchievementReward('talismanUnlock') ? 'true' : 'false'
+  document.documentElement.dataset.chal9 = player.unlocks.talismans ? 'true' : 'false'
   document.documentElement.dataset.chal9x1 = player.highestchallengecompletions[9] > 0 ? 'true' : 'false'
-  document.documentElement.dataset.chal10 = getAchievementReward('ascensionUnlock') ? 'true' : 'false'
+  document.documentElement.dataset.chal10 = player.unlocks.ascensions ? 'true' : 'false'
 
   const example21 = document.getElementsByClassName('ascendunlock') as HTMLCollectionOf<HTMLElement>
   for (let i = 0; i < example21.length; i++) {
@@ -182,7 +183,7 @@ export const revealStuff = () => {
     }
   }
 
-  if (getAchievementReward('autoPrestigeFeature')) { // Transcend Mythos Achievement 1
+  if (getLevelMilestone('autoPrestige') === 1) { // Transcend Mythos Achievement 1
     DOMCacheGetOrSet('prestigeautotoggle').style.display = 'block'
     DOMCacheGetOrSet('prestigeamount').style.display = 'block'
     DOMCacheGetOrSet('autoprestige').style.display = 'block'
@@ -192,7 +193,7 @@ export const revealStuff = () => {
     DOMCacheGetOrSet('autoprestige').style.display = 'none'
   }
 
-  if (getAchievementReward('talismanUnlock')) { // No Runes Challenge Achievement 1
+  if (player.unlocks.talismans) { // No Runes Challenge Achievement 1
     DOMCacheGetOrSet('toggleRuneSubTab2').style.display = 'block'
     DOMCacheGetOrSet('toggleRuneSubTab3').style.display = 'block'
   } else {
@@ -394,12 +395,12 @@ export const revealStuff = () => {
     toggle6: player.upgrades[86] === 1, // Autobuyer - Coin Buildings - Accelerator
     toggle7: player.upgrades[87] === 1, // Autobuyer - Coin Buildings - Multiplier
     toggle8: player.upgrades[88] === 1, // Autobuyer - Coin Buildings - Accelerator Boost
-    toggle10: Boolean(getAchievementReward('refineryAutobuy')), // Autobuyer - Diamond Buildings - Tier 1 (Refineries)
-    toggle11: Boolean(getAchievementReward('coalPlantAutobuy')), // Autobuyer - Diamond Buildings - Tier 2 (Coal Plants)
-    toggle12: Boolean(getAchievementReward('coalRigAutobuy')), // Autobuyer - Diamond Buildings - Tier 3 (Coal Rigs)
-    toggle13: Boolean(getAchievementReward('pickaxeAutobuy')), // Autobuyer - Diamond Buildings - Tier 4 (Pickaxes)
-    toggle14: Boolean(getAchievementReward('pandorasBoxAutobuy')), // Autobuyer - Diamond Buildings - Tier 5 (Pandora's Boxes)
-    toggle15: Boolean(getAchievementReward('autoPrestigeFeature')), // Feature - Diamond Buildings - Auto Prestige
+    toggle10: getLevelMilestone('tier1CrystalAutobuy') === 1, // Autobuyer - Diamond Buildings - Tier 1 (Refineries)
+    toggle11: getLevelMilestone('tier2CrystalAutobuy') === 1, // Autobuyer - Diamond Buildings - Tier 2 (Coal Plants)
+    toggle12: getLevelMilestone('tier3CrystalAutobuy') === 1, // Autobuyer - Diamond Buildings - Tier 3 (Coal Rigs)
+    toggle13: getLevelMilestone('tier4CrystalAutobuy') === 1, // Autobuyer - Diamond Buildings - Tier 4 (Pickaxes)
+    toggle14: getLevelMilestone('tier5CrystalAutobuy') === 1, // Autobuyer - Diamond Buildings - Tier 5 (Pandora's Boxes)
+    toggle15: getLevelMilestone('autoPrestige') === 1, // Feature - Diamond Buildings - Auto Prestige
     toggle16: player.upgrades[94] === 1, // Autobuyer - Mythos Buildings - Tier 1 (Augments)
     toggle17: player.upgrades[95] === 1, // Autobuyer - Mythos Buildings - Tier 2 (Enchantments)
     toggle18: player.upgrades[96] === 1, // Autobuyer - Mythos Buildings - Tier 3 (Wizards)
@@ -635,7 +636,7 @@ export const htmlInserts = () => {
 // TODO(not @KhafraDev): cache the elements and stop getting them every time?
 export const buttoncolorchange = () => {
   DOMCacheGetOrSet('prestigebtn').style.backgroundColor =
-    player.toggles[15] && Boolean(getAchievementReward('autoPrestigeFeature'))
+    player.toggles[15] && getLevelMilestone('autoPrestige') === 1
       ? 'green'
       : ''
 
@@ -736,23 +737,23 @@ export const buttoncolorchange = () => {
     const h = DOMCacheGetOrSet('buycrystalupgrade3')
     const i = DOMCacheGetOrSet('buycrystalupgrade4')
     const j = DOMCacheGetOrSet('buycrystalupgrade5')
-    ;((!player.toggles[10] || Boolean(!getAchievementReward('refineryAutobuy')))
+    ;((!player.toggles[10] || getLevelMilestone('tier1CrystalAutobuy') === 0)
         && player.prestigePoints.gte(player.firstCostDiamonds))
       ? a.classList.add('buildingPurchaseBtnAvailable')
       : a.classList.remove('buildingPurchaseBtnAvailable')
-    ;((!player.toggles[11] || Boolean(!getAchievementReward('coalPlantAutobuy')))
+    ;((!player.toggles[11] || getLevelMilestone('tier2CrystalAutobuy') === 0)
         && player.prestigePoints.gte(player.secondCostDiamonds))
       ? b.classList.add('buildingPurchaseBtnAvailable')
       : b.classList.remove('buildingPurchaseBtnAvailable')
-    ;((!player.toggles[12] || Boolean(!getAchievementReward('coalRigAutobuy')))
+    ;((!player.toggles[12] || getLevelMilestone('tier3CrystalAutobuy') === 0)
         && player.prestigePoints.gte(player.thirdCostDiamonds))
       ? c.classList.add('buildingPurchaseBtnAvailable')
       : c.classList.remove('buildingPurchaseBtnAvailable')
-    ;((!player.toggles[13] || Boolean(!getAchievementReward('pickaxeAutobuy')))
+    ;((!player.toggles[13] || getLevelMilestone('tier4CrystalAutobuy') === 0)
         && player.prestigePoints.gte(player.fourthCostDiamonds))
       ? d.classList.add('buildingPurchaseBtnAvailable')
       : d.classList.remove('buildingPurchaseBtnAvailable')
-    ;((!player.toggles[14] || Boolean(!getAchievementReward('pandorasBoxAutobuy')))
+    ;((!player.toggles[14] || getLevelMilestone('tier5CrystalAutobuy') === 0)
         && player.prestigePoints.gte(player.fifthCostDiamonds))
       ? e.classList.add('buildingPurchaseBtnAvailable')
       : e.classList.remove('buildingPurchaseBtnAvailable')
@@ -761,7 +762,7 @@ export const buttoncolorchange = () => {
       k += 10
     }
 
-    !getAchievementReward('crystalUpgrade1Autobuy')
+    getLevelMilestone('tier1CrystalAutobuy') === 0
       ? (player.prestigeShards.gte(
           Decimal.pow(
             10,
@@ -772,7 +773,7 @@ export const buttoncolorchange = () => {
         ? f.style.backgroundColor = 'purple'
         : f.style.backgroundColor = '')
       : f.style.backgroundColor = 'green'
-    !getAchievementReward('crystalUpgrade2Autobuy')
+    getLevelMilestone('tier2CrystalAutobuy') === 0
       ? (player.prestigeShards.gte(
           Decimal.pow(
             10,
@@ -783,7 +784,7 @@ export const buttoncolorchange = () => {
         ? g.style.backgroundColor = 'purple'
         : g.style.backgroundColor = '')
       : g.style.backgroundColor = 'green'
-    !getAchievementReward('crystalUpgrade3Autobuy')
+    getLevelMilestone('tier3CrystalAutobuy') === 0
       ? (player.prestigeShards.gte(
           Decimal.pow(
             10,
@@ -794,7 +795,7 @@ export const buttoncolorchange = () => {
         ? h.style.backgroundColor = 'purple'
         : h.style.backgroundColor = '')
       : h.style.backgroundColor = 'green'
-    !getAchievementReward('crystalUpgrade4Autobuy')
+    getLevelMilestone('tier4CrystalAutobuy') === 0
       ? (player.prestigeShards.gte(
           Decimal.pow(
             10,
@@ -805,7 +806,7 @@ export const buttoncolorchange = () => {
         ? i.style.backgroundColor = 'purple'
         : i.style.backgroundColor = '')
       : i.style.backgroundColor = 'green'
-    !getAchievementReward('crystalUpgrade5Autobuy')
+    getLevelMilestone('tier5CrystalAutobuy') === 0
       ? (player.prestigeShards.gte(
           Decimal.pow(
             10,

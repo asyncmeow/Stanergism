@@ -1694,7 +1694,7 @@
       "noLevelReq": "Unlocked by Default!",
       "salvage": {
         "name": "♻ Salvage",
-        "description": "Gain +1 ♻ Salvage per Synergism level!",
+        "description": "Gain +1 ♻ Salvage per Synergism level! This increases by 1 per 100 levels (e.g. gain +2 at level 101).",
         "effect": "Current Effect: +{{salvage}} ♻ Salvage"
       },
       "quarks": {
@@ -1751,6 +1751,68 @@
         "name": "&#9861 Red Ambrosia luck",
         "description": "For each level past 249, gain +1 &#9861 Red Ambrosia Luck! I like stats with symbols next to them.",
         "effect": "Current Effect: +{{luck}} &#9861 Red Ambrosia Luck"
+      }
+    },
+    "levelMilestones": {
+      "offeringTimerScaling": {
+        "name": "Offering Prestige Timer Scaling",
+        "description": "To encourage longer Prestiges, Gain +10% Offerings on Prestige per second, past 10 seconds in your current Prestige.",
+        "effect": "Current Effect: Gain {{mult}} more Offerings from Prestige timer"
+      },
+      "duplicationRune": {
+        "name": "The Duplication Rune!",
+        "description": "Making it to level 10, you unlock a second rune. This one has more to do with your Multipliers!",
+        "effect": "Current Effect: Duplication Rune Unlocked!"
+      },
+      "prismRune": {
+        "name": "The Prism Rune!",
+        "description": "Making it to level 20, you unlock a third rune. This one has more to do with your Crystals!",
+        "effect": "Current Effect: Prism Rune Unlocked!"
+      },
+      "thriftRune": {
+        "name": "The Thrift Rune!",
+        "description": "Making it to level 30, you unlock a fourth rune. This one has more to do with your Salvage and building costs!",
+        "effect": "Current Effect: Thrift Rune Unlocked!"
+      },
+      "autoPrestige": {
+        "name": "Auto Prestiging!",
+        "description": "Why prestige by hand, when you can make your computer do it for you?",
+        "effect": "Current Effect: Auto-Prestige Feature Unlocked!"
+      },
+      "tier1CrystalAutobuy": {
+        "name": "Tier 1 Crystal Autobuy",
+        "description": "You can now automatically buy Diamond Refineries! Also automagically buys the first Crystal upgrade if you can afford it.",
+        "effect": "Current Effect: See Above!"
+      },
+      "tier2CrystalAutobuy": {
+        "name": "Tier 2 Crystal Autobuy",
+        "description": "You can now automatically buy Coal Plants! Also automagically buys the second Crystal upgrade if you can afford it.",
+        "effect": "Current Effect: See Above!"
+      },
+      "tier3CrystalAutobuy": {
+        "name": "Tier 3 Crystal Autobuy",
+        "description": "You can now automatically buy Coal Rigs! Also automagically buys the third Crystal upgrade if you can afford it.",
+        "effect": "Current Effect: See Above!"
+      },
+      "tier4CrystalAutobuy": {
+        "name": "Tier 4 Crystal Autobuy",
+        "description": "You can now automatically buy Diamond Pickaxes! Also automagically buys the fourth Crystal upgrade if you can afford it.",
+        "effect": "Current Effect: See Above!"
+      },
+      "tier5CrystalAutobuy": {
+        "name": "Tier 5 Crystal Autobuy",
+        "description": "You can now automatically buy Pandora's Boxes! Also automagically buys the fifth Crystal upgrade if you can afford it.",
+        "effect": "Current Effect: See Above!"
+      },
+      "achievementTalismanUnlock": {
+        "name": "Achievement Talisman!",
+        "description": "Wear your Achievements with pride, and unlock the new Achievement Talisman!",
+        "effect": "Current Effect: See Above!"
+      },
+      "achievementTalismanEnhancement": {
+        "name": "Achievement Talisman Enhancement",
+        "description": "Your Achievement Talisman may be leveled up one additional time for each Synergism Level!",
+        "effect": "Current Effect: Achievement Talisman may be leveled up {{level}} additional times."
       }
     },
     "progressiveAchievements": {
@@ -2068,7 +2130,7 @@
         "2": "+10% Ant speed [Multiplicative!] Current: ",
         "3": "SI Rune Exp +20%! Current: "
       },
-      "first": "Unlock the Talismans feature! [In Runes tab]. A Global Diamond Upgrade.",
+      "first": "Unlock Talismans and Blessings, in the rune Tab. A Global Diamond Upgrade.",
       "start": "Start <No Runes>",
       "current": {
         "1": "+{{value}} free levels",
@@ -4866,6 +4928,12 @@
         "inscription": "<<gold | ✏>> Inscription: Even-Dimensional Cube Gain is increased by <<gold|{{val}}>>",
         "signature": "<<crimson | ✎>> Signature: Odd-Dimensional Cube Gain is increased by <<crimson|12%>>"
       },
+      "achievement": {
+        "name": "Achievement Cape",
+        "description": "This isn't a talisman! Or... so you think.",
+        "inscription": "<<gold | ✏>> Inscription: Sources of Positive ♲ Salvage give <<gold|{{val}}>> more!",
+        "signature": "<<crimson | ✎>> Signature: Sources of Negative ♲ Salvage effect <<crimson|{{val}}>>."
+      },
       "cookieGrandma": {
         "name": "Freshly-Baked Cookie",
         "description": "Kinda burns your neck. Thanks Grandma!",
@@ -5922,7 +5990,7 @@
     "salvageStats": {
       "title": "Offering ♲ Salvage",
       "Total": "Total ♲ Salvage:",
-      "extraInfo": "If your ♲ Salvage is less than 90, your Rune EXP is multiplied by <br> <<yellow|1 / (1 - Salvage / 100)>> <br> Otherwise, your Rune EXP is multiplied by <br> <<yellow |10^((Salvage - 90)/25 + 1)>> <br> <<crimson|If your ♲ Salvage is negative, your Rune EXP is instead divided by these values.>>"
+      "extraInfo": "Your ♲ Salvage multiplies your Rune, Blessing and Spirit EXP gain by <br> <<yellow |10^(Salvage / 30)>> <br> <<crimson|If your ♲ Salvage is negative, your Rune EXP is instead divided by this amount.>>"
     },
     "salvagePositive": {
       "title": "Positive ♲ Salvage",

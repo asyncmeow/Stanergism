@@ -9,7 +9,6 @@ import { format, player } from './Synergism'
 import { Tabs } from './Tabs'
 import { assert } from './Utility'
 import { Globals as G } from './Variables'
-import { getAchievementReward } from './Achievements'
 
 type RuneSpiritTypeMap = {
   speed: { globalSpeed: number }
@@ -183,7 +182,7 @@ export const getRuneSpiritTNL = (spirit: RuneSpiritKeys) => {
 }
 
 export const buySpiritLevels = (spirit: RuneSpiritKeys, budget: Decimal) => {
-  if (!getAchievementReward('spiritUnlock')) {
+  if (!player.unlocks.spirits) {
     return
   }
 

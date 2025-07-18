@@ -12,6 +12,7 @@ import { format, formatAsPercentIncrease, player } from './Synergism'
 import { Tabs } from './Tabs'
 import { assert } from './Utility'
 import { Globals as G } from './Variables'
+import { getLevelMilestone } from './Levels'
 
 interface TalismanFragmentCost {
   obtainium: number
@@ -69,6 +70,7 @@ type TalismanTypeMap = {
   mortuus: { antBonus: number; prismOOMBonus: number }
   plastic: { quarkBonus: number }
   wowSquare: { evenDimBonus: number; oddDimBonus: number }
+  achievement: { positiveSalvageMult: number; negativeSalvageMult: number }
   cookieGrandma: { freeCorruptionLevel: number; cookieSix: boolean }
   horseShoe: { luckPercentage: number; redLuck: number }
 }
@@ -215,7 +217,7 @@ export const talismans: { [K in TalismanKeys]: TalismanData<K> } = {
     },
     minimalResetTier: 'ascension',
     isUnlocked: () => {
-      return Boolean(getAchievementReward('exemptionTalisman'))
+      return true
     },
     name: () => i18next.t('runes.talismans.exemption.name'),
     description: () => i18next.t('runes.talismans.exemption.description')
@@ -224,7 +226,7 @@ export const talismans: { [K in TalismanKeys]: TalismanData<K> } = {
     level: 0,
     rarity: 0,
     fragmentsInvested: { ...noTalismanFragments },
-    baseMult: 4,
+    baseMult: 10,
     maxLevel: 180,
     costs: regularCostProgression,
     levelCapIncrease: () => universalTalismanMaxLevelIncreasers(),
@@ -361,7 +363,7 @@ export const talismans: { [K in TalismanKeys]: TalismanData<K> } = {
     level: 0,
     rarity: 0,
     fragmentsInvested: { ...noTalismanFragments },
-    baseMult: 1e13,
+    baseMult: 1e16,
     maxLevel: 180,
     costs: regularCostProgression,
     levelCapIncrease: () => universalTalismanMaxLevelIncreasers(),
@@ -406,7 +408,7 @@ export const talismans: { [K in TalismanKeys]: TalismanData<K> } = {
     level: 0,
     rarity: 0,
     fragmentsInvested: { ...noTalismanFragments },
-    baseMult: 10,
+    baseMult: 100,
     maxLevel: 180,
     costs: regularCostProgression,
     levelCapIncrease: () => universalTalismanMaxLevelIncreasers(),
@@ -451,7 +453,7 @@ export const talismans: { [K in TalismanKeys]: TalismanData<K> } = {
     level: 0,
     rarity: 0,
     fragmentsInvested: { ...noTalismanFragments },
-    baseMult: 100,
+    baseMult: 1e6,
     maxLevel: 180,
     costs: regularCostProgression,
     levelCapIncrease: () => {
@@ -492,7 +494,7 @@ export const talismans: { [K in TalismanKeys]: TalismanData<K> } = {
     rarity: 0,
     fragmentsInvested: { ...noTalismanFragments },
     maxLevel: 210,
-    baseMult: 1e20,
+    baseMult: 1e30,
     costs: exponentialCostProgression,
     levelCapIncrease: () => universalTalismanMaxLevelIncreasers(),
     effects: (n) => {
@@ -525,6 +527,51 @@ export const talismans: { [K in TalismanKeys]: TalismanData<K> } = {
     },
     name: () => i18next.t('runes.talismans.wowSquare.name'),
     description: () => i18next.t('runes.talismans.wowSquare.description')
+  },
+  achievement: {
+    level: 0,
+    rarity: 0,
+    fragmentsInvested: { ...noTalismanFragments },
+    baseMult: 1e50,
+    maxLevel: 40,
+    costs: exponentialCostProgression,
+    levelCapIncrease: () => getLevelMilestone('achievementTalismanEnhancement'),
+    effects: (n) => {
+      const inscriptValues = [0, 0, 0, 0, 0, 0, 0, .01, .015, .02, .03]
+      const signatureValue = (n >= 6) ? -0.02 : 0
+      return {
+        positiveSalvageMult: inscriptValues[n] ?? 1,
+        negativeSalvageMult: signatureValue
+      }
+    },
+    inscriptionDesc: (n) => {
+      const inscriptValues = [1, 1, 1, 1, 1, 1, 1, 1.01, 1.015, 1.02, 1.03]
+      return i18next.t('runes.talismans.achievement.inscription', {
+        val: formatAsPercentIncrease(inscriptValues[n] ?? 1, 1)
+      })
+    },
+    signatureDesc: (n) => {
+      const negativeSalvageMult = (n >= 6) ? 0.98 : 1
+      return i18next.t('runes.talismans.achievement.signature', {
+        val: formatAsPercentIncrease(negativeSalvageMult, 0)
+      })
+    },
+    talismanBaseCoefficient: {
+      speed: 1.4,
+      duplication: 1.4,
+      prism: 1.4,
+      thrift: 1.4,
+      superiorIntellect: 1.4,
+      infiniteAscent: 0.01,
+      antiquities: 0,
+      horseShoe: 0
+    },
+    minimalResetTier: 'singularity',
+    isUnlocked: () => {
+      return getLevelMilestone('achievementTalismanUnlock') === 1
+    },
+    name: () => i18next.t('runes.talismans.achievement.name'),
+    description: () => i18next.t('runes.talismans.achievement.description')
   },
   cookieGrandma: {
     level: 0,

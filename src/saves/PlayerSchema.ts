@@ -385,7 +385,14 @@ export const playerSchema = z.object({
 
   researches: z.number().array().transform((array) => arrayExtend(array, 'researches')),
 
-  unlocks: z.record(z.string(), z.boolean()),
+  unlocks: z.record(z.string(), z.boolean()).transform((object) => {
+    return Object.fromEntries(
+      Object.keys(blankSave.unlocks).map((key) => {
+        const value = object[key] ?? blankSave.unlocks[key as keyof typeof blankSave['unlocks']]
+        return value === null ? [key, false] : [key, Boolean(value)]
+      })
+    )
+  }).default(() => ({ ...blankSave.unlocks })),
   achievements: z.number().array().transform((array) => arrayExtend(array, 'achievements')),
   progressiveAchievements: z.record(z.string(), z.number()).transform(
     (object) => {

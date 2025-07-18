@@ -17,7 +17,8 @@ import { firstFiveRuneEffectivenessStats, runeEffectivenessStatsSI } from './Sta
 import { Tabs } from './Tabs'
 import { getRuneBonusFromAllTalismans, getTalismanEffects } from './Talismans'
 import { assert } from './Utility'
-import { awardAchievementGroup, getAchievementReward } from './Achievements'
+import { awardAchievementGroup } from './Achievements'
+import { getLevelMilestone } from './Levels'
 
 export enum resetTiers {
   prestige = 1,
@@ -414,7 +415,7 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
     effectiveLevelMult: () => firstFiveEffectiveRuneLevelMult(),
     freeLevels: () => firstFiveFreeLevels() + bonusRuneLevelsDuplication(),
     runeEXPPerOffering: (purchasedLevels) => universalRuneEXPMult(purchasedLevels).times(duplicationEXPMult()),
-    isUnlocked: () => Boolean(getAchievementReward('duplicationRuneUnlock')),
+    isUnlocked: () => getLevelMilestone('duplicationRune') === 1,
     minimalResetTier: 'ascension',
     name: () => i18next.t('runes.duplication.name'),
     description: () => i18next.t('runes.duplication.description'),
@@ -446,7 +447,7 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
     effectiveLevelMult: () => firstFiveEffectiveRuneLevelMult(),
     freeLevels: () => firstFiveFreeLevels() + bonusRuneLevelsPrism(),
     runeEXPPerOffering: (purchasedLevels) => universalRuneEXPMult(purchasedLevels).times(prismEXPMult()),
-    isUnlocked: () => Boolean(getAchievementReward('prismRuneUnlock')),
+    isUnlocked: () => getLevelMilestone('prismRune') === 1,
     minimalResetTier: 'ascension',
     name: () => i18next.t('runes.prism.name'),
     description: () => i18next.t('runes.prism.description'),
@@ -477,7 +478,7 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
     effectiveLevelMult: () => firstFiveEffectiveRuneLevelMult(),
     freeLevels: () => firstFiveFreeLevels() + bonusRuneLevelsThrift(),
     runeEXPPerOffering: (purchasedLevels) => universalRuneEXPMult(purchasedLevels).times(thriftEXPMult()),
-    isUnlocked: () => Boolean(getAchievementReward('thriftRuneUnlock')),
+    isUnlocked: () => getLevelMilestone('thriftRune') === 1,
     minimalResetTier: 'ascension',
     name: () => i18next.t('runes.thrift.name'),
     description: () => i18next.t('runes.thrift.description'),

@@ -9,7 +9,6 @@ import { Tabs } from './Tabs'
 import { getTalismanEffects } from './Talismans'
 import { assert } from './Utility'
 import { Globals as G } from './Variables'
-import { getAchievementReward } from './Achievements'
 
 type RuneBlessingTypeMap = {
   speed: { globalSpeed: number }
@@ -193,7 +192,7 @@ export const getRuneBlessingTNL = (bless: RuneBlessingKeys) => {
 }
 
 export const buyBlessingLevels = (blessing: RuneBlessingKeys, budget: Decimal) => {
-  if (!getAchievementReward('blessingUnlock')) {
+  if (!player.unlocks.blessings) {
     return
   }
 

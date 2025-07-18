@@ -1,4 +1,4 @@
-import { awardAchievement, getAchievementReward, ungroupedNameMap } from './Achievements'
+import { awardAchievement, ungroupedNameMap } from './Achievements'
 import { DOMCacheGetOrSet, DOMCacheHas } from './Cache/DOM'
 import { prod } from './Config'
 import { pressedKeys } from './Hotkeys'
@@ -165,21 +165,21 @@ const subtabInfo: Record<Tabs, SubTab> = {
       {
         subTabID: '2',
         get unlocked () {
-          return Boolean(getAchievementReward('talismanUnlock'))
+          return player.unlocks.talismans
         },
         buttonID: 'toggleRuneSubTab2'
       },
       {
         subTabID: '3',
         get unlocked () {
-          return Boolean(getAchievementReward('blessingUnlock'))
+          return player.unlocks.blessings
         },
         buttonID: 'toggleRuneSubTab3'
       },
       {
         subTabID: '4',
         get unlocked () {
-          return Boolean(getAchievementReward('spiritUnlock'))
+          return player.unlocks.spirits
         },
         buttonID: 'toggleRuneSubTab4'
       }
@@ -214,49 +214,49 @@ const subtabInfo: Record<Tabs, SubTab> = {
       {
         subTabID: '1',
         get unlocked () {
-          return Boolean(getAchievementReward('ascensionUnlock'))
+          return player.unlocks.ascensions
         },
         buttonID: 'switchCubeSubTab1'
       },
       {
         subTabID: '2',
         get unlocked () {
-          return Boolean(getAchievementReward('tesseractUnlock'))
+          return player.unlocks.tesseracts
         },
         buttonID: 'switchCubeSubTab2'
       },
       {
         subTabID: '3',
         get unlocked () {
-          return Boolean(getAchievementReward('hypercubeUnlock'))
+          return player.unlocks.hypercubes
         },
         buttonID: 'switchCubeSubTab3'
       },
       {
         subTabID: '4',
         get unlocked () {
-          return Boolean(getAchievementReward('platonicUnlock'))
+          return player.unlocks.platonics
         },
         buttonID: 'switchCubeSubTab4'
       },
       {
         subTabID: '5',
         get unlocked () {
-          return Boolean(getAchievementReward('ascensionUnlock'))
+          return player.unlocks.ascensions
         },
         buttonID: 'switchCubeSubTab5'
       },
       {
         subTabID: '6',
         get unlocked () {
-          return Boolean(getAchievementReward('platonicUnlock'))
+          return player.unlocks.platonics
         },
         buttonID: 'switchCubeSubTab6'
       },
       {
         subTabID: '7',
         get unlocked () {
-          return player.challenge15Exponent >= G.challenge15Rewards.hepteractsUnlocked.requirement
+          return player.unlocks.hepteracts
         },
         buttonID: 'switchCubeSubTab7'
       }
@@ -273,14 +273,14 @@ const subtabInfo: Record<Tabs, SubTab> = {
       {
         subTabID: 'true',
         get unlocked () {
-          return Boolean(getAchievementReward('ascensionUnlock'))
+          return player.unlocks.ascensions
         },
         buttonID: 'corrStatsBtn'
       },
       {
         subTabID: 'false',
         get unlocked () {
-          return Boolean(getAchievementReward('ascensionUnlock'))
+          return player.unlocks.ascensions
         },
         buttonID: 'corrLoadoutsBtn'
       }
@@ -622,12 +622,12 @@ tabRow.appendButton(
     .makeDraggable()
     .makeRemoveable(),
   new $Tab({ class: 'chal8', id: 'anttab', i18n: 'tabs.main.antHill' })
-    .setUnlockedState(() => Boolean(getAchievementReward('antHillUnlock')))
+    .setUnlockedState(() => player.unlocks.anthill)
     .setType(Tabs.AntHill)
     .makeDraggable()
     .makeRemoveable(),
   new $Tab({ class: 'chal10', id: 'cubetab', i18n: 'tabs.main.wowCubes' })
-    .setUnlockedState(() => Boolean(getAchievementReward('ascensionUnlock')))
+    .setUnlockedState(() => player.unlocks.ascensions)
     .setType(Tabs.WowCubes)
     .makeDraggable()
     .makeRemoveable(),
