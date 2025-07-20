@@ -123,7 +123,7 @@ import type { GlobalVariables } from './types/Synergism'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
 import { getAchievementReward } from './Achievements'
-import { getLevelReward } from './Levels'
+import { getLevelMilestone, getLevelReward } from './Levels'
 
 export interface StatLine {
   i18n: string
@@ -765,7 +765,7 @@ export const allOcteractCubeStats: StatLine[] = [
 export const allBaseOfferingStats: StatLine[] = [
   {
     i18n: 'Base',
-    stat: () => 10 // Absolute Base
+    stat: () => 1 // Absolute Base
   },
   {
     i18n: 'PseudoCoins',
@@ -2781,6 +2781,10 @@ export const positiveSalvageStats: StatLine[] = [
   {
     i18n: 'SynergismLevel',
     stat: () => getLevelReward('salvage')
+  },
+  {
+    i18n: 'SynergismLevelMilestone',
+    stat: () => getLevelMilestone('salvageChallengeBuff')
   },
   {
     i18n: 'UpgradeBonus',

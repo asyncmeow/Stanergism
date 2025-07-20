@@ -34,7 +34,7 @@
     "refund": "You have refunded all spent Blueberries and Ambrosia.",
     "refundWord": "Refund",
     "ignoreEXALT": "[<<white|♔>>] This upgrade is active even if an EXALT says otherwise!",
-    "notUnlocked": "Clear No Singularity Upgrades, Tier 1!",
+    "notUnlocked": "Clear No Golden Quark Upgrades, Tier 1!",
     "data": {
       "ambrosiaTutorial": {
         "name": "Ambrosia Tutorial Module",
@@ -1813,6 +1813,11 @@
         "name": "Achievement Talisman Enhancement",
         "description": "Your Achievement Talisman may be leveled up one additional time for each Synergism Level!",
         "effect": "Current Effect: Achievement Talisman may be leveled up {{level}} additional times."
+      },
+      "salvageChallengeBuff": {
+        "name": "♻ Salvage Challenge Buff",
+        "description": "Gain +25 ♻ Salvage. <br> If you are in any Challenge, this value is doubled. <br> If you are in Challenge 15, this value is doubled. <br> If you are in EXALT, this value is tripled! <br> Effects may stack.",
+        "effect": "Current Effect: +{{salvage}} ♻ Salvage"
       }
     },
     "progressiveAchievements": {
@@ -1829,7 +1834,7 @@
       "singularityCount": {
         "name": "Progressive Achievement - Singularity Count",
         "description": "Gain AP based on the highest Singularity you have reached! Highest Reached: {{x}}",
-        "apSource": "Gain +2 AP for Singularities 1-100 <br> Gain +3 AP for Singularities 101-200 <br> Gain +4 AP for Singularities 201-300"
+        "apSource": "Gain +9 AP for Singularities 1-100 <br> Gain +12 AP for Singularities 101-200 <br> Gain +15 AP for Singularities 201-300"
       },
       "ambrosiaCount": {
         "name": "Progressive Achievement - Lifetime Ambrosia",
@@ -1844,7 +1849,7 @@
       "exalts": {
         "name": "Progressive Achievement - EXALT Completions",
         "description": "Gain AP for each EXALT you have completed!",
-        "apSource": "No Singularity Upgrades: {{num1}}/{{cap1}} AP <br> One Challenge Caps: {{num2}}/{{cap2}} AP <br> Twenty Ascensions: {{num3}}/{{cap3}} AP <br> No Octeract Effects: {{num4}}/{{cap4}} AP <br> No Ambrosia Upgrades: {{num5}}/{{cap5}} AP <br> Grand Singularity Speedrun: {{num6}}/{{cap6}} AP <br> Sadistic III: {{num7}}/{{cap7}} AP <br> Rejected by the Gods: {{num8}}/{{cap8}} AP"
+        "apSource": "No Golden Quark Upgrades: {{num1}}/{{cap1}} AP <br> One Challenge Caps: {{num2}}/{{cap2}} AP <br> Twenty Ascensions: {{num3}}/{{cap3}} AP <br> No Octeract Effects: {{num4}}/{{cap4}} AP <br> No Ambrosia Upgrades: {{num5}}/{{cap5}} AP <br> Grand Singularity Speedrun: {{num6}}/{{cap6}} AP <br> Sadistic III: {{num7}}/{{cap7}} AP <br> Rejected by the Gods: {{num8}}/{{cap8}} AP"
       },
       "singularityUpgrades": {
         "name": "Progressive Achievement - Golden Quark Upgrades",
@@ -1882,7 +1887,8 @@
     "notification": "You unlocked an achievement: {{m}}",
     "quarkBonus": "Gain .01 Quark Multiplier per 500 AP! Quark Multiplier: <<cyan | x{{multiplier}}>>",
     "achievementLevel": "Based on your Achievement Points, you are at Synergism Level <span class=\"rainbowText\">{{level}}</span>",
-    "achievementToNextLevel": "Level {{level}} in {{AP}} AP"
+    "achievementToNextLevel": "Level {{level}} in {{AP}} AP",
+    "levelUpNotification": "Level Up! Synergism Level {{old}} → {{new}}"
   },
   "reset": {
     "details": {
@@ -4929,8 +4935,8 @@
         "signature": "<<crimson | ✎>> Signature: Odd-Dimensional Cube Gain is increased by <<crimson|12%>>"
       },
       "achievement": {
-        "name": "Achievement Cape",
-        "description": "This isn't a talisman! Or... so you think.",
+        "name": "Medal of Achievement",
+        "description": "Has serial number <i>{{num}}</i> on it.",
         "inscription": "<<gold | ✏>> Inscription: Sources of Positive ♲ Salvage give <<gold|{{val}}>> more!",
         "signature": "<<crimson | ✎>> Signature: Sources of Negative ♲ Salvage effect <<crimson|{{val}}>>."
       },
@@ -5080,8 +5086,8 @@
     },
     "data": {
       "noSingularityUpgrades": {
-        "name": "No Singularity Upgrades",
-        "description": "Simply put, you have to beat the target singularity without (most) Singularity Upgrades.<br/>Octeracts, Perks and Quality of Life Singularity Upgrades are preserved.",
+        "name": "No Golden Quark Upgrades",
+        "description": "Simply put, you have to beat the target Singularity without (most) Golden Quark Upgrades.<br/>Octeracts, Perks and Quality of Life Singularity Upgrades are preserved.",
         "ScalingReward1": "+50% increase to <<yellow|ALL Cube>> gain",
         "UniqueReward1": "1st - +12% <<gold|Golden Quarks>>!",
         "UniqueReward2": "1st - A free <<var(--blueberry-box-color)|Blueberry>>!",
@@ -5413,7 +5419,7 @@
       "DigitalOcteractAccumulator": "Digital Octeract Accumulator:",
       "Event": "Event Buff:",
       "PlatonicDelta": "Platonic DELTA:",
-      "NoSingUpgrades": "No Singularity Upgrades Challenge:",
+      "NoSingUpgrades": "No Golden Quark Upgrades Challenge:",
       "PassINF": "Wow Pass ∞:",
       "Ambrosia": "Unspent Ambrosia Bonus:",
       "ModuleTutorial": "Module- Tutorial:",
@@ -5755,7 +5761,7 @@
     "ambrosiaAdditiveLuckMultStats": {
       "title": "Ambrosia Additive Luck Multiplier",
       "Base": "Base Multiplier:",
-      "NoSingularityUpgrades": "No Singularity Upgrades Challenge:",
+      "NoSingularityUpgrades": "No Golden Quark Upgrades Challenge:",
       "DilatedFiveLeaf": "Dilated Five Leaf Clover:",
       "ShopUpgrade": "EXALT Ambrosia Luck Multiplier:",
       "NoAmbrosiaUpgrades": "No Ambrosia Upgrades Challenge:",
@@ -5796,7 +5802,7 @@
     },
     "ambrosiaBlueberryStats": {
       "title": "Ambrosia Blueberry Inventory",
-      "E1x1Clear": "No Singularity Upgrades Challenge:",
+      "E1x1Clear": "No Golden Quark Upgrades Challenge:",
       "SingBlueberries": "Singularity Blueberry Upgrade:",
       "ConglomerateBerries": "Congealed Blueberries (Singularity Milestones):",
       "NoAmbrosiaUpgrades": "No Ambrosia Upgrades Challenge Reward:",
@@ -5842,7 +5848,7 @@
       "Challenge15": "Challenge 15 Exponent:",
       "GoldenQuarks1": "Golden Quarks I Upgrade:",
       "CookieUpgrade19": "Cookie Upgrade 19:",
-      "NoSingularityUpgrades": "No Singularity Upgrades Challenge:",
+      "NoSingularityUpgrades": "No Golden Quark Upgrades Challenge:",
       "GoldenRevolution2": "Golden Revolution II:",
       "FastForwards": "Singularity Fast Forwards:",
       "ImmaculateAlchemy": "Immaculate Alchemy:",
@@ -5996,6 +6002,7 @@
       "title": "Positive ♲ Salvage",
       "AchievementBonus": "Salvage from Achievements:",
       "SynergismLevel": "Synergism Level:",
+      "SynergismLevelMilestone": "Level Milestone - Salvage Challenge Buff:",
       "UpgradeBonus": "Transcension Upgrade 1:",
       "RuneBonus": "Thrift Rune:",
       "CubeUpgrade2": "Cube Upgrade 2:",

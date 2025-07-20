@@ -9,7 +9,7 @@ import { runeBlessings } from './RuneBlessings'
 import { runes, sumOfFreeRuneLevels, sumOfRuneLevels } from './Runes'
 import { runeSpirits } from './RuneSpirits'
 import { goldenQuarkUpgrades } from './singularity'
-import type { SingularityChallengeDataKeys } from './SingularityChallenges'
+import { maxAPFromChallenges, type SingularityChallengeDataKeys } from './SingularityChallenges'
 import { format, formatAsPercentIncrease, player } from './Synergism'
 import { talismans } from './Talismans'
 import type { resetNames } from './types/Synergism'
@@ -17,6 +17,7 @@ import { Alert, Notification, revealStuff } from './UpdateHTML'
 import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
 import { Tabs } from './Tabs'
+import { displayLevelStuff } from './Levels'
 
 export const resetAchievementCheck = (reset: resetNames) => {
   if (reset === 'prestige') {
@@ -222,6 +223,7 @@ export interface ProgressiveAchievement {
   updateValue: () => number // Number to compare to existing caches
   useCachedValue: boolean
   rewardedAP: number // Updating achievementPoints: pointsAwarded() - rewardedAP
+  extraI18n?: () => Record<string, number>
 }
 
 export const progressiveAchievements: Record<ProgressiveAchievements, ProgressiveAchievement> = {
@@ -250,16 +252,16 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
     rewardedAP: 0
   },
   singularityCount: {
-    maxPointValue: 900,
-    pointsAwarded: (cached: number) => {
-      return 2 * cached
-        + Math.max(0, cached - 100)
-        + Math.max(0, cached - 200)
+    maxPointValue: 3600,
+    pointsAwarded: (_cached: number) => {
+      return 9 * player.highestSingularityCount
+        + 3 * Math.max(0, player.highestSingularityCount - 100)
+        + 3 * Math.max(0, player.highestSingularityCount - 200)
     },
     updateValue: () => {
-      return player.highestSingularityCount
+      return 0
     },
-    useCachedValue: true,
+    useCachedValue: false,
     rewardedAP: 0
   },
   ambrosiaCount: {
@@ -289,7 +291,7 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
     rewardedAP: 0
   },
   exalts: {
-    maxPointValue: -1,
+    maxPointValue: maxAPFromChallenges,
     pointsAwarded: (_cached: number) => {
       let pointValue = 0
       for (const chal of Object.keys(player.singularityChallenges) as SingularityChallengeDataKeys[]) {
@@ -301,7 +303,27 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
       return 0
     },
     useCachedValue: false,
-    rewardedAP: 0
+    rewardedAP: 0,
+    extraI18n: () => {
+      return { 
+        num1: player.singularityChallenges.noSingularityUpgrades.rewardAP,
+        cap1: player.singularityChallenges.noSingularityUpgrades.maxAP,
+        num2: player.singularityChallenges.oneChallengeCap.rewardAP,
+        cap2: player.singularityChallenges.oneChallengeCap.maxAP,
+        num3: player.singularityChallenges.limitedAscensions.rewardAP,
+        cap3: player.singularityChallenges.limitedAscensions.maxAP,
+        num4: player.singularityChallenges.noOcteracts.rewardAP,
+        cap4: player.singularityChallenges.noOcteracts.maxAP,
+        num5: player.singularityChallenges.noAmbrosiaUpgrades.rewardAP,
+        cap5: player.singularityChallenges.noAmbrosiaUpgrades.maxAP,
+        num6: player.singularityChallenges.limitedTime.rewardAP,
+        cap6: player.singularityChallenges.limitedTime.maxAP,
+        num7: player.singularityChallenges.sadisticPrequel.rewardAP,
+        cap7: player.singularityChallenges.sadisticPrequel.maxAP,
+        num8: player.singularityChallenges.noOfferingPower.rewardAP,
+        cap8: player.singularityChallenges.noOfferingPower.maxAP,
+      }
+    }
   },
   singularityUpgrades: {
     maxPointValue: -1,
@@ -328,7 +350,7 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
       // Go through all octeract upgrades. if the max level is NOT -1, add 5 points if the upgrade level equals max level
       for (const upgrade of Object.values(octeractUpgrades)) {
         if (upgrade.maxLevel !== -1 && upgrade.level >= upgrade.maxLevel) {
-          pointValue += 7
+          pointValue += 8
         }
       }
       return pointValue
@@ -2479,10 +2501,18 @@ export const updateProgressiveCache = (ach: ProgressiveAchievements) => {
 }
 
 export const updateAchievementLevel = () => {
+  const oldLevel = achievementLevel
   if (achievementPoints < 2500) {
     achievementLevel = Math.floor(achievementPoints / 50)
   } else {
     achievementLevel =  50 + Math.floor((achievementPoints - 2500) / 100)
+  }
+  displayLevelStuff()
+
+  if (oldLevel < achievementLevel) {
+    if (player.toggles[34]) {
+      void Notification(i18next.t('achievements.levelUpNotification', { old: oldLevel, new: achievementLevel }))
+    }
   }
 }
 
@@ -2690,7 +2720,8 @@ export const generateProgressiveAchievementDescription = (name: ProgressiveAchie
     x: format(player.progressiveAchievements[name], 0, true)
   })
 
-  const achAPSourceText = i18next.t(`achievements.progressiveAchievements.${name}.apSource`)
+  const i18nObject = ach.extraI18n ? ach.extraI18n() : {}
+  const achAPSourceText = i18next.t(`achievements.progressiveAchievements.${name}.apSource`, i18nObject)
 
   let APText = ''
 

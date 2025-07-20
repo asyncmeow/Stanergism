@@ -263,7 +263,7 @@ export const generateLevelRewardHTMLs = () => {
 
 export type SynergismLevelMilestones = 'offeringTimerScaling' | 'duplicationRune' | 'prismRune' | 'thriftRune' | 'autoPrestige' |
 'tier1CrystalAutobuy' | 'tier2CrystalAutobuy' | 'tier3CrystalAutobuy' | 'tier4CrystalAutobuy' | 'tier5CrystalAutobuy' |
-'achievementTalismanUnlock' | 'achievementTalismanEnhancement'
+'achievementTalismanUnlock' | 'achievementTalismanEnhancement' | 'salvageChallengeBuff'
 
 interface SynergismLevelMilestoneData {
     name: () => string
@@ -445,6 +445,35 @@ export const synergismLevelMilestones: Record<SynergismLevelMilestones, Synergis
         },
         levelReq: 160,
         displayOrder: 12
+    },
+    salvageChallengeBuff: {
+        name: () => i18next.t('achievements.levelMilestones.salvageChallengeBuff.name'),
+        description: () => i18next.t('achievements.levelMilestones.salvageChallengeBuff.description'),
+        effect: () => {
+            let baseVal = 25
+            if (player.currentChallenge.transcension !== 0 ||
+                player.currentChallenge.reincarnation !== 0 ||
+                player.currentChallenge.ascension !== 0
+            ) {
+                baseVal *= 2
+            }
+            if (player.currentChallenge.ascension === 15) {
+                baseVal *= 2
+            }
+            if (player.insideSingularityChallenge) {
+                baseVal *= 3
+            }
+            return baseVal
+        },
+        defaultValue: 0,
+        effectDescription: () => {
+            const salvage = getLevelMilestone('salvageChallengeBuff')
+            return i18next.t('achievements.levelMilestones.salvageChallengeBuff.effect', {
+                salvage: format(salvage, 0, true)
+            })
+        },
+        levelReq: 180,
+        displayOrder: 13
     }
 }
 
@@ -488,7 +517,7 @@ export const generateLevelMilestoneHTMLS = () => {
 
         const img = document.createElement('img')
         img.id = `synergismLevelMilestone${capitalizedName}`
-        img.src = `Pictures/Achievements/Rewards/${capitalizedName}.png`
+        img.src = `Pictures/Achievements/Milestones/${capitalizedName}.png`
         img.alt = synergismLevelMilestones[milestone].name()
         img.style.cursor = 'pointer'
   
@@ -503,5 +532,31 @@ export const generateLevelMilestoneHTMLS = () => {
         }
         div.appendChild(img)
         rewardTable.appendChild(div)
+    }
+
+    displayLevelStuff()
+}
+
+export const displayLevelStuff = () => {
+    for (const key of synergismLevelReward) {
+        const capitalizedName = key.charAt(0).toUpperCase() + key.slice(1)
+        const id = `synergismLevelReward${capitalizedName}`
+        const element = DOMCacheGetOrSet(id)
+        if (achievementLevel >= synergismLevelRewards[key].minLevel) {
+            element.style.display = 'inline-block'
+        } else {
+            element.style.display = 'none'
+        }
+    }
+
+    for (const key of synergismLevelMilestone) {
+        const capitalizedName = key.charAt(0).toUpperCase() + key.slice(1)
+        const id = `synergismLevelMilestone${capitalizedName}`
+        const element = DOMCacheGetOrSet(id)
+        if (achievementLevel >= synergismLevelMilestones[key].levelReq) {
+            element.style.display = 'inline-block'
+        } else {
+            element.style.display = 'none'
+        }
     }
 }

@@ -1,6 +1,6 @@
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
-import { awardAchievement, getAchievementReward, ungroupedNameMap } from './Achievements'
+import { achievementPoints, awardAchievement, getAchievementReward, ungroupedNameMap } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { isShopTalismanUnlocked } from './Calculate'
 import { CalcECC } from './Challenges'
@@ -217,7 +217,7 @@ export const talismans: { [K in TalismanKeys]: TalismanData<K> } = {
     },
     minimalResetTier: 'ascension',
     isUnlocked: () => {
-      return true
+      return player.unlocks.talismans
     },
     name: () => i18next.t('runes.talismans.exemption.name'),
     description: () => i18next.t('runes.talismans.exemption.description')
@@ -537,7 +537,7 @@ export const talismans: { [K in TalismanKeys]: TalismanData<K> } = {
     costs: exponentialCostProgression,
     levelCapIncrease: () => getLevelMilestone('achievementTalismanEnhancement'),
     effects: (n) => {
-      const inscriptValues = [0, 0, 0, 0, 0, 0, 0, .01, .015, .02, .03]
+      const inscriptValues = [0, 0.001, 0.002, 0.003, 0.004, 0.006, 0.008, .01, .015, .02, .03]
       const signatureValue = (n >= 6) ? -0.02 : 0
       return {
         positiveSalvageMult: inscriptValues[n] ?? 1,
@@ -571,7 +571,9 @@ export const talismans: { [K in TalismanKeys]: TalismanData<K> } = {
       return getLevelMilestone('achievementTalismanUnlock') === 1
     },
     name: () => i18next.t('runes.talismans.achievement.name'),
-    description: () => i18next.t('runes.talismans.achievement.description')
+    description: () => i18next.t('runes.talismans.achievement.description', {
+      num: achievementPoints
+    })
   },
   cookieGrandma: {
     level: 0,

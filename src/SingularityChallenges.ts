@@ -415,7 +415,7 @@ export const singularityChallengeData: Record<
     maxCompletions: 20,
     unlockSingularity: 166,
     achievementPointValue: (n) => {
-      return 10 * n + 5 * Math.max(n - 10)
+      return 10 * n + 5 * Math.max(0, n - 10)
     },
     HTMLTag: 'noAmbrosiaUpgrades',
     singularityRequirement: (baseReq: number, completions: number) => {

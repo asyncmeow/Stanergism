@@ -272,16 +272,12 @@ const subtabInfo: Record<Tabs, SubTab> = {
     subTabList: [
       {
         subTabID: 'true',
-        get unlocked () {
-          return player.unlocks.ascensions
-        },
+        unlocked: true,
         buttonID: 'corrStatsBtn'
       },
       {
         subTabID: 'false',
-        get unlocked () {
-          return player.unlocks.ascensions
-        },
+        unlocked: true,
         buttonID: 'corrLoadoutsBtn'
       }
     ]
@@ -601,8 +597,8 @@ tabRow.appendButton(
     .setType(Tabs.Upgrades)
     .makeDraggable()
     .makeRemoveable(),
-  new $Tab({ id: 'achievementstab', i18n: 'tabs.main.achievements', class: 'coinunlock4' })
-    .setUnlockedState(() => player.unlocks.coinfour)
+  new $Tab({ class: 'prestigeunlock', id: 'achievementstab', i18n: 'tabs.main.achievements' })
+    .setUnlockedState(() => player.unlocks.prestige)
     .setType(Tabs.Achievements)
     .makeDraggable()
     .makeRemoveable(),

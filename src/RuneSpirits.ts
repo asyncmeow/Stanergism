@@ -9,6 +9,7 @@ import { format, player } from './Synergism'
 import { Tabs } from './Tabs'
 import { assert } from './Utility'
 import { Globals as G } from './Variables'
+import { awardAchievementGroup } from './Achievements'
 
 type RuneSpiritTypeMap = {
   speed: { globalSpeed: number }
@@ -245,6 +246,7 @@ export const updateAllSpiritLevelsFromEXP = () => {
   for (const spirit of runeSpiritKeys) {
     updateLevelsFromEXP(spirit)
   }
+  awardAchievementGroup('speedSpirit')
 }
 
 export const updateRuneSpiritHTML = (spirit: RuneSpiritKeys) => {

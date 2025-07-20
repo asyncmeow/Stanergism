@@ -362,7 +362,7 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
   speed: {
     level: 0,
     runeEXP: new Decimal('0'),
-    costCoefficient: new Decimal(500),
+    costCoefficient: new Decimal(50),
     levelsPerOOM: 150,
     levelsPerOOMIncrease: () => speedRuneOOMIncrease(),
     effects: (n) => {

@@ -9,6 +9,7 @@ import { Tabs } from './Tabs'
 import { getTalismanEffects } from './Talismans'
 import { assert } from './Utility'
 import { Globals as G } from './Variables'
+import { awardAchievementGroup } from './Achievements'
 
 type RuneBlessingTypeMap = {
   speed: { globalSpeed: number }
@@ -255,6 +256,7 @@ export const updateAllBlessingLevelsFromEXP = () => {
   for (const bless of runeBlessingKeys) {
     updateLevelsFromEXP(bless)
   }
+  awardAchievementGroup('speedBlessing')
 }
 
 export const updateRuneBlessingHTML = (bless: RuneBlessingKeys) => {

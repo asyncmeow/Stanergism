@@ -3291,10 +3291,7 @@ export const calculateSingularityDebuff = (
   debuff: SingularityDebuffs,
   singularityCount: number = player.singularityCount
 ) => {
-  if (singularityCount === 0) {
-    return 1
-  }
-  if (runes.antiquities.level > 0) {
+  if (singularityCount === 0 || runes.antiquities.level > 0) {
     return (debuff === 'Salvage') ? 0 : 1
   }
 
@@ -3309,7 +3306,7 @@ export const calculateSingularityDebuff = (
 
   if (debuff === 'Offering') {
     return constitutiveSingularityCount < 150
-      ? Math.sqrt(effectiveSingularities) + 1
+      ? 3 * (Math.sqrt(effectiveSingularities) + 1)
       : Math.pow(effectiveSingularities, 2 / 3) / 400
   } else if (debuff === 'Salvage') {
     return -(5 * constitutiveSingularityCount
@@ -3322,7 +3319,7 @@ export const calculateSingularityDebuff = (
     return 1 + Math.sqrt(effectiveSingularities) / 4
   } else if (debuff === 'Obtainium') {
     return constitutiveSingularityCount < 150
-      ? Math.sqrt(effectiveSingularities) + 1
+      ? 3 * (Math.sqrt(effectiveSingularities) + 1)
       : Math.pow(effectiveSingularities, 2 / 3) / 400
   } else if (debuff === 'Researches') {
     return 1 + Math.sqrt(effectiveSingularities) / 2
@@ -3335,7 +3332,7 @@ export const calculateSingularityDebuff = (
       ? Math.pow(1.02, constitutiveSingularityCount - 100)
       : 1
     return constitutiveSingularityCount < 150
-      ? 1 + (Math.sqrt(effectiveSingularities) * extraMult) / 4
+      ? 3 * (1 + (Math.sqrt(effectiveSingularities) * extraMult) / 4)
       : 1 + (Math.pow(effectiveSingularities, 0.75) * extraMult) / 1000
   } else if (debuff === 'Platonic Costs') {
     return constitutiveSingularityCount > 36

@@ -401,37 +401,37 @@ export class CampaignManager {
 
   get tutorialBonus (): TutorialBonus {
     return {
-      cubeBonus: 1 + 0.1 * +(this.tokens > 0),
-      obtainiumBonus: 1 + 0.25 * +(this.tokens > 0),
-      offeringBonus: 1 + 0.25 * +(this.tokens > 0)
+      cubeBonus: 1 + 0.05 * +(this.tokens > 0),
+      obtainiumBonus: 1 + 0.1 * +(this.tokens > 0),
+      offeringBonus: 1 + 0.1 * +(this.tokens > 0)
     }
   }
 
   get cubeBonus () {
     return 1
-      + 0.25 * 1 / 25 * Math.min(this.tokens, 25)
-      + 0.75 * (1 - Math.exp(-Math.max(this.tokens - 25, 0) / 500))
+      + 0.1 * 1 / 25 * Math.min(this.tokens, 25)
+      + 0.4 * (1 - Math.exp(-Math.max(this.tokens - 25, 0) / 500))
       + 0.5 * (1 - Math.exp(-Math.max(this.tokens - 2500, 0) / 5000))
   }
 
   get obtainiumBonus () {
     return 1
-      + 0.25 * 1 / 25 * Math.min(this.tokens, 25)
-      + 0.75 * (1 - Math.exp(-Math.max(this.tokens - 25, 0) / 500))
+      + 0.1 * 1 / 25 * Math.min(this.tokens, 25)
+      + 0.4 * (1 - Math.exp(-Math.max(this.tokens - 25, 0) / 500))
       + 0.5 * (1 - Math.exp(-Math.max(this.tokens - 2500, 0) / 5000))
   }
 
   get offeringBonus () {
     return 1
-      + 0.25 * 1 / 25 * Math.min(this.tokens, 25)
-      + 0.75 * (1 - Math.exp(-Math.max(this.tokens - 25, 0) / 500))
+      + 0.1 * 1 / 25 * Math.min(this.tokens, 25)
+      + 0.4 * (1 - Math.exp(-Math.max(this.tokens - 25, 0) / 500))
       + 0.5 * (1 - Math.exp(-Math.max(this.tokens - 2500, 0) / 5000))
   }
 
   get ascensionScoreMultiplier () {
     return 1
-      + 0.5 * 1 / 100 * Math.min(this.tokens, 100)
-      + 0.5 * (1 - Math.exp(-Math.max(this.tokens - 100, 0) / 1000))
+      + 0.2 * 1 / 100 * Math.min(this.tokens, 100)
+      + 0.3 * (1 - Math.exp(-Math.max(this.tokens - 100, 0) / 1000))
       + 0.5 * (1 - Math.exp(-Math.max(this.tokens - 2500, 0) / 5000))
   }
   /**
@@ -455,9 +455,9 @@ export class CampaignManager {
       return 1
     } else {
       return 1
-        + 0.1 * Math.min(this.tokens - 100, 100) / 100
-        + 0.15 * (1 - Math.exp(-Math.max(this.tokens - 200, 0) / 3000))
-        + 0.15 * (1 - Math.exp(-Math.max(this.tokens - 2500, 0) / 10000))
+        + 0.05 * Math.min(this.tokens - 100, 100) / 100
+        + 0.05 * (1 - Math.exp(-Math.max(this.tokens - 200, 0) / 3000))
+        + 0.1 * (1 - Math.exp(-Math.max(this.tokens - 2500, 0) / 10000))
     }
   }
 
@@ -476,18 +476,18 @@ export class CampaignManager {
       return 1
     }
     return 1
-      + 0.1 * 1 / 250 * Math.min(this.tokens - 250, 250)
-      + 0.9 * (1 - Math.exp(-Math.max(this.tokens - 500, 0) / 1250))
+      + 0.05 * 1 / 250 * Math.min(this.tokens - 250, 250)
+      + 0.95 * (1 - Math.exp(-Math.max(this.tokens - 500, 0) / 1250))
   }
 
   get bonusRune6 () {
-    const thresholdReqs = [500, 2000, 5000]
+    const thresholdReqs = [500, 2000, 5000, 1000]
     for (let i = 0; i < thresholdReqs.length; i++) {
       if (this.tokens < thresholdReqs[i]) {
         return i
       }
     }
-    return 3
+    return 4
   }
 
   get goldenQuarkBonus () {
@@ -495,8 +495,8 @@ export class CampaignManager {
       return 1
     }
     return 1
-      + 0.1 * 1 / 500 * Math.min(this.tokens - 500, 500)
-      + 0.15 * (1 - Math.exp(-Math.max(this.tokens - 1000, 0) / 2500))
+      + 0.05 * 1 / 500 * Math.min(this.tokens - 500, 500)
+      + 0.05 * (1 - Math.exp(-Math.max(this.tokens - 1000, 0) / 2500))
   }
 
   get octeractBonus () {
@@ -505,7 +505,7 @@ export class CampaignManager {
     }
     return 1
       + 0.1 * 1 / 1000 * Math.min(this.tokens - 1000, 1000)
-      + 0.4 * (1 - Math.exp(-Math.max(this.tokens - 2000, 0) / 4000))
+      + 0.15 * (1 - Math.exp(-Math.max(this.tokens - 2000, 0) / 4000))
   }
 
   get ambrosiaLuckBonus () {
@@ -522,8 +522,8 @@ export class CampaignManager {
       return 1
     }
     return 1
-      + 0.05 * 1 / 2000 * Math.min(this.tokens - 2000, 2000)
-      + 0.05 * (1 - Math.exp(-Math.max(this.tokens - 4000, 0) / 2000))
+      + 0.02 * 1 / 2000 * Math.min(this.tokens - 2000, 2000)
+      + 0.03 * (1 - Math.exp(-Math.max(this.tokens - 4000, 0) / 2000))
   }
 }
 

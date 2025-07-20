@@ -1306,6 +1306,8 @@ p#promocodeinfo {
     grid-template-columns: repeat(12, 48px);
     grid-template-rows: repeat(1, 48px);
     gap: 2px 2px;
+    align-items: center;
+    justify-content: center;
 }
 
 #synergismLevelRewardsTable > div {
@@ -1318,6 +1320,8 @@ p#promocodeinfo {
     grid-template-columns: repeat(12, 32px);
     grid-template-rows: repeat(4, 32px);
     gap: 2px 2px;
+    align-items: center;
+    justify-content: center;
 }
 
 #synergismLevelMilestonesTable > div {
