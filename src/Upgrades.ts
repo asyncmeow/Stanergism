@@ -10,7 +10,7 @@ import { format, player } from './Synergism'
 import { revealStuff } from './UpdateHTML'
 import { sumContents } from './Utility'
 import { Globals as G, Upgrade } from './Variables'
-import { getAchievementReward } from './Achievements'
+import { achievementPoints, getAchievementReward } from './Achievements'
 
 const crystalupgdesc: Record<number, () => Record<string, string>> = {
   3: () => ({
@@ -149,7 +149,7 @@ const upgradetexts = [
   () => format(Decimal.min(1e6, Decimal.pow(1.01, player.transcendCount)), 2),
   () => format(Math.min(2500, Math.floor(Decimal.log(player.transcendShards.add(1), 10)))),
   () => null,
-  () => format(Math.pow(1.05, player.achievementPoints) * (player.achievementPoints + 1), 2),
+  () => format(Math.pow(1.01, achievementPoints) * (achievementPoints / 5 + 1), 2),
   () => format(Math.pow(Math.min(1e25, G.totalMultiplier * G.totalAccelerator) / 1000 + 1, 8)),
   () => format(Math.min(50, Math.floor(Decimal.log(player.transcendPoints.add(1), 1e10)))),
   () => null,
@@ -362,7 +362,7 @@ const crystalupgeffect: Record<number, () => Record<string, string>> = {
     x: format(
       Decimal.min(
         Decimal.pow(10, 50 + 2 * player.crystalUpgrades[0]),
-        Decimal.pow(1.05, player.achievementPoints * player.crystalUpgrades[0])
+        Decimal.pow(1.01, achievementPoints * player.crystalUpgrades[0])
       ),
       2,
       true

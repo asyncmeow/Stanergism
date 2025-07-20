@@ -18,6 +18,7 @@ import { btoa, sortWithIndices, sumContents } from './Utility'
 import { blankGlobals, Globals as G } from './Variables'
 
 import {
+  achievementPoints,
   type AchievementRewards,
   achRewards,
   awardAchievement,
@@ -3060,7 +3061,7 @@ export const multipliers = (): void => {
   G.globalCrystalMultiplier = G.globalCrystalMultiplier.times(
     Decimal.min(
       Decimal.pow(10, 50 + 2 * player.crystalUpgrades[0]),
-      Decimal.pow(1.05, player.achievementPoints * player.crystalUpgrades[0])
+      Decimal.pow(1.01, achievementPoints * player.crystalUpgrades[0])
     )
   )
   G.globalCrystalMultiplier = G.globalCrystalMultiplier.times(
@@ -3138,8 +3139,8 @@ export const multipliers = (): void => {
   }
   if (player.upgrades[47] > 0.5) {
     G.globalMythosMultiplier = G.globalMythosMultiplier
-      .times(Decimal.pow(1.05, player.achievementPoints))
-      .times(player.achievementPoints + 1)
+      .times(Decimal.pow(1.01, achievementPoints))
+      .times(achievementPoints / 5 + 1)
   }
   if (player.upgrades[51] > 0.5) {
     G.globalMythosMultiplier = G.globalMythosMultiplier.times(
