@@ -172,7 +172,9 @@ import {
   campaignIconHTMLUpdates,
   CampaignManager,
   campaignTokenRewardHTMLUpdate,
-  createCampaignIconHTMLS
+  createCampaignIconHTMLS,
+  updateMaxTokens,
+  updateTokens
 } from './Campaign'
 import { dev, lastUpdated, prod, testing, version } from './Config'
 import { WowCubes, WowHypercubes, WowPlatonicCubes, WowTesseracts } from './CubeExperimental'
@@ -5433,6 +5435,8 @@ export const reloadShit = (reset = false) => {
     }
   }
 
+  updateTokens()
+  updateMaxTokens()
   updateAchievementPoints()
   setAmbrosiaUpgradeLevels()
   setRedAmbrosiaUpgradeLevels()

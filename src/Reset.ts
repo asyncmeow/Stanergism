@@ -22,7 +22,9 @@ import {
   campaignIconHTMLUpdate,
   campaignIconHTMLUpdates,
   type CampaignKeys,
-  campaignTokenRewardHTMLUpdate
+  campaignTokenRewardHTMLUpdate,
+  updateMaxTokens,
+  updateTokens
 } from './Campaign'
 import { challengeRequirement } from './Challenges'
 import { c15Corruptions, CorruptionLoadout, corruptionStatsUpdate, type SavedCorruption } from './Corruptions'
@@ -728,8 +730,8 @@ export const reset = (input: resetNames, fast = false, from = 'unknown') => {
         }
         campaignIconHTMLUpdate(campaignName)
       }
-
-      player.campaigns.computeTotalCampaignTokens()
+      updateTokens()
+      updateMaxTokens()
       campaignTokenRewardHTMLUpdate()
     }
 

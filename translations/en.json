@@ -761,7 +761,17 @@
       "422": "Simulated Tithe XII: Obtain 200,000 free levels of the Speed Rune.",
       "423": "Simulated Tithe XIII: Obtain 300,000 free levels of the Speed Rune.",
       "424": "Simulated Tithe XIV: Obtain 500,000 free levels of the Speed Rune.",
-      "425": "God needs better names: Obtain 750,000 free levels of the Speed Rune."
+      "425": "God needs better names: Obtain 750,000 free levels of the Speed Rune.",
+      "426": "Proof of Work: Gain 10 Campaign Tokens from Campaigns.",
+      "427": "Insert tokens: Gain 20 Campaign Tokens from Campaigns.",
+      "428": "Novice Corruptor: Gain 40 Campaign Tokens from Campaigns.",
+      "429": "A Roll of Campaign Tokens: Gain 80 Campaign Tokens from Campaigns.",
+      "430": "Relative Campaign Expert: Gain 160 Campaign Tokens from Campaigns.",
+      "431": "Five Stacks: Gain 320 Campaign Tokens from Campaigns.",
+      "432": "Thousandaire: Gain 1,000 Campaign Tokens from Campaigns.",
+      "433": "Question 6 of a possible 15: Gain 2,000 Campaign Tokens from Campaigns.",
+      "434": "Platonic Campaigns: Gain 4,000 Campaign Tokens from Campaigns.",
+      "435": "Campaign Master: Gain 9,000 Campaign Tokens from Campaigns."
     },
     "achievementRewards": {
       "3": {
@@ -1614,6 +1624,7 @@
       "singularityCount": "Singularities",
       "runeLevel": "Rune Levels",
       "runeFreeLevel": "Free Rune Levels",
+      "campaignTokens": "Campaign Tokens",
       "ungrouped": "Miscellaneous"
     },
     "rewardTypes": {
@@ -4247,19 +4258,19 @@
       "count": "You have {{ count }} / {{ maxCount }} tokens!",
       "rewardTexts": {
         "tutorial": "For clearing your first Campaign, get {{cube}} more Cubes, <<pink | {{obtainium}}>> more Obtainium, and <<orange | {{offering}}>> more Offerings!",
-        "cube": "Increase Cube gain by {{ reward }} (Maximum +150%).",
-        "obtainium": "Increase Obtainium gain by <<pink | {{ reward }}>> (Maximum +150%).",
-        "offering": "Increase Offering gain by <<orange | {{ reward }}>> (Maximum +150%).",
-        "ascensionScore": "Increase Ascension Score by <<orange | {{ reward }}>> (Maximum +150%).",
+        "cube": "Increase Cube gain by {{ reward }}",
+        "obtainium": "Increase Obtainium gain by <<pink | {{ reward }}>>",
+        "offering": "Increase Offering gain by <<orange | {{ reward }}>>",
+        "ascensionScore": "Increase Ascension Score by <<orange | {{ reward }}>>",
         "timeThreshold": "For Reset Rewards that have a penalty if you reset under a certain time, reduce that time by <<gray | {{ reward }}>> seconds (Base: 10s).",
-        "quark": "Increase Quark gain by <<cyan | {{ reward }}>> (Maximum +40%).",
-        "tax": "Taxes <<blue | {{ reward }}>> (Minimum -25%).",
-        "c15": "Increase Challenge 15 bonus by <<lightgoldenrodyellow | {{ reward }}>> (Maximum +100%)",
-        "rune6": "Increase Rune 6 Bonus Levels by <<brown | {{ reward }}>> (Maximum +3).",
-        "goldenQuark": "Increase Golden Quark gain by <<gold | {{ reward }}>> (Maximum +25%).",
-        "octeract": "Increase Octeract gain by <<teal | {{ reward }}>> (Maximum +50%).",
-        "ambrosiaLuck": "Increase ☘ Ambrosia Luck by <<green | {{ reward }}>> (Maximum ☘ +100).",
-        "blueberrySpeed": "Increase Ambrosia Bar Points gain by <<blue | {{ reward }}>> (Maximum +10%)."
+        "quark": "Increase Quark gain by <<cyan | {{ reward }}>>",
+        "tax": "Taxes <<blue | {{ reward }}>>",
+        "c15": "Increase Challenge 15 bonus by <<lightgoldenrodyellow | {{ reward }}>>",
+        "rune6": "Increase Rune 6 Bonus Levels by <<brown | {{ reward }}>>",
+        "goldenQuark": "Increase Golden Quark gain by <<gold | {{ reward }}>>",
+        "octeract": "Increase Octeract gain by <<teal | {{ reward }}>>",
+        "ambrosiaLuck": "Increase ☘ Ambrosia Luck by <<green | {{ reward }}>>",
+        "blueberrySpeed": "Increase Ambrosia Bar Points gain by <<blue | {{ reward }}>>"
       }
     },
     "currentCampaignPreTitle": "Current Campaign: ",

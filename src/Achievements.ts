@@ -18,6 +18,7 @@ import { sumContents } from './Utility'
 import { Globals as G } from './Variables'
 import { Tabs } from './Tabs'
 import { displayLevelStuff } from './Levels'
+import { campaignTokens } from './Campaign'
 
 export const resetAchievementCheck = (reset: resetNames) => {
   if (reset === 'prestige') {
@@ -156,6 +157,7 @@ export type AchievementGroups =
   | 'singularityCount'
   | 'runeLevel'
   | 'runeFreeLevel'
+  | 'campaignTokens'
   | 'ungrouped'
 
 export type AchievementRewards =
@@ -1963,7 +1965,57 @@ export const achievements: Achievement[] = [
     pointValue: 30,
     unlockCondition: () => runes.speed.freeLevels() >= 750000,
     group: 'runeFreeLevel',
-  }
+  },
+  {
+    pointValue: 5,
+    unlockCondition: () => campaignTokens >= 10,
+    group: 'campaignTokens'
+  },
+  {
+    pointValue: 10,
+    unlockCondition: () => campaignTokens >= 20,
+    group: 'campaignTokens'
+  },
+  {
+    pointValue: 15,
+    unlockCondition: () => campaignTokens >= 40,
+    group: 'campaignTokens'
+  },
+  {
+    pointValue: 20,
+    unlockCondition: () => campaignTokens >= 80,
+    group: 'campaignTokens'
+  },
+  {
+    pointValue: 25,
+    unlockCondition: () => campaignTokens >= 160,
+    group: 'campaignTokens'
+  },
+  {
+    pointValue: 30,
+    unlockCondition: () => campaignTokens >= 320,
+    group: 'campaignTokens'
+  },
+  {
+    pointValue: 35,
+    unlockCondition: () => campaignTokens >= 1000,
+    group: 'campaignTokens'
+  },
+  {
+    pointValue: 40,
+    unlockCondition: () => campaignTokens >= 2000,
+    group: 'campaignTokens'
+  },
+  {
+    pointValue: 45,
+    unlockCondition: () => campaignTokens >= 4000,
+    group: 'campaignTokens'
+  },
+  {
+    pointValue: 50,
+    unlockCondition: () => campaignTokens >= 9000,
+    group: 'campaignTokens'
+  },
 ]
 
 export interface GroupAchievementInfo {
@@ -2087,6 +2139,10 @@ export const groupedAchievementData: Record<Exclude<AchievementGroups, 'ungroupe
   challenge11: {
     order: 28,
     displayCondition: () => player.ascensionCount > 0
+  },
+  campaignTokens: {
+    order: 28.5,
+    displayCondition: () => player.highestchallengecompletions[11] > 0
   },
   ascensionScore: {
     order: 29,

@@ -3,6 +3,7 @@ import { DOMCacheGetOrSet } from './Cache/DOM'
 import { calculateOcteractMultiplier } from './Calculate'
 import { format, formatAsPercentIncrease, formatTimeShort, player } from './Synergism'
 import { Alert, Prompt } from './UpdateHTML'
+import { updateMaxTokens, updateTokens } from './Campaign'
 
 export type OcteractDataKeys =
   | 'octeractStarter'
@@ -1052,6 +1053,8 @@ export const buyOcteractUpgradeLevel = async (upgradeKey: OcteractDataKeys, even
   }
 
   updateOcteractUpgradeHTML(upgradeKey)
+  updateTokens()
+  updateMaxTokens()
 }
 
 export const getOcteractUpgradeEffect = (upgradeKey: OcteractDataKeys): number => {

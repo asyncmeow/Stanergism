@@ -6,6 +6,7 @@ import { runes } from './Runes'
 import { format, formatAsPercentIncrease, player } from './Synergism'
 import { Alert, Prompt, revealStuff } from './UpdateHTML'
 import { toOrdinal } from './Utility'
+import { updateMaxTokens, updateTokens } from './Campaign'
 
 export type SingularityDataKeys =
   | 'goldenQuarks1'
@@ -2019,6 +2020,8 @@ export async function buyGQUpgradeLevel (upgradeKey: SingularityDataKeys, event:
   updateGQUpgradeHTML(upgradeKey)
   updateSingularityPenalties()
   updateSingularityPerks()
+  updateTokens()
+  updateMaxTokens()
   revealStuff()
 }
 
