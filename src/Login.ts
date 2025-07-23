@@ -9,7 +9,7 @@ import { updateGlobalsIsEvent } from './Event'
 import { addTimers, automaticTools } from './Helper'
 import { importSynergism, saveFilename } from './ImportExport'
 import { updatePseudoCoins } from './purchases/UpgradesSubtab'
-import { QuarkHandler, setQuarkBonus } from './Quark'
+import { QuarkHandler, refreshQuarkBonus, setQuarkBonus } from './Quark'
 import { format, player, saveSynergy } from './Synergism'
 import { Alert, Notification } from './UpdateHTML'
 import { assert } from './Utility'
@@ -239,7 +239,8 @@ export async function handleLogin () {
     | SynergismEmailUserAPIResponse
     | SynergismNotLoggedInResponse
 
-  setQuarkBonus(100 * (1 + globalBonus / 100) * (1 + personalBonus / 100) - 100)
+  setQuarkBonus(personalBonus, globalBonus)
+  setInterval(() => refreshQuarkBonus(), 1000 * 60 * 15)
   player.worlds = new QuarkHandler(Number(player.worlds))
   loggedIn = accountType !== 'none' && response.ok
 

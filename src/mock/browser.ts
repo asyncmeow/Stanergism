@@ -4,6 +4,11 @@ import { cloudSaveHandlers } from './handlers/CloudSaveHandlers'
 import { consumeHandlers } from './websocket'
 
 const GETHandlers = [
+  http.get('https://synergism.cc/api/v1/quark-bonus', () => {
+    return HttpResponse.json({
+      bonus: 105.3
+    })
+  }),
   http.get('https://synergism.cc/stripe/coins', () => {
     return HttpResponse.json({
       coins: 49001
