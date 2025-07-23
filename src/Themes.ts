@@ -84,7 +84,6 @@ export const toggleTheme = (initial = false, themeNumber = 1, change = false) =>
     DOMCacheGetOrSet('buildinghotkeys').style.color = 'lightgray'
     DOMCacheGetOrSet('buildinghotkeys2').style.color = 'lightgray'
     DOMCacheGetOrSet('antspecies').style.color = 'royalblue' // HTML colors
-    DOMCacheGetOrSet('achievementcolorcode2').style.color = 'purple'
     DOMCacheGetOrSet('corruptionTesseracts').style.color = 'darkviolet'
     DOMCacheGetOrSet('antwelcome').style.color = 'lightslategrey'
     DOMCacheGetOrSet('confirmationToggleTitle').style.color = 'pink'
@@ -200,7 +199,6 @@ export const toggleTheme = (initial = false, themeNumber = 1, change = false) =>
     body.style.setProperty('--lightseagreen-text-color', 'limegreen')
     body.style.setProperty('--orangered-text-color', '#f74')
     body.style.setProperty('--gray-text-color', '#a5a5a5')
-    DOMCacheGetOrSet('achievementcolorcode2').style.color = '#dc7dff'
     DOMCacheGetOrSet('corruptionDescription').style.color = '#d272ff'
     DOMCacheGetOrSet('corruptionTesseracts').style.color = '#d272ff'
     DOMCacheGetOrSet('antwelcome').style.color = '#b1b1b1'
@@ -267,7 +265,6 @@ export const toggleTheme = (initial = false, themeNumber = 1, change = false) =>
     DOMCacheGetOrSet('corruptionStatsLoadouts').style.borderColor = '#04d481'
     DOMCacheGetOrSet('heptGrid').style.backgroundColor = '#11111b'
     DOMCacheGetOrSet('heptGrid').style.borderColor = '#9b7306'
-    DOMCacheGetOrSet('achievementcolorcode2').style.color = '#ef00e4' // Text colors
     DOMCacheGetOrSet('corruptionDescription').style.color = '#c205ff'
     DOMCacheGetOrSet('corruptionTesseracts').style.color = '#c205ff'
     DOMCacheGetOrSet('antwelcome').style.color = 'darkgrey'
