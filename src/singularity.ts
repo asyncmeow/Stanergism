@@ -1074,18 +1074,18 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
   singQuarkHepteract: {
     level: 0,
     freeLevel: 0,
-    maxLevel: 1,
+    maxLevel: 10,
     canExceedCap: false,
     qualityOfLife: true,
     costPerLevel: 14999,
     minimumSingularity: 5,
-    specialCostForm: 'Default',
+    specialCostForm: 'Exponential2',
     effect: (n: number) => {
-      return n / 100
+      return n / 50
     },
     effectDescription: (n: number) =>
       i18next.t('singularity.data.singQuarkHepteract.effect', {
-        n: format(2 * n, 2, true)
+        n: format(n / 50, 2, true)
       }),
     name: () => i18next.t('singularity.data.singQuarkHepteract.name'),
     description: () => i18next.t('singularity.data.singQuarkHepteract.description')
@@ -1093,18 +1093,18 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
   singQuarkHepteract2: {
     level: 0,
     freeLevel: 0,
-    maxLevel: 1,
+    maxLevel: 10,
     canExceedCap: false,
     qualityOfLife: true,
     costPerLevel: 449999,
     minimumSingularity: 30,
-    specialCostForm: 'Default',
+    specialCostForm: 'Exponential2',
     effect: (n: number) => {
-      return n / 100
+      return n / 50
     },
     effectDescription: (n: number) =>
       i18next.t('singularity.data.singQuarkHepteract2.effect', {
-        n: format(2 * n, 2, true)
+        n: format(n / 50, 2, true)
       }),
     name: () => i18next.t('singularity.data.singQuarkHepteract2.name'),
     description: () => i18next.t('singularity.data.singQuarkHepteract2.description')
@@ -1112,18 +1112,18 @@ export const goldenQuarkUpgrades: Record<SingularityDataKeys, GoldenQuarkUpgrade
   singQuarkHepteract3: {
     level: 0,
     freeLevel: 0,
-    maxLevel: 1,
-    canExceedCap: false,
+    maxLevel: 10,
+    canExceedCap: true,
     qualityOfLife: true,
     costPerLevel: 13370000,
     minimumSingularity: 61,
-    specialCostForm: 'Default',
+    specialCostForm: 'Exponential2',
     effect: (n: number) => {
       return n / 100
     },
     effectDescription: (n: number) =>
       i18next.t('singularity.data.singQuarkHepteract3.effect', {
-        n: format(2 * n, 2, true)
+        n: format(n / 100, 2, true)
       }),
     name: () => i18next.t('singularity.data.singQuarkHepteract3.name'),
     description: () => i18next.t('singularity.data.singQuarkHepteract3.description')
@@ -1875,9 +1875,9 @@ export function upgradeGQToString (upgradeKey: SingularityDataKeys): string {
   const upgradeEffectHTML = `<span style="color: gold">${effectDesc}</span>`
 
   // TNL Cost Text
-  const costHTML = i18next.t('singularity.toString.costNextLevel', { amount: format(costNextLevel, 0, true) })
+  const costHTML = computeGQUpgradeMaxLevel(upgradeKey) === upgrade.level ? '' : i18next.t('singularity.toString.costNextLevel', { amount: format(costNextLevel, 0, true) })
 
-  return `${nameHTML}<br>${descriptionHTML}<br>${minSingularityHTML}<br>${levelText}<br>${upgradeEffectHTML}<br>${costHTML}`
+  return `${nameHTML}<br>${levelText}<br>${descriptionHTML}<br>${minSingularityHTML}<br>${upgradeEffectHTML}<br>${costHTML}`
 }
 
 /**

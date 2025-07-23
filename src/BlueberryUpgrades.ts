@@ -1148,6 +1148,12 @@ export const refundAmbrosiaUpgrade = (upgradeKey: AmbrosiaUpgradeNames): void =>
 
   player.spentBlueberries -= upgrade.blueberriesInvested
   upgrade.blueberriesInvested = 0
+
+  // Just in case!
+  player.ambrosiaUpgrades[upgradeKey] = {
+    ambrosiaInvested: 0,
+    blueberriesInvested: 0
+  } 
 }
 
 export const ambrosiaUpgradeToString = (upgradeKey: AmbrosiaUpgradeNames): string => {
@@ -1262,13 +1268,14 @@ export const buyAmbrosiaUpgradeLevel = async (upgradeKey: AmbrosiaUpgradeNames, 
           return Alert(i18next.t('ambrosia.notEnoughBlueberries'))
         } else {
           player.spentBlueberries += upgrade.blueberryCost
-          ambrosiaUpgrades[upgradeKey].blueberriesInvested = upgrade.blueberryCost
+          upgrade.blueberriesInvested = upgrade.blueberryCost
+
         }
       }
       player.ambrosia -= cost
       ambrosiaBudget -= cost
-      ambrosiaUpgrades[upgradeKey].ambrosiaInvested += cost
-      ambrosiaUpgrades[upgradeKey].level += 1
+      upgrade.ambrosiaInvested += cost
+      upgrade.level += 1
       purchased += 1
       maxPurchasable -= 1
     }
@@ -1548,36 +1555,23 @@ export const displayOnlyLoadout = (loadout: BlueberryOpt) => {
     const level = loadout[k] || 0 // Get the level from the loadout, default to 0 if not present
     const parent = elm.parentElement!
 
+    let levelOverlay = parent.querySelector('.level-overlay') as HTMLDivElement
+    if (!levelOverlay) {
+      levelOverlay = document.createElement('div') // Changed from 'p' to 'div'
+      levelOverlay.classList.add('level-overlay')
+      parent.classList.add('relative-container') // Apply relative container to the element
+      parent.appendChild(levelOverlay) // Append to the element
+    }
+
     if (loadoutKeys.includes(k) && level > 0) {
-      elm.classList.remove('notInLoadout')
       elm.classList.add('dimmed') // Apply the dimmed class
-
-      // Create or get the level overlay element
-      let levelOverlay = parent.querySelector('.level-overlay') as HTMLDivElement
-      if (!levelOverlay) {
-        levelOverlay = document.createElement('p')
-        levelOverlay.classList.add('level-overlay')
-
-        if (level === ambrosiaUpgrades[k].maxLevel) {
-          levelOverlay.classList.add('maxBlueberryLevel')
-        } else {
-          levelOverlay.classList.add('notMaxBlueberryLevel')
-        }
-
-        parent.classList.add('relative-container') // Apply relative container to the element
-        parent.appendChild(levelOverlay) // Append to the element
-      }
       levelOverlay.textContent = String(level) // Set the level text
-    } else {
-      elm.classList.add('notInLoadout')
-      elm.classList.remove('dimmed') // Remove the dimmed class
-
-      // Remove the level overlay if it exists
-      const levelOverlay = parent.querySelector('.level-overlay')
-      if (levelOverlay) {
-        levelOverlay.remove()
-        parent.classList.remove('relative-container') // Remove relative container
+      if (level === ambrosiaUpgrades[k].maxLevel) {
+        levelOverlay.classList.add('maxBlueberryLevel')
       }
+    } else {
+      elm.classList.add('superDimmed')
+      levelOverlay!.textContent = ''
     }
   }
 }
@@ -1587,8 +1581,8 @@ export const resetLoadoutOnlyDisplay = () => {
     const k = key as AmbrosiaUpgradeNames
     const elm = DOMCacheGetOrSet(k)
     const parent = elm.parentElement!
-    elm.classList.remove('notInLoadout')
     elm.classList.remove('dimmed') // Remove the dimmed class
+    elm.classList.remove('superDimmed') // Remove the superDimmed class
 
     // Remove the level overlay if it exists
     const levelOverlay = parent.querySelector('.level-overlay')

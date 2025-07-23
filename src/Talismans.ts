@@ -453,7 +453,7 @@ export const talismans: { [K in TalismanKeys]: TalismanData<K> } = {
     level: 0,
     rarity: 0,
     fragmentsInvested: { ...noTalismanFragments },
-    baseMult: 1e6,
+    baseMult: 1e5,
     maxLevel: 180,
     costs: regularCostProgression,
     levelCapIncrease: () => {
@@ -501,7 +501,7 @@ export const talismans: { [K in TalismanKeys]: TalismanData<K> } = {
       const inscriptValues = [1, 1.025, 1.05, 1.075, 1.1, 1.125, 1.15, 1.2, 1.225, 1.25, 1.30]
       return {
         evenDimBonus: inscriptValues[n] ?? 1,
-        oddDimBonus: n >= 6 ? 0.05 : 0
+        oddDimBonus: n >= 6 ? 1.20 : 1
       }
     },
     inscriptionDesc: (n) => {
@@ -672,7 +672,8 @@ export const getTalismanLevelCap = (t: TalismanKeys) => {
 
 export const setTalismanRarity = (t: TalismanKeys) => {
   if (!talismans[t].isUnlocked()) {
-    return 0
+    talismans[t].rarity = 0
+    return
   }
 
   // Since the actual level cap depends on
@@ -863,10 +864,106 @@ export const getTalismanEffects = <T extends TalismanKeys>(
   return talismans[t].effects(talismans[t].rarity)
 }
 
+export const talismanRarityInfo = (t: TalismanKeys): void => {
+
+  DOMCacheGetOrSet('rarityInfoTexts').style.display = 'block'
+
+  const title = `<span style="color: lightgoldenrodyellow">${i18next.t('runes.talismans.rarityInfo.title', {
+    talismanName: String(i18next.t(`runes.talismans.${t}.name`))
+  })}
+  </span>`
+
+  const levelCap = talismans[t].maxLevel
+  const rarity = talismans[t].rarity
+
+  const common = `<span style="color: white">${i18next.t('runes.talismans.rarityInfo.common')} <span class="rarityReqNum">
+  ${rarity === 1 ? '▶ ' : ''}
+  ${i18next.t('runes.talismans.rarityInfo.default')}
+  </span>
+  </span>`
+
+  const uncommon = `<span style="color: limegreen">${i18next.t('runes.talismans.rarityInfo.uncommon')} <span class="rarityReqNum">
+  ${rarity === 2 ? '▶ ' : ''}
+  ${i18next.t('runes.talismans.rarityInfo.levelReq', {
+    level: format(Math.ceil(levelCap / 6), 0, true)
+  })}
+  </span>
+  </span>`
+
+  const rare = `<span style="color: lightblue">${i18next.t('runes.talismans.rarityInfo.rare')} <span class="rarityReqNum">
+  ${rarity === 3 ? '▶ ' : ''}
+  ${i18next.t('runes.talismans.rarityInfo.levelReq', {
+    level: format(Math.ceil(levelCap / 3), 0, true)
+  })}
+  </span>
+  </span>`
+ 
+  const epic = `<span style="color: plum">${i18next.t('runes.talismans.rarityInfo.epic')} <span class="rarityReqNum">
+  ${rarity === 4 ? '▶ ' : ''}
+  ${i18next.t('runes.talismans.rarityInfo.levelReq', {
+    level: format(Math.ceil(levelCap / 2), 0, true)
+  })}
+  </span>
+  </span>`
+
+  const legendary = `<span style="color: darkorange">${i18next.t('runes.talismans.rarityInfo.legendary')} <span class="rarityReqNum">
+  ${rarity === 5 ? '▶ ' : ''}
+  ${i18next.t('runes.talismans.rarityInfo.levelReq', {
+    level: format(Math.ceil(levelCap * 2 / 3), 0, true)
+  })}
+  </span>
+  </span>`
+
+  const mythic = `<span style="color: crimson">${i18next.t('runes.talismans.rarityInfo.mythic')} <span class="rarityReqNum">
+  ${rarity === 6 ? '▶ ' : ''}
+  ${i18next.t('runes.talismans.rarityInfo.levelReq', {
+    level: format(Math.ceil(levelCap * 5 / 6), 0, true)
+  })}
+  </span>
+  </span>`
+  
+  const extraordinary = `<span style="color: violet">${i18next.t('runes.talismans.rarityInfo.extraordinary')} <span class="rarityReqNum">
+  ${rarity === 7 ? '▶ ' : ''}
+  ${i18next.t('runes.talismans.rarityInfo.levelReq', {
+    level: format(levelCap, 0, true)
+  })}
+  </span>
+  </span>`
+  
+  const godlike = `<span style="color: lightcoral">${i18next.t('runes.talismans.rarityInfo.godlike')} <span class="rarityReqNum">
+  ${rarity === 8 ? '▶ ' : ''}
+  ${i18next.t('runes.talismans.rarityInfo.levelReq', {
+    level: format(2 * levelCap, 0, true)
+  })}
+  </span>
+  </span>`
+
+  const perfect = `<span style="color: gold">${i18next.t('runes.talismans.rarityInfo.perfect')} <span class="rarityReqNum">
+  ${rarity === 9 ? '▶ ' : ''}
+  ${i18next.t('runes.talismans.rarityInfo.levelReq', {
+    level: format(4 * levelCap, 0, true)
+  })}
+  </span>
+  </span>`
+
+  const immaculate = `<span class="rainbowText">${i18next.t('runes.talismans.rarityInfo.immaculate')} <span class="rarityReqNum rainbowText">
+  ${rarity === 10 ? '▶ ' : ''}
+  ${i18next.t('runes.talismans.rarityInfo.levelReq', {
+    level: format(8 * levelCap, 0, true)
+  })}
+  </span>
+  </span>`
+
+  DOMCacheGetOrSet('rarityInfoMultiline').innerHTML = `${title}<br>${common}<br>${uncommon}
+  <br>${rare}<br>${epic}<br>${legendary}
+  <br>${mythic}<br>${extraordinary}<br>${godlike}
+  <br>${perfect}<br>${immaculate}`
+}
+
 export const talismanToStringHTML = (t: TalismanKeys): void => {
   assert(G.currentTab === Tabs.Runes, 'Talisman updateRewardHTML called outside of Runes tab')
   const talisman = talismans[t]
-  DOMCacheGetOrSet('talismanlevelup').style.display = 'none'
+  DOMCacheGetOrSet('talismanLevelUpCost').style.display = 'none'
   DOMCacheGetOrSet('talismanEffect').style.display = 'block'
 
   DOMCacheGetOrSet('talismanTitle').innerHTML = `${talisman.name()} - ${
@@ -920,7 +1017,7 @@ export const talismanToStringHTML = (t: TalismanKeys): void => {
 export const updateTalismanCostHTML = (t: TalismanKeys) => {
   assert(G.currentTab === Tabs.Runes, 'Talisman updateCostHTML called outside of Runes tab')
   DOMCacheGetOrSet('talismanEffect').style.display = 'none'
-  DOMCacheGetOrSet('talismanlevelup').style.display = 'block'
+  DOMCacheGetOrSet('talismanLevelUpCost').style.display = 'block'
   const a = DOMCacheGetOrSet('talismanShardCost')
   const b = DOMCacheGetOrSet('talismanCommonFragmentCost')
   const c = DOMCacheGetOrSet('talismanUncommonFragmentCost')
@@ -973,7 +1070,7 @@ export const updateTalismanDisplay = (t: TalismanKeys) => {
   }
   if (rarity === 5) {
     ti.style.border = '3px solid orange'
-    la.style.color = 'orange'
+    la.style.color = 'darkorange'
   }
   if (rarity === 6) {
     ti.style.border = '3px solid crimson'
@@ -1004,6 +1101,7 @@ export const updateTalismanDisplay = (t: TalismanKeys) => {
 export const resetSingleTalisman = (t: TalismanKeys) => {
   talismans[t].level = 0
   talismans[t].fragmentsInvested = { ...noTalismanFragments }
+  player.talismans[t] = { ...noTalismanFragments }
   setTalismanRarity(t)
 }
 

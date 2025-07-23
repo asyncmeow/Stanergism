@@ -204,8 +204,14 @@ export const buyBlessingLevels = (blessing: RuneBlessingKeys, budget: Decimal) =
 
 export const buyAllBlessingLevels = (budget: Decimal) => {
   const ratio = runeBlessingKeys.length
+  const budgetPerBlessing = budget.div(ratio).floor()
   for (const key of runeBlessingKeys) {
-    buyBlessingLevels(key, Decimal.floor(budget.div(ratio)))
+    buyBlessingLevels(key, budgetPerBlessing)
+  }
+
+  if (player.offerings.lt(0)) {
+    // TODO: Figure out why this fucking happens so often
+    player.offerings = new Decimal(0)
   }
 }
 

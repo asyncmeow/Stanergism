@@ -1275,10 +1275,6 @@ export const singularity = (setSingNumber = -1) => {
   hold.blueberryTime = player.blueberryTime
   hold.blueberryLoadouts = player.blueberryLoadouts
   hold.blueberryLoadoutMode = player.blueberryLoadoutMode as BlueberryLoadoutMode
-  hold.wowCubes = Number(player.wowCubes)
-  hold.wowTesseracts = Number(player.wowTesseracts)
-  hold.wowHypercubes = Number(player.wowHypercubes)
-  hold.wowPlatonicCubes = Number(player.wowPlatonicCubes)
 
   const saveCode42 = player.codes.get(42) ?? false
   const saveCode43 = player.codes.get(43) ?? false

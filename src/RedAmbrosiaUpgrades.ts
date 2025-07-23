@@ -695,13 +695,13 @@ export const displayRedAmbrosiaLevels = () => {
     const capKey = key.charAt(0).toUpperCase() + key.slice(1)
     const name = `redAmbrosia${capKey}`
     const elm = DOMCacheGetOrSet(name)
-    const level = redAmbrosiaUpgrades[k].level || 0 // Get the level from the loadout, default to 0 if not present
+    const level = redAmbrosiaUpgrades[k].level || 0
     const parent = elm.parentElement!
 
     elm.classList.add('dimmed')
     let levelOverlay = parent.querySelector('.level-overlay') as HTMLDivElement
     if (!levelOverlay) {
-      levelOverlay = document.createElement('p')
+      levelOverlay = document.createElement('div')
       levelOverlay.classList.add('level-overlay')
 
       if (level === redAmbrosiaUpgrades[k].maxLevel) {

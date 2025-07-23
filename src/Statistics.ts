@@ -244,7 +244,7 @@ export const allCubeStats: StatLine[] = [
   },
   {
     i18n: 'SingCitadel2',
-    stat: () => getGQUpgradeEffect('singCitadel')
+    stat: () => getGQUpgradeEffect('singCitadel2')
   },
   {
     i18n: 'Delta',
@@ -2374,8 +2374,8 @@ export const allAddCodeTimerStats: StatLine[] = [
     color: 'lime'
   },
   {
-    i18n: 'InfiniteAscent',
-    stat: () => getRuneEffects('antiquities').addCodeCooldownReduction, // Infinite Ascent rune reduction (20%)
+    i18n: 'Antiquities',
+    stat: () => getRuneEffects('antiquities').addCodeCooldownReduction, // Antiquities rune reduction (20%)
     color: 'lime'
   },
   {

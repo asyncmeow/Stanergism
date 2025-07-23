@@ -269,12 +269,12 @@ export const octeractUpgrades: Record<OcteractDataKeys, OcteractUpgrade> = {
     level: 0,
     freeLevel: 0,
     costFormula: (level: number, baseCost: number) => {
-      return baseCost * Math.pow(1e6, level)
+      return baseCost * Math.pow(1e3, level)
     },
-    maxLevel: 3,
+    maxLevel: 25,
     costPerLevel: 1 / 10,
     effect: (n: number) => {
-      return n / 100
+      return n / 50
     },
     effectDescription: function(n: number) {
       const effectValue = this.effect(n)
@@ -979,15 +979,19 @@ export const upgradeOcteractToString = (upgradeKey: OcteractDataKeys): string =>
   const totalLevels = actualOcteractUpgradeTotalLevels(upgradeKey)
   const effectDesc = upgrade.effectDescription(totalLevels)
 
-  return `<span style="color: gold">${upgrade.name()}</span>
-              <span style="color: lightblue">${upgrade.description()}</span>
-              <span style="color: ${color}"> ${i18next.t('general.level')} ${
-    format(upgrade.level, 0, true)
-  }${maxLevel}${freeLevelInfo}</span>
-              <span style="color: gold">${effectDesc}</span>
-              ${i18next.t('octeract.toString.costNextLevel')} ${
+  const costDisplay = (upgrade.level === upgrade.maxLevel && upgrade.maxLevel !== -1) ?
+  '' :
+  `${i18next.t('octeract.toString.costNextLevel')} ${
     format(costNextLevel, 2, true, true, true)
   } Octeracts${affordableInfo}`
+
+  return `<span style="color: gold">${upgrade.name()}</span>
+  <span style="color: ${color}"> ${i18next.t('general.level')} ${
+    format(upgrade.level, 0, true)
+  }${maxLevel}${freeLevelInfo}</span>
+              <span style="color: lightblue">${upgrade.description()}</span>
+              <span style="color: gold">${effectDesc}</span>
+   ${costDisplay}`
 }
 
 export const updateOcteractUpgradeHTML = (upgradeKey: OcteractDataKeys): void => {

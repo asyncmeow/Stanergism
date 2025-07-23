@@ -1,7 +1,7 @@
 import ClipboardJS from 'clipboard'
 import i18next from 'i18next'
 import LZString from 'lz-string'
-import { awardAchievement, ungroupedNameMap } from './Achievements'
+import { awardAchievement, resetAchievements, ungroupedNameMap } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { calculateOcteractMultiplier } from './Calculate'
 import { testing, version } from './Config'
@@ -27,6 +27,10 @@ import { Alert, Confirm, Prompt } from './UpdateHTML'
 import { cleanString, getElementById } from './Utility'
 import { btoa } from './Utility'
 import { Globals as G } from './Variables'
+import { resetTalismanData } from './Talismans'
+import { resetRunes } from './Runes'
+import { resetRuneBlessings } from './RuneBlessings'
+import { resetRuneSpirits } from './RuneSpirits'
 
 const format24 = new Intl.DateTimeFormat('EN-GB', {
   year: 'numeric',
@@ -293,6 +297,12 @@ export const resetGame = async (force = true) => {
       return Alert(i18next.t('importexport.wrongAnswer'))
     }
   }
+
+  resetAchievements()
+  resetTalismanData('never')
+  resetRunes('never')
+  resetRuneBlessings('never')
+  resetRuneSpirits('never')
 
   const hold = playerJsonSchema.safeParse(deepClone()(blankSave))
 

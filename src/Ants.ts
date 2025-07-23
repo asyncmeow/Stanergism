@@ -279,8 +279,8 @@ export const antUpgradeDescription = (i: number) => {
 }
 
 export const antSacrificePointsToMultiplier = (points: number) => {
-  let multiplier = Math.pow(1 + points / 5000, 2)
-  multiplier *= 1 + 0.2 * Math.log(1 + points) / Math.log(10)
+  let multiplier = 1 + points / 5000
+  multiplier *= 1 + 0.1 * Math.log10(1 + points)
   return Math.min(1e300, multiplier)
 }
 

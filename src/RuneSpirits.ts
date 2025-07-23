@@ -197,6 +197,11 @@ export const buyAllSpiritLevels = (budget: Decimal) => {
   for (const key of runeSpiritKeys) {
     buySpiritLevels(key, Decimal.floor(budget.div(ratio)))
   }
+
+    if (player.offerings.lt(0)) {
+      // TODO: Figure out why this fucking happens so often
+      player.offerings = new Decimal(0)
+    }
 }
 
 export const levelSpirit = (spirit: RuneSpiritKeys, timesLeveled: number, budget: Decimal) => {

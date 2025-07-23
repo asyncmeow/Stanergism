@@ -113,6 +113,7 @@ import {
   buyTalismanLevelToRarityIncrease,
   buyTalismanResources,
   type TalismanKeys,
+  talismanRarityInfo,
   talismans,
   talismanToStringHTML,
   toggleTalismanBuy,
@@ -516,7 +517,10 @@ export const generateEventHandlers = () => {
   for (const key of talismanStats) {
     DOMCacheGetOrSet(`${key}Talisman`).addEventListener(
       'mouseover',
-      () => talismanToStringHTML(key)
+      () => {
+        talismanToStringHTML(key) 
+        talismanRarityInfo(key)
+      }
     )
     DOMCacheGetOrSet(`level${key}Once`).addEventListener(
       'click',

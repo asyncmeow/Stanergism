@@ -1238,7 +1238,7 @@ p#promocodeinfo {
 .tieredAchievementType img.dimmed,
 .ungroupedAchievementType img.dimmed,
 .progressiveAchievementType img.dimmed {
-    opacity: 0.5;
+    opacity: 0.3;
 }
 
 .achievement-ap-overlay {
@@ -1330,21 +1330,12 @@ p#promocodeinfo {
 }
 
 #buyamountoffering {
-    position: absolute;
     left: calc(50% + 350px);
     top: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     z-index: 1;
-}
-
-.talismansCenter {
-    display: flex;
-    width: 70%;
-    flex-direction: column;
-    padding: 0 10px;
-    max-width: 900px;
 }
 
 .talismansModify {
@@ -1356,27 +1347,6 @@ p#promocodeinfo {
 
 .talismansModify p {
     margin: 0;
-}
-
-#talismanSummary,
-#talismanLevelUpSummary,
-#talismanRespecSummary {
-    margin-bottom: 10px;
-}
-
-.talismanBuyAmountContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: 30%;
-    margin-top: 23px;
-}
-
-#buyamounttalisman {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
 }
 
 #buyamountcoin,
@@ -1458,6 +1428,14 @@ p#prestigehotkeys {
     padding: 0;
 }
 
+#runesHeader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
 #runeContainer1,
 #runeContainer3,
 #runeContainer4 {
@@ -1465,11 +1443,6 @@ p#prestigehotkeys {
     flex-direction: column;
     align-items: center;
     position: relative;
-}
-
-#runeContainer2 {
-    margin-top: 20px;
-    justify-content: center;
 }
 
 #runesToggle,
@@ -1560,32 +1533,85 @@ img.runeTypeElement:hover {
     background-color: var(--purplehover-color);
 }
 
-#toggleautofortify,
-#toggleautoenhance {
+#runeContainer2 {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+    position: relative;
+}
+.talismansCenter {
+    grid-area: 1 / 2 / 4 / 6;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.talismanShardSection { 
+    grid-area: 1 / 1 / 4 / 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-left: 10px;
+    width: 100%;
+}
+.talismanToggles { 
+    grid-area: 1 / 6 / 4 / 7;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.talismanSettingsContainer {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    align-items: center;
+}
+
+#rarityInfoTexts {
+    display: none;
+    width: 75%;
+    align-items: center;
+}
+
+.rarityReqNum {
+    float: right;
+}
+
+#toggleautofortify {
     min-width: 125px;
     border: 2px solid red;
 }
 
 #talismanFragmentCost {
-    width: 15em;
-    max-width: 250px;
+    width: 20em;
     text-align: center;
-    margin: 0 -30px 0 0;
 }
 
-.talismanShardsContainer {
+.talismanShardContainers {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
-    width: 30%;
-    margin-top: 23px;
-    z-index: 1;
+    width: 60%;
+    align-items: center;
+}
+
+.talismanShardHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.talismanShardHeader > button {
+    width: 100px;
+    margin: 2px;
 }
 
 .talismanShardContainer {
     display: flex;
     align-items: center;
-    margin-bottom: 12px;
+    padding: 5px;
 }
 
 .talismanShardIcon {
@@ -1596,7 +1622,7 @@ img.runeTypeElement:hover {
     width: 5em;
     min-width: 70px;
     margin-left: 4px;
-    font-size: 0.9em;
+    font-size: 1em;
 }
 
 .fragmentBtn {
@@ -1615,18 +1641,6 @@ img.runeTypeElement:hover {
     min-width: 80px;
 }
 
-#buyTalismanAll {
-    width: 5em;
-    min-width: 80px;
-    color: orange;
-}
-
-#toggleautoBuyFragments {
-    width: 7em;
-    min-width: 94px;
-    margin-right: 10px;
-    color: orange;
-}
 
 .talisminBtnAvailable {
     background-color: var(--purplebtn-color);
@@ -1637,21 +1651,20 @@ img.runeTypeElement:hover {
     background-color: var(--purplehover-color);
 }
 
+
 .talismansContainer {
     display: flex;
     position: relative;
-    justify-content: space-around;
-    padding: 0 10px;
-    max-width: 1500px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .talismanContainer {
     flex-direction: column;
-    min-width: 11%;
-    min-width: 102px;
+    width: 96px;
     align-items: center;
     white-space: nowrap;
-    font-size: min(1em, 20px);
+    padding: 2px;
 }
 
 .talismanIcon {
@@ -1662,7 +1675,7 @@ img.runeTypeElement:hover {
 
 .talismanIcon > img {
     position: relative;
-    width: calc(100% - 6px); /* 58px */
+    width: calc(100% - 6px);
     height: calc(100% - 6px);
     object-fit: none;
     background-color: var(--bg-color);
@@ -1674,27 +1687,17 @@ img.runeTypeElement:hover {
     margin-bottom: 3px;
 }
 
-#respecAllTalismans {
-    position: absolute;
-    width: 7em;
-    max-width: 140px;
-    color: plum;
-    border: 2px solid white;
-    left: 135px;
-    top: 70px;
-    transform: translate(-100%);
-}
-
 #talismanEffect,
-#talismanlevelup,
-#talismanrespec {
-    margin-top: 40px;
+#talismanLevelUpCost {
+    margin-top: 10px;
     text-align: center;
 }
 
 #talismanlevelup {
-    align-self: flex-start;
-    margin-left: 150px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 #talismanlevelup table {
@@ -1704,24 +1707,6 @@ img.runeTypeElement:hover {
 #talismanlevelup table p {
     font-size: initial;
     width: 5em;
-}
-
-#talismanrespec > div {
-    display: flex;
-    flex-direction: column;
-    transform: translate(25%);
-    margin-top: 10px;
-}
-
-#talismanrespec > div > div {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-}
-
-.talismanRespecBtn {
-    width: 200px;
-    text-align: center;
 }
 
 #transcension {
@@ -3935,6 +3920,11 @@ header #obtainiumDisplay { color: pink; }
     gap: 4px;
 }
 
+.blueberryUpgradeTier > div {
+    width: 32px;
+    height: 32px;
+}
+
 .singularityUpgrade,
 .octeractUpgrade,
 .singularityChallenge {
@@ -4305,14 +4295,15 @@ img#singularityPerksIcon {
     border: 2px solid gold;
 }
 
-.notInLoadout {
-    visibility: hidden;
-}
-
 /* Style for dimmed image */
 .blueberryUpgrade img.dimmed,
 .redAmbrosiaUpgrade img.dimmed {
-    opacity: 0.5; /* Adjust the opacity to control the dimming effect */
+    opacity: 0.3;
+}
+
+.blueberryUpgrade img.superDimmed,
+.redAmbrosiaUpgrade img.superDimmed {
+    opacity: 0; /* if not bought, fully dim */
 }
 
 /* Style for level display */
@@ -4322,9 +4313,14 @@ img#singularityPerksIcon {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 1em; /* Adjust font size as needed */
-    text-shadow: 2px 2px 4px #000; /* Add a text shadow for better readability */
-    z-index: 999; /* Ensure the text is on top of the image */
+    font-size: 1em;
+    text-shadow: 2px 2px 4px #000;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 0.8;
+    background-color: black;
 }
 
 /* Style for relative positioning */

@@ -95,6 +95,7 @@ export const buyAccelerator = (autobuyer?: boolean) => {
 
     player.acceleratorBought = buyable
     player.acceleratorCost = thisCost
+    awardAchievementGroup('accelerators')
     return
   }
 
@@ -136,13 +137,16 @@ export const buyAccelerator = (autobuyer?: boolean) => {
     thisCost = getCostAccelerator(buyFrom)
     player.acceleratorCost = thisCost
     if (buyFrom >= buymax) {
-      return
+      break
     }
   }
 
-  player.prestigenoaccelerator = false
-  player.transcendnoaccelerator = false
-  player.reincarnatenoaccelerator = false
+  if (player.acceleratorBought > 0) {
+    player.prestigenoaccelerator = false
+    player.transcendnoaccelerator = false
+    player.reincarnatenoaccelerator = false
+  }
+
   updateAllTick()
   awardAchievementGroup('accelerators')
 }
@@ -218,6 +222,7 @@ export const buyMultiplier = (autobuyer?: boolean) => {
 
     player.multiplierBought = buyable
     player.multiplierCost = thisCost
+    awardAchievementGroup('multipliers')
     return
   }
 
@@ -259,13 +264,16 @@ export const buyMultiplier = (autobuyer?: boolean) => {
     thisCost = getCostMultiplier(buyFrom)
     player.multiplierCost = thisCost
     if (buyFrom >= buymax) {
-      return
+      break
     }
   }
 
+  if (player.multiplierBought > 0) {
   player.prestigenomultiplier = false
   player.transcendnomultiplier = false
   player.reincarnatenomultiplier = false
+  }
+
   updateAllMultiplier()
   awardAchievementGroup('multipliers')
 }

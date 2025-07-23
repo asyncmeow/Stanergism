@@ -1585,7 +1585,7 @@ const loadSynergy = () => {
     // For blueberry upgrades!
     displayProperLoadoutCount()
 
-    DOMCacheGetOrSet('talismanlevelup').style.display = 'none'
+    DOMCacheGetOrSet('talismanLevelUpCost').style.display = 'none'
 
     DOMCacheGetOrSet('antSacrificeSummary').style.display = 'none'
 

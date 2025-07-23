@@ -138,14 +138,14 @@ const subtabInfo: Record<Tabs, SubTab> = {
       {
         subTabID: '1',
         get unlocked () {
-          return player.unlocks.prestige
+          return true
         },
         buttonID: 'toggleAchievementSubTab1'
       },
       {
         subTabID: '2',
         get unlocked () {
-          return player.unlocks.prestige
+          return true
         },
         buttonID: 'toggleAchievementSubTab2'
       }
@@ -597,8 +597,8 @@ tabRow.appendButton(
     .setType(Tabs.Upgrades)
     .makeDraggable()
     .makeRemoveable(),
-  new $Tab({ class: 'prestigeunlock', id: 'achievementstab', i18n: 'tabs.main.achievements' })
-    .setUnlockedState(() => player.unlocks.prestige)
+  new $Tab({ /*class: 'prestigeunlock',*/ id: 'achievementstab', i18n: 'tabs.main.achievements' })
+    //.setUnlockedState(() => player.unlocks.prestige)
     .setType(Tabs.Achievements)
     .makeDraggable()
     .makeRemoveable(),

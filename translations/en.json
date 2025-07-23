@@ -683,9 +683,9 @@
       "344": "A crumby achievement: Obtain 1e25,000 Galactic Crumbs.",
       "345": "Get it? Crumbs?: Obtain 1e125,000 Galactic Crumbs.",
       "346": "You clearly do: Obtain 1e1,000,000 Galactic Crumbs.",
-      "347": "Gordon Ramses: Amass a 1e6x Multiplier through Ant Sacrifice.",
-      "348": "Wolfgang Pluck: Amass a 1e15x Multiplier through Ant Sacrifice.",
-      "349": "Marco Pierre Blanco: Amass a 1e100x Multiplier through Ant Sacrifice.",
+      "347": "Gordon Ramses: Amass a 1e12x Multiplier through Ant Sacrifice.",
+      "348": "Wolfgang Pluck: Amass a 1e50x Multiplier through Ant Sacrifice.",
+      "349": "Marco Pierre Blanco: Amass a 1e150x Multiplier through Ant Sacrifice.",
       "350": "Ascensions are suggestions: Ascend 1e16 times.",
       "351": "Nothing promised, no regrets: Ascend 1e20 times.",
       "352": "Immaculate Ascensions: Ascend 1e25 times.",
@@ -2556,9 +2556,9 @@
       "75": "[3x25] Automatically gain completions for Challenge 5 while running a Reincarnation Challenge",
       "76": "[4x1] Welcome to the land of expensive researches. Here's +10% Obtainium per level to help you out!",
       "77": "[4x2] If you offer 10x the rune EXP to the Speed rune, you'd get about 150 more levels, on average. Why not increase that by 1 per level?",
-      "78": "[4x3] If you offer 10x the rune EXP to the Duplication rune, you'd get about 150 more levels, on average. Why not increase that by 1 per level?",
-      "79": "[4x4] If you offer 10x the rune EXP to the Prism rune, you'd get about 150 more levels, on average. Why not increase that by 1 per level?",
-      "80": "[4x5] If you offer 10x the rune EXP to the Thrift rune, you'd get about 150 more levels, on average. Why not increase that by 1 per level?",
+      "78": "[4x3] If you offer 10x the rune EXP to the Duplication rune, you'd get about 120 more levels, on average. Why not increase that by 1 per level?",
+      "79": "[4x4] If you offer 10x the rune EXP to the Prism rune, you'd get about 90 more levels, on average. Why not increase that by 1 per level?",
+      "80": "[4x5] If you offer 10x the rune EXP to the Thrift rune, you'd get about 60 more levels, on average. Why not increase that by 1 per level?",
       "81": "[4x6] You thought the previous researches are expensive? You're going to need this! [+10% Obtainium/level]",
       "82": "[4x7] Permanently UNLOCK the Rune of Superior Intellect! [+%Ob / +Ant Speed / +%Off.]",
       "83": "[4x8] Taking forever to level up that SI Rune? Here's +5% SI Rune EXP per level.",
@@ -2590,10 +2590,10 @@
       "109": "[5x9] A more convoluted trick makes your base Ant ELO increase by 25 per level again!",
       "110": "[5x10] Gain +1% more ELO from Ant sources per level because why not?",
       "111": "[5x11] If you offer 10x the rune EXP to the Speed rune, you'd get about 150 more levels, on average. Why not increase that by 1 per level?",
-      "112": "[5x12] If you offer 10x the rune EXP to the Duplication rune, you'd get about 150 more levels, on average. Why not increase that by 1 per level",
-      "113": "[5x13] If you offer 10x the rune EXP to the Prism rune, you'd get about 150 more levels, on average. Why not increase that by 1 per level?",
-      "114": "[5x14] If you offer 10x the rune EXP to the Thrift rune, you'd get about 150 more levels, on average. Why not increase that by 1 per level?",
-      "115": "[5x15] If you offer 10x the rune EXP to the Superior Intellect rune, you'd get about 150 more levels, on average. Why not increase that by 1 per level?",
+      "112": "[5x12] If you offer 10x the rune EXP to the Duplication rune, you'd get about 120 more levels, on average. Why not increase that by 1 per level",
+      "113": "[5x13] If you offer 10x the rune EXP to the Prism rune, you'd get about 90 more levels, on average. Why not increase that by 1 per level?",
+      "114": "[5x14] If you offer 10x the rune EXP to the Thrift rune, you'd get about 60 more levels, on average. Why not increase that by 1 per level?",
+      "115": "[5x15] If you offer 10x the rune EXP to the Superior Intellect rune, you'd get about 30 more levels, on average. Why not increase that by 1 per level?",
       "116": "Talismans grant another +0.1% more free Rune Levels per level!",
       "117": "[5x17] Talismans grant yet ANOTHER +0.1% more free Rune Levels per level!",
       "118": "[5x18] Try this for size: Talismans grant +0.2% more free Rune Levels per level! It's like twice as good as the other upgrades.",
@@ -2742,10 +2742,10 @@
       "challenge15Auto": "Your grandparents had to bend dimensions to gain Challenge 15 score, but not you! Updates Challenge 15 Exponent every tick while in challenge 15!",
       "extraWarp": "\"Hey dude, get in this portal I built up last night in my shed!\" said the Quack Merchant",
       "autoWarp": "With the power of Quacks Warp machine will now be able to go into overdrive",
-      "improveQuarkHept": "Did you know that after 1,000 Quark Hepteracts, their effect is raised to ^0.5? The Seal disapproves. Gain +2% to the diminishing return exponent.",
-      "improveQuarkHept2": "After 1,024,000 Quark Hepts, their effect is raised to ^0.25!!! Nonsense. Gain +2% to all Quark Hept DRs.",
-      "improveQuarkHept3": "After ~100 million Quark Hepts, their effect is raised to ^0.16! Absolute rubbish. Gain +2% to all Quark Hept DRs, yet again.",
-      "improveQuarkHept4": "And when they've given you their all, some stagger and fall after all it's not easy...",
+      "improveQuarkHept": "After 1,000 Quark Hepts, you gain +20% more Quarks every doubling! This, however, raises the entire reward by +0.01 power per level!",
+      "improveQuarkHept2": "Want even stronger Quark Hepts? Gain +0.01 power per level to the Quark Hept Exponent!",
+      "improveQuarkHept3": "You are probably asking why I would sell this to you instead of using it for myself. Well... here's +0.01 power per level!",
+      "improveQuarkHept4": "+0.01 power per level... You know that 10^0.01 is about 1.023, right?",
       "shopImprovedDaily": "Hey you. Yeah, you! Quarks make seal merchant happy. Get +5% more of them from code 'daily' per level.",
       "shopImprovedDaily2": "Gain 1 additional free Singularity Upgrade and 20% more Golden Quarks per use of 'daily' per level!",
       "shopImprovedDaily3": "Gain 1 additional free Singularity Upgrade and 15% more Golden Quarks per use of 'daily' per level!",
@@ -2756,7 +2756,7 @@
       "seasonPassInfinity": "[Supplied by - Infinity CO.] Gain 1.2% more cubes per level, multiplicative! (Multiplier is 1.012^level). This effect is raised to the power of 1.25 for Octeract calculations!",
       "shopSingularityPenaltyDebuff": "Derpsmith was so proud of your performance in the first EXALT that he wants to make your singularity debuffs weaker. At a cost. A big cost.",
       "obtainiumEX2": "Gain +1% Obtainium per level per Singularity!!!",
-      "improveQuarkHept5": "[NOT Supplied by - Infinity CO.] This is 1/50 as effective as a normal improver. Why? Because of balancing...",
+      "improveQuarkHept5": "[NOT Supplied by - Infinity CO.] Adds +0.01 Quark Hept Exponent per level. Platonic claims this is not from Infinity CO., but that might just be a cover.",
       "shopAmbrosiaGeneration1": "Buying this charm grants +1% more Ambrosia Bar Points per level, for more Ambrosia! Don't know what that means? You soon will.",
       "shopAmbrosiaGeneration2": "Newly fortified Obtainium Dust makes your charm more powerful, giving +1% more Ambrosia Bar Points per level, stacking multiplicatively.",
       "shopAmbrosiaGeneration3": "It turns out adding more Obtainium Dust makes your charm more powerful, go figure. +1% more Ambrosia Bar Points per level, stacking multiplicatively.",
@@ -2848,11 +2848,11 @@
       "challenge15Auto": "Even in a premium shop it's kinda obvious, right?",
       "extraWarp": "You can warp <<red|+{{amount}}>> extra times.",
       "autoWarp": "If you buy this upgrade, you can toggle <<red|auto warp>> in the Hepteract Forge tab. Only if you buy this, though.",
-      "improveQuarkHept": "The Diminishing Returns Exponent on Quark Hepteract is increased by <<cyan|+{{amount}}%>>.",
-      "improveQuarkHept2": "The Diminishing Returns Exponent on Quark Hepteract is increased by <<cyan|+{{amount}}%>>.",
-      "improveQuarkHept3": "The Diminishing Returns Exponent on Quark Hepteract is increased by <<cyan|+{{amount}}%>>.",
-      "improveQuarkHept4": "The Diminishing Returns Exponent on Quark Hepteract is increased by <<cyan|+{{amount}}%>>.",
-      "improveQuarkHept5": "The Diminishing Returns Exponent on Quark Hepteract is increased by <<cyan|+{{amount}}%>>.",
+      "improveQuarkHept": "The Exponent on Quark Hepteract is increased by <<cyan|+{{amount}}>>.",
+      "improveQuarkHept2": "The Exponent on Quark Hepteract is increased by <<cyan|+{{amount}}>>.",
+      "improveQuarkHept3": "The Exponent on Quark Hepteract is increased by <<cyan|+{{amount}}>>.",
+      "improveQuarkHept4": "The Exponent on Quark Hepteract is increased by <<cyan|+{{amount}}>>.",
+      "improveQuarkHept5": "The Exponent on Quark Hepteract is increased by <<cyan|+{{amount}}>>.",
       "shopImprovedDaily": "Code 'daily' gives <<cyan|+{{amount}}%>> more quarks.",
       "shopImprovedDaily2": "Code 'daily' grants <<turquoise|+{{amount1}}>> free Singularity Upgrades and <<turquoise|+{{amount2}}%>> more Golden Quarks.",
       "shopImprovedDaily3": "Code 'daily' grants <<turquoise|+{{amount1}}>> free Singularity Upgrades and <<turquoise|+{{amount2}}%>> more Golden Quarks.",
@@ -3374,18 +3374,18 @@
       },
       "singQuarkHepteract": {
         "name": "I wish my Quark Hepteract was marginally better.",
-        "description": "Wrong game, oops. Anyway, would you like a very slightly better DR exponent on Quark Hepteract?",
-        "effect": "The DR exponent is now {{n}}% larger!"
+        "description": "Wrong game, oops. Anyway, would you like more exponent on your Quark Hepteract. +0.02 per level, to be precise.",
+        "effect": "Quark Hepteract Exponent +{{n}}"
       },
       "singQuarkHepteract2": {
         "name": "I wish my Quark Hepteract was marginally better II.",
         "description": "Still not the right game. Same as the previous upgrade.",
-        "effect": "The DR exponent is now {{n}}% larger!"
+        "effect": "Quark Hepteract Exponent +{{n}}"
       },
       "singQuarkHepteract3": {
         "name": "I wish my Quark Hepteract was marginally better III.",
-        "description": "I AM NOT THE GODMOTHER YOU ARE LOOKING FOR, DYLAN!",
-        "effect": "The DR exponent is now {{n}}% larger!"
+        "description": "I AM NOT THE GODMOTHER YOU ARE LOOKING FOR! This wish is weaker... but it can be overclocked.",
+        "effect": "Quark Hepteract Exponent +{{n}}"
       },
       "singOcteractGain": {
         "name": "Octeract Absinthe",
@@ -3718,7 +3718,7 @@
       "58": "Printer production is multiplied by 1e+15000.",
       "59": "Coin Mint production is multiplied by 1e+25000.",
       "60": "Alchemies production is multiplied by 1e+35000.",
-      "61": "Welcome to Reincarnation! +5% Offering Recycle, +2 EXP/Offering!",
+      "61": "Welcome to Reincarnation! +5 ♲ Salvage, +2 EXP/Offering!",
       "62": "Completing Challenges, automatically or manually, increase Offerings gained in Reincarnation. Bonus subject to time multiplier!",
       "63": "Crystal Production is multiplied based on Particles to the sixth power [Caps at 1e6000x].",
       "64": "Mythos Shard Production is multiplied by your Particles squared.",
@@ -3886,7 +3886,7 @@
       "58": "Effect: Look above!",
       "59": "Effect: Look above!",
       "60": "Effect: Look above!",
-      "61": "Effect: +5% Offering Recycle/+2EXP per Offerings. Duh!",
+      "61": "Effect: +5 ♲ Salvage / +2 EXP per Offering. Wow!",
       "62": "Effect: Base Offering amount for Reincarnations +{{x}}. Challenge yourself!",
       "63": "Effect: All Crystal production x{{x}}",
       "64": "Effect: All Mythos Shard production x{{x}}",
@@ -4601,8 +4601,8 @@
       },
       "octeractImprovedQuarkHept": {
         "name": "I wish for even better Quark Hepteracts.",
-        "description": "The godmother is absent, but Derpsmith is here! +2% DR exponent per level. Stacks additively with all the others!",
-        "effect": "Quark Hepteract DR +{{n}}."
+        "description": "The godmother is absent, but Derpsmith is here! +0.02 exponent to your Quark Hepteract per level.",
+        "effect": "Quark Hepteract Exponent +{{n}}"
       },
       "octeractImprovedGlobalSpeed": {
         "name": "The forbidden clock of time",
@@ -4796,7 +4796,7 @@
     "recycleChanceDividedBy": "You have {{amount}} ♲ Salvage. This divides EXP gain by {{div}}.",
     "hover": "Hey, hover over a rune icon to get details on what each one does and what benefits they're giving you!",
     "thanksResearches": "The effect of the first five Runes is increased by {{percent}}%",
-    "offeringInvested": "<<orange | Invested <b>{{amount}}</b> Offerings>>",
+    "offeringInvested": "<<orange | EXP: <b>{{amount}}</b>>",
     "speed": {
       "name": "Speed Rune",
       "description": "An energy emanates from this stone. You feel compelled to inscribe power into it with your Offerings.",
@@ -4818,7 +4818,7 @@
     "thrift": {
       "name": "Thrift Rune",
       "description": "It seems with this rune in tow, you keep making great deals on your purchases, and your Offerings are just a little more reusable.",
-      "values": "+0.125% building cost growth delay per level, more ♲ Salvage per level (cap: ♲ +200), Tax Growth is delayed more for each level (cap: 99%)!",
+      "values": "+0.125% building cost growth delay per level, more ♲ Salvage per level (log scaling), Tax Growth is delayed more for each level (cap: 99%)!",
       "effect": "Thrift Rune Bonus: Delay all producer cost increases by {{val}}%, ♲ Salvage: +{{val2}}. -{{val3}}% Tax Growth"
     },
     "superiorIntellect": {
@@ -4886,11 +4886,11 @@
         "3": "<<lightblue | Rare>>",
         "4": "<<orchid | Epic>>",
         "5": "<<orange | Legendary>>",
-        "6": "<<crimson | MYTHIC!>>",
-        "7": "<<cyan | IMMACULATE!>>",
-        "8": "<<red | SPECIAL!>>",
-        "9": "<<gold | EXTRAORDINARY!>>",
-        "10": "<span class=\"rainbowText\">PERFECT!</span>"
+        "6": "<<crimson | Mythic>>",
+        "7": "<<violet | EXTRAORDINARY!>>",
+        "8": "<<lightcoral | GODLIKE!>>",
+        "9": "<<darkorange | PERFECT!>>",
+        "10": "<span class=\"rainbowText\">IMMACULATE!</span>"
       },
       "modifiers": {
         "positive": "{{name}}: Positive",
@@ -4943,7 +4943,7 @@
         "name": "The Wow! Square",
         "description": "For the average :unsmith:, this is a cube.",
         "inscription": "<<gold | ✏>> Inscription: Even-Dimensional Cube Gain is increased by <<gold|{{val}}>>",
-        "signature": "<<crimson | ✎>> Signature: Odd-Dimensional Cube Gain is increased by <<crimson|12%>>"
+        "signature": "<<crimson | ✎>> Signature: Odd-Dimensional Cube Gain is increased by <<crimson|20%>>"
       },
       "achievement": {
         "name": "Medal of Achievement",
@@ -4980,6 +4980,23 @@
         "polymath": "Polymath",
         "mortuus": "Mortuus Est",
         "plastic": "Plastic"
+      },
+      "rarityInfo": {
+        "title": "⋆ Rarity Requirements ⋆<br>{{talismanName}}",
+        "infoText1": "Higher Talisman Rarities improve the power of its <<gold | ✏>> Inscription and give more Free Rune Levels!",
+        "infoText2": "When your Talisman is Mythic or better, it gains a <<crimson | ✎>> Signature!",
+        "common": "Common",
+        "uncommon": "Uncommon",
+        "rare": "Rare",
+        "epic": "Epic",
+        "legendary": "Legendary",
+        "mythic": "Mythic",
+        "extraordinary": "Extraordinary",
+        "godlike": "Godlike",
+        "perfect": "Perfect",
+        "immaculate": "Immaculate",
+        "default": "Default!",
+        "levelReq": "≥ Level {{level}}"
       },
       "summaries": {
         "exemption": "=-=-=-= Exemption Talisman Effects =-=-=-=",
@@ -5253,7 +5270,7 @@
       "gSpeedMultIgnoreDR": "Immaculate Global Speed",
       "gSpeedMult": "Global Speed Multipliers",
       "antSacrificeMult": "Ant Sacrifice Multipliers",
-      "talismanRuneBonusMult": "Talisman → Rune Level Mult.",
+      "talismanRuneBonusMult": "Talisman → Rune Mult",
       "ascMult": "Asc. Speed Multipliers",
       "globalCubeMult": "Global Cube Multipliers",
       "cubeMult": "Cube Multipliers",
@@ -5895,7 +5912,7 @@
       "BaseTimer": "Base Timer (ms):",
       "Calculator4": "PL-AT δ Discount:",
       "SingularityCount": "Singularity Milestone Bonus:",
-      "InfiniteAscent": "Infinite Ascent Bonus:",
+      "Antiquities": "Antiquities of Ant God Bonus:",
       "SingularityPerkBonus": "Singularity Perk Bonus:",
       "Total": "Final Add Code Interval (ms):"
     },
@@ -6014,7 +6031,7 @@
       "AchievementBonus": "Salvage from Achievements:",
       "SynergismLevel": "Synergism Level:",
       "SynergismLevelMilestone": "Level Milestone - Salvage Challenge Buff:",
-      "UpgradeBonus": "Transcension Upgrade 1:",
+      "UpgradeBonus": "Reincarnation Upgrade 1:",
       "RuneBonus": "Thrift Rune:",
       "CubeUpgrade2": "Cube Upgrade 2:",
       "AbyssHepteract": "Abyss Hepteract Bonus:",

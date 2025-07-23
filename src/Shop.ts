@@ -464,8 +464,8 @@ export const shopData: Record<keyof Player['shopUpgrades'], IShopData> = {
   improveQuarkHept: {
     tier: 'Ascension',
     price: 2e5 - 1,
-    priceIncrease: 0,
-    maxLevel: 1,
+    priceIncrease: 19999,
+    maxLevel: 15,
     type: shopUpgradeTypes.UPGRADE,
     refundable: false,
     refundMinimumLevel: 0
@@ -473,8 +473,8 @@ export const shopData: Record<keyof Player['shopUpgrades'], IShopData> = {
   improveQuarkHept2: {
     tier: 'Singularity',
     price: 2e7 - 1,
-    priceIncrease: 0,
-    maxLevel: 1,
+    priceIncrease: 2e6 - 1,
+    maxLevel: 15,
     type: shopUpgradeTypes.UPGRADE,
     refundable: false,
     refundMinimumLevel: 0
@@ -482,8 +482,8 @@ export const shopData: Record<keyof Player['shopUpgrades'], IShopData> = {
   improveQuarkHept3: {
     tier: 'SingularityVol2',
     price: 2e9 - 1,
-    priceIncrease: 0,
-    maxLevel: 1,
+    priceIncrease: 2e9 - 1,
+    maxLevel: 15,
     type: shopUpgradeTypes.UPGRADE,
     refundable: false,
     refundMinimumLevel: 0
@@ -491,8 +491,8 @@ export const shopData: Record<keyof Player['shopUpgrades'], IShopData> = {
   improveQuarkHept4: {
     tier: 'SingularityVol3',
     price: 2e11 - 1,
-    priceIncrease: 0,
-    maxLevel: 1,
+    priceIncrease: 2e11 - 1,
+    maxLevel: 15,
     type: shopUpgradeTypes.UPGRADE,
     refundable: false,
     refundMinimumLevel: 0
@@ -1190,22 +1190,22 @@ export const shopDescriptions = (input: ShopUpgradeNames) => {
       break
     case 'improveQuarkHept':
       lol.innerHTML = i18next.t('shop.upgradeEffects.improveQuarkHept', {
-        amount: 2 * player.shopUpgrades.improveQuarkHept
+        amount: format(player.shopUpgrades.improveQuarkHept / 100, 2)
       })
       break
     case 'improveQuarkHept2':
       lol.innerHTML = i18next.t('shop.upgradeEffects.improveQuarkHept2', {
-        amount: 2 * player.shopUpgrades.improveQuarkHept2
+        amount: format(player.shopUpgrades.improveQuarkHept2 / 100, 2)
       })
       break
     case 'improveQuarkHept3':
       lol.innerHTML = i18next.t('shop.upgradeEffects.improveQuarkHept3', {
-        amount: 2 * player.shopUpgrades.improveQuarkHept3
+        amount: format(player.shopUpgrades.improveQuarkHept3 / 100, 2)
       })
       break
     case 'improveQuarkHept4':
       lol.innerHTML = i18next.t('shop.upgradeEffects.improveQuarkHept4', {
-        amount: 2 * player.shopUpgrades.improveQuarkHept4
+        amount: format(player.shopUpgrades.improveQuarkHept4 / 100, 2)
       })
       break
     case 'shopImprovedDaily':
@@ -1263,7 +1263,7 @@ export const shopDescriptions = (input: ShopUpgradeNames) => {
       break
     case 'improveQuarkHept5':
       lol.innerHTML = i18next.t('shop.upgradeEffects.improveQuarkHept5', {
-        amount: format(player.shopUpgrades.improveQuarkHept5 / 25, 2, true)
+        amount: format(player.shopUpgrades.improveQuarkHept5 / 100, 2, true)
       })
       break
     case 'seasonPassInfinity':

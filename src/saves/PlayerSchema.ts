@@ -126,7 +126,7 @@ const goldenQuarkUpgradeSchema = z.object({
 
 const ambrosiaUpgradeSchema = z.object({
   ambrosiaInvested: z.number().default(0),
-  level: z.number().default(0)
+  blueberriesInvested: z.number().default(0)
 })
 
 export const playerCorruptionSchema = z.object({

@@ -146,7 +146,7 @@ export const hepteracts: { [K in HepteractKeys]: HepteractData<K> } = {
         + player.shopUpgrades.improveQuarkHept2 / 100
         + player.shopUpgrades.improveQuarkHept3 / 100
         + player.shopUpgrades.improveQuarkHept4 / 100
-        + player.shopUpgrades.improveQuarkHept5 / 5000
+        + player.shopUpgrades.improveQuarkHept5 / 100
     }
   },
   challenge: {
@@ -455,7 +455,7 @@ export const expandHepteracts = async (hept: HepteractKeys) => {
   const heptCap = getFinalHepteractCap(hept)
   const currHeptCapNoMulti = getHepteractCap(hept)
 
-  if (hepteracts[hept].UNLOCKED()) {
+  if (!hepteracts[hept].UNLOCKED()) {
     return Alert(i18next.t('hepteracts.notUnlocked'))
   }
 
@@ -537,14 +537,14 @@ export const autoCraftHepteracts = (hept: HepteractKeys, heptAmount: number) => 
     hepteracts[hept].BAL -= baseCap
     hepteracts[hept].TIMES_CAP_EXTENDED += 1
 
+    heptCap *= 2
+    baseCap *= 2
+
     craft = Math.min(heptCap - hepteracts[hept].BAL, amountToCraft)
 
     hepteracts[hept].BAL += craft
     amountCrafted += craft
     amountToCraft -= craft
-
-    heptCap *= 2
-    baseCap *= 2
   }
 
   if (typeof quarks === 'number') {

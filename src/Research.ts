@@ -150,6 +150,7 @@ export const maxRoombaResearchIndex = (p = player) => {
   return base + c11 + c12 + c13 + c14
 }
 
+// TODO: WHY
 export const isResearchUnlocked = (index: number) => {
   // https://stackoverflow.com/questions/20477177/creating-an-array-of-cumulative-sum-in-javascript
   const cumuSum = ((sum) => (value: number) => sum += value)(0)

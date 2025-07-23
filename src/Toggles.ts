@@ -410,6 +410,13 @@ export const toggleRuneScreen = (indexStr: string) => {
       b.style.display = 'none'
     }
   }
+
+  if (index === 2) {
+    DOMCacheGetOrSet('offeringDetails').style.display = 'none'
+  }
+  else {
+    DOMCacheGetOrSet('offeringDetails').style.display = 'flex'
+  }
   // player.subtabNumber = index - 1
 }
 

@@ -20,14 +20,13 @@ export const buyGenerator = (i: number, state: boolean) => {
   const cost = Decimal.pow(10, G.upgradeCosts[q])
 
   if (player.upgrades[q] === 0 && player[type].gte(cost)) {
+    player[type] = player[type].sub(cost)
+    player.upgrades[q] = 1
+    upgradeupdate(q, state)
     awardAchievement(ungroupedNameMap.generationAch1)
     awardAchievement(ungroupedNameMap.generationAch2)
     awardAchievement(ungroupedNameMap.generationAch3)
     awardAchievement(ungroupedNameMap.generationAch4)
-
-    player[type] = player[type].sub(cost)
-    player.upgrades[q] = 1
-    upgradeupdate(q, state)
   }
 }
 

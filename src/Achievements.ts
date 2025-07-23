@@ -19,6 +19,7 @@ import { Globals as G } from './Variables'
 import { Tabs } from './Tabs'
 import { displayLevelStuff } from './Levels'
 import { campaignTokens } from './Campaign'
+import { antSacrificePointsToMultiplier } from './Ants'
 
 export const resetAchievementCheck = (reset: resetNames) => {
   if (reset === 'prestige') {
@@ -366,12 +367,13 @@ export const progressiveAchievements: Record<ProgressiveAchievements, Progressiv
   redAmbrosiaUpgrades: {
     maxPointValue: -1,
     pointsAwarded: () => {
-      return 10 * Object.values(redAmbrosiaUpgrades).reduce((acc, upgrade) => {
-        if (upgrade.maxLevel !== -1 && upgrade.level >= upgrade.maxLevel) {
-          acc++
+      let pointValue = 0
+      for (const upgrade of Object.values(redAmbrosiaUpgrades)) {
+        if (upgrade.level >= upgrade.maxLevel) {
+          pointValue += 10
         }
-        return acc
-      }, 0)
+      }
+      return pointValue
     },
     updateValue: () => {
       return 0
@@ -982,7 +984,7 @@ export const achievements: Achievement[] = [
   },
   {
     pointValue: 30,
-    unlockCondition: () => player.challengecompletions[6] >= 15,
+    unlockCondition: () => player.challengecompletions[6] >= 20,
     group: 'challenge6',
     reward: {
       taxReduction: () =>
@@ -1021,7 +1023,7 @@ export const achievements: Achievement[] = [
   },
   {
     pointValue: 30,
-    unlockCondition: () => player.challengecompletions[7] >= 15,
+    unlockCondition: () => player.challengecompletions[7] >= 20,
     group: 'challenge7',
   },
   {
@@ -1052,7 +1054,7 @@ export const achievements: Achievement[] = [
   },
   {
     pointValue: 30,
-    unlockCondition: () => player.challengecompletions[8] >= 15,
+    unlockCondition: () => player.challengecompletions[8] >= 20,
     group: 'challenge8',
   },
   {
@@ -1089,7 +1091,7 @@ export const achievements: Achievement[] = [
   { pointValue: 25, unlockCondition: () => player.challengecompletions[9] >= 10, group: 'challenge9' },
   {
     pointValue: 30,
-    unlockCondition: () => player.challengecompletions[9] >= 15,
+    unlockCondition: () => player.challengecompletions[9] >= 20,
     group: 'challenge9',
   },
   {
@@ -1237,49 +1239,49 @@ export const achievements: Achievement[] = [
   { pointValue: 35, unlockCondition: () => player.antPoints.gte('1e2500'), group: 'antCrumbs' },
   {
     pointValue: 5,
-    unlockCondition: () => player.antSacrificePoints >= 666 && player.secondOwnedAnts > 0,
+    unlockCondition: () => antSacrificePointsToMultiplier(player.antSacrificePoints) >= 2 && player.secondOwnedAnts > 0,
     group: 'sacMult',
     reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 2 },
     checkReset: () => player.highestSingularityCount >= 10
   },
   {
     pointValue: 10,
-    unlockCondition: () => player.antSacrificePoints >= 5000 && player.thirdOwnedAnts > 0,
+    unlockCondition: () => antSacrificePointsToMultiplier(player.antSacrificePoints) >= 6 && player.thirdOwnedAnts > 0,
     group: 'sacMult',
     reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 1 },
     checkReset: () => player.highestSingularityCount >= 10
   },
   {
     pointValue: 15,
-    unlockCondition: () => player.antSacrificePoints >= 25000 && player.fourthOwnedAnts > 0,
+    unlockCondition: () => antSacrificePointsToMultiplier(player.antSacrificePoints) >= 20 && player.fourthOwnedAnts > 0,
     group: 'sacMult',
     reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 2 },
     checkReset: () => player.highestSingularityCount >= 10
   },
   {
     pointValue: 20,
-    unlockCondition: () => player.antSacrificePoints >= 1e5 && player.fifthOwnedAnts > 0,
+    unlockCondition: () => antSacrificePointsToMultiplier(player.antSacrificePoints) >= 100 && player.fifthOwnedAnts > 0,
     group: 'sacMult',
     reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 1 },
     checkReset: () => player.highestSingularityCount >= 10
   },
   {
     pointValue: 25,
-    unlockCondition: () => player.antSacrificePoints >= 1e6 && player.sixthOwnedAnts > 0,
+    unlockCondition: () => antSacrificePointsToMultiplier(player.antSacrificePoints) >= 500 && player.sixthOwnedAnts > 0,
     group: 'sacMult',
     reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 2 },
     checkReset: () => player.highestSingularityCount >= 10
   },
   {
     pointValue: 30,
-    unlockCondition: () => player.antSacrificePoints >= 1e7 && player.seventhOwnedAnts > 0,
+    unlockCondition: () => antSacrificePointsToMultiplier(player.antSacrificePoints) >= 6666 && player.seventhOwnedAnts > 0,
     group: 'sacMult',
     reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 1 },
     checkReset: () => player.highestSingularityCount >= 10
   },
   {
     pointValue: 35,
-    unlockCondition: () => player.antSacrificePoints >= 1e8 && player.eighthOwnedAnts > 0,
+    unlockCondition: () => antSacrificePointsToMultiplier(player.antSacrificePoints) >= 77777 && player.eighthOwnedAnts > 0,
     group: 'sacMult',
     reward: { antAutobuyers: () => 1, antUpgradeAutobuyers: () => 2 },
     checkReset: () => player.highestSingularityCount >= 10
@@ -1777,17 +1779,17 @@ export const achievements: Achievement[] = [
   { pointValue: 50, unlockCondition: () => player.antPoints.gte('1e1000000'), group: 'antCrumbs' },
   {
     pointValue: 40,
-    unlockCondition: () => player.antSacrificePoints >= 1e12,
+    unlockCondition: () => antSacrificePointsToMultiplier(player.antSacrificePoints) >= 1e12,
     group: 'sacMult'
   },
   {
     pointValue: 45,
-    unlockCondition: () => player.antSacrificePoints >= 1e50,
+    unlockCondition: () => antSacrificePointsToMultiplier(player.antSacrificePoints) >= 1e50,
     group: 'sacMult'
   },
   {
     pointValue: 50,
-    unlockCondition: () => player.antSacrificePoints >= 1e150,
+    unlockCondition: () => antSacrificePointsToMultiplier(player.antSacrificePoints) >= 1e150,
     group: 'sacMult'
   },
   { pointValue: 75, unlockCondition: () => player.ascensionCount >= 1e16, group: 'ascensionCount' },
@@ -2525,11 +2527,6 @@ export const awardAchievementGroup = (group: AchievementGroups) => {
     throw new Error('Cannot award ungrouped achievements')
   }
 
-  // If not displayed, we probably do not want to award the achievement early!
-  if (!groupedAchievementData[group].displayCondition()) {
-    return
-  }
-
   for (const index of achievementsByGroup[group]) {
     awardAchievement(index)
   }
@@ -2549,6 +2546,9 @@ export const updateProgressiveAP = (ach: ProgressiveAchievements) => {
 }
 
 export const updateProgressiveCache = (ach: ProgressiveAchievements) => {
+  if (!progressiveAchievements[ach].useCachedValue) {
+    updateProgressiveAP(ach)
+  }
   const oldVal = player.progressiveAchievements[ach]
   player.progressiveAchievements[ach] = Math.max(player.progressiveAchievements[ach], progressiveAchievements[ach].updateValue())
   if (oldVal !== player.progressiveAchievements[ach]) {
@@ -3165,4 +3165,14 @@ export const resetAchievementProgressDisplay = () => {
       }
     })
   })
+}
+
+// You should really only use this when the game is reset.
+export const resetAchievements = () => {
+  player.achievements.fill(0)
+  for (const k of Object.keys(progressiveAchievements) as ProgressiveAchievements[]) {
+    player.progressiveAchievements[k] = 0
+  }
+  achievementPoints = 0
+  achievementLevel = 0
 }
