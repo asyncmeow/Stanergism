@@ -896,6 +896,12 @@ export const calculateOffline = (forceTime = 0, fromTips = false) => {
     obtainium: obtainiumGain.times(timeAdd).times(G.timeMultiplier)
   }
 
+  const resetAddDisplay = {
+    prestige: player.prestigeCount,
+    transcension: player.transcendCount,
+    reincarnation: player.reincarnationCount,
+  }
+
   const timerAdd = {
     prestige: timeAdd * G.timeMultiplier,
     transcension: timeAdd * G.timeMultiplier,
@@ -926,6 +932,10 @@ export const calculateOffline = (forceTime = 0, fromTips = false) => {
   timerAdd.quarks = quarkHandler().gain - timerAdd.quarks
   timerAdd.ambrosia = player.lifetimeAmbrosia - timerAdd.ambrosia
   timerAdd.redAmbrosia = player.lifetimeRedAmbrosia - timerAdd.redAmbrosia
+
+  resetAddDisplay.prestige = player.prestigeCount - resetAddDisplay.prestige
+  resetAddDisplay.transcension = player.transcendCount - resetAddDisplay.transcension
+  resetAddDisplay.reincarnation = player.reincarnationCount - resetAddDisplay.reincarnation
 
   // 200 simulated all ticks [July 12, 2021]
   const runOffline = setInterval(() => {
@@ -973,7 +983,7 @@ export const calculateOffline = (forceTime = 0, fromTips = false) => {
   DOMCacheGetOrSet('offlinePrestigeCount').innerHTML = i18next.t(
     'offlineProgress.prestigeCount',
     {
-      value: format(resetAdd.prestige, 0, true)
+      value: format(resetAddDisplay.prestige, 0, true)
     }
   )
   DOMCacheGetOrSet('offlinePrestigeTimer').innerHTML = i18next.t(
@@ -991,7 +1001,7 @@ export const calculateOffline = (forceTime = 0, fromTips = false) => {
   DOMCacheGetOrSet('offlineTranscensionCount').innerHTML = i18next.t(
     'offlineProgress.transcensionCount',
     {
-      value: format(resetAdd.transcension, 0, true)
+      value: format(resetAddDisplay.transcension, 0, true)
     }
   )
   DOMCacheGetOrSet('offlineTranscensionTimer').innerHTML = i18next.t(
@@ -1003,7 +1013,7 @@ export const calculateOffline = (forceTime = 0, fromTips = false) => {
   DOMCacheGetOrSet('offlineReincarnationCount').innerHTML = i18next.t(
     'offlineProgress.reincarnationCount',
     {
-      value: format(resetAdd.reincarnation, 0, true)
+      value: format(resetAddDisplay.reincarnation, 0, true)
     }
   )
   DOMCacheGetOrSet('offlineReincarnationTimer').innerHTML = i18next.t(

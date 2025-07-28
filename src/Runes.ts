@@ -92,6 +92,7 @@ export interface RuneData<K extends RuneKeys> {
   runeEXP: Decimal
   costCoefficient: Decimal
   levelsPerOOM: number
+  ignoreChal9: boolean
   levelsPerOOMIncrease: () => number
   effectiveLevelMult: () => number
   freeLevels: () => number
@@ -369,6 +370,7 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
     runeEXP: new Decimal('0'),
     costCoefficient: new Decimal(50),
     levelsPerOOM: 150,
+    ignoreChal9: false,
     levelsPerOOMIncrease: () => speedRuneOOMIncrease(),
     effects: (n) => {
       const acceleratorPower = 0.0002 * n
@@ -402,6 +404,7 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
     runeEXP: new Decimal('0'),
     costCoefficient: new Decimal(20000),
     levelsPerOOM: 120,
+    ignoreChal9: false,
     levelsPerOOMIncrease: () => duplicationRuneOOMIncrease(),
     effects: (n) => {
       const multiplierBoosts = n / 5
@@ -435,6 +438,7 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
     runeEXP: new Decimal('0'),
     costCoefficient: new Decimal(5e5),
     levelsPerOOM: 90,
+    ignoreChal9: false,
     levelsPerOOMIncrease: () => prismRuneOOMIncrease(),
     effects: (level) => {
       const productionLog10 = Math.max(0, 2 * Math.log10(1 + level / 2) + (level / 2) * Math.log10(2) - Math.log10(256))
@@ -468,6 +472,7 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
     runeEXP: new Decimal('0'),
     costCoefficient: new Decimal(2.5e7),
     levelsPerOOM: 60,
+    ignoreChal9: false,
     levelsPerOOMIncrease: () => thriftRuneOOMIncrease(),
     effects: (level) => {
       const costDelay = Math.min(1e15, level / 125)
@@ -501,6 +506,7 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
     runeEXP: new Decimal('0'),
     costCoefficient: new Decimal(1e12),
     levelsPerOOM: 30,
+    ignoreChal9: false,
     levelsPerOOMIncrease: () => superiorIntellectOOMIncrease(),
     effects: (level) => {
       const offeringMult = 1 + level / 2000
@@ -534,6 +540,7 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
     runeEXP: new Decimal('0'),
     costCoefficient: new Decimal(1e75),
     levelsPerOOM: 1 / 2,
+    ignoreChal9: true,
     levelsPerOOMIncrease: () => infiniteAscentOOMIncrease(),
     effects: (level) => {
       const quarkMult = 1 + level / 500 + (level > 0 ? 0.1 : 0)
@@ -579,6 +586,7 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
     runeEXP: new Decimal('0'),
     costCoefficient: new Decimal(1e206),
     levelsPerOOM: 1 / 50,
+    ignoreChal9: true,
     levelsPerOOMIncrease: () => 0,
     effects: (level) => {
       const addCodeCooldownReduction = level > 0 ? 0.8 - 0.3 * (level - 1) / (level + 10) : 1
@@ -612,6 +620,7 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
     runeEXP: new Decimal('0'),
     costCoefficient: new Decimal('1e500'),
     levelsPerOOM: 1 / 16,
+    ignoreChal9: true,
     levelsPerOOMIncrease: () => 0,
     effects: (level) => {
       const ambrosiaLuck = 5 * level
@@ -646,14 +655,17 @@ export const runes: { [K in RuneKeys]: RuneData<K> } = {
 }
 
 export const getRuneEffectiveLevel = (rune: RuneKeys): number => {
+  if (!runes[rune].isUnlocked()) {
+    return 0
+  }
+  if (player.currentChallenge.reincarnation === 9 && !runes[rune].ignoreChal9) {
+    return 1
+  }
   const effectiveMult = runes[rune].effectiveLevelMult()
   return (runes[rune].level + runes[rune].freeLevels()) * effectiveMult
 }
 
 export const getRuneEffects = <T extends RuneKeys>(rune: T): RuneTypeMap[T] => {
-  if (player.currentChallenge.reincarnation === 9) {
-    return runes[rune].effects(1)
-  }
   return runes[rune].effects(getRuneEffectiveLevel(rune))
 }
 

@@ -186,6 +186,7 @@ import {
   type HepteractKeys,
   hepteracts,
   type HepteractValues,
+  setAutomaticHepteractTexts,
   toggleAutoBuyOrbs
 } from './Hepteracts'
 import { disableHotkeys } from './Hotkeys'
@@ -1551,7 +1552,6 @@ const loadSynergy = () => {
     player.roombaResearchIndex = 0
 
     // June 09, 2021: Updated toggleShops() and removed boilerplate - Platonic
-    toggleShops()
     getChallengeConditions()
     revealStuff()
     toggleauto()
@@ -5459,6 +5459,8 @@ export const reloadShit = (reset = false) => {
   }
 
   toggleTheme(true)
+  toggleShops()
+  setAutomaticHepteractTexts()
   settingAnnotation()
   toggleIconSet()
   toggleauto()

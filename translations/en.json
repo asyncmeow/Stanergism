@@ -1484,7 +1484,7 @@
         "transcendToPrestige": "For each Transcension Count you gain, you get 1 Prestige Count (subject to Prestige Count multipliers)"
       },
       "444": {
-        "transcensionCountMultiplier": "Gain up to 10x the Transcension Count based on your Prestige Timer (maxes at 10s)"
+        "transcensionCountMultiplier": "Gain up to 4x the Transcension Count based on your Prestige Timer (maxes at 10s)"
       },
       "452": {
         "transcensionCountMultiplier": "Gain +100% more Transcension Count per digit in your Transcension Count (additive)!"
@@ -1499,7 +1499,7 @@
         "reincarnationToTranscend": "For each Reincarnation Count you gain, you get 1 Transcension Count (subject to Transcension Count multipliers)"
       },
       "459": {
-        "reincarnationCountMultiplier": "Gain up to 10x the Reincarnation Count based on your Prestige Timer (maxes at 1,000s)"
+        "reincarnationCountMultiplier": "Gain up to 4x the Reincarnation Count based on your Prestige Timer (maxes at 1,000s)"
       },
       "467": {
         "reincarnationCountMultiplier": "Gain +100% more Reincarnation Count per digit in your Reincarnation Count (additive)!"
@@ -1511,7 +1511,7 @@
         "thriftRuneUnlock": "Permanently unlock the Thrift Rune!"
       },
       "474": {
-        "prestigeCountMultiplier": "Gain up to 10x the Prestige Count based on your Prestige Timer (maxes at 1,000,000s)",
+        "prestigeCountMultiplier": "Gain up to 4x the Prestige Count based on your Prestige Timer (maxes at 1,000,000s)",
         "ascensionCountMultiplier": "Gain up to 1.25x the Ascension Count based on your Ascension Timer (maxes at 1,000,000s)"
       }
     },
@@ -5441,6 +5441,8 @@
     },
     "cubeMultiplierStats": {
       "title": "Wow! Cube Multiplier",
+      "AchievementBonus": "Achievement Wow! Cubes Bonus:",
+      "SynergismLevel": "Synergism Level Reward:",
       "AscensionScore": "Ascension Score Multiplier:",
       "GlobalCube": "Global Cube Multiplier:",
       "SeasonPass1": "Season Pass 1:",
@@ -5462,6 +5464,8 @@
     },
     "tesseractMultiplierStats": {
       "title": "Wow! Tesseract Multiplier",
+      "AchievementBonus": "Achievement Wow! Tesseracts Bonus:",
+      "SynergismLevel": "Synergism Level Reward:",
       "AscensionScore": "Ascension Score Multiplier:",
       "GlobalCube": "Global Cube Multiplier:",
       "SeasonPass1": "Season Pass 1:",
@@ -5479,6 +5483,8 @@
     },
     "hypercubeMultiplierStats": {
       "title": "Wow! Hypercube Multiplier",
+      "AchievementBonus": "Achievement Wow! Hypercubes Bonus:",
+      "SynergismLevel": "Synergism Level Reward:",
       "AscensionScore": "Ascension Score Multiplier:",
       "GlobalCube": "Global Cube Multiplier:",
       "SeasonPass2": "Season Pass 2:",
@@ -5495,6 +5501,8 @@
     },
     "platonicMultiplierStats": {
       "title": "Wow! Platonic Cube Multiplier",
+      "AchievementBonus": "Achievement Platonic Cubes Bonus:",
+      "SynergismLevel": "Synergism Level Reward:",
       "AscensionScore": "Ascension Score Multiplier:",
       "GlobalCube": "Global Cube Multiplier:",
       "SeasonPass2": "Season Pass 2:",
@@ -5509,6 +5517,8 @@
     },
     "hepteractMultiplierStats": {
       "title": "Wow! Hepteract Cube Multiplier",
+      "AchievementBonus": "Achievement Hepteracts Bonus:",
+      "SynergismLevel": "Synergism Level Reward:",
       "AscensionScore": "Ascension Score Multiplier:",
       "GlobalCube": "Global Cube Multiplier:",
       "SeasonPass3": "Season Pass 3:",
@@ -5521,6 +5531,7 @@
     },
     "octeractMultiplierStats": {
       "title": "Wow! Octeract Cube Multiplier",
+      "SynergismLevel": "Synergism Level Reward:",
       "BasePerSecond": "Base Per Second:",
       "AscensionScore": "Ascension Score Multiplier:",
       "PseudoCoins": "PseudoCoin Upgrade:",
@@ -5586,6 +5597,8 @@
     "offeringMultiplierStats": {
       "title": "Offering Multiplier",
       "Base": "Base Offerings:",
+      "AchievementBonus": "Achievement Offering Multiplier:",
+      "SynergismLevel": "Synergism Level Reward:",
       "PrestigeShards": "Prestige Shards Multiplier:",
       "SuperiorIntellect": "Superior Intellect Rune Bonus:",
       "ReincarnationChallenge": "Reincarnation Challenges 6, 8, 10:",
@@ -5666,7 +5679,9 @@
     "globalQuarkMultiplierStats": {
       "title": "Quark Multiplier",
       "AchievementPoints": "Achievement Points Bonus:",
-      "plasticTalisman": "Plastic Talisman - Inscription Bonus:",
+      "AchievementBonus": "Achievement Quarks Multiplier:",
+      "SynergismLevel": "Synergism Level Reward:",
+      "PlasticTalisman": "Plastic Talisman - Inscription Bonus:",
       "Achievement250": "Achievement 250 Bonus:",
       "Achievement251": "Achievement 251 Bonus:",
       "Achievement266": "Achievement 266 Bonus:",
@@ -5744,6 +5759,8 @@
     "obtainiumMultiplierStats": {
       "title": "Obtainium Multiplier",
       "Base": "Base Obtainium:",
+      "AchievementBonus": "Achievement Obtainium Multiplier:",
+      "SynergismLevel": "Synergism Level Reward:",
       "ThresholdPenalty": "Reincarnation Time Penalty:",
       "TimeMultiplier": "Reincarnation Time Multiplier:",
       "TranscendShards": "Transcend Shards Bonus:",
@@ -5804,6 +5821,7 @@
     },
     "antSacrificeMultStats": {
       "title": "Ant Sacrifice Reward Multiplier",
+      "AchievementBonus": "Achievement Ant Sacrifice Multiplier:",
       "AntUpgrade11": "Ant Upgrade 11:",
       "Research103": "Research 5x3:",
       "Research104": "Research 5x4:",
@@ -5903,6 +5921,7 @@
     "ambrosiaLuckStats": {
       "title": "Ambrosia Luck",
       "Base": "Base Value:",
+      "SynergismLevel": "Synergism Level Reward:",
       "PseudoCoins": "PseudoCoin Upgrade:",
       "Campaign": "Campaign Bonus:",
       "SingularityMilestones": "Singularity Milestones:",
@@ -5961,6 +5980,7 @@
     "powderMultiplierStats": {
       "title": "Orb to Powder Conversion",
       "Base": "Base Conversion Rate:",
+      "AchievementBonus": "Achievement Power Conversion Bonus:",
       "Challenge15": "Challenge 15 Reward:",
       "ShopPowderEX": "Powder EX Shop Upgrade:",
       "Achievement256": "Achievement 256 Bonus:",
@@ -6065,6 +6085,7 @@
     "redAmbrosiaLuckStats": {
       "title": "Red Ambrosia Luck",
       "Base": "Base Value:",
+      "SynergismLevel": "Synergism Level Reward:",
       "PseudoCoins": "PseudoCoin Upgrade:",
       "LuckConversion": "Luck from Ambrosia Luck:",
       "RedAmbrosia": "The Dice That Decide Your Fate",
@@ -6104,8 +6125,7 @@
     "talismanRuneBonusMultiplierStats": {
       "title": "Talisman Rune Bonus Additive Multiplier",
       "Base": "Base Multiplier",
-      "Achievement135": "Achievement 135:",
-      "Achievement136": "Achievement 136:",
+      "AchievementBonus": "Achievement Talisman Effect Bonus:",
       "Research106": "Research 5x6:",
       "Research107": "Research 5x7:",
       "Research116": "Research 5x16:",
@@ -6130,7 +6150,7 @@
     "salvagePositive": {
       "title": "Positive ♲ Salvage",
       "AchievementBonus": "Salvage from Achievements:",
-      "SynergismLevel": "Synergism Level:",
+      "SynergismLevel": "Synergism Level Reward:",
       "SynergismLevelMilestone": "Level Milestone - Salvage Challenge Buff:",
       "UpgradeBonus": "Reincarnation Upgrade 1:",
       "RuneBonus": "Thrift Rune:",
@@ -6176,7 +6196,7 @@
       "hypercubeQuarksToday": "Quarks gained from Hypercubes: <<cyan|{{amount}}>>",
       "hypercubeQuarksOpenRequirement": "Open {{amount}} Hypercubes for next quark.",
       "hypercubeQuarksOpenToday": "Hypercubes opened today: <<orchid|{{amount}}>>",
-      "platonicCubeQuarksToday": "Platonic Cubes gained from Cubes: <<cyan|{{amount}}>>",
+      "platonicCubeQuarksToday": "Quarks gained from Platonic Cubes: <<cyan|{{amount}}>>",
       "platonicCubeQuarksOpenRequirement": "Open {{amount}} Platonic Cubes for next quark.",
       "platonicCubeQuarksOpenToday": "Platonic Cubes opened today: <<orchid|{{amount}}>>"
     },
