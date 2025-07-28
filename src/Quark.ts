@@ -39,8 +39,12 @@ export const quarkHandler = () => {
 }
 
 let bonus = 0
+let personalQuarkBonus = 0
 
-export const setQuarkBonus = (newBonus: number) => bonus = newBonus
+export const setQuarkBonus = (personalBonus: number, globalBonus: number) => {
+  bonus = 100 * (1 + globalBonus / 100) * (1 + personalBonus / 100) - 100
+  personalQuarkBonus = personalBonus
+}
 export const getQuarkBonus = () => bonus
 
 export class QuarkHandler {
@@ -89,4 +93,11 @@ export class QuarkHandler {
   }
 
   [Symbol.toPrimitive] = (t: string) => t === 'number' ? this.QUARKS : null
+}
+
+export const refreshQuarkBonus = async () => {
+  const response = await fetch('https://synergism.cc/api/v1/quark-bonus')
+  const { bonus } = await response.json() as { bonus: number }
+
+  setQuarkBonus(personalQuarkBonus, bonus)
 }
