@@ -21,17 +21,16 @@ import {
   achievementPoints,
   type AchievementRewards,
   achRewards,
-  awardAchievement,
   awardAchievementGroup,
+  awardUngroupedAchievement,
   buildingAchievementCheck,
   challengeAchievementCheck,
   generateAchievementHTMLs,
   getAchievementReward,
   numAchievements,
-  ProgressiveAchievements,
+  type ProgressiveAchievements,
   progressiveAchievements,
   resetAchievementCheck,
-  ungroupedNameMap,
   updateAchievementPoints,
   updateAllGroupedAchievementProgress,
   updateAllProgressiveAchievementProgress,
@@ -118,7 +117,8 @@ import {
   talismans,
   toggleTalismanBuy,
   updateTalismanInventory,
-  updateTalismanLevelAndSpentFromInvested
+  updateTalismanLevelAndSpentFromInvested,
+  updateTalismanRarities
 } from './Talismans'
 import { calculatetax } from './Tax'
 import { calculateTesseractBlessings } from './Tesseracts'
@@ -1553,7 +1553,6 @@ const loadSynergy = () => {
     // June 09, 2021: Updated toggleShops() and removed boilerplate - Platonic
     toggleShops()
     getChallengeConditions()
-    updateChallengeDisplay()
     revealStuff()
     toggleauto()
 
@@ -4391,8 +4390,8 @@ export const updateAll = (): void => {
   }
 
   awardAchievementGroup('antCrumbs')
-  awardAchievement(ungroupedNameMap.thousandSuns)
-  awardAchievement(ungroupedNameMap.thousandMoons)
+  awardUngroupedAchievement('thousandSuns')
+  awardUngroupedAchievement('thousandMoons')
 
   // Autobuy "Upgrades" Tab
   autoUpgrades()
@@ -4956,6 +4955,7 @@ export const constantIntervals = (): void => {
   setInterval(updateAllRuneLevelsFromEXP, 25)
   setInterval(updateAllBlessingLevelsFromEXP, 25)
   setInterval(updateAllSpiritLevelsFromEXP, 25)
+  setInterval(updateTalismanRarities, 250)
   setInterval(() => awardAchievementGroup('runeFreeLevel'), 25)
   setInterval(() => {
     for (const key of Object.keys(progressiveAchievements) as ProgressiveAchievements[]) {
@@ -5499,6 +5499,7 @@ export const reloadShit = (reset = false) => {
   updateAllUngroupedAchievementProgress()
   updateAllGroupedAchievementProgress()
   updateAllProgressiveAchievementProgress()
+  updateChallengeDisplay()
   clearTimeout(preloadDeleteGame)
 
   if (localStorage.getItem('pleaseStar') === null) {

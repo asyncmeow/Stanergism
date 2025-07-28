@@ -1,6 +1,6 @@
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
-import { awardAchievement, getAchievementReward, ungroupedNameMap } from './Achievements'
+import { awardUngroupedAchievement, getAchievementReward } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { CalcECC } from './Challenges'
 import { BuffType, calculateEventSourceBuff } from './Event'
@@ -11,7 +11,7 @@ import { getOcteractUpgradeEffect } from './Octeracts'
 import { PCoinUpgradeEffects } from './PseudoCoinUpgrades'
 import { quarkHandler } from './Quark'
 import { getRedAmbrosiaUpgradeEffects } from './RedAmbrosiaUpgrades'
-import { reset } from './Reset'
+import { reset, updatePrestigeCount, updateReincarnationCount, updateTranscensionCount } from './Reset'
 import { getRuneBlessingEffect } from './RuneBlessings'
 import { sumOfRuneLevels } from './Runes'
 import { getGQUpgradeEffect } from './singularity'
@@ -314,11 +314,11 @@ export const calculateGlobalSpeedMult = () => {
   // Achievement Stuffs
   // One second in 100 years
   if (totalTimeMultiplier < 1 / (3600 * 24 * 365 * 100)) {
-    awardAchievement(ungroupedNameMap.verySlow)
+    awardUngroupedAchievement('verySlow')
   }
   // One hour in a second
   if (totalTimeMultiplier > 3600) {
-    awardAchievement(ungroupedNameMap.veryFast)
+    awardUngroupedAchievement('veryFast')
   }
 
   return totalTimeMultiplier
@@ -889,10 +889,10 @@ export const calculateOffline = (forceTime = 0, fromTips = false) => {
   const obtainiumGain = calculateResearchAutomaticObtainium(timeAdd)
 
   const resetAdd = {
-    prestige: (player.prestigeCount > 0) ? timeAdd / Math.max(0.01, player.fastestprestige) : 0,
+    prestige: (player.prestigeCount > 0) ? timeAdd / Math.max(0.25, player.fastestprestige) : 0,
     offering: Math.floor(timeAdd),
-    transcension: (player.transcendCount > 0) ? timeAdd / Math.max(0.01, player.fastesttranscend) : 0,
-    reincarnation: (player.reincarnationCount > 0) ? timeAdd / Math.max(0.01, player.fastestreincarnate) : 0,
+    transcension: (player.transcendCount > 0) ? timeAdd / Math.max(0.25, player.fastesttranscend) : 0,
+    reincarnation: (player.reincarnationCount > 0) ? timeAdd / Math.max(0.25, player.fastestreincarnate) : 0,
     obtainium: obtainiumGain.times(timeAdd).times(G.timeMultiplier)
   }
 
@@ -918,9 +918,10 @@ export const calculateOffline = (forceTime = 0, fromTips = false) => {
   addTimers('ambrosia', timeAdd)
   addTimers('redAmbrosia', timeAdd)
 
-  player.prestigeCount += resetAdd.prestige
-  player.transcendCount += resetAdd.transcension
-  player.reincarnationCount += resetAdd.reincarnation
+  updatePrestigeCount(resetAdd.prestige)
+  updateTranscensionCount(resetAdd.transcension)
+  updateReincarnationCount(resetAdd.reincarnation)
+
   timerAdd.ascension = player.ascensionCounter - timerAdd.ascension
   timerAdd.quarks = quarkHandler().gain - timerAdd.quarks
   timerAdd.ambrosia = player.lifetimeAmbrosia - timerAdd.ambrosia

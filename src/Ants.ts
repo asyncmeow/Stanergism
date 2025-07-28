@@ -11,7 +11,7 @@ import { Globals as G } from './Variables'
 import type { DecimalSource } from 'break_infinity.js'
 import Decimal from 'break_infinity.js'
 import i18next from 'i18next'
-import { awardAchievement, awardAchievementGroup, getAchievementReward, ungroupedNameMap } from './Achievements'
+import { awardAchievementGroup, awardUngroupedAchievement, getAchievementReward } from './Achievements'
 import { DOMCacheGetOrSet } from './Cache/DOM'
 import { resetHistoryAdd, type ResetHistoryEntryAntSacrifice } from './History'
 import { buyResearch } from './Research'
@@ -398,7 +398,7 @@ export const sacrificeAnts = async (auto = false) => {
   }
 
   if (player.mythicalFragments >= 1e11 && player.currentChallenge.ascension === 14) {
-    awardAchievement(ungroupedNameMap.seeingRedNoBlue)
+    awardUngroupedAchievement('seeingRedNoBlue')
   }
 }
 
