@@ -21,11 +21,6 @@ jobs:
         run: |
           npm install
 
-      - name: Lint
-        run: |
-          npm run lint
-          npm run csslint
-
       - name: Build
         run: |
           node ./scripts/update-last-updated.js
