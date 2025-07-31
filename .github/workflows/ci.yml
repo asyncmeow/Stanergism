@@ -1,5 +1,4 @@
-name: ci
-
+name: CI
 on:
   push:
     paths-ignore:
@@ -12,32 +11,37 @@ on:
 
 jobs:
   test:
-    runs-on: ${{ matrix.os }}
-
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
+    runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
+
       - name: Use Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
-      - name: Install
+
+      - name: Install dependencies
         run: |
           npm install
+
       - name: Check
         run: |
           npm run check:tsc
-      - name: Run linter
+
+      - name: Lint
         run: |
           npm run lint
           npm run csslint
+
       - name: Check translation files
-        if: matrix.os == 'ubuntu-latest' && ${{ github.event_name == 'pull_request' }}
+        if: matrix.os == 'ubuntu-latest' && github.event_name == 'pull_request'
         uses: actions/github-script@v7
         id: check-translation-files
         with:
