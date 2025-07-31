@@ -1,0 +1,61 @@
+name: Deploy to GitHub Pages
+on:
+  push:
+    branches: master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false 
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install dependencies
+        run: |
+          npm install
+
+      - name: Lint
+        run: |
+          npm run lint
+          npm run csslint
+
+      - name: Build
+        run: |
+          node ./scripts/update-last-updated.js
+          npm run-script build:esbuild
+
+      - name: Prepare for deploy
+        run: |
+          rm -rf targetdir
+          mkdir -p targetdir
+          mv dist Pictures translations index.html Synergism.css favicon.ico package.json targetdir
+
+      - name: Upload static files as artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: targetdir
+
+  deploy:
+    needs: build
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
