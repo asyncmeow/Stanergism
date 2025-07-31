@@ -3,6 +3,7 @@ import { Alert, Notification } from '../UpdateHTML'
 import { memoize } from '../Utility'
 import { coinProducts } from './CartTab'
 import { addToCart } from './CartUtil'
+import { addPseudoCoins, updatePseudoCoins } from './UpgradesSubtab'
 
 const productContainer = document.querySelector<HTMLElement>('#pseudoCoins > #productContainer')
 
@@ -16,12 +17,13 @@ const clickHandler = (e: HTMLElementEventMap['click']) => {
   const productName = (e.target as HTMLButtonElement).getAttribute('data-name')
 
   if (productId === null || !coinProducts.some((product) => product.id === productId)) {
-    Alert('Stop fucking touching the html! We do server-side validation!')
+    Alert("Stop fucking touching the html! We don't do server-side validation!")
     return
   }
-
-  addToCart(productId)
-  Notification(`Added ${productName} to the cart!`)
+  var coinsToAdd = coinProducts.filter((product) => product.id === productId)[0].coins;
+  addPseudoCoins(coinsToAdd);
+  updatePseudoCoins();
+  Notification(`Added ${productName}!`)
 }
 
 export const initializeProductPage = memoize(() => {

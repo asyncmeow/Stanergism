@@ -107,31 +107,28 @@ async function purchaseUpgrade (upgrades: Map<number, UpgradesList>) {
     return
   }
 
-  const response = await fetch(`https://synergism.cc/stripe/buy-upgrade/${activeUpgrade.upgradeId}`, {
-    method: 'PUT'
-  })
-  const json = await response.json()
-  const parsed = buyUpgradeSchema.safeParse(json)
-
-  if (!parsed.success) {
-    Alert(`Didn't buy the upgrade... try again? ${JSON.stringify(json)}`)
+  const cost = activeUpgrade.cost[0]
+  if (coins < cost) {
+    Alert("not enough coins, oof.")
     return
   }
 
-  const upgrade = upgrades?.get(parsed.data.upgradeId)
+  addPseudoCoins(-cost)
+
+  const upgrade = upgrades?.get(activeUpgrade.upgradeId)
 
   if (upgrade) {
-    upgrade.playerLevel = parsed.data.level
-    Alert(`Upgraded ${upgrade.name} (${upgrade.description}) to ${parsed.data.level}!`)
+    upgrade.playerLevel += activeUpgrade.level[0]
+    Alert(`Upgraded ${upgrade.name} (${upgrade.description}) to ${upgrade.playerLevel}!`)
 
     tab.querySelector('#upgradeGrid > .active > p#a')!.textContent = `${upgrade.playerLevel}/${upgrade.maxLevel}`
     tab.querySelector('#upgradeGrid > .active > p#b')!.textContent = upgrade.playerLevel === upgrade.maxLevel ? '✔️' : ''
 
     setActiveUpgrade(upgrade)
 
-    await updatePseudoCoins()
+    updatePseudoCoins()
 
-    updatePCoinCache(upgrade.internalName, parsed.data.level)
+    updatePCoinCache(upgrade.internalName, upgrade.playerLevel)
   } else {
     Alert('Upgrades did not load. Please refresh the page.')
   }
@@ -206,18 +203,19 @@ export const clearUpgradeSubtab = () => {
   tab.style.display = 'none'
 }
 
-export const updatePseudoCoins = async () => {
-  const response = await fetch('https://synergism.cc/stripe/coins')
-  const coins = await response.json() as CoinsResponse
-
+var coins = 0;
+export const addPseudoCoins = (coinsToAdd: number) => {
+  coins = coins + coinsToAdd;
+}
+export const updatePseudoCoins = () => {
   tab!.querySelector('#pseudoCoinAmounts > #currentCoinBalance')!.innerHTML = `${
-    i18next.t('pseudoCoins.coinCount', { amount: Intl.NumberFormat().format(coins.coins) })
+    i18next.t('pseudoCoins.coinCount', { amount: Intl.NumberFormat().format(coins) })
   }`
 
   // WOW this is so hacky and shit but It's the best I can do in a pinch -Platonic
   DOMCacheGetOrSet('currentCoinBalance2')!.innerHTML = `${
-    i18next.t('pseudoCoins.coinCount', { amount: Intl.NumberFormat().format(coins.coins) })
+    i18next.t('pseudoCoins.coinCount', { amount: Intl.NumberFormat().format(coins) })
   }`
 
-  return coins.coins
+  return coins
 }
